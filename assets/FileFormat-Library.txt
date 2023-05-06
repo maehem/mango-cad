@@ -1,0 +1,52 @@
+MangoCAD File Format -- Library
+
+Layers are maintained by main CAD
+0-99   System Fixed layers
+100-999  User defined layers
+
+File Format Version:  0.1
+
+Units:  Always stored in MM
+
+
+Grid:   UI Will default to 0.05".  Not a file file format thing like Eagle does.
+
+Library
+  Name
+  Descriptions (arraylist for multiple languages
+    Description (locale:en_US,  value:Hello there)
+            See: https://developer.chrome.com/webstore/i18n
+
+  Packages
+    Package 
+        name
+        descriptions
+            description(locale, value)
+        displayUnits: MM IN MIL
+        wire ( x1, y1, x2, y2, width, layer, style, curve, cap )
+        pad_thd(name, x, y, drill,diameter,shape,rotation,stop,thermals,first?)
+        pad_smt(name,x,y,dx,dy,layer,roundness,rotation,stop,thermals,cream)
+        text( x,y,size,layer,width,align,distance?) content
+        circle(x,y,radius,width,layer)
+        rectangle(x1,y1,x2,y2,layer,rotation
+        hole(x,y,drill)
+        via(x,y,extent?,drill,diameter,shape,stop
+        polygon(width,layer,spacing,pour-->fill,isolate,orphans,thermals,rank,vertexList)
+            vertex(x,y,curve)
+
+  Symbols
+    Symbol
+        name
+        description
+        wire
+        text
+        circle
+        rectangle
+        pin(name,x,y,visible,length,direction,function,swap,rotation)
+
+  Devices
+    device
+        name
+        description
+        variant
+        
