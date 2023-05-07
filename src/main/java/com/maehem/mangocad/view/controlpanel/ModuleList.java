@@ -209,7 +209,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
         TreeItem item;
         // List each footprint(package)  (Folder)
-        item= new TreeItem(new LibraryItem("Footprints", "", file));
+        item= new TreeItem(new LibrarySubItem("Footprints", "", file));
         parentItem.getChildren().add(item);
         for ( Footprint f: library.getPackages() ) {
             TreeItem footprintItem = new TreeItem( new LibraryDeviceFootprintItem(f.getName(), f.getDescription(), file) );
@@ -217,7 +217,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         }
         
         // List each 3D package (Folder)
-        item= new TreeItem(new LibraryItem("3D Packages", "", file));
+        item= new TreeItem(new LibrarySubItem("3D Packages", "", file));
         parentItem.getChildren().add(item);
         for ( Package3d f: library.getPackages3d()) {
             TreeItem package3dItem = new TreeItem( new LibraryDevicePackage3dItem(f.getName(), f.getDescription(), file) );
@@ -225,7 +225,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         }
         
         // List each symbol (Folder)
-        item= new TreeItem(new LibraryItem("Symbols", "", file));
+        item= new TreeItem(new LibrarySubItem("Symbols", "", file));
         parentItem.getChildren().add(item);
         for ( Symbol f: library.getSymbols() ) {
             TreeItem symbolItem = new TreeItem( new LibraryDeviceSymbolItem(f.getName(), f.getDescription(), file) );
