@@ -49,6 +49,8 @@ public class TableOfContentsPane extends SplitPane {
     private final LibraryElementListView package3dList;
     private final LibraryElementListView symbolList;
 
+    private boolean selectorUpdating = false;
+
     public TableOfContentsPane(File lbrFile) {
 
         try {
@@ -77,7 +79,7 @@ public class TableOfContentsPane extends SplitPane {
         symbolList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
 
-        getItems().addAll(deviceList, footprintList, symbolList, package3dList, detailsArea);
+        getItems().addAll(deviceList, footprintList, package3dList, symbolList, detailsArea);
 
         setDividerPosition(0, 1 * PANE_W);
         setDividerPosition(1, 2 * PANE_W);
@@ -94,43 +96,98 @@ public class TableOfContentsPane extends SplitPane {
      * @param newValue
      */
     void selectionChanged(ElementType src, String newValue) {
-        LOGGER.log(Level.SEVERE, "User Clicked: " + newValue + " in " + src);
+        // Selecting any list item programatially causes events to call this
+        // selectionChanged method repeatedly. So we ignore changes while updating.
+        if (selectorUpdating) {
+            return;
+        }
+
+        selectorUpdating = true;
         switch (src) {
             case DEVICE -> {
                 footprintList.clearSelections();
                 symbolList.clearSelections();
                 package3dList.clearSelections();
-                
+
                 for (DeviceSet ds : lib.getDeviceSets()) {
-                    if (ds.getName().equals(newValue)) {
+                    if (newValue.equals(ds.getName())) {
                         for (Device d : ds.getDevices()) {
                             footprintList.select(d.getPackage());
                             // loop through package3d where pkginst matches d.getPackage
-                            for ( Package3d p3d:  lib.getPackages3d() ) {
-                               for ( PackageInstance3d pi :  p3d.getPackageInstances() ) {
-                                   if ( pi.getName().equals(d.getPackage()) ) {
-                                       package3dList.select(p3d.getName());
-                                   }
-                               }
+                            for (Package3d p3d : lib.getPackages3d()) {
+                                for (PackageInstance3d pi : p3d.getPackageInstances()) {
+                                    if (pi.getName().equals(d.getPackage())) {
+                                        package3dList.select(p3d.getName());
+                                    }
+                                }
                             }
                         }
-                        for (Gate g: ds.getGates() ) {
+                        for (Gate g : ds.getGates()) {
                             symbolList.select(g.getSymbol());
                         }
-                        
                     }
-                    // foreach gate.symbol --> symbol
                 }
 
             }
             case FOOTPRINT -> {
+                symbolList.clearSelections();
+                package3dList.clearSelections();
+                deviceList.clearSelections();
+
+                // Devices
+                for (DeviceSet ds : lib.getDeviceSets()) {
+                    for (Device d : ds.getDevices()) {
+                        if (newValue.equals(d.getPackage())) {
+                            deviceList.select(ds.getName());
+                            // loop through package3d where pkginst matches d.getPackage
+                            for (Package3d p3d : lib.getPackages3d()) {
+                                for (PackageInstance3d pi : p3d.getPackageInstances()) {
+                                    if (pi.getName().equals(newValue)) {
+                                        package3dList.select(p3d.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             case PACKAGE3D -> {
+                footprintList.clearSelections();
+                symbolList.clearSelections();
+                deviceList.clearSelections();
+
+                for (Package3d p3d : lib.getPackages3d()) {
+                    for (PackageInstance3d pi : p3d.getPackageInstances()) {
+                        if (p3d.getName().equals(newValue)) {
+                            footprintList.select(pi.getName());
+                            for (DeviceSet ds : lib.getDeviceSets()) {
+                                for (Device d : ds.getDevices()) {
+                                    if (pi.getName().equals(d.getPackage())) {
+                                        deviceList.select(ds.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
+
             case SYMBOL -> {
+                footprintList.clearSelections();
+                package3dList.clearSelections();
+                deviceList.clearSelections();
+
+                for (DeviceSet ds : lib.getDeviceSets()) {
+                    for (Gate g : ds.getGates()) {
+                        if (g.getSymbol().equals(newValue)) {
+                            deviceList.select(ds.getName());
+                        }
+                    }
+                }
             }
 
         }
+        selectorUpdating = false;
     }
 
 }
