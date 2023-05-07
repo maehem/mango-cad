@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.model.library.LibraryCache;
 import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
 import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
 import com.maehem.mangocad.model.library.element.DeviceSet;
@@ -53,12 +54,16 @@ public class TableOfContentsPane extends SplitPane {
 
     public TableOfContentsPane(File lbrFile) {
 
-        try {
-            lib = EagleCADUtils.importLBR(lbrFile);
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        } catch (EagleCADLibraryFileException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+//        try {
+//            lib = EagleCADUtils.importLBR(lbrFile);
+//        } catch (IOException ex) {
+//            LOGGER.log(Level.SEVERE, null, ex);
+//        } catch (EagleCADLibraryFileException ex) {
+//            LOGGER.log(Level.SEVERE, null, ex);
+//        }
+        lib = LibraryCache.getInstance().getLibrary(lbrFile);
+        if ( lib == null ) {
+            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
         }
 
         // TODO: Add selectoin listener.

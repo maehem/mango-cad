@@ -29,6 +29,7 @@ import com.maehem.mangocad.model.library.element.Symbol;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Library {
+
     public static final String FILE_EXTENSION = "mclib";
     
     private ArrayList<Note> notes = new ArrayList<>();
@@ -40,6 +41,8 @@ public class Library {
     private ArrayList<DeviceSet> deviceSets = new ArrayList<>();
     private ArrayList<Package3d> packages3d = new ArrayList<>();
 
+    private String filePath;
+    
     /**
      * @return the description
      */
@@ -128,4 +131,17 @@ public class Library {
         this.packages3d = packages3d;
     }
 
+    /**
+     * @return the filePath
+     */
+    public String getFilePath() {
+        return filePath;
+    }
+
+    /**
+     * @param filePath the filePath to set
+     */
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 }

@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.controlpanel;
 
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.model.library.LibraryCache;
 import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
 import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
 import java.io.BufferedReader;
@@ -69,7 +70,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         folderIconImage = new Image(getClass().getResourceAsStream("/icons/folder.png"));
         libraryIconImage = new Image(getClass().getResourceAsStream("/icons/photo-album.png"));
 
-        modules = new TreeItem(new ModuleItem("Modules", "...") , libraryIcon());
+        modules = new TreeItem(new ModuleItem("Modules", "..."), libraryIcon());
         librariesItem = new TreeItem(new LibraryModuleItem("Libraries", "..."), libraryIcon());
         projectsItem = new TreeItem(new ProjectModuleItem("Projects", "..."), libraryIcon());
 
@@ -82,7 +83,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
         setShowRoot(false);
         setRoot(modules);
-        
+
         // Update the context menu every time it is displayed.
         getSelectionModel().selectedItemProperty().addListener((o) -> {
             setContextMenu(getSelectionModel().getSelectedItem().getValue().getContextMenu());
@@ -105,7 +106,6 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         useColumn.setMinWidth(USE_COL_WIDTH);
         useColumn.setMaxWidth(USE_COL_WIDTH);
 
-        
         getColumns().add(nameColumn);
         getColumns().add(descColumn);
         getColumns().add(modifiedColumn);
@@ -162,32 +162,40 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             return (file.isFile() && file.getName().endsWith(".lbr"));
         });
         for (File lbr : libs) {
-            try {
+//            try {
                 // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
                 //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
                 //       for a possible solution.
-                Library importLBR = EagleCADUtils.importLBR(lbr);
-                if (!importLBR.getDescriptions().isEmpty()) {
-                    TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), importLBR.getDescriptions().get(0).getValue(), lbr), libraryIcon());
-                    lib.getChildren().add(item);
+                // Library importLBR = EagleCADUtils.importLBR(lbr);
+                Library importLBR = LibraryCache.getInstance().getLibrary(lbr);
+                if (importLBR != null) {
+                    if (!importLBR.getDescriptions().isEmpty()) {
+                        TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), importLBR.getDescriptions().get(0).getValue(), lbr), libraryIcon());
+                        lib.getChildren().add(item);
+                    } else {
+                        TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "", lbr), libraryIcon());
+                        lib.getChildren().add(item);
+                    }
                 } else {
-                    TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "",lbr), libraryIcon());
+                    TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
                     lib.getChildren().add(item);
                 }
-            } catch (IOException ex) {
-                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File IO Exception", null));
-                lib.getChildren().add(item);
+//            } catch (IOException ex) {
+//                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File IO Exception", null));
+//                lib.getChildren().add(item);
+//
+//                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (EagleCADLibraryFileException ex) {
+//                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File XML Error", null));
+//                lib.getChildren().add(item);
+//
+//                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+//            }
 
-                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (EagleCADLibraryFileException ex) {
-                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File XML Error", null));
-                lib.getChildren().add(item);
-
-                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        }
+    //    }
     }
+    
 
     private ImageView folderIcon() {
         ImageView iconNode = new ImageView(folderIconImage);

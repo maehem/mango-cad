@@ -16,11 +16,13 @@
  */
 package com.maehem.mangocad;
 
+import com.maehem.mangocad.model.library.Library;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +37,8 @@ public class AppProperties extends Properties {
     private static AppProperties instance = null;
     private final File propFile = initPropFile();
     private static final String APP_VERSION = "0";
+    private final ArrayList<Library> libraryCache = new ArrayList<>();
+    
     
     private AppProperties() {
         initPropFile();

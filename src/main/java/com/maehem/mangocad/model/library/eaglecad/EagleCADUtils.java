@@ -53,6 +53,7 @@ public class EagleCADUtils {
         //Element element = eagleXML.getDocumentElement();
 
         Library lib = convertEagleXML(eagleXML);
+        lib.setFilePath(file.getAbsolutePath());
 
         return lib;
     }

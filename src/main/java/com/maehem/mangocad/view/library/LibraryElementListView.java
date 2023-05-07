@@ -93,7 +93,7 @@ public class LibraryElementListView extends VBox {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 // Your action here
-                LOGGER.log(Level.SEVERE, "Selected item: {0}", newValue);
+                LOGGER.log(Level.FINER, "Selected item: {0}", newValue);
                 listener.selectionChanged(type, newValue);
             }
         });
@@ -110,7 +110,7 @@ public class LibraryElementListView extends VBox {
     }
 
     public void select( String item ) {
-        LOGGER.log(Level.SEVERE, "{0} select: {1}", new Object[]{type, item});
+        LOGGER.log(Level.FINER, "{0} select: {1}", new Object[]{type, item});
         listView.getSelectionModel().select(item);     
     }
     
