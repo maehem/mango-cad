@@ -19,8 +19,10 @@ package com.maehem.mangocad.view.controlpanel;
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
+import com.maehem.mangocad.model.library.element.DeviceSet;
+import com.maehem.mangocad.model.library.element.Footprint;
+import com.maehem.mangocad.model.library.element.Package3d;
+import com.maehem.mangocad.model.library.element.Symbol;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -71,8 +73,8 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         libraryIconImage = new Image(getClass().getResourceAsStream("/icons/photo-album.png"));
 
         modules = new TreeItem(new ModuleItem("Modules", "..."), libraryIcon());
-        librariesItem = new TreeItem(new LibraryModuleItem("Libraries", "..."), libraryIcon());
-        projectsItem = new TreeItem(new ProjectModuleItem("Projects", "..."), libraryIcon());
+        librariesItem = new TreeItem(new LibraryModuleItem("Libraries", "...")/*, libraryIcon()*/);
+        projectsItem = new TreeItem(new ProjectModuleItem("Projects", "...")/*, libraryIcon()*/);
 
         modules.getChildren().add(librariesItem);
         modules.getChildren().add(projectsItem);
@@ -149,7 +151,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 }
 
                 // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
-                TreeItem item = new TreeItem(new LibraryFolderItem(dirFile.getParentFile().getName(), description, dirFile), folderIcon());
+                TreeItem item = new TreeItem(new LibraryFolderItem(dirFile.getParentFile().getName(), description, dirFile)/*, folderIcon()*/);
                 librariesItem.getChildren().add(item);
                 populateLibrary(dirFile, item);
             }
@@ -157,29 +159,31 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
     }
 
-    private void populateLibrary(File dir, TreeItem lib) {
+    private void populateLibrary(File dir, TreeItem parentItem) {
         File[] libs = dir.listFiles((file) -> {    // lambda expression
             return (file.isFile() && file.getName().endsWith(".lbr"));
         });
-        for (File lbr : libs) {
+        for (File lbrFile : libs) {
 //            try {
-                // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
-                //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
-                //       for a possible solution.
-                // Library importLBR = EagleCADUtils.importLBR(lbr);
-                Library importLBR = LibraryCache.getInstance().getLibrary(lbr);
-                if (importLBR != null) {
-                    if (!importLBR.getDescriptions().isEmpty()) {
-                        TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), importLBR.getDescriptions().get(0).getValue(), lbr), libraryIcon());
-                        lib.getChildren().add(item);
-                    } else {
-                        TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "", lbr), libraryIcon());
-                        lib.getChildren().add(item);
-                    }
+            // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
+            //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
+            //       for a possible solution.
+            // Library importLBR = EagleCADUtils.importLBR(lbr);
+            Library library = LibraryCache.getInstance().getLibrary(lbrFile);
+            if (library != null) {
+                TreeItem item;
+                if (!library.getDescriptions().isEmpty()) {
+                    item = new TreeItem(new LibraryItem(lbrFile.getName(), library.getDescriptions().get(0).getValue(), lbrFile)/*, libraryIcon()*/);
+                    parentItem.getChildren().add(item);
                 } else {
-                    TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
-                    lib.getChildren().add(item);
+                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile)/*, libraryIcon()*/);
+                    parentItem.getChildren().add(item);
                 }
+                populateLibraryDetailItems(library, lbrFile, item);
+            } else {
+                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
+                parentItem.getChildren().add(item);
+            }
 //            } catch (IOException ex) {
 //                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File IO Exception", null));
 //                lib.getChildren().add(item);
@@ -192,10 +196,42 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 //                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 
-            }
-    //    }
+        }
+        //    }
     }
-    
+
+    private void populateLibraryDetailItems(Library library, File file, TreeItem parentItem) {
+        // List each deviceset as item (leaf)
+        for (DeviceSet ds : library.getDeviceSets()) {            
+            TreeItem item = new TreeItem(new LibraryDeviceSetItem(ds.getName(), ds.getDescription(), file));
+            parentItem.getChildren().add(item);
+        }
+
+        TreeItem item;
+        // List each footprint(package)  (Folder)
+        item= new TreeItem(new LibraryItem("Footprints", "", file));
+        parentItem.getChildren().add(item);
+        for ( Footprint f: library.getPackages() ) {
+            TreeItem footprintItem = new TreeItem( new LibraryDeviceFootprintItem(f.getName(), f.getDescription(), file) );
+            item.getChildren().add(footprintItem);
+        }
+        
+        // List each 3D package (Folder)
+        item= new TreeItem(new LibraryItem("3D Packages", "", file));
+        parentItem.getChildren().add(item);
+        for ( Package3d f: library.getPackages3d()) {
+            TreeItem package3dItem = new TreeItem( new LibraryDevicePackage3dItem(f.getName(), f.getDescription(), file) );
+            item.getChildren().add(package3dItem);
+        }
+        
+        // List each symbol (Folder)
+        item= new TreeItem(new LibraryItem("Symbols", "", file));
+        parentItem.getChildren().add(item);
+        for ( Symbol f: library.getSymbols() ) {
+            TreeItem symbolItem = new TreeItem( new LibraryDeviceSymbolItem(f.getName(), f.getDescription(), file) );
+            item.getChildren().add(symbolItem);
+        }
+    }
 
     private ImageView folderIcon() {
         ImageView iconNode = new ImageView(folderIconImage);

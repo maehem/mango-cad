@@ -58,6 +58,14 @@ public abstract class LibraryElement {
         this.name = name;
     }
 
+    public String getDescription() {
+        if ( !getDescriptions().isEmpty() ) {
+            return getDescriptions().get(0).getValue();
+        } else {
+            return "";
+        }
+    }
+    
     /**
      * @return the descriptions
      */
