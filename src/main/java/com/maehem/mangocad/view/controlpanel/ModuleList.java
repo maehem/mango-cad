@@ -210,6 +210,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         TreeItem item;
         // List each footprint(package)  (Folder)
         item= new TreeItem(new LibrarySubItem("Footprints", "", file));
+        
         parentItem.getChildren().add(item);
         for ( Footprint f: library.getPackages() ) {
             TreeItem footprintItem = new TreeItem( new LibraryDeviceFootprintItem(f.getName(), f.getDescription(), file) );

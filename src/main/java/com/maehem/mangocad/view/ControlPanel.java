@@ -19,6 +19,7 @@ package com.maehem.mangocad.view;
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import com.maehem.mangocad.view.controlpanel.ModuleList;
+import com.maehem.mangocad.view.controlpanel.TabArea;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -26,7 +27,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import static javafx.scene.layout.Priority.ALWAYS;
@@ -79,17 +79,17 @@ public class ControlPanel extends Application {
         moduleList = new ModuleList();
         
         //ScrollPane leftScroll = new ScrollPane(leftControl);
-        ScrollPane leftScroll = new ScrollPane(moduleList);
-        leftScroll.setFitToHeight(true);
-        leftScroll.setFitToWidth(true);
+//        ScrollPane leftScroll = new ScrollPane(moduleList);
+//        leftScroll.setFitToHeight(true);
+//        leftScroll.setFitToWidth(true);
         
-        VBox rightControl = new VBox(new Label("Right Control"));
+        TabArea tabArea = new TabArea();
 
         // Cause the panes to expand to height of window.
         //leftControl.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-        rightControl.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
+        //rightControl.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
 
-        splitPane.getItems().addAll(moduleList, rightControl);
+        splitPane.getItems().addAll(moduleList, tabArea);
 
         BorderPane root = new BorderPane(splitPane);
 
