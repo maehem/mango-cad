@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.controlpanel;
 
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;

@@ -155,7 +155,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 if (path.endsWith("/")) { // Remove trailing path slash.
                     path = path.substring(0, path.length() - 1);
                 }
-                String description = "";
+//                String description = "";
                 // If the path string begins with $HOME, replace it with our users home dir path.
                 path = path.replaceFirst("^\\$HOME", System.getProperty("user.home"));
 
@@ -163,25 +163,25 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 if (!dirFile.exists() || !dirFile.isDirectory()) {
                     continue; // Skip if no dirFile file here.
                 }
-                File descFile = new File(dirFile, "DESCRIPTION.md");
-
-                // Is it really the description file?
-                if (descFile.exists() && descFile.isFile() && descFile.canRead()) {
-                    try {
-                        BufferedReader br = new BufferedReader(new FileReader(descFile));
-                        description = br.readLine(); // We just need the first line here.
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else {
-                    Logger.getLogger("ModuleList").log(Level.SEVERE, "Description not found.");
-                }
+//                File descFile = new File(dirFile, "DESCRIPTION.md");
+//
+//                // Is it really the description file?
+//                if (descFile.exists() && descFile.isFile() && descFile.canRead()) {
+//                    try {
+//                        BufferedReader br = new BufferedReader(new FileReader(descFile));
+//                        description = br.readLine(); // We just need the first line here.
+//                    } catch (FileNotFoundException ex) {
+//                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                } else {
+//                    Logger.getLogger("ModuleList").log(Level.SEVERE, "Description not found.");
+//                }
 
                 // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
                 TreeItem item = new TreeItem(new LibraryFolderItem(
-                        dirFile.getParentFile().getName(), description, dirFile)
+                        dirFile.getParentFile().getName(), ControlPanelUtils.getFolderDescription(dirFile), dirFile)
                 );
                 librariesItem.getChildren().add(item);
                 populateLibrary(dirFile, item);
@@ -231,15 +231,22 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         //    }
     }
 
+    /**
+     * Looks for subdirectories and project files (*.sch, *.brd)
+     * Also add icons for popular files: PDF, TXT, MD, ODF
+     * 
+     * @param dir
+     * @param parentItem 
+     */
     private void populateProjectFolder(File dir, TreeItem parentItem) {
         // List any sub directories.
         File[] sdirs = dir.listFiles((sdir) -> {
             return sdir.isDirectory();
         });
         for (File sdir : sdirs) {
-            TreeItem item = new TreeItem(new ProjectSubFolderItem(sdir.getName(), "to do", sdir));
+            TreeItem item = new TreeItem(new ProjectSubFolderItem(sdir.getName(), ControlPanelUtils.getFolderDescription(sdir), sdir));
             parentItem.getChildren().add(item);
-
+            populateProjectFolder(sdir, item);
         }
 
 //        File[] libs = dir.listFiles((file) -> {    // lambda expression
