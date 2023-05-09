@@ -70,23 +70,10 @@ public class ControlPanel extends Application {
             Platform.runLater(() -> menuBar.setUseSystemMenuBar(true));
         }
 
-        SplitPane splitPane = new SplitPane();
-
-        //VBox leftControl = new VBox(new ModuleList());
         moduleList = new ModuleList();
-        
-        //ScrollPane leftScroll = new ScrollPane(leftControl);
-//        ScrollPane leftScroll = new ScrollPane(moduleList);
-//        leftScroll.setFitToHeight(true);
-//        leftScroll.setFitToWidth(true);
-        
         TabArea tabArea = new TabArea();
 
-        // Cause the panes to expand to height of window.
-        //leftControl.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-        //rightControl.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-
-        splitPane.getItems().addAll(moduleList, tabArea);
+        SplitPane splitPane = new SplitPane(moduleList, tabArea);
 
         BorderPane root = new BorderPane(splitPane);
 
@@ -114,15 +101,11 @@ public class ControlPanel extends Application {
         );
 
         root.setTop(menuBar);
-        // Create the Scene
-        Scene scene = new Scene(root);
-        // Add the scene to the Stage
-        stage.setScene(scene);
-        // Display the Stage
-        stage.show();
+        Scene scene = new Scene(root);  // Create the Scene
+        stage.setScene(scene); // Add the scene to the Stage
+        stage.show(); // Display the Stage
 
-        stage.setOnCloseRequest((t) -> {
-            // Remember window parameters
+        stage.setOnCloseRequest((t) -> {   // Remember window parameters
             String prefix = getClass().getSimpleName() + ".";
             appProperties.setProperty(prefix + SPLITTER_X_PROP_KEY, String.valueOf(splitPane.getDividerPositions()[0]).substring(0, 5));
             appProperties.setProperty(prefix + WINDOW_POS_X_PROP_KEY, String.valueOf(stage.getX()));
@@ -130,9 +113,7 @@ public class ControlPanel extends Application {
             appProperties.setProperty(prefix + WINDOW_SIZE_W_PROP_KEY, String.valueOf(root.getWidth()));
             appProperties.setProperty(prefix + WINDOW_SIZE_H_PROP_KEY, String.valueOf(root.getHeight()));
             moduleList.pushProperties(appProperties);
-
             appProperties.save();
-
             
             Platform.exit();
         });
@@ -145,7 +126,6 @@ public class ControlPanel extends Application {
         MenuItem backups = new MenuItem("Backups/Locking...");
         MenuItem userIface = new MenuItem("User Interface...");
         optionsMenu.getItems().addAll(dirs, backups, userIface);
-
     }
 
     public static void main(String[] args) {
