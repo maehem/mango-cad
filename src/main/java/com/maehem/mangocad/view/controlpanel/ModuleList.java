@@ -46,8 +46,9 @@ import javafx.scene.layout.StackPane;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class ModuleList extends TreeTableView<ControlPanelListItem> {
+
     private static final Logger LOGGER = Logger.getLogger(ModuleList.class.getSimpleName());
-    
+
     public static final String NAME_COL_WIDTH_PROP_KEY = "ModuleList.Name.W";
     public static final String DESC_COL_WIDTH_PROP_KEY = "ModuleList.Description.W";
     public static final String MODIFIED_COL_WIDTH_PROP_KEY = "ModuleList.LastModified.W";
@@ -230,6 +231,57 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         //    }
     }
 
+    private void populateProjectFolder(File dir, TreeItem parentItem) {
+        // List any sub directories.
+        File[] sdirs = dir.listFiles((sdir) -> {
+            return sdir.isDirectory();
+        });
+        for (File sdir : sdirs) {
+            TreeItem item = new TreeItem(new ProjectSubFolderItem(sdir.getName(), "to do", sdir));
+            parentItem.getChildren().add(item);
+
+        }
+
+//        File[] libs = dir.listFiles((file) -> {    // lambda expression
+//            return (file.isFile() && file.getName().endsWith(".sch"));
+//        });
+//        for (File lbrFile : libs) {
+////            try {
+//            // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
+//            //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
+//            //       for a possible solution.
+//            // Library importLBR = EagleCADUtils.importLBR(lbr);
+//            Library library = LibraryCache.getInstance().getLibrary(lbrFile);
+//            if (library != null) {
+//                TreeItem item;
+//                if (!library.getDescriptions().isEmpty()) {
+//                    item = new TreeItem(new LibraryItem(lbrFile.getName(), library.getDescriptions().get(0).getValue(), lbrFile));
+//                    parentItem.getChildren().add(item);
+//                } else {
+//                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile));
+//                    parentItem.getChildren().add(item);
+//                }
+//                populateLibraryDetailItems(library, lbrFile, item);
+//            } else {
+//                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
+//                parentItem.getChildren().add(item);
+//            }
+////            } catch (IOException ex) {
+////                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File IO Exception", null));
+////                lib.getChildren().add(item);
+////
+////                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+////            } catch (EagleCADLibraryFileException ex) {
+////                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File XML Error", null));
+////                lib.getChildren().add(item);
+////
+////                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+////            }
+//
+//        }
+//        //    }
+    }
+
     private void populateLibraryDetailItems(Library library, File file, TreeItem parentItem) {
         // List each deviceset as item (leaf)
         for (DeviceSet ds : library.getDeviceSets()) {
@@ -267,14 +319,49 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     private void populateProjects() {
         projectsItem.getChildren().clear();
 
-        TreeItem project1 = new TreeItem(new ProjectFolderItem("projects", "User Projects"));
-        TreeItem project2 = new TreeItem(new ProjectFolderItem("boards", "My Boards"));
-        TreeItem project3 = new TreeItem(new ProjectFolderItem("examples", "Eample Projects"));
+        AppProperties appProperties = AppProperties.getInstance();
+        String projectsPath = appProperties.getProperty(DirectoriesConfigPanel.PROJECT_PATHS_KEY);
+
+        if (projectsPath != null) {
+            String[] paths = projectsPath.split(":");
+            for (String path : paths) {
+                if (path.endsWith("/")) { // Remove trailing path slash.
+                    path = path.substring(0, path.length() - 1);
+                }
+                String description = "";
+                // If the path string begins with $HOME, replace it with our users home dir path.
+                path = path.replaceFirst("^\\$HOME", System.getProperty("user.home"));
+
+                File dirFile = new File(path);
+                if (!dirFile.exists() || !dirFile.isDirectory()) {
+                    continue; // Skip if no dirFile file here.
+                }
+                File descFile = new File(dirFile, "DESCRIPTION.md");
+
+                // Is it really the description file?
+                if (descFile.exists() && descFile.isFile() && descFile.canRead()) {
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(descFile));
+                        description = br.readLine(); // We just need the first line here.
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    LOGGER.log(Level.FINE, "Description not found.");
+                }
+
+                // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
+                TreeItem item = new TreeItem(new ProjectFolderItem(
+                        dirFile.getName(), description, dirFile)
+                );
+                projectsItem.getChildren().add(item);
+                populateProjectFolder(dirFile, item);
+            }
+        }
 
         projectsItem.setExpanded(true);
-        projectsItem.getChildren().add(project1);
-        projectsItem.getChildren().add(project2);
-        projectsItem.getChildren().add(project3);
     }
 
     public void pushProperties(Properties p) {
