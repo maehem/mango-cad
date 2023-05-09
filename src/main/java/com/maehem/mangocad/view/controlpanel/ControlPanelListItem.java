@@ -22,6 +22,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -68,7 +69,7 @@ public abstract class ControlPanelListItem {
         return description;
     }
 
-    public final String getDescritpion() {
+    public final String getDescription() {
         return description.get();
     }
 
@@ -105,5 +106,7 @@ public abstract class ControlPanelListItem {
     }
 
     public abstract ContextMenu getContextMenu();
+    
+    public abstract Image getImage();
 
 }

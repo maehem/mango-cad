@@ -18,11 +18,13 @@ package com.maehem.mangocad.view.controlpanel;
 
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -30,28 +32,38 @@ import javafx.stage.Stage;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryDevicePackage3dItem extends ControlPanelListItem {
+public class ProjectItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = Logger.getLogger(LibraryDevicePackage3dItem.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(ProjectItem.class.getSimpleName());
 
     private static final Image iconImage = new Image(
-            ControlPanelListItem.class.getResourceAsStream("/icons/cube-isometric.png")
+            ControlPanelListItem.class.getResourceAsStream("/icons/brickwork.png")
     );
 
     private Stage stage = null;
 
-    public LibraryDevicePackage3dItem(String name, String description, File file) {
-        super(name, description, file);
+    public ProjectItem(String name, String description) {
+        super(name, description, null);
+
+//        if (file != null) {
+//            // TODO: Maybe get date format from AppSettings? Let user define format in settings panel.
+//            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+//            lastModifiedProperty().set(sdf.format(file.lastModified()));
+//        }
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.FINER, "getContextMenu(): Library Device Footprint Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Library Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem2 = new MenuItem("Copy to Library");
+        MenuItem menuItem1 = new MenuItem("Open");
+        MenuItem menuItem2 = new MenuItem("Rename");
+        MenuItem menuItem3 = new MenuItem("Copy");
+        MenuItem menuItem4 = new MenuItem("[x] In Use");
+        MenuItem menuItem5 = new MenuItem("Show in Finder");
 
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+        menuItem1.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
             if (stage == null) {
                 stage = new Stage();
@@ -70,10 +82,26 @@ public class LibraryDevicePackage3dItem extends ControlPanelListItem {
             stage.show();
 
         });
+        menuItem2.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+        });
+        menuItem3.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
+        });
+        menuItem4.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
+        });
+        menuItem5.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+        });
 
         contextMenu.getItems().addAll(
-                menuItem2
-        );
+                menuItem1,
+                menuItem2,
+                menuItem3,
+                menuItem4,
+                new SeparatorMenuItem(),
+                menuItem5);
 
         return contextMenu;
     }

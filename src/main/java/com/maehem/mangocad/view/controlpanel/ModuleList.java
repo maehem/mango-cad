@@ -31,12 +31,14 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
 /**
  * In the main control panel, list all the tool modules the user can access.
@@ -44,7 +46,8 @@ import javafx.scene.image.ImageView;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class ModuleList extends TreeTableView<ControlPanelListItem> {
-
+    private static final Logger LOGGER = Logger.getLogger(ModuleList.class.getSimpleName());
+    
     public static final String NAME_COL_WIDTH_PROP_KEY = "ModuleList.Name.W";
     public static final String DESC_COL_WIDTH_PROP_KEY = "ModuleList.Description.W";
     public static final String MODIFIED_COL_WIDTH_PROP_KEY = "ModuleList.LastModified.W";
@@ -54,27 +57,21 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     private static final Double MODIFIED_COL_WIDTH = 70.0;
     private static final Double USE_COL_WIDTH = 30.0; // Fixed width
 
-    private final TreeItem modules;// = new TreeItem(new ModuleItem("Modules", "..."), null);
-    private final TreeItem librariesItem;// = new TreeItem(new ModuleItem("Libraries", "..."));
-    private final TreeItem projectsItem;// = new TreeItem(new ModuleItem("Projects", "..."));
+    private final TreeItem modules;
+    private final TreeItem librariesItem;
+    private final TreeItem projectsItem;
 
     private final TreeTableColumn<ControlPanelListItem, String> nameColumn = new TreeTableColumn<>("Name");
     private final TreeTableColumn<ControlPanelListItem, String> descColumn = new TreeTableColumn<>("Description");
     private final TreeTableColumn<ControlPanelListItem, String> modifiedColumn = new TreeTableColumn<>("Last Modified");
     private final TreeTableColumn<ControlPanelListItem, String> useColumn = new TreeTableColumn<>("Use");
 
-    private final Image folderIconImage;
-    private final Image libraryIconImage;
-
     public ModuleList() {
         initColumns();
 
-        folderIconImage = new Image(getClass().getResourceAsStream("/icons/folder.png"));
-        libraryIconImage = new Image(getClass().getResourceAsStream("/icons/photo-album.png"));
-
-        modules = new TreeItem(new ModuleItem("Modules", "..."), libraryIcon());
-        librariesItem = new TreeItem(new LibraryModuleItem("Libraries", "...")/*, libraryIcon()*/);
-        projectsItem = new TreeItem(new ProjectModuleItem("Projects", "...")/*, libraryIcon()*/);
+        modules = new TreeItem(new ModuleItem("Modules", "..."));
+        librariesItem = new TreeItem(new LibraryModuleItem("Libraries", "..."));
+        projectsItem = new TreeItem(new ProjectModuleItem("Projects", "..."));
 
         modules.getChildren().add(librariesItem);
         modules.getChildren().add(projectsItem);
@@ -98,6 +95,37 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
         nameColumn.setMinWidth(100);
         nameColumn.setPrefWidth(NAME_COL_WIDTH);
+        nameColumn.setCellFactory((p) -> {
+
+            return new TreeTableCell<>() {
+                ImageView imageView;
+
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (!empty && item != null) {
+                        //LOGGER.log(Level.SEVERE, "updateItem(" + item + ")");
+
+                        if (imageView == null) {
+                            imageView = new ImageView();
+                            imageView.setFitHeight(16);
+                            imageView.setPreserveRatio(true);
+                        }
+
+                        imageView.setImage(getTableRow().getItem().getImage());
+                        setText(item);
+                        setGraphic(imageView);
+                    } else {
+                        setText(null);
+                        setGraphic(null);
+                    }
+
+                }
+
+            };
+        });
+
         descColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("description"));
         descColumn.setMinWidth(100);
         descColumn.setPrefWidth(DESC_COL_WIDTH);
@@ -151,7 +179,9 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 }
 
                 // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
-                TreeItem item = new TreeItem(new LibraryFolderItem(dirFile.getParentFile().getName(), description, dirFile)/*, folderIcon()*/);
+                TreeItem item = new TreeItem(new LibraryFolderItem(
+                        dirFile.getParentFile().getName(), description, dirFile)
+                );
                 librariesItem.getChildren().add(item);
                 populateLibrary(dirFile, item);
             }
@@ -173,10 +203,10 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             if (library != null) {
                 TreeItem item;
                 if (!library.getDescriptions().isEmpty()) {
-                    item = new TreeItem(new LibraryItem(lbrFile.getName(), library.getDescriptions().get(0).getValue(), lbrFile)/*, libraryIcon()*/);
+                    item = new TreeItem(new LibraryItem(lbrFile.getName(), library.getDescriptions().get(0).getValue(), lbrFile));
                     parentItem.getChildren().add(item);
                 } else {
-                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile)/*, libraryIcon()*/);
+                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile));
                     parentItem.getChildren().add(item);
                 }
                 populateLibraryDetailItems(library, lbrFile, item);
@@ -202,60 +232,44 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
     private void populateLibraryDetailItems(Library library, File file, TreeItem parentItem) {
         // List each deviceset as item (leaf)
-        for (DeviceSet ds : library.getDeviceSets()) {            
+        for (DeviceSet ds : library.getDeviceSets()) {
             TreeItem item = new TreeItem(new LibraryDeviceSetItem(ds.getName(), ds.getDescription(), file));
             parentItem.getChildren().add(item);
         }
 
         TreeItem item;
         // List each footprint(package)  (Folder)
-        item= new TreeItem(new LibrarySubItem("Footprints", "", file));
-        
+        item = new TreeItem(new LibrarySubItem("Footprints", "", file));
+
         parentItem.getChildren().add(item);
-        for ( Footprint f: library.getPackages() ) {
-            TreeItem footprintItem = new TreeItem( new LibraryDeviceFootprintItem(f.getName(), f.getDescription(), file) );
+        for (Footprint f : library.getPackages()) {
+            TreeItem footprintItem = new TreeItem(new LibraryDeviceFootprintItem(f.getName(), f.getDescription(), file));
             item.getChildren().add(footprintItem);
         }
-        
+
         // List each 3D package (Folder)
-        item= new TreeItem(new LibrarySubItem("3D Packages", "", file));
+        item = new TreeItem(new LibrarySubItem("3D Packages", "", file));
         parentItem.getChildren().add(item);
-        for ( Package3d f: library.getPackages3d()) {
-            TreeItem package3dItem = new TreeItem( new LibraryDevicePackage3dItem(f.getName(), f.getDescription(), file) );
+        for (Package3d f : library.getPackages3d()) {
+            TreeItem package3dItem = new TreeItem(new LibraryDevicePackage3dItem(f.getName(), f.getDescription(), file));
             item.getChildren().add(package3dItem);
         }
-        
+
         // List each symbol (Folder)
-        item= new TreeItem(new LibrarySubItem("Symbols", "", file));
+        item = new TreeItem(new LibrarySubItem("Symbols", "", file));
         parentItem.getChildren().add(item);
-        for ( Symbol f: library.getSymbols() ) {
-            TreeItem symbolItem = new TreeItem( new LibraryDeviceSymbolItem(f.getName(), f.getDescription(), file) );
+        for (Symbol f : library.getSymbols()) {
+            TreeItem symbolItem = new TreeItem(new LibraryDeviceSymbolItem(f.getName(), f.getDescription(), file));
             item.getChildren().add(symbolItem);
         }
-    }
-
-    private ImageView folderIcon() {
-        ImageView iconNode = new ImageView(folderIconImage);
-        iconNode.setFitHeight(16);
-        iconNode.setPreserveRatio(true);
-
-        return iconNode;
-    }
-
-    private ImageView libraryIcon() {
-        ImageView iconNode = new ImageView(libraryIconImage);
-        iconNode.setFitHeight(16);
-        iconNode.setPreserveRatio(true);
-
-        return iconNode;
     }
 
     private void populateProjects() {
         projectsItem.getChildren().clear();
 
-        TreeItem project1 = new TreeItem(new ModuleItem("projects", "User Projects"), folderIcon());
-        TreeItem project2 = new TreeItem(new ModuleItem("boards", "My Boards"), folderIcon());
-        TreeItem project3 = new TreeItem(new ModuleItem("examples", "Eample Projects"), folderIcon());
+        TreeItem project1 = new TreeItem(new ProjectItem("projects", "User Projects"));
+        TreeItem project2 = new TreeItem(new ProjectItem("boards", "My Boards"));
+        TreeItem project3 = new TreeItem(new ProjectItem("examples", "Eample Projects"));
 
         projectsItem.setExpanded(true);
         projectsItem.getChildren().add(project1);

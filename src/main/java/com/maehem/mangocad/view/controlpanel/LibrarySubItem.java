@@ -16,16 +16,11 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
-import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -33,7 +28,11 @@ import javafx.stage.Stage;
  */
 public class LibrarySubItem extends ControlPanelListItem {
 
-    private static final Logger logger = Logger.getLogger("LibraryItem");
+    private static final Logger LOGGER = Logger.getLogger("LibraryItem");
+
+    private static final Image iconImage = new Image(
+            ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
+    );
 
     //private Stage stage = null;
 
@@ -49,7 +48,7 @@ public class LibrarySubItem extends ControlPanelListItem {
 
     @Override
     public ContextMenu getContextMenu() {
-        logger.log(Level.SEVERE, "getContextMenu(): Library Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Library Sub-Item");
         ContextMenu contextMenu = new ContextMenu();
 //        MenuItem menuItem1 = new MenuItem("Open");
 //        MenuItem menuItem2 = new MenuItem("Rename");
@@ -99,6 +98,11 @@ public class LibrarySubItem extends ControlPanelListItem {
 //                menuItem5);
 
         return contextMenu;
+    }
+
+    @Override
+    public Image getImage() {
+        return iconImage;
     }
 
 }

@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -32,10 +33,14 @@ import javafx.stage.Stage;
  */
 public class LibraryDeviceFootprintItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = Logger.getLogger("LibraryDeviceSetItem");
+    private static final Logger LOGGER = Logger.getLogger(LibraryDeviceFootprintItem.class.getSimpleName());
+
+    private static final Image iconImage = new Image(
+            LibraryDeviceFootprintItem.class .getResourceAsStream("/icons/integrated-circuit.png")
+    );
 
     private Stage stage = null;
-
+    
     public LibraryDeviceFootprintItem(String name, String description, File file) {
         super(name, description, file);
     }
@@ -85,6 +90,11 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
         );
 
         return contextMenu;
+    }
+
+    @Override
+    public Image getImage() {
+        return iconImage;
     }
 
 }

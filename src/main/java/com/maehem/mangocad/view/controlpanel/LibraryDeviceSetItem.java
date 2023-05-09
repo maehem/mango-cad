@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -33,6 +34,10 @@ import javafx.stage.Stage;
 public class LibraryDeviceSetItem extends ControlPanelListItem {
 
     private static final Logger LOGGER = Logger.getLogger(LibraryDeviceSetItem.class.getSimpleName());
+
+    private static final Image iconImage = new Image(
+            ControlPanelListItem.class.getResourceAsStream("/icons/electronics-component-kit.png")
+    );
 
     private Stage stage = null;
 
@@ -89,6 +94,11 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         );
 
         return contextMenu;
+    }
+
+    @Override
+    public Image getImage() {
+        return iconImage;
     }
 
 }

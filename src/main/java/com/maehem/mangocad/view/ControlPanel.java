@@ -23,14 +23,11 @@ import com.maehem.mangocad.view.controlpanel.TabArea;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import static javafx.scene.layout.Priority.ALWAYS;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**

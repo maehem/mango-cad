@@ -25,6 +25,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -33,7 +34,11 @@ import javafx.stage.Stage;
  */
 public class LibraryItem extends ControlPanelListItem {
 
-    private static final Logger logger = Logger.getLogger("LibraryItem");
+    private static final Logger LOGGER = Logger.getLogger("LibraryItem");
+
+    private static final Image iconImage = new Image(
+            ControlPanelListItem.class.getResourceAsStream("/icons/photo-album.png")
+    );
 
     private Stage stage = null;
 
@@ -49,7 +54,7 @@ public class LibraryItem extends ControlPanelListItem {
 
     @Override
     public ContextMenu getContextMenu() {
-        logger.log(Level.SEVERE, "getContextMenu(): Library Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Library Item");
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("Open");
         MenuItem menuItem2 = new MenuItem("Rename");
@@ -58,7 +63,7 @@ public class LibraryItem extends ControlPanelListItem {
         MenuItem menuItem5 = new MenuItem("Show in Finder");
 
         menuItem1.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
             if (stage == null) {
                 stage = new Stage();
@@ -78,16 +83,16 @@ public class LibraryItem extends ControlPanelListItem {
 
         });
         menuItem2.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
         });
         menuItem3.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
         });
         menuItem4.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
         });
         menuItem5.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
         });
 
         contextMenu.getItems().addAll(
@@ -99,6 +104,11 @@ public class LibraryItem extends ControlPanelListItem {
                 menuItem5);
 
         return contextMenu;
+    }
+
+    @Override
+    public Image getImage() {
+        return iconImage;
     }
 
 }

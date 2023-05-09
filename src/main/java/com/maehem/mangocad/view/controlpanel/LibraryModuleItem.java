@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -27,6 +28,10 @@ import javafx.scene.control.MenuItem;
  */
 public class LibraryModuleItem extends ControlPanelListItem {
     private static final Logger LOGGER = Logger.getLogger("LibraryModuleItem");
+
+    private static final Image iconImage = new Image(
+            ControlPanelListItem.class.getResourceAsStream("/icons/bank.png")
+    );
 
     public LibraryModuleItem(String name, String description) {
         super(name, description);
@@ -50,4 +55,10 @@ public class LibraryModuleItem extends ControlPanelListItem {
 
         return contextMenu;
     }
+    
+    @Override
+    public Image getImage() {
+        return iconImage;
+    }
+
 }

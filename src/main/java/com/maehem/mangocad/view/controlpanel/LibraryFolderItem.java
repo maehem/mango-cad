@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -28,15 +29,19 @@ import javafx.scene.control.MenuItem;
  */
 public class LibraryFolderItem extends ControlPanelListItem {
 
-    private static final Logger logger = Logger.getLogger("LibraryFolderItem");
+    private static final Logger LOGGER = Logger.getLogger("LibraryFolderItem");
     
+    private static final Image iconImage = new Image(
+            ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
+    );
+
     public LibraryFolderItem(String name, String description, File file) {
         super(name, description, file);
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        logger.log(Level.SEVERE, "getContextMenu(): Library Folder Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Library Folder Item");
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("Open Library Manager...");
         MenuItem menuItem2 = new MenuItem("Edit Description...");
@@ -45,20 +50,20 @@ public class LibraryFolderItem extends ControlPanelListItem {
         MenuItem menuItem5 = new MenuItem("Search in Folder");
 
         menuItem1.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
         });
         menuItem2.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
         });
         menuItem3.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
         });
         
         menuItem4.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
         });
         menuItem5.setOnAction((event) -> {
-            logger.log(Level.SEVERE, "{0}: Show in Finder", getName());
+            LOGGER.log(Level.SEVERE, "{0}: Show in Finder", getName());
         });
 
         contextMenu.getItems().addAll(menuItem1, menuItem2, menuItem3, menuItem4, menuItem5);
@@ -66,4 +71,9 @@ public class LibraryFolderItem extends ControlPanelListItem {
         return contextMenu;
     }
     
+    @Override
+    public Image getImage() {
+        return iconImage;
+    }
+
 }
