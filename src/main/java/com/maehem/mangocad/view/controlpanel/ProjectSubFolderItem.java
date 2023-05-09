@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -108,4 +109,10 @@ public class ProjectSubFolderItem extends ControlPanelListItem {
         return iconImage;
     }
 
+    @Override
+    public Tooltip getTooltip() {
+        return new Tooltip("I like chocolate!");
+    }
+
+    
 }

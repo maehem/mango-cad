@@ -31,14 +31,13 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 
 /**
  * In the main control panel, list all the tool modules the user can access.
@@ -102,10 +101,10 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 ImageView imageView;
 
                 @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
+                protected void updateItem(String text, boolean empty) {
+                    super.updateItem(text, empty);
 
-                    if (!empty && item != null) {
+                    if (!empty && text != null) {
                         //LOGGER.log(Level.SEVERE, "updateItem(" + item + ")");
 
                         if (imageView == null) {
@@ -114,9 +113,11 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                             imageView.setPreserveRatio(true);
                         }
 
-                        imageView.setImage(getTableRow().getItem().getImage());
-                        setText(item);
+                        ControlPanelListItem item = getTableRow().getItem();
+                        imageView.setImage(item.getImage());
+                        setText(text);
                         setGraphic(imageView);
+                        setTooltip(item.getTooltip());
                     } else {
                         setText(null);
                         setGraphic(null);
@@ -155,7 +156,6 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 if (path.endsWith("/")) { // Remove trailing path slash.
                     path = path.substring(0, path.length() - 1);
                 }
-//                String description = "";
                 // If the path string begins with $HOME, replace it with our users home dir path.
                 path = path.replaceFirst("^\\$HOME", System.getProperty("user.home"));
 
@@ -163,21 +163,6 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 if (!dirFile.exists() || !dirFile.isDirectory()) {
                     continue; // Skip if no dirFile file here.
                 }
-//                File descFile = new File(dirFile, "DESCRIPTION.md");
-//
-//                // Is it really the description file?
-//                if (descFile.exists() && descFile.isFile() && descFile.canRead()) {
-//                    try {
-//                        BufferedReader br = new BufferedReader(new FileReader(descFile));
-//                        description = br.readLine(); // We just need the first line here.
-//                    } catch (FileNotFoundException ex) {
-//                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                } else {
-//                    Logger.getLogger("ModuleList").log(Level.SEVERE, "Description not found.");
-//                }
 
                 // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
                 TreeItem item = new TreeItem(new LibraryFolderItem(
@@ -187,7 +172,6 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 populateLibrary(dirFile, item);
             }
         }
-
     }
 
     private void populateLibrary(File dir, TreeItem parentItem) {
@@ -195,7 +179,6 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             return (file.isFile() && file.getName().endsWith(".lbr"));
         });
         for (File lbrFile : libs) {
-//            try {
             // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
             //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
             //       for a possible solution.
@@ -215,20 +198,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
                 parentItem.getChildren().add(item);
             }
-//            } catch (IOException ex) {
-//                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File IO Exception", null));
-//                lib.getChildren().add(item);
-//
-//                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (EagleCADLibraryFileException ex) {
-//                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File XML Error", null));
-//                lib.getChildren().add(item);
-//
-//                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
         }
-        //    }
     }
 
     /**
