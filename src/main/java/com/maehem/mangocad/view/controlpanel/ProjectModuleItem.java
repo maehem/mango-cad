@@ -30,7 +30,7 @@ public class ProjectModuleItem extends ControlPanelListItem {
     private static final Logger LOGGER = Logger.getLogger("ProjectModuleItem");
 
     private static final Image iconImage = new Image(
-            ControlPanelListItem.class.getResourceAsStream("/icons/brick-wall.png")
+            ControlPanelListItem.class.getResourceAsStream("/icons/brick-wall-2.png")
     );
 
     public ProjectModuleItem(String name, String description) {

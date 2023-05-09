@@ -32,17 +32,17 @@ import javafx.stage.Stage;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class ProjectItem extends ControlPanelListItem {
+public class ProjectFolderItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = Logger.getLogger(ProjectItem.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(ProjectFolderItem.class.getSimpleName());
 
     private static final Image iconImage = new Image(
-            ControlPanelListItem.class.getResourceAsStream("/icons/brickwork.png")
+            ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
     );
 
     private Stage stage = null;
 
-    public ProjectItem(String name, String description) {
+    public ProjectFolderItem(String name, String description) {
         super(name, description, null);
 
 //        if (file != null) {

@@ -11,5 +11,6 @@ Transistor         icon by Arthur Shlain from Usefulicons  https://usefulicons.c
 Bank               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/bank
 Bench Vise         icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/bench-vise
 Brick Wall         icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-8x8/brick-wall
+Brick Wall 2       icon by Arthur Shlain from Usefulicons  https://usefulicons.com/double/brick-wall
 Brickwork          icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/brickwork
 Electronics Component Kit icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/electronics-component-kit

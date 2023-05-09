@@ -267,9 +267,9 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     private void populateProjects() {
         projectsItem.getChildren().clear();
 
-        TreeItem project1 = new TreeItem(new ProjectItem("projects", "User Projects"));
-        TreeItem project2 = new TreeItem(new ProjectItem("boards", "My Boards"));
-        TreeItem project3 = new TreeItem(new ProjectItem("examples", "Eample Projects"));
+        TreeItem project1 = new TreeItem(new ProjectFolderItem("projects", "User Projects"));
+        TreeItem project2 = new TreeItem(new ProjectFolderItem("boards", "My Boards"));
+        TreeItem project3 = new TreeItem(new ProjectFolderItem("examples", "Eample Projects"));
 
         projectsItem.setExpanded(true);
         projectsItem.getChildren().add(project1);
