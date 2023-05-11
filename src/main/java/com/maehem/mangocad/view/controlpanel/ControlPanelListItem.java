@@ -111,7 +111,25 @@ public abstract class ControlPanelListItem {
     public abstract Image getImage();
     
     public Tooltip getTooltip() {
-        return null;
+        String descString = ControlPanelUtils.getItemDescriptionFull(this);
+        if ( descString != null && !descString.isEmpty() ) {
+                Tooltip tt = new Tooltip();
+                tt.setGraphic(ControlPanelUtils.markdownNode(descString));
+                return tt;
+            
+        } else {
+            return null;
+        }
+
+//        
+//        
+//        
+//        if ( getDescription().isEmpty() ) {
+//            return null;
+//        }
+//        Tooltip tt = new Tooltip();
+//        tt.setGraphic(ControlPanelUtils.markdownNode(getDescription()));
+//        return tt;
     }
 
 }

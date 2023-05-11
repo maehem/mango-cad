@@ -70,8 +70,8 @@ public class ControlPanel extends Application {
             Platform.runLater(() -> menuBar.setUseSystemMenuBar(true));
         }
 
-        moduleList = new ModuleList();
         TabArea tabArea = new TabArea();
+        moduleList = new ModuleList(tabArea);
 
         SplitPane splitPane = new SplitPane(moduleList, tabArea);
 
@@ -102,6 +102,8 @@ public class ControlPanel extends Application {
 
         root.setTop(menuBar);
         Scene scene = new Scene(root);  // Create the Scene
+        //scene.getStylesheets().add("/style/dark.css");
+        scene.getStylesheets().add(this.getClass().getResource("/style/dark.css").toExternalForm());
         stage.setScene(scene); // Add the scene to the Stage
         stage.show(); // Display the Stage
 

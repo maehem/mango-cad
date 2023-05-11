@@ -16,13 +16,29 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.model.library.LibraryCache;
+import com.maehem.mangocad.model.library.element.DeviceSet;
+import com.maehem.mangocad.model.library.element.Footprint;
+import com.maehem.mangocad.model.library.element.Package3d;
+import com.maehem.mangocad.model.library.element.Symbol;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -30,13 +46,15 @@ import java.util.logging.Logger;
  */
 public class ControlPanelUtils {
 
+    private static final Logger LOGGER = Logger.getLogger(ControlPanelUtils.class.getSimpleName());
+
     /**
      * Search in this directory for the DESCRIPTION.md
-     * 
+     *
      * @param dir that might contain a Description file.
      * @return first line of the Description file (DESCRIPTION.md)
      */
-    public static String getFolderDescription(File dir) {
+    public static String getFolderDescriptionShort(File dir) {
         String description = "";
 
         File descFile = new File(dir, "DESCRIPTION.md");
@@ -56,5 +74,110 @@ public class ControlPanelUtils {
         }
 
         return description;
+    }
+
+    public static String getItemDescriptionFull(ControlPanelListItem item) {
+        File fileOrDir = item.getFile();
+        if (fileOrDir != null) {
+            LOGGER.log(Level.SEVERE, "getFolderDesc for: " + fileOrDir.getName());
+        }
+        if (fileOrDir != null && fileOrDir.isDirectory()) {
+            File descFile = new File(fileOrDir, "DESCRIPTION.md");
+            if (!descFile.exists() || descFile.isDirectory() || !descFile.canRead()) {
+                return null;
+            }
+            try {
+                String readString = Files.readString(descFile.toPath());
+                if (readString == null) {
+                    return "";
+                }
+                return readString;
+            } catch (IOException ex) {
+                Logger.getLogger(ProjectSubFolderItem.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (fileOrDir != null && fileOrDir.isFile() && fileOrDir.canRead()) {
+            String fName = fileOrDir.getName();
+            if (fName.endsWith(".lbr")) {
+                Library library = LibraryCache.getInstance().getLibrary(fileOrDir);
+                if (item.getName().equals(fName)) {
+                    // Get description from file.
+                    if (library != null) {
+                        return library.getDescription();
+                    } else {
+                        LOGGER.log(Level.SEVERE, "Library requested was null: " + fileOrDir.getName());
+                    }
+                } else { // One of the sub-items
+                    // TODO: Include Parent library information.
+                    for ( Symbol s: library.getSymbols() ) {
+                        if ( s.getName().equals(item.getName()) ) {
+                            return s.getDescription();
+                        }
+                    }
+                    for ( Footprint f: library.getPackages() ) {
+                        if ( f.getName().equals(item.getName()) ) {
+                            return f.getDescription();
+                        }
+                    }
+                    for ( Package3d p: library.getPackages3d() ) {
+                        if ( p.getName().equals(item.getName()) ) {
+                            return p.getDescription();
+                        }
+                    }
+                    for ( DeviceSet ds: library.getDeviceSets()) {
+                        if ( ds.getName().equals(item.getName()) ) {
+                            return ds.getDescription();
+                        }
+                    }
+                }
+            }
+        }
+
+        return "";
+    }
+
+    public static Node markdownNode(String text) {
+        VBox node = new VBox();
+        node.setSpacing(0);
+        node.setPadding(Insets.EMPTY);
+        // parse thngs.
+        String[] lines = text.split(System.lineSeparator());
+        Font f = Font.getDefault();
+        Font h1 = Font.font(f.getFamily(), FontWeight.BLACK, f.getSize());
+        Font h2 = Font.font(f.getFamily(), FontWeight.BOLD, f.getSize() - 1.0);
+        Font h3 = Font.font(f.getFamily(), FontWeight.BOLD, f.getSize() - 2.0);
+        Font body = f;
+
+        Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
+        for (String line : lines) {
+            if (line.startsWith("***")) {
+                // Heading
+                Text t = new Text(line.substring(3));
+                t.setFont(h1);
+                t.setFill(Color.KHAKI);
+                node.getChildren().add(t);
+                //continue;
+            } else if (line.startsWith("**")) {
+                Text t = new Text(line.substring(2));
+                t.setFont(h2);
+                t.setFill(Color.DARKGRAY);
+                node.getChildren().add(t);
+                //continue;
+            } else if (line.startsWith("*")) {
+                Text t = new Text(line.substring(1));
+                t.setFont(h3);
+                t.setFill(Color.GRAY);
+                node.getChildren().add(t);
+                //continue;
+            } else {
+                Text t = new Text(line);
+                t.setFont(body);
+                t.setFill(Color.LIGHTGRAY);
+                node.getChildren().add(t);
+                //continue;
+            }
+
+        }
+
+        return node;
     }
 }

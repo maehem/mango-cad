@@ -16,7 +16,12 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
@@ -109,10 +114,34 @@ public class ProjectSubFolderItem extends ControlPanelListItem {
         return iconImage;
     }
 
-    @Override
-    public Tooltip getTooltip() {
-        return new Tooltip("I like chocolate!");
-    }
+//    @Override
+//    public Tooltip getTooltip() {
+//        String descString = ControlPanelUtils.getFolderDescriptionFull(getFile());
+//        if ( !descString.isEmpty() ) {
+//                Tooltip tt = new Tooltip();
+//                tt.setGraphic(ControlPanelUtils.markdownNode(descString));
+//                return tt;
+//            
+//        } else {
+//            return null;
+//        }
+////        if (getFile().isDirectory()) {
+////            File descFile = new File(getFile(), "DESCRIPTION.md");
+////            if ( !descFile.exists() || descFile.isDirectory() || !descFile.canRead() ) return null;
+////            try {
+////                String readString = Files.readString(descFile.toPath());
+////                if (readString.isEmpty()) {
+////                    return null;
+////                }
+////                Tooltip tt = new Tooltip();
+////                tt.setGraphic(ControlPanelUtils.markdownNode(readString));
+////                return tt; // TODO Markdown processor.
+////            } catch (IOException ex) {
+////                Logger.getLogger(ProjectSubFolderItem.class.getName()).log(Level.SEVERE, null, ex);
+////            }
+////        }
+////        
+////        return null;
+//    }
 
-    
 }

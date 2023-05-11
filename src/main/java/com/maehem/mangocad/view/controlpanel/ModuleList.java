@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -60,13 +59,17 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     private final TreeItem modules;
     private final TreeItem librariesItem;
     private final TreeItem projectsItem;
+    
+    private final TabArea tabArea;
 
     private final TreeTableColumn<ControlPanelListItem, String> nameColumn = new TreeTableColumn<>("Name");
     private final TreeTableColumn<ControlPanelListItem, String> descColumn = new TreeTableColumn<>("Description");
     private final TreeTableColumn<ControlPanelListItem, String> modifiedColumn = new TreeTableColumn<>("Last Modified");
     private final TreeTableColumn<ControlPanelListItem, String> useColumn = new TreeTableColumn<>("Use");
 
-    public ModuleList() {
+    public ModuleList(TabArea tabArea) {
+        this.tabArea = tabArea;
+        
         initColumns();
 
         modules = new TreeItem(new ModuleItem("Modules", "..."));
@@ -86,6 +89,8 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         // Update the context menu every time it is displayed.
         getSelectionModel().selectedItemProperty().addListener((o) -> {
             setContextMenu(getSelectionModel().getSelectedItem().getValue().getContextMenu());
+            LOGGER.log(Level.SEVERE, "Selected: {0}", getSelectionModel().getSelectedItem().getValue().getName());
+            tabArea.setPreviewItem(getSelectionModel().getSelectedItem().getValue());
         });
     }
 
@@ -166,7 +171,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
                 // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
                 TreeItem item = new TreeItem(new LibraryFolderItem(
-                        dirFile.getParentFile().getName(), ControlPanelUtils.getFolderDescription(dirFile), dirFile)
+                        dirFile.getParentFile().getName(), ControlPanelUtils.getFolderDescriptionShort(dirFile), dirFile)
                 );
                 librariesItem.getChildren().add(item);
                 populateLibrary(dirFile, item);
@@ -214,7 +219,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             return sdir.isDirectory();
         });
         for (File sdir : sdirs) {
-            TreeItem item = new TreeItem(new ProjectSubFolderItem(sdir.getName(), ControlPanelUtils.getFolderDescription(sdir), sdir));
+            TreeItem item = new TreeItem(new ProjectSubFolderItem(sdir.getName(), ControlPanelUtils.getFolderDescriptionShort(sdir), sdir));
             parentItem.getChildren().add(item);
             populateProjectFolder(sdir, item);
         }

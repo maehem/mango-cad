@@ -27,15 +27,26 @@ import javafx.scene.control.TabPane;
  */
 public class TabArea extends TabPane {
 
+    private final PreviewContent previewContent = new PreviewContent();
+    private Tab homeTab;
+    private Tab previewTab;
+
     public TabArea() {
         // TODO: Set Graphic
-        
-        Tab homeTab = new Tab("Home", new HomeContent());
+
+        homeTab = new Tab("Home", new HomeContent());
         homeTab.setClosable(false);
-        Tab previewTab = new Tab("Preview", new PreviewContent());
-        previewTab.setClosable(false);
         
+        previewTab = new Tab("Preview", previewContent);
+        previewTab.setClosable(false);
+
         getTabs().addAll(homeTab, previewTab);
+    }
+
+    public void setPreviewItem(ControlPanelListItem item) {
+        getSelectionModel().select(previewTab);
+        
+        previewContent.setItem(item);
     }
 
 }

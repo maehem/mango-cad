@@ -31,7 +31,7 @@ import com.maehem.mangocad.model.library.element.Symbol;
 public class Library {
 
     public static final String FILE_EXTENSION = "mclib";
-    
+
     private ArrayList<Note> notes = new ArrayList<>();
     // Descriptions is a list of this library descriptions for each language
     // supported.
@@ -42,7 +42,7 @@ public class Library {
     private ArrayList<Package3d> packages3d = new ArrayList<>();
 
     private String filePath;
-    
+
     /**
      * @return the description
      */
@@ -55,6 +55,14 @@ public class Library {
      */
     public void setDescriptions(ArrayList<Description> descriptions) {
         this.descriptions = descriptions;
+    }
+
+    public String getDescription() {
+        if ( !getDescriptions().isEmpty() ) {
+            return getDescriptions().get(0).getValue();
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -116,7 +124,7 @@ public class Library {
     public void addNote(String string) {
         getNotes().add(new Note(string));
     }
-    
+
     /**
      * @return the deviceSets
      */
@@ -144,4 +152,5 @@ public class Library {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
+
 }
