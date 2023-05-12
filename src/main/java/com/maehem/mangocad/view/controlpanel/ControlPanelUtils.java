@@ -28,8 +28,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
@@ -108,23 +110,24 @@ public class ControlPanelUtils {
                     }
                 } else { // One of the sub-items
                     // TODO: Include Parent library information.
-                    for ( Symbol s: library.getSymbols() ) {
-                        if ( s.getName().equals(item.getName()) ) {
+                    for (Symbol s : library.getSymbols()) {
+                        if (s.getName().equals(item.getName())) {
                             return s.getDescription();
                         }
                     }
-                    for ( Footprint f: library.getPackages() ) {
-                        if ( f.getName().equals(item.getName()) ) {
+                    for (Footprint f : library.getPackages()) {
+                        if (f.getName().equals(item.getName())) {
+                            //LOGGER.log(Level.SEVERE, "Package raw desc.: " + f.getDescription());
                             return f.getDescription();
                         }
                     }
-                    for ( Package3d p: library.getPackages3d() ) {
-                        if ( p.getName().equals(item.getName()) ) {
+                    for (Package3d p : library.getPackages3d()) {
+                        if (p.getName().equals(item.getName())) {
                             return p.getDescription();
                         }
                     }
-                    for ( DeviceSet ds: library.getDeviceSets()) {
-                        if ( ds.getName().equals(item.getName()) ) {
+                    for (DeviceSet ds : library.getDeviceSets()) {
+                        if (ds.getName().equals(item.getName())) {
                             return ds.getDescription();
                         }
                     }
@@ -136,11 +139,22 @@ public class ControlPanelUtils {
     }
 
     public static Node markdownNode(String text) {
+        String content = text;
+        LOGGER.log(Level.SEVERE, "Process: " + text);
+        if (content.contains("<p>") || content.contains("<br>") || content.contains("<h1>")) {
+            LOGGER.log(Level.SEVERE, "text contains HTML");
+            content = html2markdown(text);
+        }
         VBox node = new VBox();
         node.setSpacing(0);
         node.setPadding(Insets.EMPTY);
         // parse thngs.
-        String[] lines = text.split(System.lineSeparator());
+
+        content = content.translateEscapes(); // Was fun figuring out this one.
+        String[] lines = content.split("\n");
+        for ( String s: lines ) {
+            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
+        }
         Font f = Font.getDefault();
         Font h1 = Font.font(f.getFamily(), FontWeight.BLACK, f.getSize());
         Font h2 = Font.font(f.getFamily(), FontWeight.BOLD, f.getSize() - 1.0);
@@ -149,27 +163,40 @@ public class ControlPanelUtils {
 
         Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
         for (String line : lines) {
-            if (line.startsWith("***")) {
-                // Heading
+            line = line.strip();
+            if (  line.startsWith("#####")) {
+                Text t = new Text(line.substring(5));
+                t.setFont(h3);
+                t.setFill(Color.WHITE);
+                node.getChildren().add(t);
+                //continue;
+            } else if (line.startsWith("####")) {
+                Text t = new Text(line.substring(4));
+                t.setFont(h3);
+                t.setFill(Color.LIGHTBLUE);
+                node.getChildren().add(t);
+                //continue;
+            } else if (line.startsWith("###")) {
                 Text t = new Text(line.substring(3));
-                t.setFont(h1);
-                t.setFill(Color.KHAKI);
-                node.getChildren().add(t);
-                //continue;
-            } else if (line.startsWith("**")) {
-                Text t = new Text(line.substring(2));
-                t.setFont(h2);
-                t.setFill(Color.DARKGRAY);
-                node.getChildren().add(t);
-                //continue;
-            } else if (line.startsWith("*")) {
-                Text t = new Text(line.substring(1));
                 t.setFont(h3);
                 t.setFill(Color.GRAY);
                 node.getChildren().add(t);
                 //continue;
+            } else if (line.startsWith("##")) {
+                Text t = new Text(line.substring(2) );
+                t.setFont(h2);
+                t.setFill(Color.DARKGRAY);
+                node.getChildren().add(t);
+                //continue;
+            } else if (line.startsWith("#")) {
+                // Heading
+                Text t = new Text(line.substring(1) );
+                t.setFont(h1);
+                t.setFill(Color.KHAKI);
+                node.getChildren().add(t);
+                //continue;
             } else {
-                Text t = new Text(line);
+                Text t = new Text(line );
                 t.setFont(body);
                 t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
@@ -180,4 +207,24 @@ public class ControlPanelUtils {
 
         return node;
     }
+
+    public static String html2markdown(String content) {
+        //StringBuilder sb = new StringBuilder();
+        return content
+                .replaceAll("<p>", "\n")
+                .replaceAll("</p>", "\n")
+                .replaceAll("<br>", "\n")
+                .replaceAll("<h1>", "\n# ")
+                .replaceAll("</h1>", "")
+                .replaceAll("<h2>", "\n## ")
+                .replaceAll("</h2>", "")
+                .replaceAll("<h3>", "\n### ")
+                .replaceAll("</h3>", "")
+                .replaceAll("<h4>", "\n#### ")
+                .replaceAll("</h4>", "")
+                .replaceAll("<h5>", "\n##### ")
+                .replaceAll("</h5>", "");
+
+    }
+
 }

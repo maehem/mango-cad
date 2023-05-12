@@ -60,6 +60,7 @@ public abstract class LibraryElement {
 
     public String getDescription() {
         if ( !getDescriptions().isEmpty() ) {
+            
             return getDescriptions().get(0).getValue();
         } else {
             return "";

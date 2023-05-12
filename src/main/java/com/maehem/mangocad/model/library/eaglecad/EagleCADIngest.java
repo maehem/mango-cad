@@ -47,6 +47,17 @@ import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinLength;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinVisible;
 import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
+import java.io.StringWriter;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,6 +67,7 @@ import org.w3c.dom.NodeList;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class EagleCADIngest {
+    private static final Logger LOGGER = Logger.getLogger(EagleCADIngest.class.getSimpleName());
 
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
@@ -241,11 +253,19 @@ public class EagleCADIngest {
                 desc.setLocale(langAttribute.getNodeValue());
             } // else default is en_US so we don't set it.
         }
-        if (node.getChildNodes().getLength() == 1) {
-            desc.setValue(node.getChildNodes().item(0).getNodeValue());
+
+        String serializeDoc = serializeDoc(node);
+        Pattern pattern = Pattern.compile("<description language=\"..\">(.*)</description>");
+
+        Matcher matcher = pattern.matcher(serializeDoc);
+
+        if (matcher.find()) {
+            //LOGGER.log(Level.SEVERE, "Matcher Outout: " + matcher.group(1));
+            desc.setValue(matcher.group(1));
         } else {
-            desc.setValue("WARNING: Node has [" + node.getChildNodes().getLength() + "] nodes. Should be only one?");
+            desc.setValue("");
         }
+        
         libElement.getDescriptions().add(desc);
     }
 
@@ -258,9 +278,10 @@ public class EagleCADIngest {
             } // else default is en_US so we don't set it.
         }
         if (node.getChildNodes().getLength() == 1) {
-            desc.setValue(node.getChildNodes().item(0).getNodeValue());
+            desc.setValue(node.getChildNodes().item(0).getTextContent());
         } else {
-            desc.setValue("WARNING: Node has [" + node.getChildNodes().getLength() + "] nodes. Should be only one?");
+            //desc.setValue("WARNING: Node has [" + node.getChildNodes().getLength() + "] nodes. Should be only one?");
+            desc.setValue(node.getTextContent());
         }
         library.getDescriptions().add(desc);
     }
@@ -772,7 +793,7 @@ public class EagleCADIngest {
         for (int j = 0; j < childNodes.getLength(); j++) {
             Node subItem = childNodes.item(j);
             switch (subItem.getNodeName()) {
-                case "#text" :
+                case "#text":
                     // Ignore for now.
                     break;
                 case "connects":
@@ -964,10 +985,10 @@ public class EagleCADIngest {
             for (int j = 0; j < attributes.getLength(); j++) {
                 Node attr = attributes.item(j);
                 switch (attr.getNodeName()) {
-                    case "name" -> 
+                    case "name" ->
                         packages.getPackageInstances().add(new PackageInstance3d(attr.getNodeValue())
                         );
-                    default -> 
+                    default ->
                         throw new EagleCADLibraryFileException(
                                 "package3dInstance has unknown attribute: [" + attr.getNodeName() + "]"
                         );
@@ -977,4 +998,33 @@ public class EagleCADIngest {
         }
     }
 
+    /**
+     * Used by description parser to get sub-HTML snippets used by legacy
+     * description tags.  The XML parser tends to DOM it all out, but we
+     * need it raw to render in our content areas properly.
+     * 
+     * Lifted from StackOverflow
+     * https://stackoverflow.com/questions/8873393/get-node-raw-text
+     * 
+     * 
+     * @param doc node to transform
+     * @return raw HTML content of the doc node.
+     */
+    public static String serializeDoc(Node doc) {
+        StringWriter outText = new StringWriter();
+        StreamResult sr = new StreamResult(outText);
+        Properties oprops = new Properties();
+        oprops.put(OutputKeys.METHOD, "html");
+        //oprops.put(OutputKeys.METHOD, "xml");
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer t = null;
+        try {
+            t = tf.newTransformer();
+            t.setOutputProperties(oprops);
+            t.transform(new DOMSource(doc), sr);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return outText.toString();
+    }
 }
