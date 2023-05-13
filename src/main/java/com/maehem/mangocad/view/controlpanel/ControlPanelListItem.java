@@ -114,7 +114,7 @@ public abstract class ControlPanelListItem {
         String descString = ControlPanelUtils.getItemDescriptionFull(this);
         if ( descString != null && !descString.isEmpty() ) {
                 Tooltip tt = new Tooltip();
-                tt.setGraphic(ControlPanelUtils.markdownNode(descString));
+                tt.setGraphic(ControlPanelUtils.markdownNode(0.75, descString));
                 return tt;
             
         } else {

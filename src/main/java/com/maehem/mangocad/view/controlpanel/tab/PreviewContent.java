@@ -37,7 +37,7 @@ public class PreviewContent extends BorderPane {
     public void setItem(ControlPanelListItem item) {
 //       contentArea.clear();
 //       contentArea.setText(ControlPanelUtils.getItemDescriptionFull(item.getFile()));
-        Node cNode = ControlPanelUtils.markdownNode(ControlPanelUtils.getItemDescriptionFull(item));
+        Node cNode = ControlPanelUtils.markdownNode(2.0, ControlPanelUtils.getItemDescriptionFull(item));
         setCenter(cNode);
     }
     

@@ -28,14 +28,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -138,11 +134,19 @@ public class ControlPanelUtils {
         return "";
     }
 
-    public static Node markdownNode(String text) {
+    public static Node markdownNode(double scale, String text) {
         String content = text;
         LOGGER.log(Level.SEVERE, "Process: " + text);
-        if (content.contains("<p>") || content.contains("<br>") || content.contains("<h1>")) {
-            LOGGER.log(Level.SEVERE, "text contains HTML");
+        if (content.contains("<p>") || content.contains("<br>")
+                || content.contains("<b>" )
+                || content.contains("<h1>" )
+                || content.contains("<h2>" )
+                || content.contains("<h3>" )
+                || content.contains("<h4>" )
+                || content.contains("<h5>" )
+                || content.contains("<h6>" )
+                ) {
+            LOGGER.log(Level.FINER, "text contains HTML");
             content = html2markdown(text);
         }
         VBox node = new VBox();
@@ -151,20 +155,23 @@ public class ControlPanelUtils {
         // parse thngs.
 
         content = content.translateEscapes(); // Was fun figuring out this one.
-        String[] lines = content.split("\n");
-        for ( String s: lines ) {
-            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
+        if ( !content.startsWith("#") ) {
+            content = "#" + content;
         }
+        String[] lines = content.split("\n");
+//        for (String s : lines) {
+//            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
+//        }
         Font f = Font.getDefault();
-        Font h1 = Font.font(f.getFamily(), FontWeight.BLACK, f.getSize());
-        Font h2 = Font.font(f.getFamily(), FontWeight.BOLD, f.getSize() - 1.0);
-        Font h3 = Font.font(f.getFamily(), FontWeight.BOLD, f.getSize() - 2.0);
+        Font h1 = Font.font(f.getFamily(), FontWeight.BLACK, f.getSize()* scale);
+        Font h2 = Font.font(f.getFamily(), FontWeight.BOLD, (f.getSize() - 1.0) * scale);
+        Font h3 = Font.font(f.getFamily(), FontWeight.BOLD, (f.getSize() - 2.0) * scale);
         Font body = f;
 
-        Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
+        //Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
         for (String line : lines) {
             line = line.strip();
-            if (  line.startsWith("#####")) {
+            if (line.startsWith("#####")) {
                 Text t = new Text(line.substring(5));
                 t.setFont(h3);
                 t.setFill(Color.WHITE);
@@ -183,20 +190,20 @@ public class ControlPanelUtils {
                 node.getChildren().add(t);
                 //continue;
             } else if (line.startsWith("##")) {
-                Text t = new Text(line.substring(2) );
+                Text t = new Text(line.substring(2));
                 t.setFont(h2);
                 t.setFill(Color.DARKGRAY);
                 node.getChildren().add(t);
                 //continue;
             } else if (line.startsWith("#")) {
                 // Heading
-                Text t = new Text(line.substring(1) );
+                Text t = new Text(line.substring(1));
                 t.setFont(h1);
                 t.setFill(Color.KHAKI);
                 node.getChildren().add(t);
                 //continue;
             } else {
-                Text t = new Text(line );
+                Text t = new Text(line);
                 t.setFont(body);
                 t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
