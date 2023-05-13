@@ -136,6 +136,11 @@ public class ControlPanelUtils {
 
     public static Node markdownNode(double scale, String text) {
         String content = text;
+        VBox node = new VBox();
+        node.setSpacing(0);
+        node.setPadding(new Insets(10));
+        if ( content == null ) return node;
+        
         LOGGER.log(Level.SEVERE, "Process: " + text);
         if (content.contains("<p>") || content.contains("<br>")
                 || content.contains("<b>" )
@@ -149,9 +154,6 @@ public class ControlPanelUtils {
             LOGGER.log(Level.FINER, "text contains HTML");
             content = html2markdown(text);
         }
-        VBox node = new VBox();
-        node.setSpacing(0);
-        node.setPadding(Insets.EMPTY);
         // parse thngs.
 
         content = content.translateEscapes(); // Was fun figuring out this one.
@@ -163,7 +165,7 @@ public class ControlPanelUtils {
 //            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
 //        }
         Font f = Font.getDefault();
-        Font h1 = Font.font(f.getFamily(), FontWeight.BLACK, f.getSize()* scale);
+        Font h1 = Font.font("Arial", FontWeight.BOLD, f.getSize()* scale);
         Font h2 = Font.font(f.getFamily(), FontWeight.BOLD, (f.getSize() - 1.0) * scale);
         Font h3 = Font.font(f.getFamily(), FontWeight.BOLD, (f.getSize() - 2.0) * scale);
         Font body = f;
@@ -171,7 +173,17 @@ public class ControlPanelUtils {
         //Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
         for (String line : lines) {
             line = line.strip();
-            if (line.startsWith("#####")) {
+            if (line.startsWith("***") | line.startsWith("---") | line.startsWith("___")) { // <HR>
+                StringBuilder sb = new StringBuilder();
+                for ( int i=0; i<60; i++ ) {
+                    sb.append("\u2501");
+                }
+                Text t = new Text(sb.toString());
+                t.setFont(h3);
+                t.setFill(Color.GREY);
+                node.getChildren().add(t);
+                //continue;
+            } else if (line.startsWith("#####")) {
                 Text t = new Text(line.substring(5));
                 t.setFont(h3);
                 t.setFill(Color.WHITE);
@@ -199,7 +211,9 @@ public class ControlPanelUtils {
                 // Heading
                 Text t = new Text(line.substring(1));
                 t.setFont(h1);
-                t.setFill(Color.KHAKI);
+                // On OSX Need to specify Arial to get bold. Unfixed Jfx bug.
+                t.setStyle("-fx-font-family: \"Arial\" -fx-font-style: bold");
+                t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
                 //continue;
             } else {
