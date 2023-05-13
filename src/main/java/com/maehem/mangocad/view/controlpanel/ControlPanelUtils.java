@@ -215,9 +215,43 @@ public class ControlPanelUtils {
         return node;
     }
 
+    /**
+     * Convert HTML snippets to Marddown
+     * Using this guide:
+     * https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#lines
+     * 
+     * 
+     * TODO:   Case insensitive
+     * 
+     *          <B> bold tag  _word_  or *word*
+     *        LI/UL lists
+     *          - Unordered lists:  + - or *
+     *          - Ordered List:  Number ( 1. )
+     *          - SubList:  ..1.  or ..-
+     * 
+     *         LINKS:  Ability to open browser.
+     * 
+     *        CODE STYLING:  three backticks with optional type?
+     *              ``` java
+     *                  foo();
+     *              ```
+     *          HORIZ RULE (three or more )
+     *                  ---
+     *                  ___
+     *                  ***
+     * 
+     * @param content
+     * @return 
+     */
     public static String html2markdown(String content) {
         //StringBuilder sb = new StringBuilder();
         return content
+                .replaceAll("<b>", "__")
+                .replaceAll("</b>", "__")
+                .replaceAll("<i>", "_")
+                .replaceAll("</i>", "_")
+                .replaceAll("<code>", "```")
+                .replaceAll("</code>", "```")
                 .replaceAll("<p>", "\n")
                 .replaceAll("</p>", "\n")
                 .replaceAll("<br>", "\n")
@@ -230,7 +264,9 @@ public class ControlPanelUtils {
                 .replaceAll("<h4>", "\n#### ")
                 .replaceAll("</h4>", "")
                 .replaceAll("<h5>", "\n##### ")
-                .replaceAll("</h5>", "");
+                .replaceAll("</h5>", "")
+                .replaceAll("<h6>", "\n###### ")
+                .replaceAll("</h6>", "");
 
     }
 
