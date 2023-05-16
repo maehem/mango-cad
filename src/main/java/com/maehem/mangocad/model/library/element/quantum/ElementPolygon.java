@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Polygon extends _AQuantum {
+public class ElementPolygon extends _AQuantum {
     private double width;
     private double spacing;
     private String pour = "solid";

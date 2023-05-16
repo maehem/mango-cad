@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
@@ -33,7 +34,7 @@ import javafx.stage.Stage;
  */
 public class LibraryDeviceSymbolItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = Logger.getLogger(LibraryDeviceSymbolItem.class.getSimpleName());
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     private static final Image iconImage = new Image(
             ControlPanelListItem.class.getResourceAsStream("/icons/transistor.png")

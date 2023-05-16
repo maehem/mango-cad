@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.model.library.eaglecad;
 
+import com.maehem.mangocad.model.LayerElement;
 import com.maehem.mangocad.model.library.Library;
 import java.util.ArrayList;
 import com.maehem.mangocad.model.library.element.Description;
@@ -30,15 +31,15 @@ import com.maehem.mangocad.model.library.element.device.Connection;
 import com.maehem.mangocad.model.library.element.device.Device;
 import com.maehem.mangocad.model.library.element.device.DevicePackageInstance3d;
 import com.maehem.mangocad.model.library.element.device.Technology;
-import com.maehem.mangocad.model.library.element.quantum.Circle;
+import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
 import com.maehem.mangocad.model.library.element.quantum.Gate;
 import com.maehem.mangocad.model.library.element.quantum.Hole;
 import com.maehem.mangocad.model.library.element.quantum.PadSMD;
 import com.maehem.mangocad.model.library.element.quantum.PadTHD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
-import com.maehem.mangocad.model.library.element.quantum.Polygon;
-import com.maehem.mangocad.model.library.element.quantum.Rectangle;
-import com.maehem.mangocad.model.library.element.quantum.Text;
+import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
+import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
+import com.maehem.mangocad.model.library.element.quantum.ElementText;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Via;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
@@ -47,6 +48,7 @@ import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinLength;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinVisible;
 import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -64,10 +66,48 @@ import org.w3c.dom.NodeList;
 
 /**
  *
+ * <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+ *
+ *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class EagleCADIngest {
-    private static final Logger LOGGER = Logger.getLogger(EagleCADIngest.class.getSimpleName());
+
+    private static final Logger LOGGER = ControlPanel.LOGGER;
+
+    public static void ingestLayer(Node node, LayerElement[] layers) throws EagleCADLibraryFileException {
+
+        //LOGGER.log(Level.SEVERE, "Ingest Layer: " + node.getTextContent());
+//            Node item = childNodes.item(i);
+//            if (!item.getNodeName().equals("layer")) {
+//                continue;
+//            }
+            NamedNodeMap attributes = node.getAttributes();
+            
+            LayerElement layer = new LayerElement();
+            LOGGER.log(Level.SEVERE, "Ingest Layer: " + attributes.getNamedItem("number").getNodeValue() );
+            layer.setNumber( Integer.parseInt(
+                    attributes.getNamedItem("number").getNodeValue()
+            ));
+
+            layer.setName(attributes.getNamedItem("name").getNodeValue());
+            layer.setColorIndex(Integer.parseInt(
+                    attributes.getNamedItem("color").getNodeValue()
+            ));
+            layer.setFill(Integer.parseInt(
+                    attributes.getNamedItem("fill").getNodeValue()
+            ));
+            layer.setVisible(
+                    attributes.getNamedItem("visible").getNodeValue().equals("yes")
+            );
+            layer.setActive(
+                    attributes.getNamedItem("active").getNodeValue().equals("yes")
+            );
+
+            //ingestLayerElements(item.getChildNodes(), layer);
+            layers[layer.getNumber()] = layer;
+        
+    }
 
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
@@ -153,13 +193,13 @@ public class EagleCADIngest {
                     ingestPadSmd(pkg, node);
                 case "pad" -> // Pad
                     ingestPadThd(pkg, node);
-                case "text" -> // Text
+                case "text" -> // ElementText
                     ingestText(pkg, node);
-                case "polygon" -> // Polygon
+                case "polygon" -> // ElementPolygon
                     ingestPolygon(pkg, node);
-                case "rectangle" -> // Rectangle
+                case "rectangle" -> // ElementRectangle
                     ingestRectangle(pkg, node);
-                case "circle" -> // Circle
+                case "circle" -> // ElementCircle
                     ingestCircle(pkg, node);
                 case "hole" -> // Hole
                     ingestHole(pkg, node);
@@ -202,19 +242,19 @@ public class EagleCADIngest {
                 case "wire":        // Wire
                     ingestWire(symbol, node);
                     break;
-                case "text":        // Text
+                case "text":        // ElementText
                     ingestText(symbol, node);
                     break;
-                case "polygon":     // Polygon
+                case "polygon":     // ElementPolygon
                     ingestPolygon(symbol, node);
                     break;
-                case "rectangle":   // Rectangle
+                case "rectangle":   // ElementRectangle
                     ingestRectangle(symbol, node);
                     break;
-                case "circle":      // Circle
+                case "circle":      // ElementCircle
                     ingestCircle(symbol, node);
                     break;
-                case "pin":      // Circle
+                case "pin":      // ElementCircle
                     ingestPin(symbol, node);
                     break;
                 default:
@@ -265,7 +305,7 @@ public class EagleCADIngest {
         } else {
             desc.setValue("");
         }
-        
+
         libElement.getDescriptions().add(desc);
     }
 
@@ -428,7 +468,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestText(LibraryElement element, Node node) throws EagleCADLibraryFileException {
-        Text text = new Text();
+        ElementText text = new ElementText();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -445,8 +485,14 @@ public class EagleCADIngest {
                     break;
                 case "rot":
                     // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                    // Found an Eagle file where the Rot value was MRnn instead of Rnn
+                    // But that's not in the XML spec.  Eagle CAD parses it fine though.
+                    try {
                     text.setRotation(Double.parseDouble(value.substring(1)));
-                    break;
+                } catch (NumberFormatException ex) {
+                    text.setRotation(Double.parseDouble(value.substring(2)));
+                }
+                break;
                 case "distance":
                     text.setDistance(Integer.parseInt(value));
                     break;
@@ -473,7 +519,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestPolygon(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
-        Polygon poly = new Polygon();
+        ElementPolygon poly = new ElementPolygon();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -541,7 +587,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestRectangle(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
-        Rectangle rect = new Rectangle();
+        ElementRectangle rect = new ElementRectangle();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -574,7 +620,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestCircle(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
-        Circle circ = new Circle();
+        ElementCircle circ = new ElementCircle();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -1000,13 +1046,13 @@ public class EagleCADIngest {
 
     /**
      * Used by description parser to get sub-HTML snippets used by legacy
-     * description tags.  The XML parser tends to DOM it all out, but we
-     * need it raw to render in our content areas properly.
-     * 
+     * description tags. The XML parser tends to DOM it all out, but we need it
+     * raw to render in our content areas properly.
+     *
      * Lifted from StackOverflow
      * https://stackoverflow.com/questions/8873393/get-node-raw-text
-     * 
-     * 
+     *
+     *
      * @param doc node to transform
      * @return raw HTML content of the doc node.
      */

@@ -57,7 +57,7 @@ public abstract class _AQuantum {
     /**
      * @return the layer
      */
-    public int getLayer() {
+    public int getLayerNum() {
         return layer;
     }
 

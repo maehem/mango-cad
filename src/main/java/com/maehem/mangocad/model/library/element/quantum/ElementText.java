@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Text extends _AQuantum {
+public class ElementText extends _AQuantum {
     // No FONT.  We only support line-font right now.
     private double size;
     private int    distance = 50;  // Line to line distance

@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -34,7 +35,7 @@ import javafx.stage.Stage;
  */
 public class LibraryItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = Logger.getLogger("LibraryItem");
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     private static final Image iconImage = new Image(
             ControlPanelListItem.class.getResourceAsStream("/icons/photo-album.png")
@@ -69,7 +70,9 @@ public class LibraryItem extends ControlPanelListItem {
                 stage = new Stage();
                 LibraryEditor root = new LibraryEditor( getFile() );
                 stage.setTitle("Library Editor: " + getName());
-                stage.setScene(new Scene(root, 1280, 960));
+                Scene scene = new Scene(root, 1280, 960);
+                scene.getStylesheets().add(this.getClass().getResource("/style/dark.css").toExternalForm());
+                stage.setScene(scene);
                 stage.centerOnScreen();
                 stage.setOnCloseRequest((t) -> {
                     // TODO: Popup if file edited and not saved.

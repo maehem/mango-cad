@@ -16,13 +16,12 @@
  */
 package com.maehem.mangocad;
 
-import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,10 +33,12 @@ import java.util.logging.Logger;
  */
 public class AppProperties extends Properties {
 
+    private static final Logger LOGGER = ControlPanel.LOGGER;
+
     private static AppProperties instance = null;
     private final File propFile = initPropFile();
     private static final String APP_VERSION = "0";
-    private final ArrayList<Library> libraryCache = new ArrayList<>();
+    //private final ArrayList<Library> libraryCache = new ArrayList<>();
     
     
     private AppProperties() {
@@ -62,11 +63,11 @@ public class AppProperties extends Properties {
     public final void load() {
         try {
             load(new FileInputStream(propFile));
-            Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, "Loaded MangoCAD file." + propFile.getAbsolutePath());
+            LOGGER.log(Level.SEVERE, "Loaded MangoCAD settings file: {0}", propFile.getAbsolutePath());
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         
     }
@@ -74,11 +75,11 @@ public class AppProperties extends Properties {
     public final void save() {
         try {
             store(new FileOutputStream(propFile), "Saved mangoCAD");
-            Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, "Saved MangoCAD file.");
+            LOGGER.log(Level.SEVERE, "Saved MangoCAD settings file: {0}", propFile.getAbsolutePath());
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 

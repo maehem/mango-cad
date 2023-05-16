@@ -20,7 +20,7 @@ package com.maehem.mangocad.model.library.element.quantum;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Rectangle extends _AQuantum {
+public class ElementRectangle extends _AQuantum {
     private double x2;
     private double y2;
     private double rotation = 0;

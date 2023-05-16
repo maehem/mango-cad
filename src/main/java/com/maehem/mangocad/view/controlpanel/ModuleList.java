@@ -23,6 +23,7 @@ import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +46,7 @@ import javafx.scene.image.ImageView;
  */
 public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
-    private static final Logger LOGGER = Logger.getLogger(ModuleList.class.getSimpleName());
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     public static final String NAME_COL_WIDTH_PROP_KEY = "ModuleList.Name.W";
     public static final String DESC_COL_WIDTH_PROP_KEY = "ModuleList.Description.W";

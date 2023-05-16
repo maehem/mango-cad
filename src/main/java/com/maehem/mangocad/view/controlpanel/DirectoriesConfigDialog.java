@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 

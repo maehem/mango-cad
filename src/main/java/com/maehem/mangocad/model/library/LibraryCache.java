@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.library;
 
 import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
 import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class LibraryCache extends ArrayList<Library> {
-    private static final Logger LOGGER = Logger.getLogger(LibraryCache.class.getName());
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     private static LibraryCache instance = null;
     
@@ -61,7 +62,7 @@ public class LibraryCache extends ArrayList<Library> {
         } catch (IOException ex) {
             Logger.getLogger(LibraryCache.class.getName()).log(Level.SEVERE, null, ex);
         } catch (EagleCADLibraryFileException ex) {
-            Logger.getLogger(LibraryCache.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LibraryCache.class.getName()).log(Level.SEVERE, "Error importing: " + f.getAbsolutePath(), ex);
         }
         
         LOGGER.log(Level.SEVERE, "ERROR: Could find or load library for requested file!");

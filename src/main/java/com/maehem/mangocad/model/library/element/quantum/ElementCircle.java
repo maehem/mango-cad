@@ -20,7 +20,7 @@ package com.maehem.mangocad.model.library.element.quantum;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Circle extends _AQuantum {
+public class ElementCircle extends _AQuantum {
     private double radius;
     private double width;
 

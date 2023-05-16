@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +45,7 @@ import javafx.scene.text.Text;
  */
 public class ControlPanelUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(ControlPanelUtils.class.getSimpleName());
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     /**
      * Search in this directory for the DESCRIPTION.md
@@ -68,7 +69,7 @@ public class ControlPanelUtils {
                 Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            Logger.getLogger("ModuleList").log(Level.SEVERE, "Description not found.");
+            LOGGER.log(Level.FINER, "Description not found.");
         }
 
         return description;
@@ -77,7 +78,7 @@ public class ControlPanelUtils {
     public static String getItemDescriptionFull(ControlPanelListItem item) {
         File fileOrDir = item.getFile();
         if (fileOrDir != null) {
-            LOGGER.log(Level.SEVERE, "getFolderDesc for: " + fileOrDir.getName());
+            LOGGER.log(Level.FINER, "getFolderDesc for: " + fileOrDir.getName());
         }
         if (fileOrDir != null && fileOrDir.isDirectory()) {
             File descFile = new File(fileOrDir, "DESCRIPTION.md");
@@ -141,7 +142,7 @@ public class ControlPanelUtils {
         node.setPadding(new Insets(10));
         if ( content == null ) return node;
         
-        LOGGER.log(Level.SEVERE, "Process: " + text);
+        LOGGER.log(Level.FINER, "Process: " + text);
         if (content.contains("<p>") || content.contains("<br>")
                 || content.contains("<b>" )
                 || content.contains("<h1>" )
@@ -165,9 +166,14 @@ public class ControlPanelUtils {
 //            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
 //        }
         Font f = Font.getDefault();
-        Font h1 = Font.font("Arial", FontWeight.BOLD, f.getSize()* scale);
-        Font h2 = Font.font(f.getFamily(), FontWeight.BOLD, (f.getSize() - 1.0) * scale);
-        Font h3 = Font.font(f.getFamily(), FontWeight.BOLD, (f.getSize() - 2.0) * scale);
+        // TODO: Move these over to CSS file.
+        Font h1 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale);
+        Font h2 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.90);
+        Font h3 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.85);
+        Font h4 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.82);
+        Font h5 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.80);
+        Font h6 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.78);
+        
         Font body = f;
 
         //Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
@@ -182,46 +188,44 @@ public class ControlPanelUtils {
                 t.setFont(h3);
                 t.setFill(Color.GREY);
                 node.getChildren().add(t);
-                //continue;
+            } else if (line.startsWith("######")) {
+                Text t = new Text(line.substring(6));
+                t.setFont(h6);
+                t.setFill(Color.LAVENDER);
+                node.getChildren().add(t);
             } else if (line.startsWith("#####")) {
                 Text t = new Text(line.substring(5));
-                t.setFont(h3);
-                t.setFill(Color.WHITE);
+                t.setFont(h5);
+                t.setFill(Color.CORAL);
                 node.getChildren().add(t);
-                //continue;
             } else if (line.startsWith("####")) {
                 Text t = new Text(line.substring(4));
-                t.setFont(h3);
+                t.setFont(h4);
                 t.setFill(Color.LIGHTBLUE);
                 node.getChildren().add(t);
-                //continue;
             } else if (line.startsWith("###")) {
                 Text t = new Text(line.substring(3));
                 t.setFont(h3);
                 t.setFill(Color.GRAY);
                 node.getChildren().add(t);
-                //continue;
             } else if (line.startsWith("##")) {
                 Text t = new Text(line.substring(2));
                 t.setFont(h2);
                 t.setFill(Color.DARKGRAY);
                 node.getChildren().add(t);
-                //continue;
             } else if (line.startsWith("#")) {
                 // Heading
                 Text t = new Text(line.substring(1));
                 t.setFont(h1);
                 // On OSX Need to specify Arial to get bold. Unfixed Jfx bug.
-                t.setStyle("-fx-font-family: \"Arial\" -fx-font-style: bold");
+                //t.setStyle("-fx-font-family: \"Arial\"; -fx-font-style: bold");
                 t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
-                //continue;
             } else {
                 Text t = new Text(line);
                 t.setFont(body);
                 t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
-                //continue;
             }
 
         }

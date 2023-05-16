@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.model.library;
 
+import com.maehem.mangocad.model.ColorPalette;
+import com.maehem.mangocad.model.LayerElement;
 import java.util.ArrayList;
 import com.maehem.mangocad.model.library.element.Description;
 import com.maehem.mangocad.model.library.element.DeviceSet;
@@ -32,9 +34,13 @@ public class Library {
 
     public static final String FILE_EXTENSION = "mclib";
 
+    private ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
+    
     private ArrayList<Note> notes = new ArrayList<>();
     // Descriptions is a list of this library descriptions for each language
     // supported.
+    private LayerElement layers[] = new LayerElement[256];
+    
     private ArrayList<Description> descriptions = new ArrayList<>();
     private ArrayList<Footprint> packages = new ArrayList<>();
     private ArrayList<Symbol> symbols = new ArrayList<>();
@@ -43,6 +49,17 @@ public class Library {
 
     private String filePath;
 
+    public Library() {
+        layers[0] = new LayerElement();
+    }
+
+    
+    
+    public ColorPalette getPalette() {
+        return colorPalette;
+    }
+    
+    
     /**
      * @return the description
      */
@@ -65,6 +82,24 @@ public class Library {
         }
     }
 
+    /**
+     * @return the layers
+     */
+    public LayerElement[] getLayers() {
+        return layers;
+    }
+
+
+    public int getIndexForLayer( int layerNum ) {
+        LayerElement layer = layers[layerNum];
+        
+        if ( layer != null ) {
+            return layer.getColorIndex();
+        } else {
+            return -1;
+        }
+    }
+    
     /**
      * @return the packages
      */

@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
@@ -27,7 +28,7 @@ import javafx.scene.image.Image;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class LibraryModuleItem extends ControlPanelListItem {
-    private static final Logger LOGGER = Logger.getLogger("LibraryModuleItem");
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     private static final Image iconImage = new Image(
             ControlPanelListItem.class.getResourceAsStream("/icons/bank.png")

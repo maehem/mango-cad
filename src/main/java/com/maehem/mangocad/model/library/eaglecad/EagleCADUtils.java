@@ -29,6 +29,9 @@ import com.maehem.mangocad.model.library.element.Description;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.quantum.Hole;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
+import com.maehem.mangocad.view.ControlPanel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -41,6 +44,7 @@ import org.xml.sax.SAXException;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class EagleCADUtils {
+    public static final Logger LOGGER = ControlPanel.LOGGER;
 
     private EagleCADUtils() {
     }   // Static methods only!
@@ -138,9 +142,9 @@ public class EagleCADUtils {
                     if (node.getNodeType() == 1) {
                         switch (node.getNodeName()) {
                             case "settings":  // Ignore 'settings'
-                            case "layers":    // Ignore 'layers'
                             case "grid":      // Ignore 'grid'
                                 break;
+                            case "layers":    // Yay! Layers
                             case "library":   // This is what we came for
                                 ingestEagleLibraryElement(lib, node);
                                 break;
@@ -160,7 +164,10 @@ public class EagleCADUtils {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node child = nodes.item(i);
             if (child.getNodeType() == 1) {
+                //LOGGER.log(Level.SEVERE, "Ingest Node: " + child.getNodeName());
                 switch (child.getNodeName()) {
+                    case "layer":
+                        EagleCADIngest.ingestLayer( child, lib.getLayers() );
                     case "description":
                         EagleCADIngest.ingestLibraryDescription(lib, child);
                         break;

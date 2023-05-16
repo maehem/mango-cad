@@ -17,9 +17,13 @@
 package com.maehem.mangocad.view;
 
 import com.maehem.mangocad.AppProperties;
+import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import com.maehem.mangocad.view.controlpanel.ModuleList;
 import com.maehem.mangocad.view.controlpanel.TabArea;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -35,6 +39,7 @@ import javafx.stage.Stage;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ControlPanel extends Application {
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String SPLITTER_X_PROP_KEY = "Splitter.X";
     public static final String WINDOW_POS_X_PROP_KEY = "Window.X";
@@ -42,18 +47,21 @@ public class ControlPanel extends Application {
     public static final String WINDOW_SIZE_W_PROP_KEY = "Window.W";
     public static final String WINDOW_SIZE_H_PROP_KEY = "Window.H";
 
-    final Menu fileMenu = new Menu("File");
-    final Menu viewMenu = new Menu("View");
-    final Menu optionsMenu = new Menu("Options");
-    final Menu windowMenu = new Menu("Window");
-    final Menu helpMenu = new Menu("Help");
+    private final Menu fileMenu = new Menu("File");
+    private final Menu viewMenu = new Menu("View");
+    private final Menu optionsMenu = new Menu("Options");
+    private final Menu windowMenu = new Menu("Window");
+    private final Menu helpMenu = new Menu("Help");
 
-    final AppProperties appProperties = AppProperties.getInstance();
+    private AppProperties appProperties;// = AppProperties.getInstance();
 
     private ModuleList moduleList;
     
     @Override
     public void start(Stage stage) throws Exception {
+        configureLogging();
+        LOGGER.log(Level.SEVERE, "MangoCAD Start...");
+        appProperties = AppProperties.getInstance();
 
         // Set the title of the Stage
         stage.setTitle("MangoCAD");
@@ -129,6 +137,27 @@ public class ControlPanel extends Application {
         MenuItem userIface = new MenuItem("User Interface...");
         optionsMenu.getItems().addAll(dirs, backups, userIface);
     }
+
+    private void configureLogging() {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new LoggingFormatter());
+        
+        // Get the top most logger and add our handler.
+        LOGGER.setUseParentHandlers(false);  // Prevent INFO and HIGHER from going to stderr.
+        LOGGER.addHandler(handler);
+
+        // Log everything and use the DebugTab to filter later.
+        LOGGER.setLevel(Level.FINEST);
+
+        //ConsoleHandler handler = new ConsoleHandler();
+        // Add console handler as handler of logs
+        //Logger.getLogger("com.maehem.abyss").addHandler(handler);
+        //Logger.getLogger("com.maehem.abyss").setUseParentHandlers(false);
+        
+
+
+}
+    
 
     public static void main(String[] args) {
         launch(args);

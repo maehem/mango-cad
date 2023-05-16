@@ -18,19 +18,16 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
 import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.ElementType;
 import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.PackageInstance3d;
 import com.maehem.mangocad.model.library.element.device.Device;
 import com.maehem.mangocad.model.library.element.quantum.Gate;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import static javafx.scene.layout.Priority.ALWAYS;
 import javafx.scene.layout.VBox;
@@ -41,14 +38,15 @@ import javafx.scene.layout.VBox;
  */
 public class TableOfContentsPane extends SplitPane {
 
-    private static final Logger LOGGER = Logger.getLogger(TableOfContentsPane.class.getName());
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
-    private static final double PANE_W = 0.2;
+    private static final double PANE_W = 0.15;
     private Library lib = new Library();
     private final LibraryElementListView deviceList;
     private final LibraryElementListView footprintList;
     private final LibraryElementListView package3dList;
     private final LibraryElementListView symbolList;
+    private final DetailsArea detailsArea = new DetailsArea();
 
     private boolean selectorUpdating = false;
 
@@ -75,14 +73,13 @@ public class TableOfContentsPane extends SplitPane {
         //VBox symbolList = new VBox(new Label("Symbol List"));
         symbolList = new LibraryElementListView(this, lib, ElementType.SYMBOL);
 
-        VBox detailsArea = new VBox(new Label("Details Area"));
 
         // Cause the panes to expand to height of window.
         //deviceList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         footprintList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         package3dList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         symbolList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-        detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
+        //detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
 
         getItems().addAll(deviceList, footprintList, package3dList, symbolList, detailsArea);
 
@@ -193,6 +190,7 @@ public class TableOfContentsPane extends SplitPane {
 
         }
         selectorUpdating = false;
+        detailsArea.setItem(lib, src, newValue);
     }
 
 }
