@@ -22,7 +22,7 @@ package com.maehem.mangocad.model.library.element.quantum.enums;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public enum PinFunction {
-    NONE("none"), DOT("dot"), CLK("slk"), DOTCLK("dotclk");
+    NONE("none"), DOT("dot"), CLK("clk"), DOTCLK("dotclk");
     
     private final String code;
  

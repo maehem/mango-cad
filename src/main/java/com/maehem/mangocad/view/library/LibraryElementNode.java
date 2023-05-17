@@ -24,6 +24,7 @@ import com.maehem.mangocad.model.library.element.quantum.PadSMD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
+import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
 import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.POINT;
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_CENTER;
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_LEFT;
@@ -231,9 +232,39 @@ public class LibraryElementNode {
     }
     
     public static Node createPinNode(Pin p) {
+        
+        // TODO:  VISIBLE:  Ghost Text and smaller font
+        //                
+                        
+        final double PIN_NAME_MARGIN = 1.5;
+        final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
+        final double PIN_FONT_SIZE = 2.0;
+        final Color PIN_COLOR = new Color(0.2,0.2,0.2,1.0);
+        final Color PIN_NAME_COLOR = new Color(1.0,1.0,1.0,0.2);
+        final Color PIN_DIR_SWAP_COLOR = new Color(0.3,1.0,0.3,0.5);
+        final double PIN_DIR_SWAP_OFFSET = PIN_FONT_SIZE * 0.2;
+        final Color ORIGIN_CIRCLE_COLOR = new Color(1.0,1.0,1.0,0.1);
+        final double ORIGIN_CIRCLE_RADIUS = 0.635;
+        final double ORIGIN_CIRCLE_LINE_WIDTH = 0.07;
+        final double DOT_CIRCLE_RADIUS = 0.7;
+        final double DOT_CIRCLE_LINE_WIDTH = PIN_STROKE_WIDTH*1.7;
+        final double CLK_SIZE = 1.3;
+        
+        // There might be a dot on pin.
+        double dotRadius = 0;
+        if ( p.getFunction() == PinFunction.DOT || p.getFunction() == PinFunction.DOTCLK ) {
+            dotRadius = DOT_CIRCLE_RADIUS;
+        }
+        double rot = p.getRotation(); // 0, 90, 180, 270
+
         Group g = new Group();
+        
         Line line = new Line(p.getX(), -p.getY(), p.getX(), -p.getY());
-        line.setStroke(Color.DARKGREEN);
+        line.setStroke(PIN_COLOR);
+        line.setStrokeLineCap(StrokeLineCap.BUTT);
+        line.setStrokeWidth(PIN_STROKE_WIDTH);               
+                
+
         // X, Y, Length
         double pinLen = 0;
         switch (p.getLength()) {
@@ -242,31 +273,168 @@ public class LibraryElementNode {
             case SHORT  -> { pinLen = 2.54; }
             case POINT  -> {} // Already zero.
         }
+        pinLen -= dotRadius*2.0;
         
-        double rot = p.getRotation(); // 0, 90, 180, 270
         if (rot == 270) {
             line.setEndY(-p.getY() + pinLen);
         } else if (rot == 180) {
-            line.setEndX(p.getX() - pinLen);
+            line.setEndX(p.getX() - pinLen );
         } else if ( rot == 90 ) {
             line.setEndY(-p.getY() - pinLen);
         } else {
             line.setEndX(p.getX() + pinLen);
         }
+
+        // When you need some dots.
+        if ( dotRadius > 0.0 ) {
+            // Dot Function
+            ElementCircle dotCircle = new ElementCircle();
+            dotCircle.setRadius(dotRadius);
+            dotCircle.setWidth(DOT_CIRCLE_LINE_WIDTH);
+
+            if (rot == 270) {
+                dotCircle.setX(line.getEndX());
+                dotCircle.setY(-line.getEndY() - dotRadius);
+            } else if (rot == 180) {
+                dotCircle.setX(line.getEndX() - dotRadius);
+                dotCircle.setY(-line.getEndY());
+            } else if ( rot == 90 ) {
+                dotCircle.setX(line.getEndX());
+                dotCircle.setY(-line.getEndY() + dotRadius);
+            } else {
+                dotCircle.setX(line.getEndX() + dotRadius);
+                dotCircle.setY(-line.getEndY());
+            }
+            
+            g.getChildren().add( createCircleNode(dotCircle, PIN_COLOR) );
+        }
         
-        line.setStrokeLineCap(StrokeLineCap.BUTT);
-        line.setStrokeWidth(0.1524);
+        PinFunction function = p.getFunction();
+        
+        // Clock Function
+        if ( p.getFunction() == PinFunction.CLK || p.getFunction() == PinFunction.DOTCLK ) {
+            Line line1 = new Line(0,0,0,0);
+//                    line.getEndX() + dotRadius*2.0, -p.getY() - CLK_SIZE/2, 
+//                    line.getEndX(), -p.getY()
+//            );
+            line1.setStroke(PIN_COLOR);
+            line1.setStrokeLineCap(StrokeLineCap.ROUND);
+            line1.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
+            
+            Line line2 = new Line();
+//                    line.getEndX() + dotRadius*2.0, -p.getY() + CLK_SIZE/2, 
+//                    line.getEndX(), -p.getY()
+//            );
+            line2.setStroke(PIN_COLOR);
+            line2.setStrokeLineCap(StrokeLineCap.ROUND);
+            line2.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
+            
+            if (rot == 270) {
+                line1.setStartX(line.getEndX() - CLK_SIZE/2.0);
+                line1.setStartY(line.getEndY() + dotRadius*2.0);
+                line1.setEndX(line.getEndX() );
+                line1.setEndY(line1.getStartY()+CLK_SIZE);
+                
+                line2.setStartX(line.getEndX() + CLK_SIZE/2.0);
+                line2.setStartY(line.getEndY() + dotRadius*2.0);
+                line2.setEndX(line.getEndX());
+                line2.setEndY(line1.getStartY()+CLK_SIZE);
+            } else if (rot == 180) {
+                line1.setStartX(line.getEndX());
+                line1.setStartY(line.getEndY() + CLK_SIZE/2.0);
+                line1.setEndX(line1.getStartX() - CLK_SIZE );
+                line1.setEndY(-p.getY());
+                
+                line2.setStartX(line.getEndX());
+                line2.setStartY(line.getEndY() - CLK_SIZE/2.0);
+                line2.setEndX(line1.getStartX() - CLK_SIZE );
+                line2.setEndY(-p.getY());
+            } else if ( rot == 90 ) {
+                line1.setStartX(line.getEndX() - CLK_SIZE/2.0);
+                line1.setStartY(line.getEndY()-dotRadius*2.0);
+                line1.setEndX(line.getEndX());
+                line1.setEndY(line1.getStartY()-CLK_SIZE);
+                
+                line2.setStartX(line.getEndX() + CLK_SIZE/2.0);
+                line2.setStartY(line.getEndY()-dotRadius*2.0);
+                line2.setEndX(line.getEndX());
+                line2.setEndY(line1.getStartY()-CLK_SIZE);
+            } else {
+                line1.setStartX(line.getEndX() + dotRadius*2.0 );
+                line1.setStartY(line.getEndY() + CLK_SIZE/2.0);
+                line1.setEndX(line1.getStartX() + CLK_SIZE );
+                line1.setEndY(-p.getY());
+                
+                line2.setStartX(line.getEndX() + dotRadius*2.0 );
+                line2.setStartY(line.getEndY() - CLK_SIZE/2.0);
+                line2.setEndX(line1.getStartX() + CLK_SIZE );
+                line2.setEndY(-p.getY());
+            }
+            
+            g.getChildren().addAll(line1, line2);
+        }        
+        
+ 
+        // Pin Name
+        Text pinName = new Text(p.getName());
+        pinName.setFont(Font.font(PIN_FONT_SIZE));
+        pinName.setFill(PIN_NAME_COLOR);
+        double width = pinName.getBoundsInLocal().getWidth();
+        double height = pinName.getBoundsInLocal().getHeight();
+        //pinName.setLayoutY(-p.getY() + height * 0.3);
+        g.getChildren().add(pinName);
+        
+        // Direction and Swap-Level
+        Text dirSwap = new Text(p.getDirection().code() + "  " + p.getSwapLevel());
+        dirSwap.setFont(Font.font(PIN_FONT_SIZE * 0.7));
+        dirSwap.setFill(PIN_DIR_SWAP_COLOR);
+        double dsWidth = dirSwap.getBoundsInLocal().getWidth();
+        double dsHeight = dirSwap.getBoundsInLocal().getHeight();
+        //pinName.setLayoutY(-p.getY() + height * 0.3);
+        g.getChildren().add(dirSwap);
+        
+        
+        if (rot == 270) {
+            pinName.setLayoutX(  p.getX() /*- height/2 */  - width/2 );
+            pinName.setLayoutY( -p.getY() + width/2 + height * 0.3 + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
+            pinName.setRotate(90);
+            
+            dirSwap.setLayoutX(  p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight/2 - dsWidth/2  );
+            dirSwap.setLayoutY( -p.getY() - dsWidth/3 - PIN_DIR_SWAP_OFFSET );
+            dirSwap.setRotate(270);
+        } else if (rot == 180) {
+            pinName.setLayoutX( p.getX() - pinLen - dotRadius*2.0 - width - PIN_NAME_MARGIN);
+            pinName.setLayoutY(-p.getY() + height * 0.3);
+            
+            dirSwap.setLayoutX(p.getX() + PIN_DIR_SWAP_OFFSET  );
+            dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
+        } else if ( rot == 90 ) {
+            // Rotate Node rotates on center, so we need to compensate for that.
+            pinName.setLayoutX( p.getX() /*- height/2 */  - width/2 );
+            pinName.setLayoutY( -p.getY() - width/2 + height * 0.3 -  pinLen - dotRadius*2.0 - PIN_NAME_MARGIN );
+            pinName.setRotate(90);
+            
+            dirSwap.setLayoutX( p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight/2 - dsWidth/2 );
+            dirSwap.setLayoutY( -p.getY() + dsWidth/2 + dsHeight/3  + PIN_DIR_SWAP_OFFSET );
+            dirSwap.setRotate(90);
+        } else {
+            pinName.setLayoutX( p.getX() + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
+            pinName.setLayoutY(-p.getY() + height * 0.3);
+            
+            dirSwap.setLayoutX( p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth );
+            dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
+       }
+        
+        g.getChildren().add(line);
+        
         
         ElementCircle originCircle = new ElementCircle();
         originCircle.setX(p.getX());
         originCircle.setY(p.getY());
-        originCircle.setRadius(0.635);
-        originCircle.setWidth(0.07);
-        
-        
-        g.getChildren().add(line);
+        originCircle.setRadius(ORIGIN_CIRCLE_RADIUS);
+        originCircle.setWidth(ORIGIN_CIRCLE_LINE_WIDTH);
         // Origin Circle
-        g.getChildren().add( createCircleNode(originCircle, new Color(1.0,1.0,1.0,0.1)) );
+        g.getChildren().add( createCircleNode(originCircle, ORIGIN_CIRCLE_COLOR) );
         
         return g;
     }
@@ -274,7 +442,8 @@ public class LibraryElementNode {
     /**
      * <circle x="3.6068" y="0" radius="1.016" width="0.508" layer="94"/>
      * 
-     * @param c
+     * @param ec ElementCircle object
+     * @param color to make the circle
      * @return 
      */
     public static Node createCircleNode( ElementCircle ec, Color color ) {
