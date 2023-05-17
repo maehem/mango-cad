@@ -255,7 +255,8 @@ public class LibraryElementNode {
         if ( p.getFunction() == PinFunction.DOT || p.getFunction() == PinFunction.DOTCLK ) {
             dotRadius = DOT_CIRCLE_RADIUS;
         }
-        double rot = p.getRotation(); // 0, 90, 180, 270
+        
+        int rot = (int) p.getRotation(); // 0, 90, 180, 270
 
         Group g = new Group();
         
@@ -268,21 +269,18 @@ public class LibraryElementNode {
         // X, Y, Length
         double pinLen = 0;
         switch (p.getLength()) {
-            case LONG   -> { pinLen = 7.52; }
-            case MIDDLE -> { pinLen = 5.08; }
-            case SHORT  -> { pinLen = 2.54; }
+            case LONG   -> { pinLen = 7.52; } // 0.3 inch
+            case MIDDLE -> { pinLen = 5.08; } // 0.2 inch
+            case SHORT  -> { pinLen = 2.54; } // 0.1 inch
             case POINT  -> {} // Already zero.
         }
         pinLen -= dotRadius*2.0;
         
-        if (rot == 270) {
-            line.setEndY(-p.getY() + pinLen);
-        } else if (rot == 180) {
-            line.setEndX(p.getX() - pinLen );
-        } else if ( rot == 90 ) {
-            line.setEndY(-p.getY() - pinLen);
-        } else {
-            line.setEndX(p.getX() + pinLen);
+        switch (rot) {
+            case 270 -> line.setEndY(-p.getY() + pinLen);
+            case 180 -> line.setEndX(p.getX() - pinLen );
+            case 90  -> line.setEndY(-p.getY() - pinLen);
+            default  -> line.setEndX(p.getX() + pinLen);
         }
 
         // When you need some dots.
@@ -292,83 +290,81 @@ public class LibraryElementNode {
             dotCircle.setRadius(dotRadius);
             dotCircle.setWidth(DOT_CIRCLE_LINE_WIDTH);
 
-            if (rot == 270) {
-                dotCircle.setX(line.getEndX());
-                dotCircle.setY(-line.getEndY() - dotRadius);
-            } else if (rot == 180) {
-                dotCircle.setX(line.getEndX() - dotRadius);
-                dotCircle.setY(-line.getEndY());
-            } else if ( rot == 90 ) {
-                dotCircle.setX(line.getEndX());
-                dotCircle.setY(-line.getEndY() + dotRadius);
-            } else {
-                dotCircle.setX(line.getEndX() + dotRadius);
-                dotCircle.setY(-line.getEndY());
+            switch (rot) {
+                case 270 -> {
+                    dotCircle.setX(line.getEndX());
+                    dotCircle.setY(-line.getEndY() - dotRadius);
+                }
+                case 180 -> {
+                    dotCircle.setX(line.getEndX() - dotRadius);
+                    dotCircle.setY(-line.getEndY());
+                }
+                case 90 -> {
+                    dotCircle.setX(line.getEndX());
+                    dotCircle.setY(-line.getEndY() + dotRadius);
+                }
+                default -> {
+                    dotCircle.setX(line.getEndX() + dotRadius);
+                    dotCircle.setY(-line.getEndY());
+                }
             }
             
             g.getChildren().add( createCircleNode(dotCircle, PIN_COLOR) );
         }
-        
-        PinFunction function = p.getFunction();
-        
+                
         // Clock Function
         if ( p.getFunction() == PinFunction.CLK || p.getFunction() == PinFunction.DOTCLK ) {
             Line line1 = new Line(0,0,0,0);
-//                    line.getEndX() + dotRadius*2.0, -p.getY() - CLK_SIZE/2, 
-//                    line.getEndX(), -p.getY()
-//            );
             line1.setStroke(PIN_COLOR);
             line1.setStrokeLineCap(StrokeLineCap.ROUND);
             line1.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
             
             Line line2 = new Line();
-//                    line.getEndX() + dotRadius*2.0, -p.getY() + CLK_SIZE/2, 
-//                    line.getEndX(), -p.getY()
-//            );
             line2.setStroke(PIN_COLOR);
             line2.setStrokeLineCap(StrokeLineCap.ROUND);
             line2.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
             
-            if (rot == 270) {
-                line1.setStartX(line.getEndX() - CLK_SIZE/2.0);
-                line1.setStartY(line.getEndY() + dotRadius*2.0);
-                line1.setEndX(line.getEndX() );
-                line1.setEndY(line1.getStartY()+CLK_SIZE);
-                
-                line2.setStartX(line.getEndX() + CLK_SIZE/2.0);
-                line2.setStartY(line.getEndY() + dotRadius*2.0);
-                line2.setEndX(line.getEndX());
-                line2.setEndY(line1.getStartY()+CLK_SIZE);
-            } else if (rot == 180) {
-                line1.setStartX(line.getEndX());
-                line1.setStartY(line.getEndY() + CLK_SIZE/2.0);
-                line1.setEndX(line1.getStartX() - CLK_SIZE );
-                line1.setEndY(-p.getY());
-                
-                line2.setStartX(line.getEndX());
-                line2.setStartY(line.getEndY() - CLK_SIZE/2.0);
-                line2.setEndX(line1.getStartX() - CLK_SIZE );
-                line2.setEndY(-p.getY());
-            } else if ( rot == 90 ) {
-                line1.setStartX(line.getEndX() - CLK_SIZE/2.0);
-                line1.setStartY(line.getEndY()-dotRadius*2.0);
-                line1.setEndX(line.getEndX());
-                line1.setEndY(line1.getStartY()-CLK_SIZE);
-                
-                line2.setStartX(line.getEndX() + CLK_SIZE/2.0);
-                line2.setStartY(line.getEndY()-dotRadius*2.0);
-                line2.setEndX(line.getEndX());
-                line2.setEndY(line1.getStartY()-CLK_SIZE);
-            } else {
-                line1.setStartX(line.getEndX() + dotRadius*2.0 );
-                line1.setStartY(line.getEndY() + CLK_SIZE/2.0);
-                line1.setEndX(line1.getStartX() + CLK_SIZE );
-                line1.setEndY(-p.getY());
-                
-                line2.setStartX(line.getEndX() + dotRadius*2.0 );
-                line2.setStartY(line.getEndY() - CLK_SIZE/2.0);
-                line2.setEndX(line1.getStartX() + CLK_SIZE );
-                line2.setEndY(-p.getY());
+            switch (rot) {
+                case 270 -> {
+                    line1.setStartX(line.getEndX() - CLK_SIZE/2.0);
+                    line1.setStartY(line.getEndY() + dotRadius*2.0);
+                    line1.setEndX(line.getEndX() );
+                    line1.setEndY(line1.getStartY()+CLK_SIZE);
+                    line2.setStartX(line.getEndX() + CLK_SIZE/2.0);
+                    line2.setStartY(line.getEndY() + dotRadius*2.0);
+                    line2.setEndX(line.getEndX());
+                    line2.setEndY(line1.getStartY()+CLK_SIZE);
+                }
+                case 180 -> {
+                    line1.setStartX(line.getEndX());
+                    line1.setStartY(line.getEndY() + CLK_SIZE/2.0);
+                    line1.setEndX(line1.getStartX() - CLK_SIZE );
+                    line1.setEndY(-p.getY());
+                    line2.setStartX(line.getEndX());
+                    line2.setStartY(line.getEndY() - CLK_SIZE/2.0);
+                    line2.setEndX(line1.getStartX() - CLK_SIZE );
+                    line2.setEndY(-p.getY());
+                }
+                case 90 -> {
+                    line1.setStartX(line.getEndX() - CLK_SIZE/2.0);
+                    line1.setStartY(line.getEndY()-dotRadius*2.0);
+                    line1.setEndX(line.getEndX());
+                    line1.setEndY(line1.getStartY()-CLK_SIZE);
+                    line2.setStartX(line.getEndX() + CLK_SIZE/2.0);
+                    line2.setStartY(line.getEndY()-dotRadius*2.0);
+                    line2.setEndX(line.getEndX());
+                    line2.setEndY(line1.getStartY()-CLK_SIZE);
+                }
+                default -> {
+                    line1.setStartX(line.getEndX() + dotRadius*2.0 );
+                    line1.setStartY(line.getEndY() + CLK_SIZE/2.0);
+                    line1.setEndX(line1.getStartX() + CLK_SIZE );
+                    line1.setEndY(-p.getY());
+                    line2.setStartX(line.getEndX() + dotRadius*2.0 );
+                    line2.setStartY(line.getEndY() - CLK_SIZE/2.0);
+                    line2.setEndX(line1.getStartX() + CLK_SIZE );
+                    line2.setEndY(-p.getY());
+                }
             }
             
             g.getChildren().addAll(line1, line2);
@@ -390,40 +386,40 @@ public class LibraryElementNode {
         dirSwap.setFill(PIN_DIR_SWAP_COLOR);
         double dsWidth = dirSwap.getBoundsInLocal().getWidth();
         double dsHeight = dirSwap.getBoundsInLocal().getHeight();
-        //pinName.setLayoutY(-p.getY() + height * 0.3);
         g.getChildren().add(dirSwap);
         
         
-        if (rot == 270) {
-            pinName.setLayoutX(  p.getX() /*- height/2 */  - width/2 );
-            pinName.setLayoutY( -p.getY() + width/2 + height * 0.3 + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
-            pinName.setRotate(90);
-            
-            dirSwap.setLayoutX(  p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight/2 - dsWidth/2  );
-            dirSwap.setLayoutY( -p.getY() - dsWidth/3 - PIN_DIR_SWAP_OFFSET );
-            dirSwap.setRotate(270);
-        } else if (rot == 180) {
-            pinName.setLayoutX( p.getX() - pinLen - dotRadius*2.0 - width - PIN_NAME_MARGIN);
-            pinName.setLayoutY(-p.getY() + height * 0.3);
-            
-            dirSwap.setLayoutX(p.getX() + PIN_DIR_SWAP_OFFSET  );
-            dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
-        } else if ( rot == 90 ) {
-            // Rotate Node rotates on center, so we need to compensate for that.
-            pinName.setLayoutX( p.getX() /*- height/2 */  - width/2 );
-            pinName.setLayoutY( -p.getY() - width/2 + height * 0.3 -  pinLen - dotRadius*2.0 - PIN_NAME_MARGIN );
-            pinName.setRotate(90);
-            
-            dirSwap.setLayoutX( p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight/2 - dsWidth/2 );
-            dirSwap.setLayoutY( -p.getY() + dsWidth/2 + dsHeight/3  + PIN_DIR_SWAP_OFFSET );
-            dirSwap.setRotate(90);
-        } else {
-            pinName.setLayoutX( p.getX() + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
-            pinName.setLayoutY(-p.getY() + height * 0.3);
-            
-            dirSwap.setLayoutX( p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth );
-            dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
-       }
+        switch (rot) {
+            case 270 -> {
+                pinName.setLayoutX(  p.getX() - width/2 );
+                pinName.setLayoutY( -p.getY() + width/2 + height * 0.3 + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
+                pinName.setRotate(90);
+                dirSwap.setLayoutX(  p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight/2 - dsWidth/2  );
+                dirSwap.setLayoutY( -p.getY() - dsWidth/3 - PIN_DIR_SWAP_OFFSET );
+                dirSwap.setRotate(270);
+            }
+            case 180 -> {
+                pinName.setLayoutX( p.getX() - pinLen - dotRadius*2.0 - width - PIN_NAME_MARGIN);
+                pinName.setLayoutY(-p.getY() + height * 0.3);
+                dirSwap.setLayoutX( p.getX() + PIN_DIR_SWAP_OFFSET  );
+                dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
+            }
+            case 90 -> {
+                // Rotate Node rotates on center, so we need to compensate for that.
+                pinName.setLayoutX(  p.getX() - width/2 );
+                pinName.setLayoutY( -p.getY() - width/2 + height * 0.3 -  pinLen - dotRadius*2.0 - PIN_NAME_MARGIN );
+                pinName.setRotate(90);
+                dirSwap.setLayoutX(  p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight/2 - dsWidth/2 );
+                dirSwap.setLayoutY( -p.getY() + dsWidth/2 + dsHeight/3  + PIN_DIR_SWAP_OFFSET );
+                dirSwap.setRotate(90);
+            }
+            default -> {
+                pinName.setLayoutX( p.getX() + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
+                pinName.setLayoutY(-p.getY() + height * 0.3);
+                dirSwap.setLayoutX( p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth );
+                dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
+            }
+        }
         
         g.getChildren().add(line);
         
