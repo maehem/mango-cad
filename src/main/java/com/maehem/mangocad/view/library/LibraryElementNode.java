@@ -145,6 +145,13 @@ public class LibraryElementNode {
         double width = tt.getBoundsInLocal().getWidth();
         double height = tt.getBoundsInLocal().getHeight();
         
+        int rot = (int) et.getRotation();
+        
+        double pxL = et.getX();
+        double pxR = et.getX() - width;
+        double pL = rot==180?pxR:pxL;
+        double pR = rot==180?pxL:pxL;
+        
         Pane ttG = new Pane(tt);
         ttG.setPrefHeight(et.getSize());
 
@@ -155,11 +162,11 @@ public class LibraryElementNode {
                 ttG.setLayoutY(-et.getY());
             }
             case BOTTOM_LEFT -> {
-                ttG.setLayoutX(et.getX());
+                ttG.setLayoutX(pL);
                 ttG.setLayoutY(-et.getY());
             }
             case BOTTOM_RIGHT -> {
-                ttG.setLayoutX(et.getX() - width);
+                ttG.setLayoutX(pR);
                 ttG.setLayoutY(-et.getY());
             }
             case CENTER -> {
@@ -167,11 +174,11 @@ public class LibraryElementNode {
                 ttG.setLayoutY(-et.getY() + height * 0.3);
             }
             case CENTER_LEFT -> {
-                ttG.setLayoutX(et.getX());
+                ttG.setLayoutX(pL);
                 ttG.setLayoutY(-et.getY() + height * 0.3);
             }
             case CENTER_RIGHT -> {
-                ttG.setLayoutX(et.getX() - width);
+                ttG.setLayoutX(pR);
                 ttG.setLayoutY(-et.getY() + height * 0.3);
             }
             case TOP_CENTER -> {
@@ -179,11 +186,11 @@ public class LibraryElementNode {
                 ttG.setLayoutY(-et.getY() + height * 0.66);
             }
             case TOP_LEFT -> {
-                ttG.setLayoutX(et.getX());
+                ttG.setLayoutX(pL);
                 ttG.setLayoutY(-et.getY() + height * 0.66);
             }
             case TOP_RIGHT -> {
-                ttG.setLayoutX(et.getX() - width);
+                ttG.setLayoutX(pR);
                 ttG.setLayoutY(-et.getY() + height * 0.66);
             }
             
