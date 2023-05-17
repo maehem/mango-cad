@@ -28,6 +28,8 @@ public class ElementText extends _AQuantum {
     private int    distance = 50;  // Line to line distance
     private double width = 8.0; // Eagle called it ratio
     private double rotation = 0.0;
+    private boolean mirror = false;
+    private boolean spin = false;
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private String value;
 
@@ -87,6 +89,34 @@ public class ElementText extends _AQuantum {
         this.rotation = rotation;
     }
 
+    /**
+     * @return the mirror
+     */
+    public boolean isMirror() {
+        return mirror;
+    }
+
+    /**
+     * @param mirror the mirror to set
+     */
+    public void setMirror(boolean mirror) {
+        this.mirror = mirror;
+    }
+    
+    /**
+     * @return the mirror
+     */
+    public boolean isSpin() {
+        return spin;
+    }
+
+    /**
+     * @param mirror the mirror to set
+     */
+    public void setSpin(boolean spin) {
+        this.spin = spin;
+    }
+    
     /**
      * @return the align
      */

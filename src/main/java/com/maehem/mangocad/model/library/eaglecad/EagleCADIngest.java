@@ -72,9 +72,9 @@ import org.w3c.dom.NodeList;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class EagleCADIngest {
-
+    
     private static final Logger LOGGER = ControlPanel.LOGGER;
-
+    
     public static void ingestLayer(Node node, LayerElement[] layers) throws EagleCADLibraryFileException {
 
         //LOGGER.log(Level.SEVERE, "Ingest Layer: " + node.getTextContent());
@@ -82,33 +82,33 @@ public class EagleCADIngest {
 //            if (!item.getNodeName().equals("layer")) {
 //                continue;
 //            }
-            NamedNodeMap attributes = node.getAttributes();
-            
-            LayerElement layer = new LayerElement();
-            LOGGER.log(Level.SEVERE, "Ingest Layer: " + attributes.getNamedItem("number").getNodeValue() );
-            layer.setNumber( Integer.parseInt(
-                    attributes.getNamedItem("number").getNodeValue()
-            ));
+        NamedNodeMap attributes = node.getAttributes();
+        
+        LayerElement layer = new LayerElement();
+        LOGGER.log(Level.FINER, "Ingest Layer: " + attributes.getNamedItem("number").getNodeValue());
+        layer.setNumber(Integer.parseInt(
+                attributes.getNamedItem("number").getNodeValue()
+        ));
+        
+        layer.setName(attributes.getNamedItem("name").getNodeValue());
+        layer.setColorIndex(Integer.parseInt(
+                attributes.getNamedItem("color").getNodeValue()
+        ));
+        layer.setFill(Integer.parseInt(
+                attributes.getNamedItem("fill").getNodeValue()
+        ));
+        layer.setVisible(
+                attributes.getNamedItem("visible").getNodeValue().equals("yes")
+        );
+        layer.setActive(
+                attributes.getNamedItem("active").getNodeValue().equals("yes")
+        );
 
-            layer.setName(attributes.getNamedItem("name").getNodeValue());
-            layer.setColorIndex(Integer.parseInt(
-                    attributes.getNamedItem("color").getNodeValue()
-            ));
-            layer.setFill(Integer.parseInt(
-                    attributes.getNamedItem("fill").getNodeValue()
-            ));
-            layer.setVisible(
-                    attributes.getNamedItem("visible").getNodeValue().equals("yes")
-            );
-            layer.setActive(
-                    attributes.getNamedItem("active").getNodeValue().equals("yes")
-            );
-
-            //ingestLayerElements(item.getChildNodes(), layer);
-            layers[layer.getNumber()] = layer;
+        //ingestLayerElements(item.getChildNodes(), layer);
+        layers[layer.getNumber()] = layer;
         
     }
-
+    
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -118,13 +118,13 @@ public class EagleCADIngest {
             }
             Footprint pkg = new Footprint();
             pkg.setName(item.getAttributes().getNamedItem("name").getNodeValue());
-
+            
             ingestPackageElements(item.getChildNodes(), pkg);
-
+            
             packages.add(pkg);
         }
     }
-
+    
     public static void ingestPackages3d(Node node, ArrayList<Package3d> packages3d) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -136,13 +136,13 @@ public class EagleCADIngest {
             pkg.setName(item.getAttributes().getNamedItem("name").getNodeValue());
             pkg.setUrn(item.getAttributes().getNamedItem("urn").getNodeValue());
             pkg.setType(item.getAttributes().getNamedItem("type").getNodeValue());
-
+            
             ingestPackage3dElements(item.getChildNodes(), pkg);
-
+            
             packages3d.add(pkg);
         }
     }
-
+    
     public static void ingestSymbols(Node node, ArrayList<Symbol> symbols) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -152,13 +152,13 @@ public class EagleCADIngest {
             }
             Symbol symbol = new Symbol();
             symbol.setName(item.getAttributes().getNamedItem("name").getNodeValue());
-
+            
             ingestSymbolElements(item.getChildNodes(), symbol);
-
+            
             symbols.add(symbol);
         }
     }
-
+    
     public static void ingestDeviceSets(Node node, ArrayList<DeviceSet> deviceSets) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -170,13 +170,13 @@ public class EagleCADIngest {
             deviceSet.setName(item.getAttributes().getNamedItem("name").getNodeValue());
             deviceSet.setPrefix(item.getAttributes().getNamedItem("prefix").getNodeValue());
             deviceSet.setUservalue(item.getAttributes().getNamedItem("uservalue").getNodeValue().equals("yes"));
-
+            
             ingestDeviceSetElements(item.getChildNodes(), deviceSet);
-
+            
             deviceSets.add(deviceSet);
         }
     }
-
+    
     private static void ingestPackageElements(NodeList nodes, Footprint pkg) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -210,7 +210,7 @@ public class EagleCADIngest {
             }
         }
     }
-
+    
     private static void ingestPackage3dElements(NodeList nodes, Package3d pkg) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -228,7 +228,7 @@ public class EagleCADIngest {
             }
         }
     }
-
+    
     private static void ingestSymbolElements(NodeList nodes, Symbol symbol) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -262,7 +262,7 @@ public class EagleCADIngest {
             }
         }
     }
-
+    
     private static void ingestDeviceSetElements(NodeList nodes, DeviceSet deviceSet) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -284,7 +284,7 @@ public class EagleCADIngest {
             }
         }
     }
-
+    
     private static void ingestDescription(LibraryElement libElement, Node node) {
         Description desc = new Description();
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -293,22 +293,22 @@ public class EagleCADIngest {
                 desc.setLocale(langAttribute.getNodeValue());
             } // else default is en_US so we don't set it.
         }
-
+        
         String serializeDoc = serializeDoc(node);
         Pattern pattern = Pattern.compile("<description language=\"..\">(.*)</description>");
-
+        
         Matcher matcher = pattern.matcher(serializeDoc);
-
+        
         if (matcher.find()) {
             //LOGGER.log(Level.SEVERE, "Matcher Outout: " + matcher.group(1));
             desc.setValue(matcher.group(1));
         } else {
             desc.setValue("");
         }
-
+        
         libElement.getDescriptions().add(desc);
     }
-
+    
     public static void ingestLibraryDescription(Library library, Node node) {
         Description desc = new Description();
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -325,7 +325,7 @@ public class EagleCADIngest {
         }
         library.getDescriptions().add(desc);
     }
-
+    
     private static void ingestWire(LibraryElement pkg, Node node) throws EagleCADLibraryFileException {
         Wire wire = new Wire();
         NamedNodeMap attributes = node.getAttributes();
@@ -364,10 +364,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Wire has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         pkg.getElements().add(wire);
     }
-
+    
     private static void ingestPadSmd(Footprint pkg, Node node) throws EagleCADLibraryFileException {
         PadSMD smd = new PadSMD();
         NamedNodeMap attributes = node.getAttributes();
@@ -413,10 +413,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("SMD has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         pkg.getElements().add(smd);
     }
-
+    
     private static void ingestPadThd(Footprint pkg, Node node) throws EagleCADLibraryFileException {
         PadTHD smd = new PadTHD();
         NamedNodeMap attributes = node.getAttributes();
@@ -463,10 +463,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Pad has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         pkg.getElements().add(smd);
     }
-
+    
     private static void ingestText(LibraryElement element, Node node) throws EagleCADLibraryFileException {
         ElementText text = new ElementText();
         NamedNodeMap attributes = node.getAttributes();
@@ -484,14 +484,27 @@ public class EagleCADIngest {
                     text.setAlign(TextAlign.fromCode(value));
                     break;
                 case "rot":
-                    // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    // Found an Eagle file where the Rot value was MRnn instead of Rnn
-                    // But that's not in the XML spec.  Eagle CAD parses it fine though.
                     try {
-                    text.setRotation(Double.parseDouble(value.substring(1)));
+                    if (value.startsWith("SR")) { // Spin Flag
+                        text.setSpin(true);
+                        text.setRotation(Double.parseDouble(value.substring(2)));
+                    } else if (value.startsWith("MR")) { // Mirror Flag
+                        text.setMirror(true);
+                        text.setRotation(Double.parseDouble(value.substring(2)));
+                    } else {
+                        text.setRotation(Double.parseDouble(value.substring(1)));
+                    }
                 } catch (NumberFormatException ex) {
-                    text.setRotation(Double.parseDouble(value.substring(2)));
+                    LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn't parse 'text:rot': " + value);
                 }
+                // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                // Found an Eagle file where the Rot value was MRnn instead of Rnn
+                // But that's not in the XML spec.  Eagle CAD parses it fine though.
+//                    try {
+//                    text.setRotation(Double.parseDouble(value.substring(1)));
+//                } catch (NumberFormatException ex) {
+//                    text.setRotation(Double.parseDouble(value.substring(2)));
+//                }
                 break;
                 case "distance":
                     text.setDistance(Integer.parseInt(value));
@@ -512,12 +525,12 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Text has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         text.setValue(node.getChildNodes().item(0).getNodeValue());
-
+        
         element.getElements().add(text);
     }
-
+    
     private static void ingestPolygon(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
         ElementPolygon poly = new ElementPolygon();
         NamedNodeMap attributes = node.getAttributes();
@@ -553,7 +566,7 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -578,14 +591,14 @@ public class EagleCADIngest {
                     default:
                         throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
                 }
-
+                
             }
             poly.getVertices().add(v);
         }
-
+        
         libElement.getElements().add(poly);
     }
-
+    
     private static void ingestRectangle(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
         ElementRectangle rect = new ElementRectangle();
         NamedNodeMap attributes = node.getAttributes();
@@ -615,10 +628,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Rectangle has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         libElement.getElements().add(rect);
     }
-
+    
     private static void ingestCircle(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
         ElementCircle circ = new ElementCircle();
         NamedNodeMap attributes = node.getAttributes();
@@ -645,10 +658,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Circle has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         libElement.getElements().add(circ);
     }
-
+    
     private static void ingestHole(Footprint pkg, Node node) throws EagleCADLibraryFileException {
         Hole hole = new Hole();
         NamedNodeMap attributes = node.getAttributes();
@@ -669,10 +682,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Hole has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         pkg.getElements().add(hole);
     }
-
+    
     private static void ingestVia(Footprint pkg, Node node) throws EagleCADLibraryFileException {
         Via via = new Via();
         NamedNodeMap attributes = node.getAttributes();
@@ -705,10 +718,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Via has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         pkg.getElements().add(via);
     }
-
+    
     private static void ingestPin(Symbol symbol, Node node) throws EagleCADLibraryFileException {
         Pin pin = new Pin();
         NamedNodeMap attributes = node.getAttributes();
@@ -747,10 +760,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         symbol.getElements().add(pin);
     }
-
+    
     private static void ingestGates(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -758,11 +771,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("gate")) {
                 continue;
             }
-
+            
             ingestGate(deviceSet, item);
         }
     }
-
+    
     private static void ingestDevices(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -770,11 +783,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("device")) {
                 continue;
             }
-
+            
             ingestDevice(deviceSet, item);
         }
     }
-
+    
     private static void ingestGate(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         Gate gate = new Gate();
         NamedNodeMap attributes = node.getAttributes();
@@ -808,10 +821,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         deviceSet.getGates().add(gate);
     }
-
+    
     private static void ingestDevice(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         Device device = new Device();
         NamedNodeMap attributes = node.getAttributes();
@@ -832,9 +845,9 @@ public class EagleCADIngest {
                 default:
                     throw new EagleCADLibraryFileException("Device has unknown attribute: [" + item.getNodeName() + "]");
             }
-
+            
         }
-
+        
         NodeList childNodes = node.getChildNodes();
         for (int j = 0; j < childNodes.getLength(); j++) {
             Node subItem = childNodes.item(j);
@@ -855,10 +868,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Device childNode has unknown attribute: [" + subItem.getNodeName() + "]");
             }
         }
-
+        
         deviceSet.getDevices().add(device);
     }
-
+    
     private static void ingestConnections(Node node, Device device) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -866,11 +879,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("connect")) {
                 continue;
             }
-
+            
             ingestConnection(device, item);
         }
     }
-
+    
     private static void ingestTechnologies(Node node, Device device) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -878,11 +891,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("technology")) {
                 continue;
             }
-
+            
             ingestTechnology(device, item);
         }
     }
-
+    
     private static void ingestDevicePackagesInstances3d(Node node, Device device) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -890,11 +903,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("technology")) {
                 continue;
             }
-
+            
             ingestDevicePackageInstance3d(device, item);
         }
     }
-
+    
     private static void ingestConnection(Device device, Node node) throws EagleCADLibraryFileException {
         Connection connection = new Connection();
         NamedNodeMap attributes = node.getAttributes();
@@ -918,10 +931,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Connect has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         device.getConnections().add(connection);
     }
-
+    
     private static void ingestTechnology(Device device, Node node) throws EagleCADLibraryFileException {
         Technology technology = new Technology();
         NamedNodeMap attributes = node.getAttributes();
@@ -935,21 +948,21 @@ public class EagleCADIngest {
                 default:
                     throw new EagleCADLibraryFileException("Technology has unknown attribute: [" + item.getNodeName() + "]");
             }
-
+            
             NodeList childNodes = node.getChildNodes();
             for (int j = 0; j < childNodes.getLength(); j++) {
                 Node attributeNode = childNodes.item(j);
                 if (!attributeNode.getNodeName().equals("attribute")) {
                     continue;
                 }
-
+                
                 ingestAttribute(technology, attributeNode);
             }
         }
-
+        
         device.getTechnologies().add(technology);
     }
-
+    
     private static void ingestDevicePackageInstance3d(Device device, Node node) throws EagleCADLibraryFileException {
         DevicePackageInstance3d packageInstance = new DevicePackageInstance3d();
         NamedNodeMap attributes = node.getAttributes();
@@ -966,7 +979,7 @@ public class EagleCADIngest {
         }
         device.getPackageInstances().add(packageInstance);
     }
-
+    
     private static void ingestAttribute(Technology technology, Node node) throws EagleCADLibraryFileException {
         Attribute attribute = new Attribute();
         NamedNodeMap attributes = node.getAttributes();
@@ -1015,10 +1028,10 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Attribute has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-
+        
         technology.getAttributes().add(attribute);
     }
-
+    
     private static void ingestPackage3dInstances(Package3d packages, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -1026,7 +1039,7 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("packageinstance")) {
                 continue;
             }
-
+            
             NamedNodeMap attributes = item.getAttributes();
             for (int j = 0; j < attributes.getLength(); j++) {
                 Node attr = attributes.item(j);
@@ -1040,7 +1053,7 @@ public class EagleCADIngest {
                         );
                 }
             }
-
+            
         }
     }
 
