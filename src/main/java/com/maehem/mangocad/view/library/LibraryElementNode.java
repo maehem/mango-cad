@@ -281,15 +281,13 @@ public class LibraryElementNode {
     
     public static Node createPinNode(Pin p) {
         
-        // TODO:  VISIBLE:  Ghost Text and smaller font
-        //                
                         
         final double PIN_NAME_MARGIN = 1.5;
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
         final double PIN_FONT_SIZE = 2.0;
         final Color PIN_COLOR = new Color(0.2,0.2,0.2,1.0);
         final Color PIN_COLOR_GHOST = new Color(0.2,0.2,0.2,0.3);
-        final Color PIN_NAME_COLOR = new Color(1.0,1.0,1.0,0.2);
+        //final Color PIN_PAD_COLOR = new Color(1.0,1.0,1.0,0.2);
         final Color PIN_DIR_SWAP_COLOR = new Color(0.3,1.0,0.3,0.5);
         final double PIN_DIR_SWAP_OFFSET = PIN_FONT_SIZE * 0.2;
         final Color ORIGIN_CIRCLE_COLOR = new Color(1.0,1.0,1.0,0.1);
@@ -299,11 +297,37 @@ public class LibraryElementNode {
         final double DOT_CIRCLE_LINE_WIDTH = PIN_STROKE_WIDTH*1.7;
         final double CLK_SIZE = 1.3;
         
+        String padValue = "9";  // TODO get from p
+        int padHang = 0;
+        switch (p.getLength()) {
+            case LONG   -> { padHang = 3; }
+            case MIDDLE -> { padHang = 2; }
+            case SHORT  -> { padHang = 1; }
+            case POINT  -> { padHang = 0; }
+        }
+        
+        for ( int i=1; i<padHang; i++  ) {
+            padValue+= "9";
+        }
+        
+        // Now check if there's an actual value set (as in schematic) and
+        // use that instead.
+        // p.hasPadValue()
+
         // There might be a dot on pin.
         double dotRadius = 0;
         if ( p.getFunction() == PinFunction.DOT || p.getFunction() == PinFunction.DOTCLK ) {
             dotRadius = DOT_CIRCLE_RADIUS;
         }
+        
+        double pinLen = padHang*2.54;
+//        switch (p.getLength()) {
+//            case LONG   -> { pinLen = 7.52; } // 0.3 inch
+//            case MIDDLE -> { pinLen = 5.08; } // 0.2 inch
+//            case SHORT  -> { pinLen = 2.54; } // 0.1 inch
+//            case POINT  -> {} // Already zero.
+//        }
+        pinLen -= dotRadius*2.0;
         
         int rot = (int) p.getRotation(); // 0, 90, 180, 270
 
@@ -332,16 +356,6 @@ public class LibraryElementNode {
                 padColor = PIN_COLOR_GHOST;
             }
         }
-        
-        // X, Y, Length
-        double pinLen = 0;
-        switch (p.getLength()) {
-            case LONG   -> { pinLen = 7.52; } // 0.3 inch
-            case MIDDLE -> { pinLen = 5.08; } // 0.2 inch
-            case SHORT  -> { pinLen = 2.54; } // 0.1 inch
-            case POINT  -> {} // Already zero.
-        }
-        pinLen -= dotRadius*2.0;
         
         switch (rot) {
             case 270 -> line.setEndY(-p.getY() + pinLen);
@@ -446,20 +460,19 @@ public class LibraryElementNode {
         double height = pinName.getBoundsInLocal().getHeight();
         g.getChildren().add(pinName);
         
-        String padText = "?";
-        switch (p.getLength()) {
-            case LONG   -> { padText = "999"; }
-            case MIDDLE -> { padText = "99"; }
-            case SHORT  -> { padText = "9"; }
-            case POINT  -> { padText = "x"; } 
-        }
         
-        Text padName = new Text(padText);
+        //Text padName = new Text(padText);
+        Text padName = new Text(padValue);
         padName.setFont(Font.font(PIN_FONT_SIZE*0.8));
         padName.setFill(padColor);
         double padWidth = padName.getBoundsInLocal().getWidth();
         double padHeight = padName.getBoundsInLocal().getHeight();
         g.getChildren().add(padName);
+        
+        Text padChar = new Text("A");
+        padChar.setFont(padName.getFont());
+        double padCharWidth = padChar.getBoundsInLocal().getWidth();
+        
 
         // Direction and Swap-Level
         Text dirSwap = new Text(p.getDirection().code() + "  " + p.getSwapLevel());
@@ -476,8 +489,8 @@ public class LibraryElementNode {
                 pinName.setLayoutY( -p.getY() + width/2 + height * 0.3 + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
                 pinName.setRotate(90);
                 
-                padName.setLayoutX(  p.getX() - padWidth/2);
-                padName.setLayoutY( -p.getY() - padWidth/2 - padHeight*0.3 );
+                padName.setLayoutX(  p.getX() - padWidth/2 + padHeight*0.5 );
+                padName.setLayoutY( -p.getY()  - padWidth/2 + padHeight*0.3 + padCharWidth*padHang );
                 padName.setRotate(90);
                 
                 dirSwap.setLayoutX(  p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight/2 - dsWidth/2  );
@@ -488,7 +501,7 @@ public class LibraryElementNode {
                 pinName.setLayoutX( p.getX() - pinLen - dotRadius*2.0 - width - PIN_NAME_MARGIN);
                 pinName.setLayoutY(-p.getY() + height * 0.3);
                 
-                padName.setLayoutX( p.getX() - padWidth);
+                padName.setLayoutX( p.getX() - padCharWidth*padHang );
                 padName.setLayoutY(-p.getY() - padHeight*0.2 );
                 
                 dirSwap.setLayoutX( p.getX() + PIN_DIR_SWAP_OFFSET  );
@@ -500,8 +513,8 @@ public class LibraryElementNode {
                 pinName.setLayoutY( -p.getY() - width/2 + height*0.3 -  pinLen - dotRadius*2.0 - PIN_NAME_MARGIN );
                 pinName.setRotate(90);
 
-                padName.setLayoutX(  p.getX() - padWidth/2);
-                padName.setLayoutY( -p.getY() - padWidth/2 + padHeight*0.3 );
+                padName.setLayoutX(  p.getX() - padWidth/2 + padHeight/2 /*+ padHeight*0.3*/ );
+                padName.setLayoutY( -p.getY() + padHeight*0.3 - padCharWidth*padHang + padWidth/2.0 );
                 padName.setRotate(90);
 
                 dirSwap.setLayoutX(  p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight/2 - dsWidth/2 );
@@ -512,7 +525,7 @@ public class LibraryElementNode {
                 pinName.setLayoutX( p.getX() + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
                 pinName.setLayoutY(-p.getY() + height*0.3);
                 
-                padName.setLayoutX( p.getX() );
+                padName.setLayoutX( p.getX() - padWidth + padCharWidth*padHang ); // Hang over the pin by one char.
                 padName.setLayoutY(-p.getY() - padHeight*0.2);
                 
                 dirSwap.setLayoutX( p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth );
