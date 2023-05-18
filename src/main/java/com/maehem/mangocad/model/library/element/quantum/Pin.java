@@ -29,6 +29,7 @@ public class Pin extends _AQuantum {
     // 'layer' is not used.
     
     private String name;
+    private String padValue = null;
     private PinVisible visible = PinVisible.BOTH;
     private PinLength length = PinLength.LONG;
     private PinDirection direction = PinDirection.IO;
@@ -36,6 +37,20 @@ public class Pin extends _AQuantum {
     private int swapLevel = 0;
     private double rotation = 0;
 
+    /**
+     * Pad Value, usually pin number assigned in DeviceSet
+     * Might be null when viewed as symbol.
+     * 
+     * @return 
+     */
+    public String getPadValue() {
+        return padValue;
+    }
+    
+    public void setPadValue( String value ) {
+        this.padValue = value;
+    }
+    
 //    /**
 //     * @return the visible
 //     */

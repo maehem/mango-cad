@@ -280,7 +280,6 @@ public class LibraryElementNode {
     }
     
     public static Node createPinNode(Pin p) {
-        
                         
         final double PIN_NAME_MARGIN = 1.5;
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
@@ -297,7 +296,6 @@ public class LibraryElementNode {
         final double DOT_CIRCLE_LINE_WIDTH = PIN_STROKE_WIDTH*1.7;
         final double CLK_SIZE = 1.3;
         
-        String padValue = "9";  // TODO get from p
         int padHang = 0;
         switch (p.getLength()) {
             case LONG   -> { padHang = 3; }
@@ -306,28 +304,24 @@ public class LibraryElementNode {
             case POINT  -> { padHang = 0; }
         }
         
-        for ( int i=1; i<padHang; i++  ) {
-            padValue+= "9";
-        }
+        // Use the padValue from DeviceSet if it exists.
+        String padValue;
+        if ( p.getPadValue() != null ) {
+            padValue = p.getPadValue();
+        } else { // Fill padValue with string that matches pinLength
+            padValue = "9";
+            for (int i = 1; i < padHang; i++) {
+                padValue += "9";
+            }
+        } 
         
-        // Now check if there's an actual value set (as in schematic) and
-        // use that instead.
-        // p.hasPadValue()
-
         // There might be a dot on pin.
         double dotRadius = 0;
         if ( p.getFunction() == PinFunction.DOT || p.getFunction() == PinFunction.DOTCLK ) {
             dotRadius = DOT_CIRCLE_RADIUS;
         }
         
-        double pinLen = padHang*2.54;
-//        switch (p.getLength()) {
-//            case LONG   -> { pinLen = 7.52; } // 0.3 inch
-//            case MIDDLE -> { pinLen = 5.08; } // 0.2 inch
-//            case SHORT  -> { pinLen = 2.54; } // 0.1 inch
-//            case POINT  -> {} // Already zero.
-//        }
-        pinLen -= dotRadius*2.0;
+        double pinLen = padHang*2.54 - dotRadius*2.0;
         
         int rot = (int) p.getRotation(); // 0, 90, 180, 270
 
