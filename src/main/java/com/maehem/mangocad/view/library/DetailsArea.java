@@ -168,7 +168,7 @@ public class DetailsArea extends SplitPane {
             if (e instanceof ElementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle((ElementRectangle) e, c));
             } else if (e instanceof ElementText) {
-                g.getChildren().add(LibraryElementNode.createText((ElementText) e));
+                g.getChildren().add(LibraryElementNode.createText((ElementText) e, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if( e instanceof ElementPolygon ) {
                 g.getChildren().add(LibraryElementNode.createPolygon((ElementPolygon) e));
@@ -217,7 +217,7 @@ public class DetailsArea extends SplitPane {
                 g.getChildren().add(LibraryElementNode.createRectangle((ElementRectangle) e, c));
             } else 
             if (e instanceof ElementText) {
-                g.getChildren().add(LibraryElementNode.createText((ElementText) e));
+                g.getChildren().add(LibraryElementNode.createText((ElementText) e, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if( e instanceof ElementPolygon ) {
                 g.getChildren().add(LibraryElementNode.createPolygon((ElementPolygon) e));

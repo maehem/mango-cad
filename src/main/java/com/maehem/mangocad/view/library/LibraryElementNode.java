@@ -25,7 +25,11 @@ import com.maehem.mangocad.model.library.element.quantum.Pin;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.LONG;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.MIDDLE;
 import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.POINT;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.SHORT;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PinVisible.BOTH;
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_CENTER;
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_LEFT;
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_RIGHT;
@@ -138,19 +142,56 @@ public class LibraryElementNode {
         return p;
     }
     
-    public static Node createText(ElementText et) {
+    public static Node createText(ElementText et, Color color) {
         
         Text tt = new Text(et.getValue());
         tt.setFont(Font.font(et.getSize()));
+        tt.setFill(color);
         double width = tt.getBoundsInLocal().getWidth();
         double height = tt.getBoundsInLocal().getHeight();
         
         int rot = (int) et.getRotation();
         
-        double pxL = et.getX();
-        double pxR = et.getX() - width;
+        double rotX = 0.0;
+        double rotY = 0.0;
+        
+        switch (rot) {
+            case 270 -> {
+                tt.setRotate(270);
+                rotX = -width/2.0 + height*0.3;
+                rotY =  width/2.0 + height*0.3;
+            }
+            case 180 -> {
+                if ( et.isMirror() ) {
+                    rot = 0;
+                    rotY = height*0.66;
+                }
+            }
+            case 90-> {
+                tt.setRotate(270);
+                rotX = -width/2.0 - height*0.3;
+                rotY = -width/2.0 + height*0.3;
+            }
+            default -> {
+                if ( et.isMirror() ) {
+                    rot = 180;
+                    rotY = -height*0.66;
+                }
+            }
+        }
+        
+        double pxL = et.getX() + rotX;
+        double pxR = et.getX() - width + rotX;
         double pL = rot==180?pxR:pxL;
         double pR = rot==180?pxL:pxL;
+        
+        double pyT = -et.getY() + height * 0.66 + rotY;
+        double pyB = -et.getY() + rotY;
+        double pT = rot==180?pyB:pyT;
+        double pB = rot==180?pyT:pyB;
+        
+        double cX = et.getX() - width / 2.0;
+        double cY = -et.getY() + height * 0.3;
         
         Pane ttG = new Pane(tt);
         ttG.setPrefHeight(et.getSize());
@@ -158,40 +199,40 @@ public class LibraryElementNode {
         // Text alignment.
         switch (et.getAlign()) {
             case BOTTOM_CENTER -> {
-                ttG.setLayoutX(et.getX() - width / 2.0);
-                ttG.setLayoutY(-et.getY());
+                ttG.setLayoutX(cX);
+                ttG.setLayoutY(pB);
             }
             case BOTTOM_LEFT -> {
                 ttG.setLayoutX(pL);
-                ttG.setLayoutY(-et.getY());
+                ttG.setLayoutY(pB);
             }
             case BOTTOM_RIGHT -> {
                 ttG.setLayoutX(pR);
-                ttG.setLayoutY(-et.getY());
+                ttG.setLayoutY(pB);
             }
             case CENTER -> {
-                ttG.setLayoutX(et.getX() - width / 2.0);
-                ttG.setLayoutY(-et.getY() + height * 0.3);
+                ttG.setLayoutX(cX);
+                ttG.setLayoutY(cY);
             }
             case CENTER_LEFT -> {
                 ttG.setLayoutX(pL);
-                ttG.setLayoutY(-et.getY() + height * 0.3);
+                ttG.setLayoutY(cY);
             }
             case CENTER_RIGHT -> {
                 ttG.setLayoutX(pR);
-                ttG.setLayoutY(-et.getY() + height * 0.3);
+                ttG.setLayoutY(cY);
             }
             case TOP_CENTER -> {
-                ttG.setLayoutX(et.getX() - width / 2.0);
-                ttG.setLayoutY(-et.getY() + height * 0.66);
+                ttG.setLayoutX(cX);
+                ttG.setLayoutY(pT);
             }
             case TOP_LEFT -> {
                 ttG.setLayoutX(pL);
-                ttG.setLayoutY(-et.getY() + height * 0.66);
+                ttG.setLayoutY(pT);
             }
             case TOP_RIGHT -> {
                 ttG.setLayoutX(pR);
-                ttG.setLayoutY(-et.getY() + height * 0.66);
+                ttG.setLayoutY(pT);
             }
             
         }
@@ -247,6 +288,7 @@ public class LibraryElementNode {
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
         final double PIN_FONT_SIZE = 2.0;
         final Color PIN_COLOR = new Color(0.2,0.2,0.2,1.0);
+        final Color PIN_COLOR_GHOST = new Color(0.2,0.2,0.2,0.3);
         final Color PIN_NAME_COLOR = new Color(1.0,1.0,1.0,0.2);
         final Color PIN_DIR_SWAP_COLOR = new Color(0.3,1.0,0.3,0.5);
         final double PIN_DIR_SWAP_OFFSET = PIN_FONT_SIZE * 0.2;
@@ -273,6 +315,24 @@ public class LibraryElementNode {
         line.setStrokeWidth(PIN_STROKE_WIDTH);               
                 
 
+        Color pinNameColor = PIN_COLOR;
+        Color padColor = PIN_COLOR;
+        
+        switch ( p.getVisible() ) {
+            case BOTH -> {
+            }
+            case PAD -> {
+                pinNameColor = PIN_COLOR_GHOST;
+            }
+            case PIN -> {
+                padColor = PIN_COLOR_GHOST;
+            }
+            case OFF -> {
+                pinNameColor = PIN_COLOR_GHOST;
+                padColor = PIN_COLOR_GHOST;
+            }
+        }
+        
         // X, Y, Length
         double pinLen = 0;
         switch (p.getLength()) {
@@ -381,12 +441,26 @@ public class LibraryElementNode {
         // Pin Name
         Text pinName = new Text(p.getName());
         pinName.setFont(Font.font(PIN_FONT_SIZE));
-        pinName.setFill(PIN_NAME_COLOR);
+        pinName.setFill(pinNameColor);
         double width = pinName.getBoundsInLocal().getWidth();
         double height = pinName.getBoundsInLocal().getHeight();
-        //pinName.setLayoutY(-p.getY() + height * 0.3);
         g.getChildren().add(pinName);
         
+        String padText = "?";
+        switch (p.getLength()) {
+            case LONG   -> { padText = "999"; }
+            case MIDDLE -> { padText = "99"; }
+            case SHORT  -> { padText = "9"; }
+            case POINT  -> { padText = "x"; } 
+        }
+        
+        Text padName = new Text(padText);
+        padName.setFont(Font.font(PIN_FONT_SIZE*0.8));
+        padName.setFill(padColor);
+        double padWidth = padName.getBoundsInLocal().getWidth();
+        double padHeight = padName.getBoundsInLocal().getHeight();
+        g.getChildren().add(padName);
+
         // Direction and Swap-Level
         Text dirSwap = new Text(p.getDirection().code() + "  " + p.getSwapLevel());
         dirSwap.setFont(Font.font(PIN_FONT_SIZE * 0.7));
@@ -401,6 +475,11 @@ public class LibraryElementNode {
                 pinName.setLayoutX(  p.getX() - width/2 );
                 pinName.setLayoutY( -p.getY() + width/2 + height * 0.3 + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
                 pinName.setRotate(90);
+                
+                padName.setLayoutX(  p.getX() - padWidth/2);
+                padName.setLayoutY( -p.getY() - padWidth/2 - padHeight*0.3 );
+                padName.setRotate(90);
+                
                 dirSwap.setLayoutX(  p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight/2 - dsWidth/2  );
                 dirSwap.setLayoutY( -p.getY() - dsWidth/3 - PIN_DIR_SWAP_OFFSET );
                 dirSwap.setRotate(270);
@@ -408,28 +487,40 @@ public class LibraryElementNode {
             case 180 -> {
                 pinName.setLayoutX( p.getX() - pinLen - dotRadius*2.0 - width - PIN_NAME_MARGIN);
                 pinName.setLayoutY(-p.getY() + height * 0.3);
+                
+                padName.setLayoutX( p.getX() - padWidth);
+                padName.setLayoutY(-p.getY() - padHeight*0.2 );
+                
                 dirSwap.setLayoutX( p.getX() + PIN_DIR_SWAP_OFFSET  );
                 dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
             }
             case 90 -> {
                 // Rotate Node rotates on center, so we need to compensate for that.
                 pinName.setLayoutX(  p.getX() - width/2 );
-                pinName.setLayoutY( -p.getY() - width/2 + height * 0.3 -  pinLen - dotRadius*2.0 - PIN_NAME_MARGIN );
+                pinName.setLayoutY( -p.getY() - width/2 + height*0.3 -  pinLen - dotRadius*2.0 - PIN_NAME_MARGIN );
                 pinName.setRotate(90);
+
+                padName.setLayoutX(  p.getX() - padWidth/2);
+                padName.setLayoutY( -p.getY() - padWidth/2 + padHeight*0.3 );
+                padName.setRotate(90);
+
                 dirSwap.setLayoutX(  p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight/2 - dsWidth/2 );
                 dirSwap.setLayoutY( -p.getY() + dsWidth/2 + dsHeight/3  + PIN_DIR_SWAP_OFFSET );
                 dirSwap.setRotate(90);
             }
             default -> {
                 pinName.setLayoutX( p.getX() + pinLen + dotRadius*2.0 + PIN_NAME_MARGIN);
-                pinName.setLayoutY(-p.getY() + height * 0.3);
+                pinName.setLayoutY(-p.getY() + height*0.3);
+                
+                padName.setLayoutX( p.getX() );
+                padName.setLayoutY(-p.getY() - padHeight*0.2);
+                
                 dirSwap.setLayoutX( p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth );
                 dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET );
             }
         }
         
         g.getChildren().add(line);
-        
         
         ElementCircle originCircle = new ElementCircle();
         originCircle.setX(p.getX());
