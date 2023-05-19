@@ -43,6 +43,7 @@ import com.maehem.mangocad.model.library.element.quantum.ElementText;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Via;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
+import com.maehem.mangocad.model.library.element.quantum.enums.PadShape;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinDirection;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinLength;
@@ -441,7 +442,7 @@ public class EagleCADIngest {
 //                    attribute.setLayer(Integer.parseInt(value));
 //                    break;
                 case "shape":
-                    smd.setShape(value);
+                    smd.setShape(PadShape.fromCode(value));
                     break;
                 case "rot":
                     // Eagle 'rot' attribute has the letter 'R' prefixing it.

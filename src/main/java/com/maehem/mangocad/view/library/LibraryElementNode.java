@@ -21,9 +21,11 @@ import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
 import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
 import com.maehem.mangocad.model.library.element.quantum.ElementText;
 import com.maehem.mangocad.model.library.element.quantum.PadSMD;
+import com.maehem.mangocad.model.library.element.quantum.PadTHD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PadShape.*;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
 import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.LONG;
 import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.MIDDLE;
@@ -41,6 +43,7 @@ import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.TOP_RIGHT;
 import java.util.List;
 import java.util.logging.Level;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -55,6 +58,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -124,6 +128,7 @@ public class LibraryElementNode {
         rr.setStrokeWidth(0);
         //rr.setStrokeLineCap(StrokeLineCap.ROUND);
         rr.setFill(color);
+        rr.setRotate(r.getRotation());
         return rr;
     }
     
@@ -138,6 +143,7 @@ public class LibraryElementNode {
         Polygon p = new Polygon(verts);
         p.setStrokeWidth(poly.getWidth());
         p.setStrokeLineCap(StrokeLineCap.ROUND);
+        //p.setRotate(poly.ge);
         
         return p;
     }
@@ -260,6 +266,7 @@ public class LibraryElementNode {
         rectangle.setY(cY);
         rectangle.setWidth(w);
         rectangle.setHeight(h);
+        rectangle.setRotate(smd.getRotation());
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
@@ -277,6 +284,103 @@ public class LibraryElementNode {
         }
         
         return rectangle;
+    }
+    
+    public static Node createThd( PadTHD thd, Color padColor ) {
+        double padDia = thd.getDerivedDiameter();
+        
+        Group g = new Group();
+        
+        padColor = Color.GREEN;
+        
+        Color drillColor = Color.BLACK;
+        int rot = (int) thd.getRotation();
+        
+        switch( thd.getShape() ) {
+            case SQUARE -> {
+                Rectangle pad = new Rectangle(
+                        padDia, padDia, 
+                        padColor
+                );
+                pad.setStroke(null);
+                pad.setLayoutX(thd.getX() - padDia/2.0);
+                pad.setLayoutY(-thd.getY() - padDia/2.0);
+                
+                g.getChildren().add(pad);
+            }
+            case LONG -> {
+                double padLongMult = 2.0;
+                Rectangle pad = new Rectangle(
+                        padDia*padLongMult, padDia, 
+                        padColor
+                );
+                pad.setArcHeight(padDia);
+                pad.setArcWidth( padDia);
+                pad.setStroke(null);
+                
+                Rotate rotate = new Rotate(360 - thd.getRotation());
+                rotate.setPivotX( padDia );
+                rotate.setPivotY( padDia/2 );
+                pad.setLayoutX( thd.getX() - pad.getWidth()/2.0);
+                pad.setLayoutY(-thd.getY() - padDia/2.0);
+                pad.getTransforms().add(rotate);
+                
+                g.getChildren().add(pad);
+            }
+            case OCTOGON -> {
+                double r = padDia/2.0;
+                double n = r * 0.383;
+                Polygon octo = new Polygon(
+                        -n, -r,
+                        n, -r,
+                        r, -n,
+                        r, n,
+                        n, r,
+                        -n, r,
+                        -r, n,
+                        -r, -n
+                );
+                octo.setFill(padColor);
+                octo.setStroke(null);
+                octo.setLayoutX(thd.getX());
+                octo.setLayoutY(-thd.getY());
+                
+                g.getChildren().add(octo);
+            }
+            case OFFSET -> {
+                double padLongMult = 2.0;
+                Rectangle pad = new Rectangle(
+                        padDia*padLongMult, padDia, 
+                        padColor
+                );
+                pad.setArcHeight(padDia);
+                pad.setArcWidth( padDia);
+                pad.setStroke(null);
+                pad.setLayoutX( thd.getX() - pad.getWidth()/4.0);
+                pad.setLayoutY(-thd.getY() - padDia/2 );
+                Rotate rotate = new Rotate(360 - thd.getRotation());
+                rotate.setPivotX( padDia/2 );
+                rotate.setPivotY( padDia/2 );
+                pad.getTransforms().add(rotate);
+                g.getChildren().add(pad);
+            }
+            default -> {  // ROUND
+                Circle pad = new Circle(padDia/2.0, padColor);
+                pad.setLayoutX(thd.getX());
+                pad.setLayoutY(-thd.getY());
+                pad.setStroke(null);
+                g.getChildren().add(pad);
+            } 
+        }
+        
+        Circle drill = new Circle(thd.getDrill()/2.0, drillColor);
+        drill.setLayoutX(thd.getX());
+        drill.setLayoutY(-thd.getY());
+        drill.setStroke(null);
+     
+        g.getChildren().add(drill);
+        
+        return g;
     }
     
     public static Node createPinNode(Pin p) {

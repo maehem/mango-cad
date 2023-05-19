@@ -16,6 +16,9 @@
  */
 package com.maehem.mangocad.model.library.element.quantum;
 
+import com.maehem.mangocad.model.library.element.quantum.enums.PadShape;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PadShape.ROUND;
+
 
 /**
  *
@@ -23,13 +26,16 @@ package com.maehem.mangocad.model.library.element.quantum;
  */
 public class PadTHD extends _AQuantum {
     private boolean first;
+    
+    public static double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );
+    
     private String name;
     private double rotation = 0.0;
     private double drill;
-    private String shape = "round";
+    private PadShape shape = ROUND;
     private boolean stopmask = true;
     private boolean thermals = true;
-    private double diameter = 0.0;
+    private double diameter = 0.0; // 0.0 == auto diamteter
 
     /**
      * @return the first
@@ -118,14 +124,14 @@ public class PadTHD extends _AQuantum {
     /**
      * @return the shape
      */
-    public String getShape() {
+    public PadShape getShape() {
         return shape;
     }
 
     /**
      * @param shape the shape to set
      */
-    public void setShape(String shape) {
+    public void setShape(PadShape shape) {
         this.shape = shape;
     }
 
@@ -137,13 +143,14 @@ public class PadTHD extends _AQuantum {
     }
 
     public double getDerivedDiameter() {
-        if ( getDiameter() == 0.0 ) {
-            double min = getDrill() + 0.3;
-            double cmp = getDrill() * 1.25;
-            if ( cmp > min ) {
-                return cmp;
-            }
-            return min;
+        if ( getDiameter() == 0.0 ) { // Use default
+            return getDrill() + DEFAULT_FLASH;
+//            double min = getDrill() + 0.3;
+//            double cmp = getDrill() * 1.25;
+//            if ( cmp > min ) {
+//                return cmp;
+//            }
+//            return min;
         }
         
         return getDiameter();

@@ -29,6 +29,7 @@ import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
 import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
 import com.maehem.mangocad.model.library.element.quantum.ElementText;
 import com.maehem.mangocad.model.library.element.quantum.PadSMD;
+import com.maehem.mangocad.model.library.element.quantum.PadTHD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
@@ -209,14 +210,13 @@ public class DetailsArea extends SplitPane {
 
             if (e instanceof PadSMD) {
                 g.getChildren().add(LibraryElementNode.createSmd((PadSMD) e));
-            } else
-            if (e instanceof Wire) {
+            } else if (e instanceof PadTHD) {
+                g.getChildren().add(LibraryElementNode.createThd((PadTHD) e, c));
+            } else if (e instanceof Wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode((Wire) e, c));
-            } else
-            if (e instanceof ElementRectangle) {
+            } else if (e instanceof ElementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle((ElementRectangle) e, c));
-            } else 
-            if (e instanceof ElementText) {
+            } else  if (e instanceof ElementText) {
                 g.getChildren().add(LibraryElementNode.createText((ElementText) e, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if( e instanceof ElementPolygon ) {
