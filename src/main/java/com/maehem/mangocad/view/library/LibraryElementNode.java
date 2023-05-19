@@ -132,7 +132,7 @@ public class LibraryElementNode {
         return rr;
     }
     
-    public static Node createPolygon(ElementPolygon poly) {
+    public static Node createPolygon(ElementPolygon poly, Color color) {
         List<Vertex> vertices = poly.getVertices();
         double verts[] = new double[vertices.size() * 2];
         
@@ -143,7 +143,7 @@ public class LibraryElementNode {
         Polygon p = new Polygon(verts);
         p.setStrokeWidth(poly.getWidth());
         p.setStrokeLineCap(StrokeLineCap.ROUND);
-        //p.setRotate(poly.ge);
+        p.setFill(color);
         
         return p;
     }
@@ -250,11 +250,15 @@ public class LibraryElementNode {
      * Create a SMD node for the pattern:
      * <smd name="1" x="-0.751840625" y="0" dx="0.7112" dy="0.762" layer="1" roundness="20"/>
      *
-     * @return
+     * TODO:  Solder Mask
+     * 
+     * @param smd
+     * @param color
+     * @return JavaFX Node.
      */
-    public static Node createSmd(PadSMD smd) {
+    public static Node createSmd(PadSMD smd, Color color) {
         Rectangle rectangle = new Rectangle();
-        rectangle.setFill(Color.LIGHTSALMON);
+        rectangle.setFill(color);
         
         double w = smd.getWidth();
         double h = smd.getHeight();
@@ -286,6 +290,15 @@ public class LibraryElementNode {
         return rectangle;
     }
     
+    /**
+     * THD Pad
+     * 
+     *   TODO:  Solder Mask, pin name, drill legend.
+     * 
+     * @param thd element
+     * @param padColor
+     * @return JavaFX Node
+     */
     public static Node createThd( PadTHD thd, Color padColor ) {
         double padDia = thd.getDerivedDiameter();
         

@@ -158,25 +158,25 @@ public class DetailsArea extends SplitPane {
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
             if ( le == null ) {
-                LOGGER.log(Level.SEVERE, "No Layer for: " + e.getLayerNum());
+                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
             }
             int colorIndex = le.getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
             
-            if (e instanceof Wire) {
-                g.getChildren().add(LibraryElementNode.createWireNode((Wire) e, c));
+            if (e instanceof Wire wire) {
+                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else
-            if (e instanceof ElementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle((ElementRectangle) e, c));
-            } else if (e instanceof ElementText) {
-                g.getChildren().add(LibraryElementNode.createText((ElementText) e, c));
+            if (e instanceof ElementRectangle elementRectangle) {
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+            } else if (e instanceof ElementText elementText) {
+                g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if( e instanceof ElementPolygon ) {
-                g.getChildren().add(LibraryElementNode.createPolygon((ElementPolygon) e));
-            } else if (e instanceof Pin) {
-                g.getChildren().add(LibraryElementNode.createPinNode((Pin) e));
-            } else if ( e instanceof ElementCircle ) {
-                g.getChildren().add(LibraryElementNode.createCircleNode((ElementCircle) e, c));
+            } else if( e instanceof ElementPolygon elementPolygon ) {
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+            } else if (e instanceof Pin pin) {
+                g.getChildren().add(LibraryElementNode.createPinNode(pin));
+            } else if ( e instanceof ElementCircle elementCircle ) {
+                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
             }
         });
         g.getChildren().add(LibraryElementNode.crosshairs(
@@ -220,7 +220,7 @@ public class DetailsArea extends SplitPane {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if( e instanceof ElementPolygon elementPolygon ) {
-                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon));
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
             }
         });
         g.getChildren().add(LibraryElementNode.crosshairs(
