@@ -208,19 +208,19 @@ public class DetailsArea extends SplitPane {
             int colorIndex = le.getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
-            if (e instanceof PadSMD) {
-                g.getChildren().add(LibraryElementNode.createSmd((PadSMD) e));
-            } else if (e instanceof PadTHD) {
-                g.getChildren().add(LibraryElementNode.createThd((PadTHD) e, c));
-            } else if (e instanceof Wire) {
-                g.getChildren().add(LibraryElementNode.createWireNode((Wire) e, c));
-            } else if (e instanceof ElementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle((ElementRectangle) e, c));
-            } else  if (e instanceof ElementText) {
-                g.getChildren().add(LibraryElementNode.createText((ElementText) e, c));
+            if (e instanceof PadSMD padSMD) {
+                g.getChildren().add(LibraryElementNode.createSmd(padSMD, c));
+            } else if (e instanceof PadTHD padTHD) {
+                g.getChildren().add(LibraryElementNode.createThd(padTHD, c));
+            } else if (e instanceof Wire wire) {
+                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
+            } else if (e instanceof ElementRectangle elementRectangle) {
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+            } else  if (e instanceof ElementText elementText) {
+                g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if( e instanceof ElementPolygon ) {
-                g.getChildren().add(LibraryElementNode.createPolygon((ElementPolygon) e));
+            } else if( e instanceof ElementPolygon elementPolygon ) {
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon));
             }
         });
         g.getChildren().add(LibraryElementNode.crosshairs(
