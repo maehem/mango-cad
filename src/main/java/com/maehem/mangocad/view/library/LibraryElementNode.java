@@ -66,7 +66,11 @@ import javafx.scene.transform.Rotate;
  */
 public class LibraryElementNode {
 
-    /**
+    // Should come from a DRC object?
+    private static final Color MASK_COLOR_DEFAULT = new Color(0.8,0.3,0.3,0.5);
+    private static double MASK_W_DEFAULT = 0.1;
+
+                /**
      *
      * ATTLIST wire x1 %Coord; #REQUIRED y1 %Coord; #REQUIRED x2 %Coord;
      * #REQUIRED y2 %Coord; #REQUIRED width %Dimension; #REQUIRED layer %Layer;
@@ -320,6 +324,22 @@ public class LibraryElementNode {
                 pad.setLayoutY(-thd.getY() - padDia/2.0);
                 
                 g.getChildren().add(pad);
+                
+                // SolderMask
+                double maskWidth2 = MASK_W_DEFAULT*2;
+                Rectangle mask = new Rectangle(
+                        padDia + maskWidth2, padDia + maskWidth2, 
+                        MASK_COLOR_DEFAULT
+                );
+                // TODO:  Fill with image pattern (cross-hatch)
+                mask.setStrokeWidth(0.01);
+                mask.setStroke(MASK_COLOR_DEFAULT.brighter().saturate());
+                mask.setLayoutX(thd.getX() - padDia/2.0 - MASK_W_DEFAULT);
+                mask.setLayoutY(-thd.getY() - padDia/2.0 - MASK_W_DEFAULT);
+                
+                g.getChildren().add(mask);
+                
+                
             }
             case LONG -> {
                 double padLongMult = 2.0;
@@ -339,6 +359,25 @@ public class LibraryElementNode {
                 pad.getTransforms().add(rotate);
                 
                 g.getChildren().add(pad);
+                
+                // Mask
+                double maskWidth2 = MASK_W_DEFAULT*2;
+                Rectangle mask = new Rectangle(
+                        padDia*padLongMult + maskWidth2, padDia + maskWidth2, 
+                        MASK_COLOR_DEFAULT
+                );
+                mask.setArcHeight(padDia + MASK_W_DEFAULT);
+                mask.setArcWidth( padDia + MASK_W_DEFAULT);
+                mask.setStrokeWidth(0.01);
+                mask.setStroke(MASK_COLOR_DEFAULT.brighter().saturate());
+                Rotate rotateM = new Rotate(360 - thd.getRotation());
+                rotateM.setPivotX( padDia + MASK_W_DEFAULT );
+                rotateM.setPivotY( padDia/2 + MASK_W_DEFAULT);
+                mask.setLayoutX(thd.getX() - pad.getWidth()/2.0 - MASK_W_DEFAULT);
+                mask.setLayoutY(-thd.getY() - padDia/2.0 - MASK_W_DEFAULT);
+                mask.getTransforms().add(rotateM);
+
+                g.getChildren().add(mask);
             }
             case OCTOGON -> {
                 double r = padDia/2.0;
@@ -359,6 +398,27 @@ public class LibraryElementNode {
                 octo.setLayoutY(-thd.getY());
                 
                 g.getChildren().add(octo);
+                
+                // Mask
+                double nn = n+MASK_W_DEFAULT;
+                double rr = r+MASK_W_DEFAULT;
+                Polygon octoMask = new Polygon(
+                        -nn, -rr,
+                        nn, -rr,
+                        rr, -nn,
+                        rr, nn,
+                        nn, rr,
+                        -nn, rr,
+                        -rr, nn,
+                        -rr, -nn
+                );
+                octoMask.setStrokeWidth(0.01);
+                octoMask.setStroke(MASK_COLOR_DEFAULT.brighter().saturate());
+                octoMask.setFill(MASK_COLOR_DEFAULT);
+                octoMask.setLayoutX(thd.getX());
+                octoMask.setLayoutY(-thd.getY());
+                
+                g.getChildren().add(octoMask);
             }
             case OFFSET -> {
                 double padLongMult = 2.0;
@@ -383,6 +443,21 @@ public class LibraryElementNode {
                 pad.setLayoutY(-thd.getY());
                 pad.setStroke(null);
                 g.getChildren().add(pad);
+                
+                // SolderMask
+                //double maskWidth2 = MASK_W_DEFAULT*2;
+//                Rectangle mask = new Rectangle(
+//                        padDia + maskWidth2, padDia + maskWidth2, 
+//                        MASK_COLOR_DEFAULT
+//                );
+                Circle mask = new Circle(padDia/2.0 + MASK_W_DEFAULT, MASK_COLOR_DEFAULT);
+                // TODO:  Fill with image pattern (cross-hatch)
+                mask.setStrokeWidth(0.01);
+                mask.setStroke(MASK_COLOR_DEFAULT.brighter().saturate());
+                mask.setLayoutX(thd.getX());
+                mask.setLayoutY(-thd.getY());
+                
+                g.getChildren().add(mask);
             } 
         }
         
