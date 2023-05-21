@@ -33,6 +33,7 @@ import com.maehem.mangocad.model.library.element.quantum.PadTHD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
+import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.ArrayList;
@@ -210,8 +211,26 @@ public class DetailsArea extends SplitPane {
 
             if (e instanceof PadSMD padSMD) {
                 g.getChildren().add(LibraryElementNode.createSmd(padSMD, c));
+                
+                ElementText et = new ElementText();
+                et.setValue(padSMD.getName());
+                et.setRotation(padSMD.getRotation());
+                et.setAlign(TextAlign.CENTER);
+                et.setSize(0.5);
+                et.setX(padSMD.getX());
+                et.setY(padSMD.getY());
+                g.getChildren().add(LibraryElementNode.createText(et, Color.GRAY));
             } else if (e instanceof PadTHD padTHD) {
                 g.getChildren().add(LibraryElementNode.createThd(padTHD, c));
+                
+                ElementText et = new ElementText();
+                et.setValue(padTHD.getName());
+                et.setRotation(padTHD.getRotation());
+                et.setAlign(TextAlign.CENTER);
+                et.setSize(0.5);
+                et.setX(padTHD.getX());
+                et.setY(padTHD.getY());
+                g.getChildren().add(LibraryElementNode.createText(et, Color.GRAY));
             } else if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else if (e instanceof ElementRectangle elementRectangle) {
