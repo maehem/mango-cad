@@ -126,7 +126,7 @@ public class LibraryElementNode {
     
     public static Node createRectangle(ElementRectangle r, Color color) {
         Rectangle rr = new Rectangle(
-                r.getX(), r.getY(),
+                r.getX(), -r.getY2(),
                 r.getX2() - r.getX(), r.getY2() - r.getY()
         );
         rr.setStrokeWidth(0);
@@ -268,7 +268,7 @@ public class LibraryElementNode {
         double h = smd.getHeight();
         
         double cX = smd.getX() - w / 2.0;
-        double cY = smd.getY() - h / 2.0;
+        double cY = -smd.getY() - h / 2.0;
         //Setting the properties of the rectangle 
         rectangle.setX(cX);
         rectangle.setY(cY);
@@ -484,7 +484,7 @@ public class LibraryElementNode {
         drill.setStroke(null);
      
         g.getChildren().add(drill);
-        
+                
         return g;
     }
     
