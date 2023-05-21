@@ -436,6 +436,23 @@ public class LibraryElementNode {
                 rotate.setPivotY( padDia/2 );
                 pad.getTransforms().add(rotate);
                 g.getChildren().add(pad);
+                
+                double maskWidth2 = MASK_W_DEFAULT*2;
+                Rectangle mask = new Rectangle(
+                        padDia*padLongMult + maskWidth2, padDia + maskWidth2, 
+                        MASK_COLOR_DEFAULT
+                );
+                mask.setArcHeight(padDia + MASK_W_DEFAULT);
+                mask.setArcWidth( padDia + MASK_W_DEFAULT);
+                mask.setStroke(MASK_COLOR_DEFAULT.brighter().saturate());
+                mask.setStrokeWidth(0.01);
+                mask.setLayoutX( thd.getX() - padDia/2.0 - MASK_W_DEFAULT);
+                mask.setLayoutY(-thd.getY() - mask.getHeight()/2.0 );
+                Rotate rotateMask = new Rotate(360 - thd.getRotation());
+                rotateMask.setPivotX( padDia/2 + MASK_W_DEFAULT );
+                rotateMask.setPivotY( padDia/2 + MASK_W_DEFAULT );
+                mask.getTransforms().add(rotateMask);
+                g.getChildren().add(mask);
             }
             default -> {  // ROUND
                 Circle pad = new Circle(padDia/2.0, padColor);
