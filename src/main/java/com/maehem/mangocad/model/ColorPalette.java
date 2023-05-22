@@ -32,15 +32,15 @@ public class ColorPalette {
     private Style style;
 
     private String[] darkHex = new String[]{
-        "0xFF000000",
+        "0xB4000000",
         "0xB43232C8",
         "0xB432C832",
         "0xB432C8C8",
         "0xB4C83232", //  0xB4C83232
         "0xB4C832C8", //  0xB4C832C8
         "0xB4C8C832",
-        "0xB4C8C8C8",
-        "0xB4646464",
+        "0xB4C8C8C8", // tStop
+        "0xB4646464", // bStop
         "0xB40000FF",
         "0xB400FF00",
         "0xB400FFFF",

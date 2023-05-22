@@ -437,7 +437,7 @@ public class EagleCADIngest {
                 case "thermals":
                     smd.setThermals(value.equals("yes"));
                     break;
-// Layer not supported on THD pads.                    
+// Layer not supported on THD pads.   Fetched from static value.                  
 //                case "layer":
 //                    attribute.setLayer(Integer.parseInt(value));
 //                    break;

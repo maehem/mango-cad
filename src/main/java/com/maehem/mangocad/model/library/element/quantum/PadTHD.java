@@ -145,16 +145,11 @@ public class PadTHD extends _AQuantum {
     public double getDerivedDiameter() {
         if ( getDiameter() == 0.0 ) { // Use default
             return getDrill() + DEFAULT_FLASH;
-//            double min = getDrill() + 0.3;
-//            double cmp = getDrill() * 1.25;
-//            if ( cmp > min ) {
-//                return cmp;
-//            }
-//            return min;
         }
         
         return getDiameter();
     }
+    
     /**
      * @param diameter the diameter to set
      */
@@ -162,13 +157,10 @@ public class PadTHD extends _AQuantum {
         this.diameter = diameter;
     }
 
-//    @Override
-//    public Rectangle2D getBounds() {
-//        double d = getDiameter();
-//        if ( d == 0.0 ) {
-//            d = getDrill()*1.25;
-//        }
-//        return new Rectangle2D.Double(getX()-d/2, getY()-d/2, d, d);
-//    }
+    @Override
+    public int getLayerNum() {
+        return 17; // TODO: get from static table.
+    }
+    
     
 }

@@ -31,41 +31,19 @@ import com.maehem.mangocad.model.library.element.quantum.ElementText;
 import com.maehem.mangocad.model.library.element.quantum.PadSMD;
 import com.maehem.mangocad.model.library.element.quantum.PadTHD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
-import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
 import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -204,13 +182,15 @@ public class DetailsArea extends SplitPane {
         Group g = new Group();
         StackPane symbolGroup = new StackPane(g);
         
+        
         footprint.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
             int colorIndex = le.getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
             if (e instanceof PadSMD padSMD) {
-                g.getChildren().add(LibraryElementNode.createSmd(padSMD, c));
+                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                g.getChildren().add(LibraryElementNode.createSmd(padSMD, c, maskColor));
                 
                 ElementText et = new ElementText();
                 et.setValue(padSMD.getName());
@@ -221,16 +201,9 @@ public class DetailsArea extends SplitPane {
                 et.setY(padSMD.getY());
                 g.getChildren().add(LibraryElementNode.createText(et, Color.GRAY));
             } else if (e instanceof PadTHD padTHD) {
-                g.getChildren().add(LibraryElementNode.createThd(padTHD, c));
+                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                g.getChildren().add(LibraryElementNode.createThd(padTHD, c, maskColor));
                 
-                ElementText et = new ElementText();
-                et.setValue(padTHD.getName());
-                et.setRotation(padTHD.getRotation());
-                et.setAlign(TextAlign.CENTER);
-                et.setSize(0.5);
-                et.setX(padTHD.getX());
-                et.setY(padTHD.getY());
-                g.getChildren().add(LibraryElementNode.createText(et, Color.GRAY));
             } else if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else if (e instanceof ElementRectangle elementRectangle) {

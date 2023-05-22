@@ -34,12 +34,12 @@ public class Library {
 
     public static final String FILE_EXTENSION = "mclib";
 
-    private ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
+    private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
     
     private ArrayList<Note> notes = new ArrayList<>();
     // Descriptions is a list of this library descriptions for each language
     // supported.
-    private LayerElement layers[] = new LayerElement[256];
+    private final LayerElement layers[] = new LayerElement[256];
     
     private ArrayList<Description> descriptions = new ArrayList<>();
     private ArrayList<Footprint> packages = new ArrayList<>();
