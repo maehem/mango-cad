@@ -44,7 +44,6 @@ import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.TOP_RIGHT;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -79,7 +78,7 @@ public class LibraryElementNode {
     }
 
     // Should come from a DRC object?
-    private static double MASK_W_DEFAULT = 0.1;
+    private static final double MASK_W_DEFAULT = 0.1;
 
     /**
      *
@@ -92,6 +91,7 @@ public class LibraryElementNode {
      * not zero
      *
      * @param w
+     * @param color
      * @return
      */
     public static Node createWireNode(Wire w, Color color) {
@@ -265,12 +265,13 @@ public class LibraryElementNode {
 
     /**
      * Create a SMD node for the pattern:
-     * <smd name="1" x="-0.751840625" y="0" dx="0.7112" dy="0.762" layer="1" roundness="20"/>
+     * xml ==> smd name="1" x="-0.751840625" y="0" dx="0.7112" dy="0.762" layer="1" roundness="20"
      *
      * TODO: Solder Mask
      *
      * @param smd
      * @param color
+     * @param maskColor
      * @return JavaFX Node.
      */
     public static Node createSmd(PadSMD smd, Color color, Color maskColor) {
@@ -296,9 +297,9 @@ public class LibraryElementNode {
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
-        double arcR = 0.0;
 
         if (smd.getRoundness() > 0) {
+            double arcR;
             if (w < h) {
                 arcR = w * roundPct;
             } else {
@@ -328,9 +329,9 @@ public class LibraryElementNode {
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
-        double maskArcR = 0.0;
 
         if (smd.getRoundness() > 0) {
+            double maskArcR;
             if (maskW < maskH) {
                 maskArcR = maskW * roundPct;
             } else {
@@ -362,6 +363,7 @@ public class LibraryElementNode {
      *
      * @param thd element
      * @param padColor
+     * @param maskColor
      * @return JavaFX Node
      */
     public static Node createThd(PadTHD thd, Color padColor, Color maskColor) {
@@ -371,7 +373,7 @@ public class LibraryElementNode {
         
         //padColor = Color.GREEN;
         Color drillColor = Color.BLACK;
-        int rot = (int) thd.getRotation();
+        //int rot = (int) thd.getRotation();
 
         switch (thd.getShape()) {
             case SQUARE -> {
