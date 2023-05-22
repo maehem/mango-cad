@@ -144,8 +144,7 @@ public class DetailsArea extends SplitPane {
             
             if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
-            } else
-            if (e instanceof ElementRectangle elementRectangle) {
+            } else if (e instanceof ElementRectangle elementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
             } else if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
@@ -190,20 +189,14 @@ public class DetailsArea extends SplitPane {
 
             if (e instanceof PadSMD padSMD) {
                 Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                g.getChildren().add(LibraryElementNode.createSmd(padSMD, c, maskColor));
-                
-//                ElementText et = new ElementText();
-//                et.setValue(padSMD.getName());
-//                et.setRotation(padSMD.getRotation());
-//                et.setAlign(TextAlign.CENTER);
-//                et.setSize(0.5);
-//                et.setX(padSMD.getX());
-//                et.setY(padSMD.getY());
-//                g.getChildren().add(LibraryElementNode.createText(et, Color.GRAY));
+                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor);
+                g.getChildren().add(n);
+                n.toBack();
             } else if (e instanceof PadTHD padTHD) {
                 Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                g.getChildren().add(LibraryElementNode.createThd(padTHD, c, maskColor));
-                
+                Node n = LibraryElementNode.createThd(padTHD, c, maskColor);
+                g.getChildren().add(n);
+                n.toBack();
             } else if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else if (e instanceof ElementRectangle elementRectangle) {
@@ -211,8 +204,12 @@ public class DetailsArea extends SplitPane {
             } else  if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
+            } else if (e instanceof ElementRectangle elementRectangle) {
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
             } else if( e instanceof ElementPolygon elementPolygon ) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+            } else if ( e instanceof ElementCircle elementCircle ) {
+                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
             }
         });
         g.getChildren().add(LibraryElementNode.crosshairs(
@@ -220,8 +217,8 @@ public class DetailsArea extends SplitPane {
         ));
 
          
-        symbolGroup.setScaleX(40.0);
-        symbolGroup.setScaleY(40.0);
+        symbolGroup.setScaleX(30.0);
+        symbolGroup.setScaleY(30.0);
 
         return symbolGroup;
     }
