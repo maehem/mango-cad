@@ -65,7 +65,7 @@ public class DetailsArea extends SplitPane {
                 // Description
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        getItems().add(DetailNodes.footprintPreview(footprint, lib.getLayers(), lib.getPalette()));
+                        getItems().add(DetailNodes.footprintPreview(footprint, lib));
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
                         return;
                     }
@@ -87,7 +87,7 @@ public class DetailsArea extends SplitPane {
                 for (Symbol s : lib.getSymbols()) {
                     if (s.getName().equals(newValue)) {
                         
-                        getItems().add(DetailNodes.symbolPreview(s, lib.getLayers(), lib.getPalette() ));
+                        getItems().add(DetailNodes.symbolPreview(s, lib ));
                         getItems().add(DetailNodes.descriptionNode(s.getDescription()));
                         return;
                     }

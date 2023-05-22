@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.LayerElement;
+import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
@@ -60,11 +61,12 @@ public class DetailNodes {
      * @param symbol
      * @return
      */
-    public static Node symbolPreview(Symbol symbol, LayerElement[] layers, ColorPalette palette ) {
+    public static Node symbolPreview(Symbol symbol, Library lib ) {
+        LayerElement[] layers = lib.getLayers();
+        ColorPalette palette = lib.getPalette();
+        
         Group g = new Group();
         StackPane symbolGroup = new StackPane(g);
-        
-
         
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -109,10 +111,12 @@ public class DetailNodes {
      * @param footprint
      * @return
      */
-    public static Node footprintPreview(Footprint footprint, LayerElement[] layers, ColorPalette palette ) {
+    public static Node footprintPreview(Footprint footprint, Library lib ) {
+        LayerElement[] layers = lib.getLayers();
+        ColorPalette palette = lib.getPalette();
+        
         Group g = new Group();
         StackPane symbolGroup = new StackPane(g);
-        
         
         footprint.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
