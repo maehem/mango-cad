@@ -27,21 +27,9 @@ import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
 import static com.maehem.mangocad.model.library.element.quantum.enums.PadShape.*;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.LONG;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.MIDDLE;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.POINT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.SHORT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PinVisible.BOTH;
+import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.*;
 import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_CENTER;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_LEFT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.BOTTOM_RIGHT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.CENTER;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.CENTER_LEFT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.CENTER_RIGHT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.TOP_CENTER;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.TOP_LEFT;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.TOP_RIGHT;
+import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.*;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
 import java.util.logging.Logger;
@@ -107,8 +95,8 @@ public class LibraryElementNode {
             arc.setX(w.getX2());
             arc.setY(-w.getY2());
 
-            // SWEEP
-            arc.setSweepFlag(w.getX() < w.getX2());
+            // SWEEP on negative curve value.
+            arc.setSweepFlag(w.getCurve() < 0.0);
 
             double sin90 = Math.sin(Math.toRadians(90.0));
             double dist = distance(w.getX(), -w.getY(), w.getX2(), -w.getY2());
@@ -558,16 +546,17 @@ public class LibraryElementNode {
         return g;
     }
 
-    public static Node createPinNode(Pin p) {
-
+    public static Node createPinNode(Pin p, Color c) {
         final double PIN_NAME_MARGIN = 1.5;
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
         final double PIN_FONT_SIZE = 2.0;
-        final Color PIN_COLOR = new Color(0.2, 0.2, 0.2, 1.0);
-        final Color PIN_COLOR_GHOST = new Color(0.2, 0.2, 0.2, 0.3);
+        //final Color PIN_COLOR = new Color(0.2, 0.2, 0.2, 1.0);
+        final Color PAD_NAME_COLOR = new Color(0.8, 0.8, 0.2, 0.8);
+        final Color PIN_NAME_COLOR = new Color(0.8, 0.8, 0.8, 0.8);
+        final Color PIN_COLOR_GHOST = new Color(0.9, 0.9, 0.9, 0.2);
         final Color PIN_DIR_SWAP_COLOR = new Color(0.3, 1.0, 0.3, 0.5);
         final double PIN_DIR_SWAP_OFFSET = PIN_FONT_SIZE * 0.2;
-        final Color ORIGIN_CIRCLE_COLOR = new Color(1.0, 1.0, 1.0, 0.1);
+        final Color ORIGIN_CIRCLE_COLOR = new Color(1.0, 1.0, 1.0, 0.2);
         final double ORIGIN_CIRCLE_RADIUS = 0.635;
         final double ORIGIN_CIRCLE_LINE_WIDTH = 0.07;
         final double DOT_CIRCLE_RADIUS = 0.7;
@@ -614,12 +603,12 @@ public class LibraryElementNode {
         Group g = new Group();
 
         Line line = new Line(p.getX(), -p.getY(), p.getX(), -p.getY());
-        line.setStroke(PIN_COLOR);
+        line.setStroke(c);
         line.setStrokeLineCap(StrokeLineCap.BUTT);
         line.setStrokeWidth(PIN_STROKE_WIDTH);
 
-        Color pinNameColor = PIN_COLOR;
-        Color padColor = PIN_COLOR;
+        Color pinNameColor = PIN_NAME_COLOR;
+        Color padColor = PAD_NAME_COLOR;
 
         switch (p.getVisible()) {
             case BOTH -> {
@@ -673,18 +662,18 @@ public class LibraryElementNode {
                 }
             }
 
-            g.getChildren().add(createCircleNode(dotCircle, PIN_COLOR));
+            g.getChildren().add(createCircleNode(dotCircle, c));
         }
 
         // Clock Function
         if (p.getFunction() == PinFunction.CLK || p.getFunction() == PinFunction.DOTCLK) {
             Line line1 = new Line(0, 0, 0, 0);
-            line1.setStroke(PIN_COLOR);
+            line1.setStroke(c);
             line1.setStrokeLineCap(StrokeLineCap.ROUND);
             line1.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
 
             Line line2 = new Line();
-            line2.setStroke(PIN_COLOR);
+            line2.setStroke(c);
             line2.setStrokeLineCap(StrokeLineCap.ROUND);
             line2.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
 
@@ -826,7 +815,7 @@ public class LibraryElementNode {
     }
 
     /**
-     * <circle x="3.6068" y="0" radius="1.016" width="0.508" layer="94"/>
+     *  xml ==> circle x="3.6068" y="0" radius="1.016" width="0.508" layer="94"
      *
      * @param ec ElementCircle object
      * @param color to make the circle

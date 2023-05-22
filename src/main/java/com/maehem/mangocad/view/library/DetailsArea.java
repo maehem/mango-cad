@@ -153,7 +153,7 @@ public class DetailsArea extends SplitPane {
             } else if( e instanceof ElementPolygon elementPolygon ) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
             } else if (e instanceof Pin pin) {
-                g.getChildren().add(LibraryElementNode.createPinNode(pin));
+                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
             } else if ( e instanceof ElementCircle elementCircle ) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
             }
