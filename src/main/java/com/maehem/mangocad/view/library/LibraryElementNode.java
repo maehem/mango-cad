@@ -44,6 +44,7 @@ import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.
 import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.TOP_RIGHT;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -163,9 +164,11 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, Color color) {
-
+        //String fontPath = "/fonts/Source_Code_Pro/SourceCodePro-VariableFont_wght.ttf";
+        String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
+        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), et.getSize());
         Text tt = new Text(et.getValue());
-        tt.setFont(Font.font(et.getSize()));
+        tt.setFont(font);
         tt.setFill(color);
         double width = tt.getBoundsInLocal().getWidth();
         double height = tt.getBoundsInLocal().getHeight();
@@ -548,7 +551,7 @@ public class LibraryElementNode {
         et.setSize(0.5);
         et.setX(thd.getX());
         et.setY(thd.getY());
-        g.getChildren().add(LibraryElementNode.createText(et, Color.GRAY));
+        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGREY));
 
         return g;
     }
