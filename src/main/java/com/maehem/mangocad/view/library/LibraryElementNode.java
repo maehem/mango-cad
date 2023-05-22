@@ -252,7 +252,7 @@ public class LibraryElementNode {
     }
 
     /**
-     * Create a SMD node for the pattern:
+     * Create a SMD node for the pattern: 
      * xml ==> smd name="1" x="-0.751840625" y="0" dx="0.7112" dy="0.762" layer="1" roundness="20"
      *
      * TODO: Solder Mask
@@ -285,7 +285,6 @@ public class LibraryElementNode {
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
-
         if (smd.getRoundness() > 0) {
             double arcR;
             if (w < h) {
@@ -297,7 +296,7 @@ public class LibraryElementNode {
             pad.setArcHeight(arcR);
         }
         g.getChildren().add(pad);
-        
+
         // Mask
         double maskWidth2 = MASK_W_DEFAULT * 2;
         double maskW = smd.getWidth() + maskWidth2;
@@ -305,7 +304,7 @@ public class LibraryElementNode {
 
         double maskCX = smd.getX() - maskW / 2.0;
         double maskCY = -smd.getY() - maskH / 2.0;
-        
+
         Rectangle mask = new Rectangle(
                 maskCX, maskCY,
                 maskW, maskH
@@ -317,7 +316,6 @@ public class LibraryElementNode {
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
-
         if (smd.getRoundness() > 0) {
             double maskArcR;
             if (maskW < maskH) {
@@ -329,7 +327,6 @@ public class LibraryElementNode {
             mask.setArcHeight(maskArcR);
         }
         g.getChildren().add(mask);
-        
 
         // Name Text
         ElementText et = new ElementText();
@@ -358,7 +355,7 @@ public class LibraryElementNode {
         Group g = new Group();
         double padDia = thd.getDerivedDiameter();
         ImagePattern maskPattern = makeHatch(10, maskColor);
-        
+
         //padColor = Color.GREEN;
         Color drillColor = Color.BLACK;
         //int rot = (int) thd.getRotation();
@@ -450,7 +447,7 @@ public class LibraryElementNode {
                 g.getChildren().add(octo);
 
                 // Mask
-                double rr = padDia/2.0 + MASK_W_DEFAULT;
+                double rr = padDia / 2.0 + MASK_W_DEFAULT;
                 double nn = rr * 0.383;
                 Polygon octoMask = new Polygon(
                         -nn, -rr,
@@ -815,7 +812,7 @@ public class LibraryElementNode {
     }
 
     /**
-     *  xml ==> circle x="3.6068" y="0" radius="1.016" width="0.508" layer="94"
+     * xml ==> circle x="3.6068" y="0" radius="1.016" width="0.508" layer="94"
      *
      * @param ec ElementCircle object
      * @param color to make the circle
@@ -853,28 +850,27 @@ public class LibraryElementNode {
         return Math.hypot(ac, cb);
     }
 
-    private static ImagePattern makeHatch( int nLines, Color c) {
+    private static ImagePattern makeHatch(int nLines, Color c) {
         int size = 64;
         WritableImage wi = new WritableImage(size, size);
-        
-        Pane g = new Pane(); // Group?
-        g.setBackground(Background.EMPTY);
-        g.setClip(new Rectangle(64, 64));
-        //Rectangle r = new Rectangle(size, size);
-        //g.getChildren().add(r);
-        
-        double inc = (double)size/nLines;
-        for ( int i=0; i < nLines*2; i++ ) {
-            Line l= new Line(i*inc, 0, i*inc - size, size);
+
+        Pane p = new Pane(); // Group?
+        p.setBackground(Background.EMPTY);
+        p.setClip(new Rectangle(64, 64));
+
+
+        double inc = (double) size / nLines;
+        for (int i = 0; i < nLines * 2; i++) {
+            Line l = new Line(i * inc, 0, i * inc - size, size);
             l.setStrokeWidth(0.5);
             l.setStroke(c);
-            g.getChildren().add(l);
+            p.getChildren().add(l);
         }
-        
+
         SnapshotParameters sp = new SnapshotParameters();
         sp.setFill(Color.TRANSPARENT);
 
-        return new ImagePattern(g.snapshot(sp, wi), 0,0,2,2,false);
+        return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
-    
+
 }
