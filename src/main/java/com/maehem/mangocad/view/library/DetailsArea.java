@@ -24,8 +24,11 @@ import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 /**
  *
@@ -35,13 +38,14 @@ public class DetailsArea extends SplitPane {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
-    private static final double PANE_H = 0.25;
+    private static final double PANE_H = 0.10;
 
     public DetailsArea() {
         setOrientation(Orientation.VERTICAL);
-        setDividerPosition(0, 1 * PANE_H);
+        setDividerPosition(0, 4 * PANE_H);
         setDividerPosition(1, 2 * PANE_H);
         setDividerPosition(2, 3 * PANE_H);
+
     }
 
     void setItem(Library lib, ElementType src, String newValue) {
@@ -54,7 +58,8 @@ public class DetailsArea extends SplitPane {
                 // Description
                 for (DeviceSet s : lib.getDeviceSets()) {
                     if (s.getName().equals(newValue)) {
-                        getItems().add(DetailNodes.descriptionNode(s.getDescription()));
+                        VBox box = new VBox(DetailNodes.descriptionNode(s.getDescription()));
+                        getItems().add(box);
                         return;
                     }
                 }
@@ -65,8 +70,12 @@ public class DetailsArea extends SplitPane {
                 // Description
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        getItems().add(DetailNodes.footprintPreview(footprint, lib));
+                        StackPane box = new StackPane(DetailNodes.footprintPreview(footprint, lib));
+                        //box.setPrefSize(100, 100);
+                        getItems().add(box);
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
+                        box.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        box.scaleXProperty().bind(getDividers().get(0).positionProperty());
                         return;
                     }
                 }
@@ -86,9 +95,11 @@ public class DetailsArea extends SplitPane {
                 // Description
                 for (Symbol s : lib.getSymbols()) {
                     if (s.getName().equals(newValue)) {
-                        
-                        getItems().add(DetailNodes.symbolPreview(s, lib ));
+                        StackPane box = new StackPane(DetailNodes.symbolPreview(s, lib));
+                        getItems().add(box);
                         getItems().add(DetailNodes.descriptionNode(s.getDescription()));
+                        box.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        box.scaleXProperty().bind(getDividers().get(0).positionProperty());
                         return;
                     }
                 }

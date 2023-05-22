@@ -33,6 +33,7 @@ import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
@@ -66,7 +67,7 @@ public class DetailNodes {
         ColorPalette palette = lib.getPalette();
         
         Group g = new Group();
-        StackPane symbolGroup = new StackPane(g);
+        StackPane pane = new StackPane(g);
         
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -95,11 +96,19 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-         
-        symbolGroup.setScaleX(10.0);
-        symbolGroup.setScaleY(10.0);
+        double fitSize = 600.0;
+        Bounds bounds = pane.getBoundsInLocal();
+        double scale;
+        if ( bounds.getWidth() > bounds.getHeight() ) {
+            scale = fitSize/bounds.getWidth();
+            
+        } else {
+            scale = fitSize/bounds.getHeight();
+        }
+        pane.setScaleX(scale);
+        pane.setScaleY(scale);
 
-        return symbolGroup;
+        return pane;
     }
     
     /**
@@ -116,7 +125,7 @@ public class DetailNodes {
         ColorPalette palette = lib.getPalette();
         
         Group g = new Group();
-        StackPane symbolGroup = new StackPane(g);
+        StackPane pane = new StackPane(g);
         
         footprint.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -152,11 +161,19 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-         
-        symbolGroup.setScaleX(30.0);
-        symbolGroup.setScaleY(30.0);
+        double fitSize = 600.0;
+        Bounds bounds = pane.getBoundsInLocal();
+        double scale;
+        if ( bounds.getWidth() > bounds.getHeight() ) {
+            scale = fitSize/bounds.getWidth();
+            
+        } else {
+            scale = fitSize/bounds.getHeight();
+        }
+        pane.setScaleX(scale);
+        pane.setScaleY(scale);
 
-        return symbolGroup;
+        return pane;
     }
 
 }
