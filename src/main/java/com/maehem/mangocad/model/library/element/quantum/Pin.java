@@ -156,13 +156,9 @@ public class Pin extends _AQuantum {
         this.name = name;
     }
 
-//    @Override
-//    public Rectangle2D getBounds() {
-//        Rectangle2D bounds = super.getBounds();
-//        bounds.add(new Rectangle2D.Double(getX()-1, getY()-1, 2, 2));
-//        return bounds;
-//    }
-    
-    
+    @Override
+    public int getLayerNum() {
+        return 94; // Same as symbol color  // TODO: get from static table.
+    }
 
 }
