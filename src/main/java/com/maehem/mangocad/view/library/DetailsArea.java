@@ -24,9 +24,12 @@ import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -42,10 +45,9 @@ public class DetailsArea extends SplitPane {
 
     public DetailsArea() {
         setOrientation(Orientation.VERTICAL);
-        setDividerPosition(0, 4 * PANE_H);
+        setDividerPosition(0, 5 * PANE_H);
         setDividerPosition(1, 2 * PANE_H);
-        setDividerPosition(2, 3 * PANE_H);
-
+        setDividerPosition(2, 2 * PANE_H);
     }
 
     void setItem(Library lib, ElementType src, String newValue) {
@@ -54,35 +56,31 @@ public class DetailsArea extends SplitPane {
 
         switch (src) {
             case DEVICE -> {
-                // Preview
-                // Description
                 for (DeviceSet s : lib.getDeviceSets()) {
                     if (s.getName().equals(newValue)) {
                         VBox box = new VBox(DetailNodes.descriptionNode(s.getDescription()));
+                        box.getChildren().add(DetailNodes.scaleGauge());
                         getItems().add(box);
                         return;
                     }
                 }
-                // Variants
             }
             case FOOTPRINT -> {
-                // Preview
-                // Description
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        StackPane box = new StackPane(DetailNodes.footprintPreview(footprint, lib));
+                        StackPane pane = new StackPane(DetailNodes.footprintPreview(footprint, lib));
+                        VBox box = new VBox(pane);
+                        box.getChildren().add(DetailNodes.scaleGauge());
                         //box.setPrefSize(100, 100);
                         getItems().add(box);
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
-                        box.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        box.scaleXProperty().bind(getDividers().get(0).positionProperty());
+                        pane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        pane.scaleXProperty().bind(getDividers().get(0).positionProperty());
                         return;
                     }
                 }
             }
             case PACKAGE3D -> {
-                // Preview
-                // Description
                 for (Package3d s : lib.getPackages3d()) {
                     if (s.getName().equals(newValue)) {
                         getItems().add(DetailNodes.descriptionNode(s.getDescription()));
@@ -91,15 +89,30 @@ public class DetailsArea extends SplitPane {
                 }
             }
             case SYMBOL -> {
-                // Preview
-                // Description
                 for (Symbol s : lib.getSymbols()) {
                     if (s.getName().equals(newValue)) {
-                        StackPane box = new StackPane(DetailNodes.symbolPreview(s, lib));
-                        getItems().add(box);
+                        Node symbolPreview = DetailNodes.symbolPreview(s, lib);
+                        Node scaleGauge = DetailNodes.scaleGauge();
+                        scaleGauge.setScaleX(symbolPreview.getScaleX());
+                        scaleGauge.setScaleY(symbolPreview.getScaleY());
+                                                
+                        StackPane symbolPane = new StackPane(symbolPreview);
+                        Pane gaugePane = new Pane( scaleGauge );
+                        BorderPane pane = new BorderPane(symbolPane);
+                        
+                        FlowPane flowPane = new FlowPane();
+                        Pane p = new Pane();
+                        p.setPrefSize(20, 20);
+                        flowPane.getChildren().addAll(p, gaugePane);
+                        pane.setBottom(flowPane);
+                        
+                        getItems().add(pane);
                         getItems().add(DetailNodes.descriptionNode(s.getDescription()));
-                        box.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        box.scaleXProperty().bind(getDividers().get(0).positionProperty());
+
+                        gaugePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        gaugePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+                        symbolPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        symbolPane.scaleXProperty().bind(getDividers().get(0).positionProperty());
                         return;
                     }
                 }

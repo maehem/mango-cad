@@ -39,6 +39,9 @@ import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -176,4 +179,38 @@ public class DetailNodes {
         return pane;
     }
 
+    public static Node scaleGauge() {
+        final double FONT_SIZE = 1.0;
+        double mmNum = 10.0;
+        double inNum = 10* 1.27;
+        Group g = new Group();
+        
+        Line left = new Line(0, FONT_SIZE*2.0, 0, -FONT_SIZE*2.0);
+        Line center = new Line(0, 0, inNum, 0);
+        Line mm = new Line(mmNum, 0, mmNum, -FONT_SIZE*2.0);
+        Line in = new Line(  inNum, 0, inNum, FONT_SIZE*2.0);
+                
+        g.getChildren().addAll(left,center,mm,in);
+        
+        Text mmText = new Text("10mm");
+        mmText.setFont(Font.font(FONT_SIZE));
+        mmText.setLayoutX(1.0);
+        mmText.setLayoutY(-FONT_SIZE*0.2);
+        Text inText = new Text("0.50in");
+        inText.setFont(Font.font(FONT_SIZE));
+        inText.setLayoutX(1.0);
+        inText.setLayoutY(FONT_SIZE);
+        
+        g.getChildren().addAll(mmText, inText);
+        
+        for ( Node n: g.getChildren() ) {
+            if ( n instanceof Line l) {
+                l.setStroke(Color.LIGHTGRAY);
+                l.setStrokeWidth(FONT_SIZE*0.05);
+            }
+        }
+        StackPane sp = new StackPane(g);
+        sp.setLayoutX(50);
+        return sp;
+    }
 }
