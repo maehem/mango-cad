@@ -180,37 +180,42 @@ public class DetailNodes {
     }
 
     public static Node scaleGauge() {
-        final double FONT_SIZE = 1.0;
+        final Color COLOR = new Color(0.5, 0.7, 1.0, 0.5);
+        final double FONT_SIZE = 2.0;
         double mmNum = 10.0;
         double inNum = 10* 1.27;
         Group g = new Group();
         
-        Line left = new Line(0, FONT_SIZE*2.0, 0, -FONT_SIZE*2.0);
+        Line left = new Line(0, FONT_SIZE*1.4, 0, -FONT_SIZE*1.4);
         Line center = new Line(0, 0, inNum, 0);
-        Line mm = new Line(mmNum, 0, mmNum, -FONT_SIZE*2.0);
-        Line in = new Line(  inNum, 0, inNum, FONT_SIZE*2.0);
+        Line mm = new Line(mmNum, 0, mmNum, -FONT_SIZE);
+        Line in = new Line(  inNum, 0, inNum, FONT_SIZE);
                 
         g.getChildren().addAll(left,center,mm,in);
         
         Text mmText = new Text("10mm");
         mmText.setFont(Font.font(FONT_SIZE));
+        mmText.setFill(COLOR.brighter().desaturate());
         mmText.setLayoutX(1.0);
-        mmText.setLayoutY(-FONT_SIZE*0.2);
+        mmText.setLayoutY(-FONT_SIZE*0.4);
         Text inText = new Text("0.50in");
         inText.setFont(Font.font(FONT_SIZE));
+        inText.setFill(COLOR.brighter().desaturate());
         inText.setLayoutX(1.0);
-        inText.setLayoutY(FONT_SIZE);
+        inText.setLayoutY(FONT_SIZE*1);
         
         g.getChildren().addAll(mmText, inText);
+        g.setTranslateY(-FONT_SIZE*1.6);
         
         for ( Node n: g.getChildren() ) {
             if ( n instanceof Line l) {
-                l.setStroke(Color.LIGHTGRAY);
-                l.setStrokeWidth(FONT_SIZE*0.05);
+                l.setStroke(COLOR);
+                l.setStrokeWidth(FONT_SIZE*0.1);
             }
         }
+        left.setStrokeWidth(FONT_SIZE*0.16);
+        
         StackPane sp = new StackPane(g);
-        sp.setLayoutX(50);
         return sp;
     }
 }

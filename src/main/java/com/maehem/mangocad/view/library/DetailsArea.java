@@ -23,15 +23,25 @@ import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 
 /**
  *
@@ -68,14 +78,24 @@ public class DetailsArea extends SplitPane {
             case FOOTPRINT -> {
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        StackPane pane = new StackPane(DetailNodes.footprintPreview(footprint, lib));
-                        VBox box = new VBox(pane);
-                        box.getChildren().add(DetailNodes.scaleGauge());
-                        //box.setPrefSize(100, 100);
-                        getItems().add(box);
+                        Node footprintPreview = DetailNodes.footprintPreview(footprint, lib);
+                        Node scaleGauge = DetailNodes.scaleGauge();
+                        scaleGauge.setScaleX(footprintPreview.getScaleX());
+                        scaleGauge.setScaleY(footprintPreview.getScaleY());
+
+                        StackPane footprintPane = new StackPane(footprintPreview);
+                        StackPane gaugePane = new StackPane( scaleGauge );
+                        BorderPane pane = new BorderPane(footprintPane);
+                        pane.setBottom(gaugePane);
+
+
+                        getItems().add(pane);
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
-                        pane.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        pane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+
+                        gaugePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        gaugePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+                        footprintPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        footprintPane.scaleXProperty().bind(getDividers().get(0).positionProperty());
                         return;
                     }
                 }
@@ -97,18 +117,14 @@ public class DetailsArea extends SplitPane {
                         scaleGauge.setScaleY(symbolPreview.getScaleY());
                                                 
                         StackPane symbolPane = new StackPane(symbolPreview);
-                        Pane gaugePane = new Pane( scaleGauge );
+                        StackPane gaugePane = new StackPane( scaleGauge );
                         BorderPane pane = new BorderPane(symbolPane);
                         
-                        FlowPane flowPane = new FlowPane();
-                        Pane p = new Pane();
-                        p.setPrefSize(20, 20);
-                        flowPane.getChildren().addAll(p, gaugePane);
-                        pane.setBottom(flowPane);
+                        pane.setBottom(gaugePane);
                         
                         getItems().add(pane);
                         getItems().add(DetailNodes.descriptionNode(s.getDescription()));
-
+                                                
                         gaugePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
                         gaugePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
                         symbolPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
