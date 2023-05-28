@@ -152,10 +152,14 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, Color color) {
+        return createText(et, null, color);
+    }
+    
+    public static Node createText(ElementText et, String altText, Color color) {
         //String fontPath = "/fonts/Source_Code_Pro/SourceCodePro-VariableFont_wght.ttf";
         String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), et.getSize());
-        Text tt = new Text(et.getValue());
+        Text tt = new Text(altText!=null?altText:et.getValue());
         tt.setFont(font);
         tt.setFill(color);
         double width = tt.getBoundsInLocal().getWidth();
