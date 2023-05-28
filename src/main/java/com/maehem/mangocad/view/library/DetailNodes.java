@@ -36,12 +36,14 @@ import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -67,10 +69,50 @@ public class DetailNodes {
         pane.setOrientation(Orientation.HORIZONTAL);
         SplitPane pkgPane = new SplitPane();
         pkgPane.setOrientation(Orientation.VERTICAL);
+        Pane footprintPreview = footprintPreview(
+                lib.getPackage(devSet.getDevices().get(0).getPackage()), 
+                lib
+        );
+        StackPane footprintPane = new StackPane(footprintPreview);
         
+        pkgPane.getItems().add(footprintPane);
+        pkgPane.getItems().add( new BorderPane(
+                new Text("details, details...")
+        ));
         
-        pane.getItems().add(gateSetPreview(devSet.getGates(), lib));
+        Node gsPreview = gateSetPreview(devSet.getGates(), lib);
+        
+        Platform.runLater(() -> {
+            double gsScale = pane.getBoundsInLocal().getWidth()/gsPreview.getBoundsInLocal().getWidth();
+            gsPreview.setScaleX(gsScale);
+            gsPreview.setScaleY(gsScale);
+            
+            double footScale = footprintPane.getBoundsInLocal().getHeight()/footprintPreview.getBoundsInLocal().getHeight();
+            footprintPreview.setScaleX(footScale);
+            footprintPreview.setScaleY(footScale);
+            
+            pane.getDividers().get(0).setPosition(0.5);
+            pkgPane.getDividers().get(0).setPosition(0.5);
+        });
+        
+        StackPane gsPane = new StackPane(gsPreview);
+        
+        pane.getItems().add(gsPane);
         pane.getItems().add(pkgPane);
+        
+        pane.getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
+            double position = pane.getDividers().get(0).getPosition();
+            //if ( position <= 0.5 ) {
+                gsPane.setScaleX(position);
+                gsPane.setScaleY(position);
+            //}
+        }));
+        
+        pkgPane.getDividers().get(0).positionProperty().addListener((o) -> {
+            double position = pkgPane.getDividers().get(0).getPosition();
+            footprintPane.setScaleX(position);
+            footprintPane.setScaleY(position);
+        });
         
         return pane;
     }
@@ -231,7 +273,7 @@ public class DetailNodes {
         gates.forEach((gate) -> {
             Node n = symbolPreview(lib.getSymbol(gate.getSymbol()), lib);
             n.setLayoutX(gate.getX());
-            n.setLayoutY(gate.getY());
+            n.setLayoutY(-gate.getY());
             
             g.getChildren().add(n);
         });
