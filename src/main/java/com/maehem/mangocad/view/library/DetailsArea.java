@@ -99,12 +99,7 @@ public class DetailsArea extends SplitPane {
 
                         Bounds winBounds = getBoundsInLocal();
 
-                        Platform.runLater(() -> {
-                            // TODO:  Base initial/max scale at slider 0.5
-                            //        Fit max w/h at 50%.
-                            //        Clamp scale >0.6
-                            //        Update scale in callback.
-                            
+                        Platform.runLater(() -> {                            
                             double scale = 2*winBounds.getWidth()/nodeW;
                             double nodeWMax = nodeW*scale;
                             double nodeHMax = nodeH*scale;
@@ -166,12 +161,7 @@ public class DetailsArea extends SplitPane {
                         
                         Bounds winBounds = getBoundsInLocal();
 
-                        Platform.runLater(() -> {
-                            // TODO:  Base initial/max scale at slider 0.5
-                            //        Fit max w/h at 50%.
-                            //        Clamp scale >0.6
-                            //        Update scale in callback.
-                            
+                        Platform.runLater(() -> {                            
                             double scale = 2*winBounds.getWidth()/nodeW;
                             double nodeWMax = nodeW*scale;
                             double nodeHMax = nodeH*scale;
