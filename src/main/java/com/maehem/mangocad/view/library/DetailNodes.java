@@ -90,7 +90,6 @@ public class DetailNodes {
         
         Group g = new Group();
         StackPane pane = new StackPane(g);
-        //Pane pane = new Pane(g);
 
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -120,22 +119,9 @@ public class DetailNodes {
         ));
 
         Bounds bounds = pane.getBoundsInLocal();
-//        LOGGER.log(Level.SEVERE, "symbol pane w: {0}   h: {1}", new Object[]{bounds.getWidth(), bounds.getHeight()});
 
         pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
         pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
-//        double fitSize = bounds.getHeight();
-//        double scale = 1.0;
-//        if ( bounds.getWidth() > bounds.getHeight() ) {
-//            scale = fitSize/bounds.getWidth();
-//            
-//        }
-//        else {
-//            scale = fitSize/bounds.getHeight();
-//        }
-        //pane.setScaleX(scale);
-        //pane.setScaleY(scale);
-        //LOGGER.log(Level.SEVERE, "symbol pane height(after scale): " + pane.getBoundsInLocal().getHeight());
 
         return pane;
     }
@@ -149,7 +135,7 @@ public class DetailNodes {
      * @param footprint
      * @return
      */
-    public static Node footprintPreview(Footprint footprint, Library lib ) {
+    public static Pane footprintPreview(Footprint footprint, Library lib ) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
         
@@ -190,17 +176,9 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-        double fitSize = 600.0;
         Bounds bounds = pane.getBoundsInLocal();
-        double scale;
-        if ( bounds.getWidth() > bounds.getHeight() ) {
-            scale = fitSize/bounds.getWidth();
-            
-        } else {
-            scale = fitSize/bounds.getHeight();
-        }
-        pane.setScaleX(scale);
-        pane.setScaleY(scale);
+        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
+        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
 
         return pane;
     }
@@ -231,7 +209,6 @@ public class DetailNodes {
         inText.setLayoutY(FONT_SIZE*1);
         
         g.getChildren().addAll(mmText, inText);
-        //g.setTranslateY(-FONT_SIZE*1.6);
         
         for ( Node n: g.getChildren() ) {
             if ( n instanceof Line l) {
@@ -240,9 +217,7 @@ public class DetailNodes {
             }
         }
         left.setStrokeWidth(FONT_SIZE*0.16);
-        
-        //g.setTranslateY(g.getBoundsInLocal().getHeight()/2.0);
-        
+                
         StackPane sp = new StackPane(g);
         Bounds bounds = sp.getBoundsInLocal();
         sp.setPrefSize(bounds.getWidth(), bounds.getHeight());

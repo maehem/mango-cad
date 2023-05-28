@@ -30,7 +30,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -75,23 +74,59 @@ public class DetailsArea extends SplitPane {
             case FOOTPRINT -> {
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        Node footprintPreview = DetailNodes.footprintPreview(footprint, lib);
+                        Pane footprintPreview = DetailNodes.footprintPreview(footprint, lib);
                         Node scaleGauge = DetailNodes.scaleGauge();
-                        scaleGauge.setScaleX(footprintPreview.getScaleX());
-                        scaleGauge.setScaleY(footprintPreview.getScaleY());
+                        
+                        double symbH = footprintPreview.getBoundsInLocal().getHeight();
+                        double symbW = footprintPreview.getBoundsInLocal().getWidth();
+                        double scaleH = scaleGauge.getBoundsInLocal().getHeight();
+                        double scaleW = scaleGauge.getBoundsInLocal().getWidth();
 
-                        StackPane footprintPane = new StackPane(footprintPreview);
-                        StackPane gaugePane = new StackPane(scaleGauge);
-                        BorderPane pane = new BorderPane(footprintPane);
-                        pane.setBottom(gaugePane);
+                        Group nodeGroup = new Group(footprintPreview, scaleGauge);
 
-                        getItems().add(pane);
+
+                        scaleGauge.setTranslateY(symbH + scaleH/2.0);
+                        scaleGauge.setTranslateX(symbW/2.0 - scaleW/2.0); // Place gauge bottom center.
+
+                        StackPane nodePane = new StackPane(nodeGroup);
+                        double nodeH = nodePane.getBoundsInLocal().getHeight();
+                        double nodeW = nodePane.getBoundsInLocal().getWidth();
+
+                        getItems().add(nodePane);
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
 
-                        gaugePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        gaugePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
-                        footprintPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        footprintPane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+                        getDividers().get(0).setPosition(0.5);
+
+                        Bounds winBounds = getBoundsInLocal();
+
+                        Platform.runLater(() -> {
+                            // TODO:  Base initial/max scale at slider 0.5
+                            //        Fit max w/h at 50%.
+                            //        Clamp scale >0.6
+                            //        Update scale in callback.
+                            
+                            double scale = 2*winBounds.getWidth()/nodeW;
+                            double nodeWMax = nodeW*scale;
+                            double nodeHMax = nodeH*scale;
+                            
+                            
+                            if ( nodeHMax> winBounds.getHeight() ) {
+                                scale = winBounds.getHeight()/nodeH;
+                            }
+                            nodeGroup.setScaleX(scale);
+                            nodeGroup.setScaleY(scale);
+                        });
+                        
+                        getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
+                            double position = getDividers().get(0).getPosition();
+                            if ( position <= 0.5 ) {
+                                nodePane.setScaleX(position);
+                                nodePane.setScaleY(position);
+                            } else {
+                                nodePane.setScaleX(0.5);
+                                nodePane.setScaleY(0.5);
+                            }
+                        }));
                         return;
                     }
                 }
@@ -115,24 +150,11 @@ public class DetailsArea extends SplitPane {
                         double scaleW = scaleGauge.getBoundsInLocal().getWidth();
                         
                         Group nodeGroup = new Group(symbolPreview, scaleGauge);
-
-                        //StackPane nodeGroupPane = new StackPane(nodeGroup);
                         
                         scaleGauge.setTranslateY(symbH + scaleH/2.0);
                         scaleGauge.setTranslateX(symbW/2.0 - scaleW/2.0); // Place gauge bottom center.
-                        
 
-//                        scaleGauge.setBorder(new Border(new BorderStroke(
-//                                new Color(1.0,0.7,0,0.5), BorderStrokeStyle.SOLID, 
-//                                CornerRadii.EMPTY, new BorderWidths(0.1)
-//                        )));
-                        
                         StackPane nodePane = new StackPane(nodeGroup);
-//                        nodePane.setBorder(new Border(new BorderStroke(
-//                                Color.GREEN, BorderStrokeStyle.SOLID, 
-//                                CornerRadii.EMPTY, new BorderWidths(1),
-//                                new Insets(30)
-//                        )));
                         double nodeH = nodePane.getBoundsInLocal().getHeight();
                         double nodeW = nodePane.getBoundsInLocal().getWidth();
                         
@@ -151,29 +173,11 @@ public class DetailsArea extends SplitPane {
                             //        Update scale in callback.
                             
                             double scale = 2*winBounds.getWidth()/nodeW;
-//                            scaleGauge.setBorder(new Border(new BorderStroke(
-//                                    new Color(1.0,0.7,0,0.5), BorderStrokeStyle.SOLID, 
-//                                    CornerRadii.EMPTY, new BorderWidths(0.4)
-//                            )));
-//                            LOGGER.log(Level.SEVERE, "RunLater: win:{0}x{1}  nodeH:{2}  scale: {3}",
-//                                    new Object[]{winBounds.getWidth(), winBounds.getHeight(), nodeH, scale}
-//                            );
                             double nodeWMax = nodeW*scale;
                             double nodeHMax = nodeH*scale;
-                            
-//                            LOGGER.log(Level.SEVERE, "Symbol Max width: " + nodeHMax );
-                            
+                                                        
                             if ( nodeHMax> winBounds.getHeight() ) {
                                 scale = winBounds.getHeight()/nodeH;
-//                                LOGGER.log(Level.SEVERE, 
-//                                        "Node Hmax: {0}   nodeH: {1}  winH: {2}", 
-//                                        new Object[]{nodeHMax, nodeH, winBounds.getHeight()}
-//                                );
-//                                LOGGER.log(Level.SEVERE, "Scale based on H.  scale:{0}", scale);
-//                                scaleGauge.setBorder(new Border(new BorderStroke(
-//                                        new Color(0.0,0.5,1.00,0.5), BorderStrokeStyle.SOLID, 
-//                                        CornerRadii.EMPTY, new BorderWidths(0.1)
-//                                )));
                             }
                             nodeGroup.setScaleX(scale);
                             nodeGroup.setScaleY(scale);
@@ -188,15 +192,8 @@ public class DetailsArea extends SplitPane {
                                 nodePane.setScaleX(0.5);
                                 nodePane.setScaleY(0.5);
                             }
-//                            double wMax = getBoundsInLocal().getWidth();
-//                            double hMax = getBoundsInLocal().getHeight();
-//                            
-//                            LOGGER.log(Level.SEVERE, "WindowArea: w:" + wMax  +  "   h:" + hMax );
                         }));
                         
-                        //nodePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
-                        //nodePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
-
                         return;
                     }
                 }
