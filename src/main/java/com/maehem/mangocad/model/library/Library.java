@@ -107,6 +107,15 @@ public class Library {
         return packages;
     }
 
+    public Footprint getPackage( String pkgName ) {
+        for ( Footprint fp: getPackages()) {
+            if ( fp.getName().equals(pkgName) ) {
+                return fp;
+            }
+        }
+        return null;
+    }
+
     /**
      * @param packages the packages to set
      */
