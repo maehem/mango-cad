@@ -82,6 +82,11 @@ public class DetailNodes {
         
         Node gsPreview = gateSetPreview(devSet.getGates(), lib);
         
+        StackPane gsPane = new StackPane(gsPreview);
+        
+        pane.getItems().add(gsPane);
+        pane.getItems().add(pkgPane);
+        
         Platform.runLater(() -> {
             double gsScale = pane.getBoundsInLocal().getWidth()/gsPreview.getBoundsInLocal().getWidth();
             gsPreview.setScaleX(gsScale);
@@ -94,11 +99,6 @@ public class DetailNodes {
             pane.getDividers().get(0).setPosition(0.5);
             pkgPane.getDividers().get(0).setPosition(0.5);
         });
-        
-        StackPane gsPane = new StackPane(gsPreview);
-        
-        pane.getItems().add(gsPane);
-        pane.getItems().add(pkgPane);
         
         pane.getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
             double position = pane.getDividers().get(0).getPosition();
@@ -166,6 +166,65 @@ public class DetailNodes {
         pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
 
         return pane;
+    }
+    
+    /**
+     * Render a preview of the symbols.
+     *
+     * NOTE: Eagle Y coordinates are reversed. Up is positive, Y origin at
+     * bottom.
+     *
+     * @param gate
+     * @return
+     */
+    public static Node deviceGatePreview(Gate gate, Library lib ) {
+        LayerElement[] layers = lib.getLayers();
+        ColorPalette palette = lib.getPalette();
+        
+        Group g = new Group();
+        //StackPane pane = new StackPane(g);
+
+        Symbol symbol = lib.getSymbol(gate.getSymbol());
+        symbol.getElements().forEach((e) -> {
+            LayerElement le = layers[e.getLayerNum()];
+            if ( le == null ) {
+                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
+            }
+            int colorIndex = le.getColorIndex();
+            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+            
+            if (e instanceof Wire wire) {
+                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
+            } else if (e instanceof ElementRectangle elementRectangle) {
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+            } else if (e instanceof ElementText elementText) {
+                String gateName = null;
+                if ( elementText.getValue().equals(">NAME") ) {
+                    gateName = gate.getName();
+                }
+                //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
+                g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c));
+                g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
+            } else if( e instanceof ElementPolygon elementPolygon ) {
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+            } else if (e instanceof Pin pin) {
+                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
+            } else if ( e instanceof ElementCircle elementCircle ) {
+                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
+            }
+        });
+        g.getChildren().add(LibraryElementNode.crosshairs(
+                0, 0, 0.5, 0.05, Color.RED
+        ));
+
+        //Bounds bounds = pane.getBoundsInLocal();
+
+//        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
+//        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
+        //g.setPrefSize(bounds.getWidth(), bounds.getHeight());
+        //g.setMaxSize(bounds.getWidth(), bounds.getHeight());
+
+        return g;
     }
     
     /**
@@ -271,7 +330,7 @@ public class DetailNodes {
         Group g = new Group();
         
         gates.forEach((gate) -> {
-            Node n = symbolPreview(lib.getSymbol(gate.getSymbol()), lib);
+            Node n = deviceGatePreview(gate, lib);
             n.setLayoutX(gate.getX());
             n.setLayoutY(-gate.getY());
             
