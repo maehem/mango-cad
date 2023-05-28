@@ -128,6 +128,15 @@ public class Library {
         this.symbols = symbols;
     }
 
+    public Symbol getSymbol( String symbolName ) {
+        for ( Symbol s: getSymbols() ) {
+            if ( s.getName().equals(symbolName) ) {
+                return s;
+            }
+        }
+        return null;
+    }
+    
     /**
      * @return the deviceSets
      */
