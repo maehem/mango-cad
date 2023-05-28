@@ -23,25 +23,16 @@ import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 
 /**
  *
@@ -68,9 +59,15 @@ public class DetailsArea extends SplitPane {
             case DEVICE -> {
                 for (DeviceSet s : lib.getDeviceSets()) {
                     if (s.getName().equals(newValue)) {
-                        VBox box = new VBox(DetailNodes.descriptionNode(s.getDescription()));
-                        box.getChildren().add(DetailNodes.scaleGauge());
-                        getItems().add(box);
+                        Node dsPreview = DetailNodes.devicePreview(s, lib);
+                        StackPane dsPane = new StackPane(dsPreview);
+
+                        getItems().add(dsPreview);
+                        getItems().add(DetailNodes.descriptionNode(s.getDescription()));
+
+                        dsPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+                        dsPane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+
                         return;
                     }
                 }
@@ -84,10 +81,9 @@ public class DetailsArea extends SplitPane {
                         scaleGauge.setScaleY(footprintPreview.getScaleY());
 
                         StackPane footprintPane = new StackPane(footprintPreview);
-                        StackPane gaugePane = new StackPane( scaleGauge );
+                        StackPane gaugePane = new StackPane(scaleGauge);
                         BorderPane pane = new BorderPane(footprintPane);
                         pane.setBottom(gaugePane);
-
 
                         getItems().add(pane);
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
@@ -111,24 +107,96 @@ public class DetailsArea extends SplitPane {
             case SYMBOL -> {
                 for (Symbol s : lib.getSymbols()) {
                     if (s.getName().equals(newValue)) {
-                        Node symbolPreview = DetailNodes.symbolPreview(s, lib);
-                        Node scaleGauge = DetailNodes.scaleGauge();
-                        scaleGauge.setScaleX(symbolPreview.getScaleX());
-                        scaleGauge.setScaleY(symbolPreview.getScaleY());
-                                                
-                        StackPane symbolPane = new StackPane(symbolPreview);
-                        StackPane gaugePane = new StackPane( scaleGauge );
-                        BorderPane pane = new BorderPane(symbolPane);
+                        Pane symbolPreview = DetailNodes.symbolPreview(s, lib);
+                        Pane scaleGauge = DetailNodes.scaleGauge();
+                        double symbH = symbolPreview.getBoundsInLocal().getHeight();
+                        double symbW = symbolPreview.getBoundsInLocal().getWidth();
+                        double scaleH = scaleGauge.getBoundsInLocal().getHeight();
+                        double scaleW = scaleGauge.getBoundsInLocal().getWidth();
                         
-                        pane.setBottom(gaugePane);
+                        Group nodeGroup = new Group(symbolPreview, scaleGauge);
+
+                        //StackPane nodeGroupPane = new StackPane(nodeGroup);
                         
-                        getItems().add(pane);
-                        getItems().add(DetailNodes.descriptionNode(s.getDescription()));
-                                                
-                        gaugePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        gaugePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
-                        symbolPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
-                        symbolPane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+                        scaleGauge.setTranslateY(symbH + scaleH/2.0);
+                        scaleGauge.setTranslateX(symbW/2.0 - scaleW/2.0); // Place gauge bottom center.
+                        
+
+//                        scaleGauge.setBorder(new Border(new BorderStroke(
+//                                new Color(1.0,0.7,0,0.5), BorderStrokeStyle.SOLID, 
+//                                CornerRadii.EMPTY, new BorderWidths(0.1)
+//                        )));
+                        
+                        StackPane nodePane = new StackPane(nodeGroup);
+//                        nodePane.setBorder(new Border(new BorderStroke(
+//                                Color.GREEN, BorderStrokeStyle.SOLID, 
+//                                CornerRadii.EMPTY, new BorderWidths(1),
+//                                new Insets(30)
+//                        )));
+                        double nodeH = nodePane.getBoundsInLocal().getHeight();
+                        double nodeW = nodePane.getBoundsInLocal().getWidth();
+                        
+                        //StackPane bp = new StackPane(nodePane);
+                        
+                        getItems().add(nodePane);
+                        getItems().add( DetailNodes.descriptionNode(s.getDescription()));
+                        getDividers().get(0).setPosition(0.5);
+                        
+                        Bounds winBounds = getBoundsInLocal();
+
+                        Platform.runLater(() -> {
+                            // TODO:  Base initial/max scale at slider 0.5
+                            //        Fit max w/h at 50%.
+                            //        Clamp scale >0.6
+                            //        Update scale in callback.
+                            
+                            double scale = 2*winBounds.getWidth()/nodeW;
+//                            scaleGauge.setBorder(new Border(new BorderStroke(
+//                                    new Color(1.0,0.7,0,0.5), BorderStrokeStyle.SOLID, 
+//                                    CornerRadii.EMPTY, new BorderWidths(0.4)
+//                            )));
+//                            LOGGER.log(Level.SEVERE, "RunLater: win:{0}x{1}  nodeH:{2}  scale: {3}",
+//                                    new Object[]{winBounds.getWidth(), winBounds.getHeight(), nodeH, scale}
+//                            );
+                            double nodeWMax = nodeW*scale;
+                            double nodeHMax = nodeH*scale;
+                            
+//                            LOGGER.log(Level.SEVERE, "Symbol Max width: " + nodeHMax );
+                            
+                            if ( nodeHMax> winBounds.getHeight() ) {
+                                scale = winBounds.getHeight()/nodeH;
+//                                LOGGER.log(Level.SEVERE, 
+//                                        "Node Hmax: {0}   nodeH: {1}  winH: {2}", 
+//                                        new Object[]{nodeHMax, nodeH, winBounds.getHeight()}
+//                                );
+//                                LOGGER.log(Level.SEVERE, "Scale based on H.  scale:{0}", scale);
+//                                scaleGauge.setBorder(new Border(new BorderStroke(
+//                                        new Color(0.0,0.5,1.00,0.5), BorderStrokeStyle.SOLID, 
+//                                        CornerRadii.EMPTY, new BorderWidths(0.1)
+//                                )));
+                            }
+                            nodeGroup.setScaleX(scale);
+                            nodeGroup.setScaleY(scale);
+                        });
+                        
+                        getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
+                            double position = getDividers().get(0).getPosition();
+                            if ( position <= 0.5 ) {
+                                nodePane.setScaleX(position);
+                                nodePane.setScaleY(position);
+                            } else {
+                                nodePane.setScaleX(0.5);
+                                nodePane.setScaleY(0.5);
+                            }
+//                            double wMax = getBoundsInLocal().getWidth();
+//                            double hMax = getBoundsInLocal().getHeight();
+//                            
+//                            LOGGER.log(Level.SEVERE, "WindowArea: w:" + wMax  +  "   h:" + hMax );
+                        }));
+                        
+                        //nodePane.scaleXProperty().bind(getDividers().get(0).positionProperty());
+                        //nodePane.scaleYProperty().bind(getDividers().get(0).positionProperty());
+
                         return;
                     }
                 }

@@ -19,24 +19,30 @@ package com.maehem.mangocad.view.library;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.LayerElement;
 import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
 import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
 import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
 import com.maehem.mangocad.model.library.element.quantum.ElementText;
+import com.maehem.mangocad.model.library.element.quantum.Gate;
 import com.maehem.mangocad.model.library.element.quantum.PadSMD;
 import com.maehem.mangocad.model.library.element.quantum.PadTHD;
 import com.maehem.mangocad.model.library.element.quantum.Pin;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -56,6 +62,19 @@ public class DetailNodes {
         return ta;
     }
 
+    public static Node devicePreview(DeviceSet devSet, Library lib ) {
+        SplitPane pane = new SplitPane();
+        pane.setOrientation(Orientation.HORIZONTAL);
+        SplitPane pkgPane = new SplitPane();
+        pkgPane.setOrientation(Orientation.VERTICAL);
+        
+        
+        pane.getItems().add(gateSetPreview(devSet.getGates(), lib));
+        pane.getItems().add(pkgPane);
+        
+        return pane;
+    }
+    
     /**
      * Render a preview of the symbols.
      *
@@ -65,13 +84,14 @@ public class DetailNodes {
      * @param symbol
      * @return
      */
-    public static Node symbolPreview(Symbol symbol, Library lib ) {
+    public static Pane symbolPreview(Symbol symbol, Library lib ) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
         
         Group g = new Group();
         StackPane pane = new StackPane(g);
-        
+        //Pane pane = new Pane(g);
+
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
             if ( le == null ) {
@@ -99,17 +119,23 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-        double fitSize = 600.0;
         Bounds bounds = pane.getBoundsInLocal();
-        double scale;
-        if ( bounds.getWidth() > bounds.getHeight() ) {
-            scale = fitSize/bounds.getWidth();
-            
-        } else {
-            scale = fitSize/bounds.getHeight();
-        }
-        pane.setScaleX(scale);
-        pane.setScaleY(scale);
+//        LOGGER.log(Level.SEVERE, "symbol pane w: {0}   h: {1}", new Object[]{bounds.getWidth(), bounds.getHeight()});
+
+        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
+        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
+//        double fitSize = bounds.getHeight();
+//        double scale = 1.0;
+//        if ( bounds.getWidth() > bounds.getHeight() ) {
+//            scale = fitSize/bounds.getWidth();
+//            
+//        }
+//        else {
+//            scale = fitSize/bounds.getHeight();
+//        }
+        //pane.setScaleX(scale);
+        //pane.setScaleY(scale);
+        //LOGGER.log(Level.SEVERE, "symbol pane height(after scale): " + pane.getBoundsInLocal().getHeight());
 
         return pane;
     }
@@ -179,7 +205,7 @@ public class DetailNodes {
         return pane;
     }
 
-    public static Node scaleGauge() {
+    public static Pane scaleGauge() {
         final Color COLOR = new Color(0.5, 0.7, 1.0, 0.5);
         final double FONT_SIZE = 2.0;
         double mmNum = 10.0;
@@ -205,7 +231,7 @@ public class DetailNodes {
         inText.setLayoutY(FONT_SIZE*1);
         
         g.getChildren().addAll(mmText, inText);
-        g.setTranslateY(-FONT_SIZE*1.6);
+        //g.setTranslateY(-FONT_SIZE*1.6);
         
         for ( Node n: g.getChildren() ) {
             if ( n instanceof Line l) {
@@ -215,7 +241,26 @@ public class DetailNodes {
         }
         left.setStrokeWidth(FONT_SIZE*0.16);
         
+        //g.setTranslateY(g.getBoundsInLocal().getHeight()/2.0);
+        
         StackPane sp = new StackPane(g);
+        Bounds bounds = sp.getBoundsInLocal();
+        sp.setPrefSize(bounds.getWidth(), bounds.getHeight());
+        sp.setMaxSize(bounds.getWidth(), bounds.getHeight());
         return sp;
+    }
+    
+    private static Node gateSetPreview( List<Gate> gates, Library lib) {
+        Group g = new Group();
+        
+        gates.forEach((gate) -> {
+            Node n = symbolPreview(lib.getSymbol(gate.getSymbol()), lib);
+            n.setLayoutX(gate.getX());
+            n.setLayoutY(gate.getY());
+            
+            g.getChildren().add(n);
+        });
+        
+        return g;
     }
 }
