@@ -22,6 +22,8 @@ import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.model.library.element.device.Device;
+import com.maehem.mangocad.model.library.element.device.DevicePackageInstance3d;
 import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
 import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
 import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
@@ -43,6 +45,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -76,9 +80,10 @@ public class DetailNodes {
         StackPane footprintPane = new StackPane(footprintPreview);
         
         pkgPane.getItems().add(footprintPane);
-        pkgPane.getItems().add( new BorderPane(
-                new Text("details, details...")
-        ));
+        
+        Device dev0 = devSet.getDevices().get(0);
+        ImageView package3DPreview = package3DPreview(null, lib);
+        pkgPane.getItems().add( new BorderPane( package3DPreview));
         
         Node gsPreview = gateSetPreview(devSet.getGates(), lib);
         
@@ -284,6 +289,17 @@ public class DetailNodes {
         return pane;
     }
 
+    public static ImageView package3DPreview(DevicePackageInstance3d pkg3d, Library lib ) {
+        // pkg3d might be null
+        
+        Image img = new Image(DetailNodes.class.getResourceAsStream("/icons/cube-isometric.png"));
+        ImageView iv = new ImageView(img);
+        iv.setPreserveRatio(true);
+        iv.setFitHeight(100);
+        iv.setOpacity(0.2);
+        return iv;
+    }
+        
     public static Pane scaleGauge() {
         final Color COLOR = new Color(0.5, 0.7, 1.0, 0.5);
         final double FONT_SIZE = 2.0;
