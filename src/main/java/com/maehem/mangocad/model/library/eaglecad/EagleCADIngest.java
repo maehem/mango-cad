@@ -841,7 +841,7 @@ public class EagleCADIngest {
                     device.setName(value);
                     break;
                 case "package":
-                    device.setPackage(value);
+                    device.setFootprint(value);
                     break;
                 default:
                     throw new EagleCADLibraryFileException("Device has unknown attribute: [" + item.getNodeName() + "]");
@@ -901,7 +901,7 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals("technology")) {
+            if (!item.getNodeName().equals("package3dinstance")) {
                 continue;
             }
             
@@ -978,7 +978,7 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Device PackageInstance3D has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        device.getPackageInstances().add(packageInstance);
+        device.getPackage3dInstances().add(packageInstance);
     }
     
     private static void ingestAttribute(Technology technology, Node node) throws EagleCADLibraryFileException {
@@ -1037,7 +1037,10 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals("packageinstance")) {
+            if ( item.getNodeName().equals("74*02?")) {
+                int iii=0; // breakpoint
+            }
+            if (!item.getNodeName().equals("package3dinstance")) {
                 continue;
             }
             

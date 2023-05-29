@@ -114,11 +114,11 @@ public class TableOfContentsPane extends SplitPane {
                 for (DeviceSet ds : lib.getDeviceSets()) {
                     if (newValue.equals(ds.getName())) {
                         for (Device d : ds.getDevices()) {
-                            footprintList.select(d.getPackage());
-                            // loop through package3d where pkginst matches d.getPackage
+                            footprintList.select(d.getFootprint());
+                            // loop through package3d where pkginst matches d.getFootprint
                             for (Package3d p3d : lib.getPackages3d()) {
                                 for (PackageInstance3d pi : p3d.getPackageInstances()) {
-                                    if (pi.getName().equals(d.getPackage())) {
+                                    if (pi.getName().equals(d.getFootprint())) {
                                         package3dList.select(p3d.getName());
                                     }
                                 }
@@ -139,9 +139,9 @@ public class TableOfContentsPane extends SplitPane {
                 // Devices
                 for (DeviceSet ds : lib.getDeviceSets()) {
                     for (Device d : ds.getDevices()) {
-                        if (newValue.equals(d.getPackage())) {
+                        if (newValue.equals(d.getFootprint())) {
                             deviceList.select(ds.getName());
-                            // loop through package3d where pkginst matches d.getPackage
+                            // loop through package3d where pkginst matches d.getFootprint
                             for (Package3d p3d : lib.getPackages3d()) {
                                 for (PackageInstance3d pi : p3d.getPackageInstances()) {
                                     if (pi.getName().equals(newValue)) {
@@ -164,7 +164,7 @@ public class TableOfContentsPane extends SplitPane {
                             footprintList.select(pi.getName());
                             for (DeviceSet ds : lib.getDeviceSets()) {
                                 for (Device d : ds.getDevices()) {
-                                    if (pi.getName().equals(d.getPackage())) {
+                                    if (pi.getName().equals(d.getFootprint())) {
                                         deviceList.select(ds.getName());
                                     }
                                 }

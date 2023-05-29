@@ -14,49 +14,70 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.library.LibraryEditor;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryModuleItem extends ControlPanelListItem {
-    private static final Logger LOGGER = ControlPanel.LOGGER;
+public class LibraryDevicePackage3dItem extends ControlPanelListItem {
+
+    private static final Logger LOGGER = Logger.getLogger(LibraryDevicePackage3dItem.class.getSimpleName());
 
     private static final Image iconImage = new Image(
-            ControlPanelListItem.class.getResourceAsStream("/icons/bank.png")
+            ControlPanelListItem.class.getResourceAsStream("/icons/cube-isometric.png")
     );
 
-    public LibraryModuleItem(String name, String description) {
-        super(name, description);
+    private Stage stage = null;
+
+    public LibraryDevicePackage3dItem(String name, String description, File file) {
+        super(name, description, file);
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): LibraryModuleItem");
+        LOGGER.log(Level.FINER, "getContextMenu(): Library Device Footprint Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Edit Paths...");
-        MenuItem menuItem2 = new MenuItem("Open Library Manager...");
+        MenuItem menuItem2 = new MenuItem("Copy to Library");
 
-        menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-        });
         menuItem2.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+
+            if (stage == null) {
+                stage = new Stage();
+                LibraryEditor root = new LibraryEditor( getFile() );
+                stage.setTitle("Library Editor: " + getName());
+                stage.setScene(new Scene(root, 1280, 960));
+                stage.centerOnScreen();
+                stage.setOnCloseRequest((t) -> {
+                    // TODO: Popup if file edited and not saved.
+
+                    stage.close();
+                    stage = null;
+                });
+            }
+            stage.toFront();
+            stage.show();
+
         });
 
-        contextMenu.getItems().addAll(menuItem1, menuItem2);
+        contextMenu.getItems().addAll(
+                menuItem2
+        );
 
         return contextMenu;
     }
-    
+
     @Override
     public Image getImage() {
         return iconImage;

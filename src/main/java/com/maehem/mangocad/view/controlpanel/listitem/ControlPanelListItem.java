@@ -14,13 +14,15 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import java.io.File;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -130,6 +132,10 @@ public abstract class ControlPanelListItem {
 //        Tooltip tt = new Tooltip();
 //        tt.setGraphic(ControlPanelUtils.markdownNode(getDescription()));
 //        return tt;
+    }
+    
+    public Node getPreviewTabNode() {
+        return ControlPanelUtils.markdownNode(1.5, ControlPanelUtils.getItemDescriptionFull(this));
     }
 
 }

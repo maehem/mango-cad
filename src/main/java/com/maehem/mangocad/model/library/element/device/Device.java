@@ -27,7 +27,7 @@ public class Device {
     // 'layer' is not used.
     
     private String name = "";
-    private String _package;  // Underbar. 'package' is a reserved Java word.
+    private String footprint;  // Underbar. 'package' is a reserved Java word.
     private List<Connection> connections = new ArrayList<>();
     private List<Technology> technologies = new ArrayList<>();
     private final List<DevicePackageInstance3d> package3dinstances = new ArrayList<>();
@@ -47,17 +47,17 @@ public class Device {
     }
 
     /**
-     * @return the _package
+     * @return the footprint
      */
-    public String getPackage() {
-        return _package;
+    public String getFootprint() {
+        return footprint;
     }
 
     /**
-     * @param _package the _package to set
+     * @param _package the footprint to set
      */
-    public void setPackage(String _package) {
-        this._package = _package;
+    public void setFootprint(String _package) {
+        this.footprint = _package;
     }
 
     /**
@@ -88,7 +88,7 @@ public class Device {
         this.technologies = technologies;
     }
     
-    public List<DevicePackageInstance3d> getPackageInstances() {
+    public List<DevicePackageInstance3d> getPackage3dInstances() {
         return package3dinstances;
     }
 }

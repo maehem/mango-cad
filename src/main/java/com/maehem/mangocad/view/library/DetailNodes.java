@@ -74,7 +74,7 @@ public class DetailNodes {
         SplitPane pkgPane = new SplitPane();
         pkgPane.setOrientation(Orientation.VERTICAL);
         Pane footprintPreview = footprintPreview(
-                lib.getPackage(devSet.getDevices().get(0).getPackage()), 
+                lib.getPackage(devSet.getDevices().get(0).getFootprint()), 
                 lib
         );
         StackPane footprintPane = new StackPane(footprintPreview);
@@ -354,5 +354,9 @@ public class DetailNodes {
         });
         
         return g;
+    }
+    
+    public static Node devicePackageListNode( DeviceSet deviceSet ) {
+        return new DevicePackageList(deviceSet);
     }
 }

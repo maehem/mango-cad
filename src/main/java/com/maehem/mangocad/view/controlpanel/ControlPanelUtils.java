@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
+import com.maehem.mangocad.view.controlpanel.listitem.ProjectSubFolderItem;
 import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.LibraryCache;
 import com.maehem.mangocad.model.library.element.DeviceSet;

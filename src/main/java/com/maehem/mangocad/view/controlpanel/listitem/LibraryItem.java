@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryEditor;

@@ -63,6 +63,7 @@ public class DetailsArea extends SplitPane {
 
                         getItems().add(dsPreview);
                         getItems().add(DetailNodes.descriptionNode(s.getDescription()));
+                        getItems().add(DetailNodes.devicePackageListNode(s));
 
                         dsPane.scaleYProperty().bind(getDividers().get(0).positionProperty());
                         dsPane.scaleXProperty().bind(getDividers().get(0).positionProperty());

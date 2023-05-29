@@ -14,9 +14,8 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
@@ -32,34 +31,32 @@ import javafx.stage.Stage;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryDeviceSetItem extends ControlPanelListItem {
+public class LibraryDeviceFootprintItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = ControlPanel.LOGGER;
+    private static final Logger LOGGER = Logger.getLogger(LibraryDeviceFootprintItem.class.getSimpleName());
 
     private static final Image iconImage = new Image(
-            ControlPanelListItem.class.getResourceAsStream("/icons/electronics-component-kit.png")
+            LibraryDeviceFootprintItem.class .getResourceAsStream("/icons/integrated-circuit.png")
     );
 
     private Stage stage = null;
-
-    public LibraryDeviceSetItem(String name, String description, File file) {
+    
+    public LibraryDeviceFootprintItem(String name, String description, File file) {
         super(name, description, file);
-
-//        if (file != null) {
-//            // TODO: Maybe get date format from AppSettings? Let user define format in settings panel.
-//            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-//            lastModifiedProperty().set(sdf.format(file.lastModified()));
-//        }
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): Library DeviceSet Item");
+        LOGGER.log(Level.FINER, "getContextMenu(): Library Device Footprint Item");
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("Add to Schematic");
         MenuItem menuItem2 = new MenuItem("Open Library");
         MenuItem menuItem3 = new MenuItem("Copy to Library");
+        MenuItem menuItem4 = new MenuItem("New Package Variant in Library");
 
+        menuItem1.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+        });
         menuItem2.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
 
@@ -80,9 +77,6 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
             stage.show();
 
         });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
         menuItem3.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
         });
@@ -91,7 +85,8 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 menuItem1,
                 new SeparatorMenuItem(),
                 menuItem2,
-                menuItem3
+                menuItem3,
+                menuItem4
         );
 
         return contextMenu;

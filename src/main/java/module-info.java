@@ -8,4 +8,5 @@ module com.maehem.mangocad {
 
     exports com.maehem.mangocad.view;
     exports com.maehem.mangocad.view.controlpanel;
+    exports com.maehem.mangocad.view.controlpanel.listitem;
 }

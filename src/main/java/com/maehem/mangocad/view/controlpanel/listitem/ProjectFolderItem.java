@@ -13,45 +13,73 @@
     WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
     License for the specific language governing permissions and limitations 
     under the License.
-*/
-package com.maehem.mangocad.view.controlpanel;
+ */
+package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryFolderItem extends ControlPanelListItem {
+public class ProjectFolderItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = ControlPanel.LOGGER;
-    
+    private static final Logger LOGGER = Logger.getLogger(ProjectFolderItem.class.getSimpleName());
+
     private static final Image iconImage = new Image(
             ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
     );
 
-    public LibraryFolderItem(String name, String description, File file) {
+    private Stage stage = null;
+
+    public ProjectFolderItem(String name, String description, File file) {
         super(name, description, file);
+
+//        if (file != null) {
+//            // TODO: Maybe get date format from AppSettings? Let user define format in settings panel.
+//            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+//            lastModifiedProperty().set(sdf.format(file.lastModified()));
+//        }
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): Library Folder Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Project Folder Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open Library Manager...");
-        MenuItem menuItem2 = new MenuItem("Edit Description...");
-        MenuItem menuItem3 = new MenuItem("Use All");
-        MenuItem menuItem4 = new MenuItem("Use None");
-        MenuItem menuItem5 = new MenuItem("Search in Folder");
+        MenuItem menuItem1 = new MenuItem("Open");
+        MenuItem menuItem2 = new MenuItem("Rename");
+        MenuItem menuItem3 = new MenuItem("Copy");
+        MenuItem menuItem4 = new MenuItem("[x] In Use");
+        MenuItem menuItem5 = new MenuItem("Show in Finder");
 
         menuItem1.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
+
+            if (stage == null) {
+                stage = new Stage();
+                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
+                stage.setTitle("Project Editor: " + getName());
+                stage.setScene(new Scene(root, 1280, 960));
+                stage.centerOnScreen();
+                stage.setOnCloseRequest((t) -> {
+                    // TODO: Popup if file edited and not saved.
+
+                    stage.close();
+                    stage = null;
+                });
+            }
+            stage.toFront();
+            stage.show();
+
         });
         menuItem2.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
@@ -59,19 +87,24 @@ public class LibraryFolderItem extends ControlPanelListItem {
         menuItem3.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
         });
-        
         menuItem4.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
         });
         menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: Show in Finder", getName());
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
         });
 
-        contextMenu.getItems().addAll(menuItem1, menuItem2, menuItem3, menuItem4, menuItem5);
+        contextMenu.getItems().addAll(
+                menuItem1,
+                menuItem2,
+                menuItem3,
+                menuItem4,
+                new SeparatorMenuItem(),
+                menuItem5);
 
         return contextMenu;
     }
-    
+
     @Override
     public Image getImage() {
         return iconImage;

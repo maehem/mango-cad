@@ -14,8 +14,9 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
@@ -26,38 +27,36 @@ import javafx.scene.image.Image;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class ModuleItem extends ControlPanelListItem {
+public class LibraryModuleItem extends ControlPanelListItem {
+    private static final Logger LOGGER = ControlPanel.LOGGER;
 
     private static final Image iconImage = new Image(
-            ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
+            ControlPanelListItem.class.getResourceAsStream("/icons/bank.png")
     );
 
-    public ModuleItem(String name, String description) {
+    public LibraryModuleItem(String name, String description) {
         super(name, description);
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        Logger.getLogger("ModuleItem").log(Level.SEVERE, "getContextMenu(): ModuleItem");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): LibraryModuleItem");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Module thing 1");
-        MenuItem menuItem2 = new MenuItem("Module thing 2");
-        MenuItem menuItem3 = new MenuItem("Module thing 3");
+        MenuItem menuItem1 = new MenuItem("Edit Paths...");
+        MenuItem menuItem2 = new MenuItem("Open Library Manager...");
 
-        menuItem3.setOnAction((event) -> {
-            if (event.getSource().getClass() == MenuItem.class) {
-                MenuItem item = (MenuItem) event.getSource();
-
-                Logger.getLogger("ModuleItem").log(Level.SEVERE, item.getText());
-            }
-            Logger.getLogger("ModuleItem").log(Level.SEVERE, "{0}: Choice 3 clicked!", getName());
+        menuItem1.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
+        });
+        menuItem2.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
         });
 
-        contextMenu.getItems().addAll(menuItem1, menuItem2, menuItem3);
+        contextMenu.getItems().addAll(menuItem1, menuItem2);
 
         return contextMenu;
     }
-
+    
     @Override
     public Image getImage() {
         return iconImage;

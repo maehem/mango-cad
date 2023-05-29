@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
 import com.maehem.mangocad.view.controlpanel.tab.HomeContent;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
 import javafx.scene.control.Tab;
@@ -46,7 +47,7 @@ public class TabArea extends TabPane {
     public void setPreviewItem(ControlPanelListItem item) {
         getSelectionModel().select(previewTab);
         
-        previewContent.setItem(item);
+        previewContent.setItem(item.getPreviewTabNode());
     }
 
 }

@@ -14,13 +14,11 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -31,9 +29,9 @@ import javafx.stage.Stage;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class ProjectFolderItem extends ControlPanelListItem {
+public class ProjectSubFolderItem extends ControlPanelListItem {
 
-    private static final Logger LOGGER = Logger.getLogger(ProjectFolderItem.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(ProjectSubFolderItem.class.getSimpleName());
 
     private static final Image iconImage = new Image(
             ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
@@ -41,7 +39,7 @@ public class ProjectFolderItem extends ControlPanelListItem {
 
     private Stage stage = null;
 
-    public ProjectFolderItem(String name, String description, File file) {
+    public ProjectSubFolderItem(String name, String description, File file) {
         super(name, description, file);
 
 //        if (file != null) {
@@ -53,7 +51,7 @@ public class ProjectFolderItem extends ControlPanelListItem {
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): Project Folder Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Project Sub Folder Item");
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("Open");
         MenuItem menuItem2 = new MenuItem("Rename");
@@ -62,23 +60,23 @@ public class ProjectFolderItem extends ControlPanelListItem {
         MenuItem menuItem5 = new MenuItem("Show in Finder");
 
         menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-
-            if (stage == null) {
-                stage = new Stage();
-                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
-                stage.setTitle("Project Editor: " + getName());
-                stage.setScene(new Scene(root, 1280, 960));
-                stage.centerOnScreen();
-                stage.setOnCloseRequest((t) -> {
-                    // TODO: Popup if file edited and not saved.
-
-                    stage.close();
-                    stage = null;
-                });
-            }
-            stage.toFront();
-            stage.show();
+//            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
+//
+//            if (stage == null) {
+//                stage = new Stage();
+//                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
+//                stage.setTitle("Project Editor: " + getName());
+//                stage.setScene(new Scene(root, 1280, 960));
+//                stage.centerOnScreen();
+//                stage.setOnCloseRequest((t) -> {
+//                    // TODO: Popup if file edited and not saved.
+//
+//                    stage.close();
+//                    stage = null;
+//                });
+//            }
+//            stage.toFront();
+//            stage.show();
 
         });
         menuItem2.setOnAction((event) -> {
@@ -109,5 +107,35 @@ public class ProjectFolderItem extends ControlPanelListItem {
     public Image getImage() {
         return iconImage;
     }
+
+//    @Override
+//    public Tooltip getTooltip() {
+//        String descString = ControlPanelUtils.getFolderDescriptionFull(getFile());
+//        if ( !descString.isEmpty() ) {
+//                Tooltip tt = new Tooltip();
+//                tt.setGraphic(ControlPanelUtils.markdownNode(descString));
+//                return tt;
+//            
+//        } else {
+//            return null;
+//        }
+////        if (getFile().isDirectory()) {
+////            File descFile = new File(getFile(), "DESCRIPTION.md");
+////            if ( !descFile.exists() || descFile.isDirectory() || !descFile.canRead() ) return null;
+////            try {
+////                String readString = Files.readString(descFile.toPath());
+////                if (readString.isEmpty()) {
+////                    return null;
+////                }
+////                Tooltip tt = new Tooltip();
+////                tt.setGraphic(ControlPanelUtils.markdownNode(readString));
+////                return tt; // TODO Markdown processor.
+////            } catch (IOException ex) {
+////                Logger.getLogger(ProjectSubFolderItem.class.getName()).log(Level.SEVERE, null, ex);
+////            }
+////        }
+////        
+////        return null;
+//    }
 
 }
