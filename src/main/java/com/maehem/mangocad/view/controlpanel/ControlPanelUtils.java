@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.css.FontFace;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
@@ -168,13 +169,14 @@ public class ControlPanelUtils {
 //            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
 //        }
         Font f = Font.getDefault();
+        String fontFamily = f.getFamily();
         // TODO: Move these over to CSS file.
-        Font h1 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale);
-        Font h2 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.90);
-        Font h3 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.85);
-        Font h4 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.82);
-        Font h5 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.80);
-        Font h6 = Font.font("Arial", FontWeight.BOLD, f.getSize() * scale * 0.78);
+        Font h1 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale);
+        Font h2 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.90);
+        Font h3 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.85);
+        Font h4 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.82);
+        Font h5 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.80);
+        Font h6 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.78);
         
         Font body = f;
 

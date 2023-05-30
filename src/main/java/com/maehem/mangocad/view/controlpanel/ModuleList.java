@@ -206,7 +206,11 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             if (library != null) {
                 TreeItem item;
                 if (!library.getDescriptions().isEmpty()) {
-                    item = new TreeItem(new LibraryItem(lbrFile.getName(), library.getDescriptionShort(), lbrFile));
+                    item = new TreeItem(new LibraryItem(
+                            lbrFile.getName(), 
+                            Library.getDescriptionShort(library.getDescription()), 
+                            lbrFile
+                    ));
                     parentItem.getChildren().add(item);
                 } else {
                     item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile));

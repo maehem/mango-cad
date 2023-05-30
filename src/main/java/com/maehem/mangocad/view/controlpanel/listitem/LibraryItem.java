@@ -17,16 +17,24 @@
 package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -114,4 +122,29 @@ public class LibraryItem extends ControlPanelListItem {
         return iconImage;
     }
 
+    @Override
+    public Node getPreviewTabNode() {
+        
+        // TODO: Maybe this is a computer font if its a file.
+        Text itemName = new Text(getName());
+        itemName.setId("control-panel-preview-area-heading");
+        
+        Separator sep = new Separator();
+        
+        VBox top = new VBox(itemName, sep);
+        VBox.setMargin(itemName, new Insets(5,10,5,10));
+                
+        BorderPane pane = new BorderPane(
+                ControlPanelUtils.markdownNode(
+                        1.5, 
+                        ControlPanelUtils.getItemDescriptionFull(this)
+                )
+        );
+        pane.setTop(top);
+        
+        
+        return pane;
+    }
+
+    
 }

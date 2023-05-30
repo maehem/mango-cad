@@ -68,3 +68,9 @@
     -fx-border-color: transparent;
     -fx-table-cell-border-color:transparent;
 }
+
+#control-panel-preview-area-heading{
+    -fx-font-size: 170%; 
+    -fx-font-weight: bold; 
+    -fx-fill: #ffffff66;
+}

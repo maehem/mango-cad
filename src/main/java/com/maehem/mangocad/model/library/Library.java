@@ -35,12 +35,12 @@ public class Library {
     public static final String FILE_EXTENSION = "mclib";
 
     private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
-    
+
     private ArrayList<Note> notes = new ArrayList<>();
     // Descriptions is a list of this library descriptions for each language
     // supported.
     private final LayerElement layers[] = new LayerElement[256];
-    
+
     private ArrayList<Description> descriptions = new ArrayList<>();
     private ArrayList<Footprint> packages = new ArrayList<>();
     private ArrayList<Symbol> symbols = new ArrayList<>();
@@ -53,15 +53,11 @@ public class Library {
         layers[0] = new LayerElement();
     }
 
-    
-    
     public ColorPalette getPalette() {
         return colorPalette;
     }
-    
-    
+
     // TODO:  Add getDescription based on local.
-    
     /**
      * @return the description
      */
@@ -77,22 +73,17 @@ public class Library {
     }
 
     public String getDescription() {
-        if ( !getDescriptions().isEmpty() ) {
+        if (!getDescriptions().isEmpty()) {
             return getDescriptions().get(0).getValue();
         } else {
             return "";
         }
     }
 
-    public String getDescriptionShort() {
-        if ( !getDescriptions().isEmpty() ) {
-            String value = getDescriptions().get(0).getValue();
-            String[] s1 = value.split("\\n");
-            String[] s2 = s1[0].split("<br\\s*\\/?>");
-            return s2[0];
-        } else {
-            return "";
-        }
+    public static String getDescriptionShort(String longDesc) {
+        String[] s1 = longDesc.split("\\n");
+        String[] s2 = s1[0].split("<br\\s*\\/?>");
+        return s2[0];
     }
 
     /**
@@ -102,17 +93,16 @@ public class Library {
         return layers;
     }
 
-
-    public int getIndexForLayer( int layerNum ) {
+    public int getIndexForLayer(int layerNum) {
         LayerElement layer = layers[layerNum];
-        
-        if ( layer != null ) {
+
+        if (layer != null) {
             return layer.getColorIndex();
         } else {
             return -1;
         }
     }
-    
+
     /**
      * @return the packages
      */
@@ -120,9 +110,9 @@ public class Library {
         return packages;
     }
 
-    public Footprint getPackage( String pkgName ) {
-        for ( Footprint fp: getPackages()) {
-            if ( fp.getName().equals(pkgName) ) {
+    public Footprint getPackage(String pkgName) {
+        for (Footprint fp : getPackages()) {
+            if (fp.getName().equals(pkgName)) {
                 return fp;
             }
         }
@@ -150,15 +140,15 @@ public class Library {
         this.symbols = symbols;
     }
 
-    public Symbol getSymbol( String symbolName ) {
-        for ( Symbol s: getSymbols() ) {
-            if ( s.getName().equals(symbolName) ) {
+    public Symbol getSymbol(String symbolName) {
+        for (Symbol s : getSymbols()) {
+            if (s.getName().equals(symbolName)) {
                 return s;
             }
         }
         return null;
     }
-    
+
     /**
      * @return the deviceSets
      */
