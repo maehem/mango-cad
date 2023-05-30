@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
