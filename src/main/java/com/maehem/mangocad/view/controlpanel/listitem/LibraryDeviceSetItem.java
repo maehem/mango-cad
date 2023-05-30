@@ -17,15 +17,26 @@
 package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -102,4 +113,40 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         return iconImage;
     }
 
+    @Override
+    public Node getPreviewTabNode() {
+        
+        Text itemName = new Text(getName());
+        itemName.setId("control-panel-preview-area-heading");
+        
+        Text fileName = new Text(getFile().getName());
+        fileName.setId("control-panel-preview-area-heading-filename");
+        
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        spacer.setMaxWidth(Double.MAX_VALUE);
+        spacer.setMinSize(10, 10);
+        HBox.getHgrow(spacer);
+
+        HBox headingBox = new HBox(itemName, spacer, fileName);
+        headingBox.setAlignment(Pos.CENTER);
+        Separator sep = new Separator();
+        
+        VBox top = new VBox(headingBox, sep);
+        top.setFillWidth(true);
+        VBox.setMargin(headingBox, new Insets(5,10,5,10));
+                
+        BorderPane pane = new BorderPane(
+                ControlPanelUtils.markdownNode(
+                        1.5, 
+                        ControlPanelUtils.getItemDescriptionFull(this)
+                )
+        );
+        pane.setTop(top);
+        
+        
+        return pane;
+    }
+    
 }

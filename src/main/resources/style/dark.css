@@ -74,3 +74,8 @@
     -fx-font-weight: bold; 
     -fx-fill: #ffffff66;
 }
+
+#control-panel-preview-area-heading-filename{
+    -fx-fill: #22ff2277;
+    -fx-font-size: 130%; 
+}
