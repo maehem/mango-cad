@@ -60,6 +60,8 @@ public class Library {
     }
     
     
+    // TODO:  Add getDescription based on local.
+    
     /**
      * @return the description
      */
@@ -77,6 +79,17 @@ public class Library {
     public String getDescription() {
         if ( !getDescriptions().isEmpty() ) {
             return getDescriptions().get(0).getValue();
+        } else {
+            return "";
+        }
+    }
+
+    public String getDescriptionShort() {
+        if ( !getDescriptions().isEmpty() ) {
+            String value = getDescriptions().get(0).getValue();
+            String[] s1 = value.split("\\n");
+            String[] s2 = s1[0].split("<br\\s*\\/?>");
+            return s2[0];
         } else {
             return "";
         }
