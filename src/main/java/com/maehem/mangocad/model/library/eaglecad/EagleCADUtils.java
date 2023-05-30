@@ -141,9 +141,13 @@ public class EagleCADUtils {
                     Node node = nodes.item(i);
                     if (node.getNodeType() == 1) {
                         switch (node.getNodeName()) {
+//                            case "description":
+//                                EagleCADIngest.ingestLibraryDescription(lib, node);
+//                                break;
                             case "settings":  // Ignore 'settings'
                             case "grid":      // Ignore 'grid'
                                 break;
+                            case "description":
                             case "layers":    // Yay! Layers
                             case "library":   // This is what we came for
                                 ingestEagleLibraryElement(lib, node);
@@ -168,6 +172,7 @@ public class EagleCADUtils {
                 switch (child.getNodeName()) {
                     case "layer":
                         EagleCADIngest.ingestLayer( child, lib.getLayers() );
+                        break;
                     case "description":
                         EagleCADIngest.ingestLibraryDescription(lib, child);
                         break;
