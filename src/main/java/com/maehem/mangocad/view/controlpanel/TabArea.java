@@ -19,8 +19,10 @@ package com.maehem.mangocad.view.controlpanel;
 import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
 import com.maehem.mangocad.view.controlpanel.tab.HomeContent;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
+import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
 
 /**
  *
@@ -35,6 +37,7 @@ public class TabArea extends TabPane {
     public TabArea() {
         // TODO: Set Graphic
 
+        //setMinWidth(100);
         homeTab = new Tab("Home", new HomeContent());
         homeTab.setClosable(false);
         
@@ -42,12 +45,17 @@ public class TabArea extends TabPane {
         previewTab.setClosable(false);
 
         getTabs().addAll(homeTab, previewTab);
+        
     }
 
     public void setPreviewItem(ControlPanelListItem item) {
         getSelectionModel().select(previewTab);
-        
-        previewContent.setItem(item.getPreviewTabNode());
+        Node node = item.getPreviewTabNode();
+        if ( node instanceof BorderPane borderPane ) {
+            previewContent.setItem(borderPane);
+        } else {
+            previewContent.setItem(node);
+        }
     }
 
 }

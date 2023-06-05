@@ -155,6 +155,15 @@ public class Library {
     public ArrayList<DeviceSet> getDeviceSets() {
         return deviceSets;
     }
+    
+    public DeviceSet getDeviceSet( String name ) {
+        for ( DeviceSet ds: getDeviceSets() ) {
+            if ( ds.getName().equals(name) ) {
+                return ds;
+            }
+        }
+        return null;
+    }
 
     /**
      * @param deviceSets the devices to set

@@ -99,6 +99,7 @@ public class ControlPanel extends Application {
 
         moduleList.pullProperties(appProperties);
         
+        // TODO: Move this to style.css with setId()
         // Set the Style-properties of the BorderPane
         root.setStyle("-fx-padding: 10;"
                 + //    "-fx-border-style: solid inside;" +

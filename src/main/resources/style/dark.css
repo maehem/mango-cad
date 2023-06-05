@@ -71,11 +71,11 @@
 
 #control-panel-preview-area-heading{
     -fx-font-size: 170%; 
-    -fx-font-weight: bold; 
     -fx-fill: #ffffff66;
+    -fx-font-weight: bold; 
 }
 
 #control-panel-preview-area-heading-filename{
-    -fx-fill: #22ff2277;
     -fx-font-size: 130%; 
+    -fx-fill: #22ff2277;
 }

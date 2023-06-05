@@ -16,11 +16,10 @@
  */
 package com.maehem.mangocad.view.controlpanel.tab;
 
-import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
-import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -31,7 +30,11 @@ public class PreviewContent extends BorderPane {
     public PreviewContent() {
         
         setCenter(new TextArea("Content Area"));
-        
+        //setMaxHeight(Double.MAX_VALUE);
+        //setPrefHeight(Double.MAX_VALUE);
+        //setMinWidth(10);
+        //setPrefWidth(10);
+        setBottom(new Text("PreviewContent bottom\n2222222\n33333333\n4444444\n555555"));
     }
 
     public void setItem(Node item) {
@@ -39,6 +42,10 @@ public class PreviewContent extends BorderPane {
 //       contentArea.setText(ControlPanelUtils.getItemDescriptionFull(item.getFile()));
         //Node cNode = ControlPanelUtils.markdownNode(1.5, ControlPanelUtils.getItemDescriptionFull(item));
         setCenter(item);
+    }
+    
+    public Node getItem() {
+        return getCenter();
     }
     
 }

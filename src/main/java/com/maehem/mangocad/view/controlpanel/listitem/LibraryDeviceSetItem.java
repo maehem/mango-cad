@@ -16,20 +16,39 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.model.library.LibraryCache;
+import com.maehem.mangocad.model.library.element.DeviceSet;
+import com.maehem.mangocad.model.library.element.Footprint;
+import com.maehem.mangocad.model.library.element.device.Device;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
+import com.maehem.mangocad.view.library.DetailNodes;
+import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.MapValueFactory;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -76,7 +95,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
             if (stage == null) {
                 stage = new Stage();
-                LibraryEditor root = new LibraryEditor( getFile() );
+                LibraryEditor root = new LibraryEditor(getFile());
                 stage.setTitle("Library Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();
@@ -115,38 +134,127 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
     @Override
     public Node getPreviewTabNode() {
-        
+
         Text itemName = new Text(getName());
         itemName.setId("control-panel-preview-area-heading");
-        
-        Text fileName = new Text(getFile().getName());
-        fileName.setId("control-panel-preview-area-heading-filename");
-        
+
         Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        
         spacer.setMaxWidth(Double.MAX_VALUE);
         spacer.setMinSize(10, 10);
-        HBox.getHgrow(spacer);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Text fileName = new Text(getFile().getName());
+        fileName.setId("control-panel-preview-area-heading-filename");
 
         HBox headingBox = new HBox(itemName, spacer, fileName);
         headingBox.setAlignment(Pos.CENTER);
         Separator sep = new Separator();
+
+        VBox heading = new VBox(headingBox, sep);
+        heading.setFillWidth(true);
+
+        VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
+
+        Node devicePreviewNode = devicePreviewNode();
+
+        SplitPane spPane = new SplitPane(devicePreviewNode, deviceSetList());
+        spPane.setOrientation(Orientation.VERTICAL);
         
-        VBox top = new VBox(headingBox, sep);
-        top.setFillWidth(true);
-        VBox.setMargin(headingBox, new Insets(5,10,5,10));
-                
-        BorderPane pane = new BorderPane(
+        VBox contentArea = new VBox(
+                heading,
                 ControlPanelUtils.markdownNode(
-                        1.5, 
+                        1.5,
                         ControlPanelUtils.getItemDescriptionFull(this)
-                )
+                ),
+                spPane
         );
-        pane.setTop(top);
-        
-        
+
+
+        BorderPane pane = new BorderPane(contentArea);
         return pane;
     }
-    
+
+    private Node devicePreviewNode() {
+        Library lib = LibraryCache.getInstance().getLibrary(getFile());
+        if (lib == null) {
+            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
+        }
+
+        DeviceSet deviceSet = lib.getDeviceSet(getName());
+
+        Group gateSetPreview = DetailNodes.gateSetPreview(deviceSet.getGates(), lib);
+
+        GroupContainer gatePreviewPane = new GroupContainer(gateSetPreview);
+        String pkgName = deviceSet.getDevices().get(0).getFootprint();
+
+        Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib);
+        GroupContainer footprintContainer = new GroupContainer(footprintPreview);
+        Text text = new Text("Goodbye\n2222222\n3333333\n4444444\n55555555");
+        VBox vArea = new VBox(footprintContainer, text);
+        VBox.setVgrow(footprintContainer, Priority.SOMETIMES);
+        VBox.setVgrow(text, Priority.SOMETIMES);
+
+        HBox hArea = new HBox(gatePreviewPane, vArea);
+        VBox.setVgrow(hArea, Priority.SOMETIMES); // Makes it stretch downward.
+
+        HBox.setHgrow(gatePreviewPane, Priority.SOMETIMES); // Makes them fit width.
+        HBox.setHgrow(vArea, Priority.SOMETIMES);
+
+        return hArea;
+    }
+
+    private Node deviceSetList() {
+        Library lib = LibraryCache.getInstance().getLibrary(getFile());
+        if (lib == null) {
+            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
+        }
+        DeviceSet deviceSet = lib.getDeviceSet(getName());
+
+        TableView tableView = new TableView();
+        tableView.setPlaceholder( new Label("No rows to display"));
+        
+        TableColumn<Map, String> deviceName = new TableColumn<>("Device");
+        deviceName.setCellValueFactory(new MapValueFactory<>("device"));
+
+        TableColumn<Map, String> footprint = new TableColumn<>("Footprint");
+        footprint.setCellValueFactory(new MapValueFactory<>("footprint"));
+        
+        TableColumn<Map, String> has3DCol = new TableColumn<>("3D");
+        has3DCol.setCellValueFactory(new MapValueFactory<>("has3D"));
+        
+        TableColumn<Map, String> desc = new TableColumn<>("Description");
+        desc.setCellValueFactory(new MapValueFactory<>("description"));
+
+        tableView.getColumns().add(deviceName);
+        tableView.getColumns().add(footprint);
+        tableView.getColumns().add(has3DCol);
+        tableView.getColumns().add(desc);
+
+        ObservableList<Map<String, Object>> items
+                = FXCollections.<Map<String, Object>>observableArrayList();
+
+        for ( Device d: deviceSet.getDevices() ) {
+            Footprint pkg = lib.getPackage(d.getFootprint());
+            String haz3d = "";
+            // There is always a default(blank) 3D package ending in "/1" initially created by CAD software.
+            if ( !d.getPackage3dInstances().isEmpty() &&
+                    !d.getPackage3dInstances().get(0).getPackage3dUrn().endsWith("/1") ) {
+                haz3d = "Y";
+            }
+            
+            Map<String, Object> item = new HashMap<>();
+            item.put("device", d.getName());
+            item.put("footprint", d.getFootprint());
+            item.put("has3D", haz3d);
+            item.put("description", pkg.getDescription());
+
+            items.add(item);
+            
+        }
+
+        tableView.getItems().addAll(items);
+
+        return tableView;
+    }
+
 }

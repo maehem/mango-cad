@@ -45,6 +45,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.maehem.mangocad/com.maehem.mangocad.view.ControlPanel</mainClass>
+                    <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.ScaledItemTest</mainClass-->
                 </configuration>
                 <executions>
                     <execution>

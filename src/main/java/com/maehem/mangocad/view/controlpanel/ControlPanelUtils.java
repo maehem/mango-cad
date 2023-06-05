@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import javafx.css.FontFace;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -184,14 +185,15 @@ public class ControlPanelUtils {
         for (String line : lines) {
             line = line.strip();
             if (line.startsWith("***") | line.startsWith("---") | line.startsWith("___")) { // <HR>
-                StringBuilder sb = new StringBuilder();
-                for ( int i=0; i<60; i++ ) {
-                    sb.append("\u2501");
-                }
-                Text t = new Text(sb.toString());
-                t.setFont(h3);
-                t.setFill(Color.GREY);
-                node.getChildren().add(t);
+//                StringBuilder sb = new StringBuilder();
+//                for ( int i=0; i<60; i++ ) {
+//                    sb.append("\u2501");
+//                }
+//                Text t = new Text(sb.toString());
+//                t.setFont(h3);
+//                t.setFill(Color.GREY);
+//                node.getChildren().add(t);
+                node.getChildren().add(new Separator());
             } else if (line.startsWith("######")) {
                 Text t = new Text(line.substring(6));
                 t.setFont(h6);

@@ -73,11 +73,11 @@ public class DetailNodes {
         pane.setOrientation(Orientation.HORIZONTAL);
         SplitPane pkgPane = new SplitPane();
         pkgPane.setOrientation(Orientation.VERTICAL);
-        Pane footprintPreview = footprintPreview(
+        Group footprintPreview = footprintPreview(
                 lib.getPackage(devSet.getDevices().get(0).getFootprint()), 
                 lib
         );
-        StackPane footprintPane = new StackPane(footprintPreview);
+        GroupContainer footprintPane = new GroupContainer(footprintPreview);
         
         pkgPane.getItems().add(footprintPane);
         
@@ -85,39 +85,39 @@ public class DetailNodes {
         ImageView package3DPreview = package3DPreview(null, lib);
         pkgPane.getItems().add( new BorderPane( package3DPreview));
         
-        Node gsPreview = gateSetPreview(devSet.getGates(), lib);
+        Group gsPreview = gateSetPreview(devSet.getGates(), lib);
         
-        StackPane gsPane = new StackPane(gsPreview);
+        GroupContainer gsPane = new GroupContainer(gsPreview);
         
         pane.getItems().add(gsPane);
         pane.getItems().add(pkgPane);
         
-        Platform.runLater(() -> {
-            double gsScale = pane.getBoundsInLocal().getWidth()/gsPreview.getBoundsInLocal().getWidth();
-            gsPreview.setScaleX(gsScale);
-            gsPreview.setScaleY(gsScale);
-            
-            double footScale = footprintPane.getBoundsInLocal().getHeight()/footprintPreview.getBoundsInLocal().getHeight();
-            footprintPreview.setScaleX(footScale);
-            footprintPreview.setScaleY(footScale);
-            
-            pane.getDividers().get(0).setPosition(0.5);
-            pkgPane.getDividers().get(0).setPosition(0.5);
-        });
+//        Platform.runLater(() -> {
+//            double gsScale = pane.getBoundsInLocal().getWidth()/gsPreview.getBoundsInLocal().getWidth();
+//            gsPreview.setScaleX(gsScale);
+//            gsPreview.setScaleY(gsScale);
+//            
+//            double footScale = footprintPane.getBoundsInLocal().getHeight()/footprintPreview.getBoundsInLocal().getHeight();
+//            footprintPreview.setScaleX(footScale);
+//            footprintPreview.setScaleY(footScale);
+//            
+//            pane.getDividers().get(0).setPosition(0.5);
+//            pkgPane.getDividers().get(0).setPosition(0.5);
+//        });
+//        
+//        pane.getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
+//            double position = pane.getDividers().get(0).getPosition();
+//            //if ( position <= 0.5 ) {
+//                gsPane.setScaleX(position);
+//                gsPane.setScaleY(position);
+//            //}
+//        }));
         
-        pane.getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
-            double position = pane.getDividers().get(0).getPosition();
-            //if ( position <= 0.5 ) {
-                gsPane.setScaleX(position);
-                gsPane.setScaleY(position);
-            //}
-        }));
-        
-        pkgPane.getDividers().get(0).positionProperty().addListener((o) -> {
-            double position = pkgPane.getDividers().get(0).getPosition();
-            footprintPane.setScaleX(position);
-            footprintPane.setScaleY(position);
-        });
+//        pkgPane.getDividers().get(0).positionProperty().addListener((o) -> {
+//            double position = pkgPane.getDividers().get(0).getPosition();
+//            footprintPane.setScaleX(position);
+//            footprintPane.setScaleY(position);
+//        });
         
         return pane;
     }
@@ -241,12 +241,12 @@ public class DetailNodes {
      * @param footprint
      * @return
      */
-    public static Pane footprintPreview(Footprint footprint, Library lib ) {
+    public static Group footprintPreview(Footprint footprint, Library lib ) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
         
         Group g = new Group();
-        StackPane pane = new StackPane(g);
+        //StackPane pane = new StackPane(g);
         
         footprint.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -282,11 +282,11 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-        Bounds bounds = pane.getBoundsInLocal();
-        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
-        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
+//        Bounds bounds = pane.getBoundsInLocal();
+//        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
+//        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
 
-        return pane;
+        return g;
     }
 
     public static ImageView package3DPreview(DevicePackageInstance3d pkg3d, Library lib ) {
@@ -342,7 +342,7 @@ public class DetailNodes {
         return sp;
     }
     
-    private static Node gateSetPreview( List<Gate> gates, Library lib) {
+    public static Group gateSetPreview( List<Gate> gates, Library lib) {
         Group g = new Group();
         
         gates.forEach((gate) -> {

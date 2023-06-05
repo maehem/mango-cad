@@ -75,7 +75,7 @@ public class DetailsArea extends SplitPane {
             case FOOTPRINT -> {
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        Pane footprintPreview = DetailNodes.footprintPreview(footprint, lib);
+                        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib);
                         Node scaleGauge = DetailNodes.scaleGauge();
                         
                         double symbH = footprintPreview.getBoundsInLocal().getHeight();
