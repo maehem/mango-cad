@@ -30,6 +30,7 @@ import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -259,13 +260,35 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 haz3d = "Y";
             }
             
-            Map<String, Object> item = new HashMap<>();
-            item.put("device", d.getName());
-            item.put("footprint", d.getFootprint());
-            item.put("has3D", haz3d);
-            item.put("description", pkg.getDescription());
+            List<Technology> technologies = d.getTechnologies();
+            if ( technologies.isEmpty() ) { // tecnologies should nver be empty, but...
+                Map<String, Object> item = new HashMap<>();
 
-            items.add(item);
+                item.put("device", d.getName());
+                item.put("footprint", d.getFootprint());
+                item.put("has3D", haz3d);
+                item.put("description", pkg.getDescription());
+                items.add(item);
+            } else {
+                for ( Technology t: technologies ) {
+                    Map<String, Object> item = new HashMap<>();
+
+                    // Replace '*' in deviceset.name with technology.name
+                    // Replace '?' in deviceset.name with d.name
+                    String name = deviceSet.getName();
+                    name = name.replace("*", t.getName());
+                    if ( name.contains("?")) {
+                        name = name.replace("?", d.getName());
+                    } else {
+                        name += d.getName();
+                    }
+                    item.put("device", name);
+                    item.put("footprint", d.getFootprint());
+                    item.put("has3D", haz3d);
+                    item.put("description", pkg.getDescription());
+                    items.add(item);
+                }
+            }
             
         }
 
