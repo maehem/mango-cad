@@ -79,3 +79,7 @@
     -fx-font-size: 130%; 
     -fx-fill: #22ff2277;
 }
+
+#technology-attributes-table{
+    -fx-font-size:70%;
+}

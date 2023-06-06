@@ -196,6 +196,16 @@ public class Library {
     public ArrayList<Package3d> getPackages3d() {
         return packages3d;
     }
+    
+    public Package3d getPackage3D( String pkgName ) {
+        for ( Package3d pkg: getPackages3d() ) {
+            if (pkg.getName().equals(pkgName )) {
+                return pkg;
+            }
+        }
+        
+        return null;
+    }
 
     /**
      * @param packages3d the 3D Packages to set

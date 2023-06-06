@@ -20,7 +20,9 @@ import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.LibraryCache;
 import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
+import com.maehem.mangocad.model.library.element.device.Attribute;
 import com.maehem.mangocad.model.library.element.device.Device;
+import com.maehem.mangocad.model.library.element.device.Technology;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
@@ -42,18 +44,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -155,10 +159,14 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
         VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
 
-        Node devicePreviewNode = devicePreviewNode();
+        ScrollPane scrollPane = new ScrollPane(devicePreviewNode());
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
 
-        SplitPane spPane = new SplitPane(devicePreviewNode, deviceSetList());
+        SplitPane spPane = new SplitPane(scrollPane, deviceSetList());
         spPane.setOrientation(Orientation.VERTICAL);
+        spPane.setDividerPosition(0, 0.72);
+        VBox.setVgrow(spPane, Priority.ALWAYS);
         
         VBox contentArea = new VBox(
                 heading,
@@ -168,7 +176,6 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 ),
                 spPane
         );
-
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
@@ -189,18 +196,28 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
         Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib);
         GroupContainer footprintContainer = new GroupContainer(footprintPreview);
-        Text text = new Text("Goodbye\n2222222\n3333333\n4444444\n55555555");
-        VBox vArea = new VBox(footprintContainer, text);
-        VBox.setVgrow(footprintContainer, Priority.SOMETIMES);
-        VBox.setVgrow(text, Priority.SOMETIMES);
+        
+        Node deviceTechnologyAttrList = deviceTechnologyAttrList(lib);
+        VBox.setMargin(deviceTechnologyAttrList, new Insets(8));
+        VBox footAttrVertArea = new VBox(footprintContainer, deviceTechnologyAttrList);
+        VBox.setVgrow(footprintContainer, Priority.ALWAYS);
+        VBox.setVgrow(deviceTechnologyAttrList, Priority.SOMETIMES);
 
-        HBox hArea = new HBox(gatePreviewPane, vArea);
-        VBox.setVgrow(hArea, Priority.SOMETIMES); // Makes it stretch downward.
+        HBox gateFootAttrArea = new HBox(gatePreviewPane, footAttrVertArea);
+        VBox.setVgrow(gateFootAttrArea, Priority.SOMETIMES); // Makes it stretch downward.
 
         HBox.setHgrow(gatePreviewPane, Priority.SOMETIMES); // Makes them fit width.
-        HBox.setHgrow(vArea, Priority.SOMETIMES);
+        HBox.setHgrow(footAttrVertArea, Priority.SOMETIMES);
 
-        return hArea;
+        ImageView package3DPreview = DetailNodes.package3DPreview(
+                deviceSet.getDevices().get(0).getPackage3dInstances().get(0),
+                lib
+        );
+        package3DPreview.setFitHeight(200);
+        VBox contentArea = new VBox(gateFootAttrArea, new StackPane(package3DPreview));
+        contentArea.setFillWidth(true);
+        
+        return contentArea;
     }
 
     private Node deviceSetList() {
@@ -253,6 +270,42 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         }
 
         tableView.getItems().addAll(items);
+
+        return tableView;
+    }
+
+    private Node deviceTechnologyAttrList(Library lib) {
+        
+        DeviceSet deviceSet = lib.getDeviceSet(getName());
+        Technology tech = deviceSet.getDevices().get(0).getTechnologies().get(0);
+
+        TableView tableView = new TableView();
+        tableView.setId("technology-attributes-table"); // Makes the font smaller
+        tableView.setPlaceholder( new Label("No attrributes to display"));
+        
+        TableColumn<Map, String> attributeColumn = new TableColumn<>("Attribute");
+        attributeColumn.setCellValueFactory(new MapValueFactory<>("attribute"));
+
+        TableColumn<Map, String> valueColumn = new TableColumn<>("Value");
+        valueColumn.setCellValueFactory(new MapValueFactory<>("value"));
+        
+        tableView.getColumns().add(attributeColumn);
+        tableView.getColumns().add(valueColumn);
+
+        ObservableList<Map<String, Object>> items
+                = FXCollections.<Map<String, Object>>observableArrayList();
+
+        for ( Attribute d: tech.getAttributes() ) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("attribute", d.getName());
+            item.put("value", d.getValue());
+
+            items.add(item);
+        }
+
+        tableView.getItems().addAll(items);
+        tableView.setPrefHeight(120);
+        tableView.setMinHeight(120);
 
         return tableView;
     }

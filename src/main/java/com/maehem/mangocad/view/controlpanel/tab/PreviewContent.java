@@ -34,7 +34,7 @@ public class PreviewContent extends BorderPane {
         //setPrefHeight(Double.MAX_VALUE);
         //setMinWidth(10);
         //setPrefWidth(10);
-        setBottom(new Text("PreviewContent bottom\n2222222\n33333333\n4444444\n555555"));
+        //setBottom(new Text("PreviewContent bottom\n2222222\n33333333\n4444444\n555555"));
     }
 
     public void setItem(Node item) {
