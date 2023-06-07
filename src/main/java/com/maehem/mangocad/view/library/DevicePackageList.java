@@ -34,50 +34,51 @@ import javafx.scene.control.cell.MapValueFactory;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class DevicePackageList extends TableView<Map>{
+public class DevicePackageList extends TableView<Map> {
+
     private static final Logger LOGGER = ControlPanel.LOGGER;
-        
+
     private final TableColumn<Map, String> pkgColumn = new TableColumn<>("Package");
     private final TableColumn<Map, String> tdColumn = new TableColumn<>("3D");
     private final TableColumn<Map, String> variantColumn = new TableColumn<>("Variant");
-    
+
     private final String CUBE_EMOJI = "\ud83e\uddca";  // u+1F9CA
     //private final Character CUBE = new Character(0x1f9ca);
 
     public DevicePackageList(DeviceSet ds) {
-                
-        pkgColumn.setCellValueFactory( new MapValueFactory<>("footprint"));
-        tdColumn.setCellValueFactory( new MapValueFactory<>("threeD"));
-        variantColumn.setCellValueFactory( new MapValueFactory<>("name"));
-        getColumns().addAll(pkgColumn,tdColumn,  variantColumn);
 
-        ObservableList<Map<String, Object>> items =
-            FXCollections.<Map<String, Object>>observableArrayList();
+        pkgColumn.setCellValueFactory(new MapValueFactory<>("footprint"));
+        tdColumn.setCellValueFactory(new MapValueFactory<>("threeD"));
+        variantColumn.setCellValueFactory(new MapValueFactory<>("name"));
+        getColumns().addAll(pkgColumn, tdColumn, variantColumn);
 
-        for ( Device d: ds.getDevices() ) {
+        ObservableList<Map<String, Object>> items
+                = FXCollections.<Map<String, Object>>observableArrayList();
+
+        for (Device d : ds.getDevices()) {
             Map<String, Object> deviceDeets = new HashMap<>();
             deviceDeets.put("name", d.getName());
-            deviceDeets.put("footprint" , d.getFootprint());
+            deviceDeets.put("footprint", d.getFootprint());
             String threeDexists = "";
-            
-            if ( !d.getPackage3dInstances().isEmpty() ) {
+
+            if (!d.getPackage3dInstances().isEmpty()) {
                 DevicePackageInstance3d instance = d.getPackage3dInstances().get(0);
                 // Devices always have a initial 3d Urn defined as version 1. Usually a blank/block file.
-                if ( !instance.getPackage3dUrn().endsWith("/1") ) {
+                if (!instance.getPackage3dUrn().endsWith("/1")) {
                     threeDexists = CUBE_EMOJI;
                 }
             }
-            deviceDeets.put("threeD" , threeDexists);        
+            deviceDeets.put("threeD", threeDexists);
             items.add(deviceDeets);
         }
-        
+
         getItems().addAll(items);
-        
+
         // Dress up column widths
         // Run later since we might not know the area size yet.
         Platform.runLater(() -> {
-            pkgColumn.setPrefWidth(getBoundsInLocal().getWidth()*0.33);
+            pkgColumn.setPrefWidth(getBoundsInLocal().getWidth() * 0.33);
         });
     }
-    
+
 }

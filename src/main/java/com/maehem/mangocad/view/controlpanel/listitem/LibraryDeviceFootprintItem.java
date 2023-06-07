@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
@@ -34,7 +33,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
@@ -55,11 +53,11 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
     private static final Logger LOGGER = Logger.getLogger(LibraryDeviceFootprintItem.class.getSimpleName());
 
     private static final Image iconImage = new Image(
-            LibraryDeviceFootprintItem.class .getResourceAsStream("/icons/integrated-circuit.png")
+            LibraryDeviceFootprintItem.class.getResourceAsStream("/icons/integrated-circuit.png")
     );
 
     private Stage stage = null;
-    
+
     public LibraryDeviceFootprintItem(String name, String description, File file) {
         super(name, description, file);
     }
@@ -81,7 +79,7 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
 
             if (stage == null) {
                 stage = new Stage();
-                LibraryEditor root = new LibraryEditor( getFile() );
+                LibraryEditor root = new LibraryEditor(getFile());
                 stage.setTitle("Library Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();
@@ -113,7 +111,7 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
 
     @Override
     public Node getPreviewTabNode() {
-        Text itemName = new Text(getName());
+        Text itemName = new Text("Footprint: " + getName());
         itemName.setId("control-panel-preview-area-heading");
 
         Pane spacer = new Pane();
@@ -133,37 +131,34 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
 
         VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
 
-//        ScrollPane scrollPane = new ScrollPane(devicePreviewNode());
-//        scrollPane.setFitToHeight(true);
-//        scrollPane.setFitToWidth(true);
-        Node symbolPreviewNode = symbolPreviewNode();
-        VBox.setVgrow(symbolPreviewNode, Priority.ALWAYS);
+        Node footprintPreviewNode = footprintPreviewNode();
+        VBox.setVgrow(footprintPreviewNode, Priority.ALWAYS);
         VBox contentArea = new VBox(
                 heading,
                 ControlPanelUtils.markdownNode(
                         1.5,
                         ControlPanelUtils.getItemDescriptionFull(this)
                 ),
-                symbolPreviewNode
+                footprintPreviewNode
         );
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
     }
 
-    private Node symbolPreviewNode() {
+    private Node footprintPreviewNode() {
         Library lib = LibraryCache.getInstance().getLibrary(getFile());
         if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
         }
-        
+
         Footprint footprint = lib.getPackage(getName());
-        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib);
+        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib, true);
         GroupContainer footprintContainer = new GroupContainer(footprintPreview);
-        
+
         return footprintContainer;
     }
-    
+
     @Override
     public Image getImage() {
         return iconImage;

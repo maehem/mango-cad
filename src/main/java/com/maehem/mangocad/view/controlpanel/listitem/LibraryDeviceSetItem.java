@@ -54,12 +54,18 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -193,10 +199,28 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         Group gateSetPreview = DetailNodes.gateSetPreview(deviceSet.getGates(), lib);
 
         GroupContainer gatePreviewPane = new GroupContainer(gateSetPreview);
+        gatePreviewPane.setBorder(new Border(new BorderStroke(
+                new Color(0.1,0.1,0.1,0.5), 
+                BorderStrokeStyle.SOLID, 
+                new CornerRadii(10), 
+                new BorderWidths(2,4,4,2),
+                new Insets(6)
+        )));
+
         String pkgName = deviceSet.getDevices().get(0).getFootprint();
 
-        Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib);
+        Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib, true);
         GroupContainer footprintContainer = new GroupContainer(footprintPreview);
+        
+        // Add a border
+        footprintContainer.setBorder(new Border(new BorderStroke(
+                new Color(0.1,0.1,0.1,0.5), 
+                BorderStrokeStyle.SOLID, 
+                new CornerRadii(10), 
+                new BorderWidths(2,4,4,2),
+                new Insets(6)
+        )));
+
         
         Node deviceTechnologyAttrList = deviceTechnologyAttrList(lib);
         VBox.setMargin(deviceTechnologyAttrList, new Insets(8));

@@ -22,7 +22,6 @@ import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Symbol;
-import com.maehem.mangocad.model.library.element.device.Device;
 import com.maehem.mangocad.model.library.element.device.DevicePackageInstance3d;
 import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
 import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
@@ -38,7 +37,6 @@ import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
@@ -68,60 +66,33 @@ public class DetailNodes {
         return ta;
     }
 
-    public static Node devicePreview(DeviceSet devSet, Library lib ) {
+    public static Node devicePreview(DeviceSet devSet, Library lib) {
         SplitPane pane = new SplitPane();
         pane.setOrientation(Orientation.HORIZONTAL);
         SplitPane pkgPane = new SplitPane();
         pkgPane.setOrientation(Orientation.VERTICAL);
         Group footprintPreview = footprintPreview(
-                lib.getPackage(devSet.getDevices().get(0).getFootprint()), 
-                lib
+                lib.getPackage(devSet.getDevices().get(0).getFootprint()),
+                lib,
+                true
         );
         GroupContainer footprintPane = new GroupContainer(footprintPreview);
-        
+
         pkgPane.getItems().add(footprintPane);
-        
-        Device dev0 = devSet.getDevices().get(0);
+
         ImageView package3DPreview = package3DPreview(null, lib);
-        pkgPane.getItems().add( new BorderPane( package3DPreview));
-        
+        pkgPane.getItems().add(new BorderPane(package3DPreview));
+
         Group gsPreview = gateSetPreview(devSet.getGates(), lib);
-        
+
         GroupContainer gsPane = new GroupContainer(gsPreview);
-        
+
         pane.getItems().add(gsPane);
         pane.getItems().add(pkgPane);
-        
-//        Platform.runLater(() -> {
-//            double gsScale = pane.getBoundsInLocal().getWidth()/gsPreview.getBoundsInLocal().getWidth();
-//            gsPreview.setScaleX(gsScale);
-//            gsPreview.setScaleY(gsScale);
-//            
-//            double footScale = footprintPane.getBoundsInLocal().getHeight()/footprintPreview.getBoundsInLocal().getHeight();
-//            footprintPreview.setScaleX(footScale);
-//            footprintPreview.setScaleY(footScale);
-//            
-//            pane.getDividers().get(0).setPosition(0.5);
-//            pkgPane.getDividers().get(0).setPosition(0.5);
-//        });
-//        
-//        pane.getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
-//            double position = pane.getDividers().get(0).getPosition();
-//            //if ( position <= 0.5 ) {
-//                gsPane.setScaleX(position);
-//                gsPane.setScaleY(position);
-//            //}
-//        }));
-        
-//        pkgPane.getDividers().get(0).positionProperty().addListener((o) -> {
-//            double position = pkgPane.getDividers().get(0).getPosition();
-//            footprintPane.setScaleX(position);
-//            footprintPane.setScaleY(position);
-//        });
-        
+
         return pane;
     }
-    
+
     /**
      * Render a preview of the symbols.
      *
@@ -131,21 +102,21 @@ public class DetailNodes {
      * @param symbol
      * @return
      */
-    public static Group symbolPreview(Symbol symbol, Library lib ) {
+    public static Group symbolPreview(Symbol symbol, Library lib, boolean showGauge) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
-        
+
         Group g = new Group();
         StackPane pane = new StackPane(g);
 
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
-            if ( le == null ) {
+            if (le == null) {
                 LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
             }
             int colorIndex = le.getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-            
+
             if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else if (e instanceof ElementRectangle elementRectangle) {
@@ -153,11 +124,11 @@ public class DetailNodes {
             } else if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if( e instanceof ElementPolygon elementPolygon ) {
+            } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
             } else if (e instanceof Pin pin) {
                 g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
-            } else if ( e instanceof ElementCircle elementCircle ) {
+            } else if (e instanceof ElementCircle elementCircle) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
             }
         });
@@ -165,15 +136,28 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-//        Bounds bounds = pane.getBoundsInLocal();
-//
-//        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
-//        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
-//
-//        return pane;
-        return g;
+        StackPane stackPane = new StackPane(g); // Centers the symbol
+        Group nodeGroup = new Group(stackPane);
+
+        // Add optional size gauge
+        if (showGauge) {
+            // scale gauge
+            Pane scaleGauge = DetailNodes.scaleGauge();
+            double scaleH = scaleGauge.getBoundsInLocal().getHeight();
+            double scaleW = scaleGauge.getBoundsInLocal().getWidth();
+
+            scaleGauge.setTranslateX(
+                    stackPane.getBoundsInLocal().getWidth() / 2.0 - scaleW / 2.0
+            );
+            scaleGauge.setTranslateY(
+                    stackPane.getBoundsInLocal().getHeight() + scaleH / 4.0
+            );
+            nodeGroup.getChildren().add(scaleGauge);
+        }
+
+        return nodeGroup;
     }
-    
+
     /**
      * Render a preview of the symbols.
      *
@@ -183,39 +167,39 @@ public class DetailNodes {
      * @param gate
      * @return
      */
-    public static Node deviceGatePreview(Gate gate, Library lib ) {
+    public static Node deviceGatePreview(Gate gate, Library lib) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
-        
+
         Group g = new Group();
         //StackPane pane = new StackPane(g);
 
         Symbol symbol = lib.getSymbol(gate.getSymbol());
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
-            if ( le == null ) {
+            if (le == null) {
                 LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
             }
             int colorIndex = le.getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-            
+
             if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else if (e instanceof ElementRectangle elementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
             } else if (e instanceof ElementText elementText) {
                 String gateName = null;
-                if ( elementText.getValue().equals(">NAME") ) {
+                if (elementText.getValue().equals(">NAME")) {
                     gateName = gate.getName();
                 }
                 //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
                 g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if( e instanceof ElementPolygon elementPolygon ) {
+            } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
             } else if (e instanceof Pin pin) {
                 g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
-            } else if ( e instanceof ElementCircle elementCircle ) {
+            } else if (e instanceof ElementCircle elementCircle) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
             }
         });
@@ -224,15 +208,13 @@ public class DetailNodes {
         ));
 
         //Bounds bounds = pane.getBoundsInLocal();
-
 //        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
 //        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
         //g.setPrefSize(bounds.getWidth(), bounds.getHeight());
         //g.setMaxSize(bounds.getWidth(), bounds.getHeight());
-
         return g;
     }
-    
+
     /**
      * Render a preview of the footprint.
      *
@@ -242,13 +224,12 @@ public class DetailNodes {
      * @param footprint
      * @return
      */
-    public static Group footprintPreview(Footprint footprint, Library lib ) {
+    public static Group footprintPreview(Footprint footprint, Library lib, boolean showGauge) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
-        
+
         Group g = new Group();
-        //StackPane pane = new StackPane(g);
-        
+
         footprint.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
             int colorIndex = le.getColorIndex();
@@ -268,14 +249,14 @@ public class DetailNodes {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
             } else if (e instanceof ElementRectangle elementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
-            } else  if (e instanceof ElementText elementText) {
+            } else if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementRectangle elementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
-            } else if( e instanceof ElementPolygon elementPolygon ) {
+            } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
-            } else if ( e instanceof ElementCircle elementCircle ) {
+            } else if (e instanceof ElementCircle elementCircle) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
             }
         });
@@ -283,16 +264,32 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-//        Bounds bounds = pane.getBoundsInLocal();
-//        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
-//        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
+        StackPane stackPane = new StackPane(g); // Centers the symbol
+        Group nodeGroup = new Group(stackPane);
 
-        return g;
+        // Add optional size gauge
+        if (showGauge) {
+            // scale gauge
+            Pane scaleGauge = DetailNodes.scaleGauge();
+            double scaleH = scaleGauge.getBoundsInLocal().getHeight();
+            double scaleW = scaleGauge.getBoundsInLocal().getWidth();
+
+            scaleGauge.setTranslateX(
+                    stackPane.getBoundsInLocal().getWidth() / 2.0 - scaleW / 2.0
+            );
+            scaleGauge.setTranslateY(
+                    stackPane.getBoundsInLocal().getHeight() + scaleH / 4.0
+            );
+            nodeGroup.getChildren().add(scaleGauge);
+        }
+
+        return nodeGroup;
+        //return g;
     }
 
-    public static ImageView package3DPreview(DevicePackageInstance3d pkg3d, Library lib ) {
+    public static ImageView package3DPreview(DevicePackageInstance3d pkg3d, Library lib) {
         // pkg3d might be null
-        
+
         Image img = new Image(DetailNodes.class.getResourceAsStream("/icons/cube-isometric.png"));
         ImageView iv = new ImageView(img);
         iv.setPreserveRatio(true);
@@ -300,64 +297,64 @@ public class DetailNodes {
         iv.setOpacity(0.2);
         return iv;
     }
-        
+
     public static Pane scaleGauge() {
         final Color COLOR = new Color(0.5, 0.7, 1.0, 0.5);
         final double FONT_SIZE = 2.0;
         double mmNum = 10.0;
-        double inNum = 10* 1.27;
+        double inNum = 10 * 1.27;
         Group g = new Group();
-        
-        Line left = new Line(0, FONT_SIZE*1.4, 0, -FONT_SIZE*1.4);
+
+        Line left = new Line(0, FONT_SIZE * 1.4, 0, -FONT_SIZE * 1.4);
         Line center = new Line(0, 0, inNum, 0);
         Line mm = new Line(mmNum, 0, mmNum, -FONT_SIZE);
-        Line in = new Line(  inNum, 0, inNum, FONT_SIZE);
-                
-        g.getChildren().addAll(left,center,mm,in);
-        
+        Line in = new Line(inNum, 0, inNum, FONT_SIZE);
+
+        g.getChildren().addAll(left, center, mm, in);
+
         Text mmText = new Text("10mm");
         mmText.setFont(Font.font(FONT_SIZE));
         mmText.setFill(COLOR.brighter().desaturate());
         mmText.setLayoutX(1.0);
-        mmText.setLayoutY(-FONT_SIZE*0.4);
+        mmText.setLayoutY(-FONT_SIZE * 0.4);
         Text inText = new Text("0.50in");
         inText.setFont(Font.font(FONT_SIZE));
         inText.setFill(COLOR.brighter().desaturate());
         inText.setLayoutX(1.0);
-        inText.setLayoutY(FONT_SIZE*1);
-        
+        inText.setLayoutY(FONT_SIZE * 1);
+
         g.getChildren().addAll(mmText, inText);
-        
-        for ( Node n: g.getChildren() ) {
-            if ( n instanceof Line l) {
+
+        for (Node n : g.getChildren()) {
+            if (n instanceof Line l) {
                 l.setStroke(COLOR);
-                l.setStrokeWidth(FONT_SIZE*0.1);
+                l.setStrokeWidth(FONT_SIZE * 0.1);
             }
         }
-        left.setStrokeWidth(FONT_SIZE*0.16);
-                
+        left.setStrokeWidth(FONT_SIZE * 0.16);
+
         StackPane sp = new StackPane(g);
         Bounds bounds = sp.getBoundsInLocal();
         sp.setPrefSize(bounds.getWidth(), bounds.getHeight());
         sp.setMaxSize(bounds.getWidth(), bounds.getHeight());
         return sp;
     }
-    
-    public static Group gateSetPreview( List<Gate> gates, Library lib) {
+
+    public static Group gateSetPreview(List<Gate> gates, Library lib) {
         Group g = new Group();
-        
+
         gates.forEach((gate) -> {
             Node n = deviceGatePreview(gate, lib);
             n.setLayoutX(gate.getX());
             n.setLayoutY(-gate.getY());
-            
+
             g.getChildren().add(n);
         });
-        
+
         return g;
     }
-    
-    public static Node devicePackageListNode( DeviceSet deviceSet ) {
+
+    public static Node devicePackageListNode(DeviceSet deviceSet) {
         return new DevicePackageList(deviceSet);
     }
 }

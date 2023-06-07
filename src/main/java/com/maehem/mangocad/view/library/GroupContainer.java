@@ -16,20 +16,13 @@
  */
 package com.maehem.mangocad.view.library;
 
-import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 
 /**
- * A Pane that will always scale the group to fit the parent regardless
- * of aspect ratio.
- * 
+ * A Pane that will always scale the group to fit the parent regardless of
+ * aspect ratio.
+ *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class GroupContainer extends BorderPane {
@@ -45,16 +38,7 @@ public class GroupContainer extends BorderPane {
 
         shapW = shapeGroup.getBoundsInLocal().getWidth();
         shapH = shapeGroup.getBoundsInLocal().getHeight();
-        
-        setBorder(new Border(new BorderStroke(
-                new Color(0.1,0.1,0.1,0.5), 
-                BorderStrokeStyle.SOLID, 
-                new CornerRadii(10), 
-                new BorderWidths(2,4,4,2),
-                new Insets(6)
-        )));
-        //setPadding(new Insets(20));
-        //setMargin(g, new Insets(20));
+
     }
 
     @Override
@@ -63,17 +47,15 @@ public class GroupContainer extends BorderPane {
 
         double wScale = getWidth() / shapW;
         double hScale = getHeight() / shapH;
-        
-        
+
         //double wScale = getBoundsInParent().getWidth() / shapW;
         //double hScale = getBoundsInParent().getHeight() / shapH;
-
         double scale = hScale;
         if (scale * shapW > getWidth()) {
             scale = wScale;
         }
 
-        shapeGroup.setScaleX(scale*0.8);
-        shapeGroup.setScaleY(scale*0.8);
+        shapeGroup.setScaleX(scale * 0.8);
+        shapeGroup.setScaleY(scale * 0.8);
     }
 }

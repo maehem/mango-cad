@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.css.FontFace;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
@@ -144,25 +143,26 @@ public class ControlPanelUtils {
         VBox node = new VBox();
         node.setSpacing(0);
         node.setPadding(new Insets(10));
-        if ( content == null ) return node;
-        
+        if (content == null) {
+            return node;
+        }
+
         LOGGER.log(Level.FINER, "Process: " + text);
         if (content.contains("<p>") || content.contains("<br>")
-                || content.contains("<b>" )
-                || content.contains("<h1>" )
-                || content.contains("<h2>" )
-                || content.contains("<h3>" )
-                || content.contains("<h4>" )
-                || content.contains("<h5>" )
-                || content.contains("<h6>" )
-                ) {
+                || content.contains("<b>")
+                || content.contains("<h1>")
+                || content.contains("<h2>")
+                || content.contains("<h3>")
+                || content.contains("<h4>")
+                || content.contains("<h5>")
+                || content.contains("<h6>")) {
             LOGGER.log(Level.FINER, "text contains HTML");
             content = html2markdown(text);
         }
         // parse thngs.
 
         content = content.translateEscapes(); // Was fun figuring out this one.
-        if ( !content.startsWith("#") ) {
+        if (!content.startsWith("#")) {
             content = "#" + content;
         }
         String[] lines = content.split("\n");
@@ -178,7 +178,7 @@ public class ControlPanelUtils {
         Font h4 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.82);
         Font h5 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.80);
         Font h6 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.78);
-        
+
         Font body = f;
 
         //Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
@@ -240,32 +240,22 @@ public class ControlPanelUtils {
     }
 
     /**
-     * Convert HTML snippets to Marddown
-     * Using this guide:
+     * Convert HTML snippets to Marddown Using this guide:
      * https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#lines
-     * 
-     * 
-     * TODO:   Case insensitive
-     * 
-     *          <B> bold tag  _word_  or *word*
-     *        LI/UL lists
-     *          - Unordered lists:  + - or *
-     *          - Ordered List:  Number ( 1. )
-     *          - SubList:  ..1.  or ..-
-     * 
-     *         LINKS:  Ability to open browser.
-     * 
-     *        CODE STYLING:  three backticks with optional type?
-     *              ``` java
-     *                  foo();
-     *              ```
-     *          HORIZ RULE (three or more )
-     *                  ---
-     *                  ___
-     *                  ***
-     * 
+     *
+     *
+     * TODO: Case insensitive
+     *
+     * <B> bold tag _word_ or *word* LI/UL lists - Unordered lists: + - or * -
+     * Ordered List: Number ( 1. ) - SubList: ..1. or ..-
+     *
+     * LINKS: Ability to open browser.
+     *
+     * CODE STYLING: three backticks with optional type? ``` java foo(); ```
+     * HORIZ RULE (three or more ) --- ___ ***
+     *
      * @param content
-     * @return 
+     * @return
      */
     public static String html2markdown(String content) {
         //StringBuilder sb = new StringBuilder();

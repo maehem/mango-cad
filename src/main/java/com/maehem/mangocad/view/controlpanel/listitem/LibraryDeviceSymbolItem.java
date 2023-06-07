@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.model.library.Library;
 import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
@@ -78,7 +77,7 @@ public class LibraryDeviceSymbolItem extends ControlPanelListItem {
 
             if (stage == null) {
                 stage = new Stage();
-                LibraryEditor root = new LibraryEditor( getFile() );
+                LibraryEditor root = new LibraryEditor(getFile());
                 stage.setTitle("Library Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();
@@ -104,7 +103,7 @@ public class LibraryDeviceSymbolItem extends ControlPanelListItem {
 
     @Override
     public Node getPreviewTabNode() {
-        Text itemName = new Text(getName());
+        Text itemName = new Text("Symbol: " + getName());
         itemName.setId("control-panel-preview-area-heading");
 
         Pane spacer = new Pane();
@@ -124,9 +123,6 @@ public class LibraryDeviceSymbolItem extends ControlPanelListItem {
 
         VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
 
-//        ScrollPane scrollPane = new ScrollPane(devicePreviewNode());
-//        scrollPane.setFitToHeight(true);
-//        scrollPane.setFitToWidth(true);
         Node symbolPreviewNode = symbolPreviewNode();
         VBox.setVgrow(symbolPreviewNode, Priority.ALWAYS);
         VBox contentArea = new VBox(
@@ -147,14 +143,14 @@ public class LibraryDeviceSymbolItem extends ControlPanelListItem {
         if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
         }
-        
+
         Symbol symbol = lib.getSymbol(getName());
-        Group footprintPreview = DetailNodes.symbolPreview(symbol, lib);
-        GroupContainer footprintContainer = new GroupContainer(footprintPreview);
-        
-        return footprintContainer;
+        Group symbolPreview = DetailNodes.symbolPreview(symbol, lib, true);
+        GroupContainer symbolContainer = new GroupContainer(symbolPreview);
+
+        return symbolContainer;
     }
-    
+
     @Override
     public Image getImage() {
         return iconImage;

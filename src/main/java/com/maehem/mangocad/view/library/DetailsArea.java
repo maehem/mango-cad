@@ -24,13 +24,10 @@ import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -75,54 +72,50 @@ public class DetailsArea extends SplitPane {
             case FOOTPRINT -> {
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
-                        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib);
-                        Node scaleGauge = DetailNodes.scaleGauge();
-                        
-                        double symbH = footprintPreview.getBoundsInLocal().getHeight();
-                        double symbW = footprintPreview.getBoundsInLocal().getWidth();
-                        double scaleH = scaleGauge.getBoundsInLocal().getHeight();
-                        double scaleW = scaleGauge.getBoundsInLocal().getWidth();
+                        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib, true);
+                        //Node scaleGauge = DetailNodes.scaleGauge();
 
-                        Group nodeGroup = new Group(footprintPreview, scaleGauge);
+                        //double symbH = footprintPreview.getBoundsInLocal().getHeight();
+                        //double symbW = footprintPreview.getBoundsInLocal().getWidth();
+                        //double scaleH = scaleGauge.getBoundsInLocal().getHeight();
+                        //double scaleW = scaleGauge.getBoundsInLocal().getWidth();
+                        //Group nodeGroup = new Group(footprintPreview );//, scaleGauge);
+                        //scaleGauge.setTranslateY(symbH + scaleH / 2.0);
+                        //scaleGauge.setTranslateX(symbW / 2.0 - scaleW / 2.0); // Place gauge bottom center.
+                        //StackPane nodePane = new StackPane(nodeGroup);
+                        GroupContainer nodeContainer = new GroupContainer(footprintPreview);
 
-
-                        scaleGauge.setTranslateY(symbH + scaleH/2.0);
-                        scaleGauge.setTranslateX(symbW/2.0 - scaleW/2.0); // Place gauge bottom center.
-
-                        StackPane nodePane = new StackPane(nodeGroup);
-                        double nodeH = nodePane.getBoundsInLocal().getHeight();
-                        double nodeW = nodePane.getBoundsInLocal().getWidth();
-
-                        getItems().add(nodePane);
+                        //double nodeH = nodePane.getBoundsInLocal().getHeight();
+                        //double nodeW = nodePane.getBoundsInLocal().getWidth();
+                        //getItems().add(nodePane);
+                        getItems().add(nodeContainer);
                         getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
 
                         getDividers().get(0).setPosition(0.5);
 
-                        Bounds winBounds = getBoundsInLocal();
-
-                        Platform.runLater(() -> {                            
-                            double scale = 2*winBounds.getWidth()/nodeW;
-                            double nodeWMax = nodeW*scale;
-                            double nodeHMax = nodeH*scale;
-                            
-                            
-                            if ( nodeHMax> winBounds.getHeight() ) {
-                                scale = winBounds.getHeight()/nodeH;
-                            }
-                            nodeGroup.setScaleX(scale);
-                            nodeGroup.setScaleY(scale);
-                        });
-                        
-                        getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
-                            double position = getDividers().get(0).getPosition();
-                            if ( position <= 0.5 ) {
-                                nodePane.setScaleX(position);
-                                nodePane.setScaleY(position);
-                            } else {
-                                nodePane.setScaleX(0.5);
-                                nodePane.setScaleY(0.5);
-                            }
-                        }));
+                        //Bounds winBounds = getBoundsInLocal();
+//                        Platform.runLater(() -> {                            
+//                            double scale = 2*winBounds.getWidth()/nodeW;
+//                            double nodeWMax = nodeW*scale;
+//                            double nodeHMax = nodeH*scale;
+//                            
+//                            
+//                            if ( nodeHMax> winBounds.getHeight() ) {
+//                                scale = winBounds.getHeight()/nodeH;
+//                            }
+//                            nodeGroup.setScaleX(scale);
+//                            nodeGroup.setScaleY(scale);
+//                        });
+//                        getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
+//                            double position = getDividers().get(0).getPosition();
+//                            if ( position <= 0.5 ) {
+//                                nodePane.setScaleX(position);
+//                                nodePane.setScaleY(position);
+//                            } else {
+//                                nodePane.setScaleX(0.5);
+//                                nodePane.setScaleY(0.5);
+//                            }
+//                        }));
                         return;
                     }
                 }
@@ -138,53 +131,53 @@ public class DetailsArea extends SplitPane {
             case SYMBOL -> {
                 for (Symbol s : lib.getSymbols()) {
                     if (s.getName().equals(newValue)) {
-                        Group symbolPreview = DetailNodes.symbolPreview(s, lib);
-                        Pane scaleGauge = DetailNodes.scaleGauge();
-                        double symbH = symbolPreview.getBoundsInLocal().getHeight();
-                        double symbW = symbolPreview.getBoundsInLocal().getWidth();
-                        double scaleH = scaleGauge.getBoundsInLocal().getHeight();
-                        double scaleW = scaleGauge.getBoundsInLocal().getWidth();
-                        
-                        Group nodeGroup = new Group(symbolPreview, scaleGauge);
-                        
-                        scaleGauge.setTranslateY(symbH + scaleH/2.0);
-                        scaleGauge.setTranslateX(symbW/2.0 - scaleW/2.0); // Place gauge bottom center.
+                        Group symbolPreview = DetailNodes.symbolPreview(s, lib, true);
+//                        Pane scaleGauge = DetailNodes.scaleGauge();
+//                        double symbH = symbolPreview.getBoundsInLocal().getHeight();
+//                        double symbW = symbolPreview.getBoundsInLocal().getWidth();
+//                        double scaleH = scaleGauge.getBoundsInLocal().getHeight();
+//                        double scaleW = scaleGauge.getBoundsInLocal().getWidth();
+//                        
+//                        Group nodeGroup = new Group(symbolPreview, scaleGauge);
+//                        
+//                        scaleGauge.setTranslateY(symbH + scaleH/2.0);
+//                        scaleGauge.setTranslateX(symbW/2.0 - scaleW/2.0); // Place gauge bottom center.
 
-                        StackPane nodePane = new StackPane(nodeGroup);
-                        double nodeH = nodePane.getBoundsInLocal().getHeight();
-                        double nodeW = nodePane.getBoundsInLocal().getWidth();
-                        
+                        //StackPane nodePane = new StackPane(nodeGroup);
+//                        GroupContainer nodeContainer = new GroupContainer(nodeGroup);
+                        GroupContainer nodeContainer = new GroupContainer(symbolPreview);
+                        //double nodeH = nodePane.getBoundsInLocal().getHeight();
+                        //double nodeW = nodePane.getBoundsInLocal().getWidth();
+
                         //StackPane bp = new StackPane(nodePane);
-                        
-                        getItems().add(nodePane);
-                        getItems().add( DetailNodes.descriptionNode(s.getDescription()));
+                        //getItems().add(nodePane);
+                        getItems().add(nodeContainer);
+                        getItems().add(DetailNodes.descriptionNode(s.getDescription()));
                         getDividers().get(0).setPosition(0.5);
-                        
-                        Bounds winBounds = getBoundsInLocal();
 
-                        Platform.runLater(() -> {                            
-                            double scale = 2*winBounds.getWidth()/nodeW;
-                            double nodeWMax = nodeW*scale;
-                            double nodeHMax = nodeH*scale;
-                                                        
-                            if ( nodeHMax> winBounds.getHeight() ) {
-                                scale = winBounds.getHeight()/nodeH;
-                            }
-                            nodeGroup.setScaleX(scale);
-                            nodeGroup.setScaleY(scale);
-                        });
-                        
-                        getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
-                            double position = getDividers().get(0).getPosition();
-                            if ( position <= 0.5 ) {
-                                nodePane.setScaleX(position);
-                                nodePane.setScaleY(position);
-                            } else {
-                                nodePane.setScaleX(0.5);
-                                nodePane.setScaleY(0.5);
-                            }
-                        }));
-                        
+//                        Bounds winBounds = getBoundsInLocal();
+//                        Platform.runLater(() -> {                            
+//                            double scale = 2*winBounds.getWidth()/nodeW;
+//                            double nodeWMax = nodeW*scale;
+//                            double nodeHMax = nodeH*scale;
+//                                                        
+//                            if ( nodeHMax> winBounds.getHeight() ) {
+//                                scale = winBounds.getHeight()/nodeH;
+//                            }
+//                            nodeGroup.setScaleX(scale);
+//                            nodeGroup.setScaleY(scale);
+//                        });
+//                        
+//                        getDividers().get(0).positionProperty().addListener(((ov, t, t1) -> {
+//                            double position = getDividers().get(0).getPosition();
+//                            if ( position <= 0.5 ) {
+//                                nodePane.setScaleX(position);
+//                                nodePane.setScaleY(position);
+//                            } else {
+//                                nodePane.setScaleX(0.5);
+//                                nodePane.setScaleY(0.5);
+//                            }
+//                        }));
                         return;
                     }
                 }
