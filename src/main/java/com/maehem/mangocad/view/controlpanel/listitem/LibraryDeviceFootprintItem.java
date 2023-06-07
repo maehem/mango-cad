@@ -16,15 +16,34 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.model.library.Library;
+import com.maehem.mangocad.model.library.LibraryCache;
+import com.maehem.mangocad.model.library.element.DeviceSet;
+import com.maehem.mangocad.model.library.element.Footprint;
+import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
+import com.maehem.mangocad.view.library.DetailNodes;
+import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -92,6 +111,59 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
         return contextMenu;
     }
 
+    @Override
+    public Node getPreviewTabNode() {
+        Text itemName = new Text(getName());
+        itemName.setId("control-panel-preview-area-heading");
+
+        Pane spacer = new Pane();
+        spacer.setMaxWidth(Double.MAX_VALUE);
+        spacer.setMinSize(10, 10);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Text fileName = new Text(getFile().getName());
+        fileName.setId("control-panel-preview-area-heading-filename");
+
+        HBox headingBox = new HBox(itemName, spacer, fileName);
+        headingBox.setAlignment(Pos.CENTER);
+        Separator sep = new Separator();
+
+        VBox heading = new VBox(headingBox, sep);
+        heading.setFillWidth(true);
+
+        VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
+
+//        ScrollPane scrollPane = new ScrollPane(devicePreviewNode());
+//        scrollPane.setFitToHeight(true);
+//        scrollPane.setFitToWidth(true);
+        Node symbolPreviewNode = symbolPreviewNode();
+        VBox.setVgrow(symbolPreviewNode, Priority.ALWAYS);
+        VBox contentArea = new VBox(
+                heading,
+                ControlPanelUtils.markdownNode(
+                        1.5,
+                        ControlPanelUtils.getItemDescriptionFull(this)
+                ),
+                symbolPreviewNode
+        );
+
+        BorderPane pane = new BorderPane(contentArea);
+        return pane;
+    }
+
+    private Node symbolPreviewNode() {
+        Library lib = LibraryCache.getInstance().getLibrary(getFile());
+        if (lib == null) {
+            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
+        }
+        
+        Footprint footprint = lib.getPackage(getName());
+        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib);
+        GroupContainer footprintContainer = new GroupContainer(footprintPreview);
+        
+        return footprintContainer;
+    }
+    
     @Override
     public Image getImage() {
         return iconImage;

@@ -138,7 +138,7 @@ public class DetailsArea extends SplitPane {
             case SYMBOL -> {
                 for (Symbol s : lib.getSymbols()) {
                     if (s.getName().equals(newValue)) {
-                        Pane symbolPreview = DetailNodes.symbolPreview(s, lib);
+                        Group symbolPreview = DetailNodes.symbolPreview(s, lib);
                         Pane scaleGauge = DetailNodes.scaleGauge();
                         double symbH = symbolPreview.getBoundsInLocal().getHeight();
                         double symbW = symbolPreview.getBoundsInLocal().getWidth();

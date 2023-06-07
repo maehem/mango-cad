@@ -131,7 +131,7 @@ public class DetailNodes {
      * @param symbol
      * @return
      */
-    public static Pane symbolPreview(Symbol symbol, Library lib ) {
+    public static Group symbolPreview(Symbol symbol, Library lib ) {
         LayerElement[] layers = lib.getLayers();
         ColorPalette palette = lib.getPalette();
         
@@ -165,12 +165,13 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-        Bounds bounds = pane.getBoundsInLocal();
-
-        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
-        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
-
-        return pane;
+//        Bounds bounds = pane.getBoundsInLocal();
+//
+//        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
+//        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
+//
+//        return pane;
+        return g;
     }
     
     /**
