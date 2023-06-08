@@ -141,7 +141,6 @@ public class DetailNodes {
 
         // Add optional size gauge
         if (showGauge) {
-            // scale gauge
             Pane scaleGauge = DetailNodes.scaleGauge();
             double scaleH = scaleGauge.getBoundsInLocal().getHeight();
             double scaleW = scaleGauge.getBoundsInLocal().getWidth();
@@ -207,11 +206,6 @@ public class DetailNodes {
                 0, 0, 0.5, 0.05, Color.RED
         ));
 
-        //Bounds bounds = pane.getBoundsInLocal();
-//        pane.setPrefSize(bounds.getWidth(), bounds.getHeight());
-//        pane.setMaxSize(bounds.getWidth(), bounds.getHeight());
-        //g.setPrefSize(bounds.getWidth(), bounds.getHeight());
-        //g.setMaxSize(bounds.getWidth(), bounds.getHeight());
         return g;
     }
 
@@ -269,7 +263,6 @@ public class DetailNodes {
 
         // Add optional size gauge
         if (showGauge) {
-            // scale gauge
             Pane scaleGauge = DetailNodes.scaleGauge();
             double scaleH = scaleGauge.getBoundsInLocal().getHeight();
             double scaleW = scaleGauge.getBoundsInLocal().getWidth();
