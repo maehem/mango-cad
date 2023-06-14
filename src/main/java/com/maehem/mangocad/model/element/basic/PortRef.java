@@ -14,64 +14,56 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.basic;
+
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
 
 /**
- *
- * @author Mark J Koch ( @maehem on GitHub)
+ * portref EMPTY>
+   portref
+          moduleInst    %String;       #REQUIRED
+          port          %String;       #REQUIRED
+ * 
+ * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Vertex extends _AQuantum {
-    public static final String ELEMENT_NAME = "vertex";
+public class PortRef extends _AQuantum {
+    
+    public static final String ELEMENT_NAME = "portref";
 
-    private double x;
-    private double y;
-    private double curve = 0;
+    private String moduleInst;
+    private String port;
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
+
     /**
-     * @return the x
+     * @return the moduleInst
      */
-    public double getX() {
-        return x;
+    public String getModuleInst() {
+        return moduleInst;
     }
 
     /**
-     * @param x the x to set
+     * @param moduleInst the moduleInst to set
      */
-    public void setX(double x) {
-        this.x = x;
+    public void setModuleInst(String moduleInst) {
+        this.moduleInst = moduleInst;
     }
 
     /**
-     * @return the y
+     * @return the port
      */
-    public double getY() {
-        return y;
+    public String getPort() {
+        return port;
     }
 
     /**
-     * @param y the y to set
+     * @param port the port to set
      */
-    public void setY(double y) {
-        this.y = y;
+    public void setPort(String port) {
+        this.port = port;
     }
-
-    /**
-     * @return the curve
-     */
-    public double getCurve() {
-        return curve;
-    }
-
-    /**
-     * @param curve the curve to set
-     */
-    public void setCurve(double curve) {
-        this.curve = curve;
-    }
-
-
+    
 }

@@ -14,23 +14,62 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.drawing;
+
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
 
 /**
- *
- * @author Mark J Koch ( @maehem on GitHub)
- */
-public class Vertex extends _AQuantum {
-    public static final String ELEMENT_NAME = "vertex";
+ *  <module>
+ *        name          %String;       #REQUIRED
+          prefix        %String;       ""
+          x            %Coord;        #REQUIRED
+          y            %Coord;        #REQUIRED
 
+ * @author Mark J Koch ( @maehem on GitHub )
+ */
+public class CircuitModule extends _AQuantum {
+
+    public static final String ELEMENT_NAME = "module";   
+    
+    private String name;
+    private String prefix;
     private double x;
     private double y;
-    private double curve = 0;
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the prefix
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
+     * @param prefix the prefix to set
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    
     /**
      * @return the x
      */
@@ -58,20 +97,5 @@ public class Vertex extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-
-    /**
-     * @return the curve
-     */
-    public double getCurve() {
-        return curve;
-    }
-
-    /**
-     * @param curve the curve to set
-     */
-    public void setCurve(double curve) {
-        this.curve = curve;
-    }
-
-
+    
 }

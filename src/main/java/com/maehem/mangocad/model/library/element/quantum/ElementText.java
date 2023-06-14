@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.library.element.quantum;
 
 import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
+import com.maehem.mangocad.model.library.element.quantum.enums.TextFont;
 
 /**
  *
@@ -24,6 +25,8 @@ import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
  */
 public class ElementText extends _AQuantum {
     // No FONT.  We only support line-font right now.
+    private double x;
+    private double y;
     private double size;
     private int    distance = 50;  // Line to line distance
     private double width = 8.0; // Eagle called it ratio
@@ -31,8 +34,44 @@ public class ElementText extends _AQuantum {
     private boolean mirror = false;
     private boolean spin = false;
     private TextAlign align = TextAlign.BOTTOM_LEFT;
+    private TextFont font = TextFont.VECTOR;
     private String value;
 
+    public static final String ELEMENT_NAME = "text";
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setY(double y) {
+        this.y = y;
+    }
+    
     /**
      * @return the size
      */
@@ -145,14 +184,20 @@ public class ElementText extends _AQuantum {
         this.value = value;
     }
 
-//    @Override
-//    public Rectangle2D getBounds() {
-//        Rectangle2D bounds = super.getBounds();
-//        bounds.add( getX()+(getValue().length()*getSize()*0.7),
-//                getY()+getSize()
-//        );
-//        return bounds; //To change body of generated methods, choose Tools | Templates.        
-//    }
+    /**
+     * @return the font
+     */
+    public TextFont getFont() {
+        return font;
+    }
+
+    /**
+     * @param font the font to set
+     */
+    public void setFont(TextFont font) {
+        this.font = font;
+    }
+
 
     
 }

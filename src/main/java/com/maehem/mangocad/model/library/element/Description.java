@@ -16,11 +16,15 @@
  */
 package com.maehem.mangocad.model.library.element;
 
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Description {
+public class Description extends _AQuantum {
+    public static final String ELEMENT_NAME = "description";
+    
     private String locale = "us_EN"; // The i18n locale code for this text. No value = en_US
     private String value = "";  // The text
 
@@ -34,6 +38,12 @@ public class Description {
     public Description(String locale, String value) {
         this(value);
         setLocale(locale);
+    }
+    
+
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
     }
     
     /**

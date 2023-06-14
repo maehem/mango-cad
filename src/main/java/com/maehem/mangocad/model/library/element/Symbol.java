@@ -16,10 +16,121 @@
  */
 package com.maehem.mangocad.model.library.element;
 
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * symbol ( description?, (polygon | wire | text | dimension | pin | circle | rectangle | frame)* )
+ *   attributes
+ *         name          %String;       #REQUIRED
+ *         urn              %Urn;       ""
+ *         locally_modified %Bool;      "no"
+ *         library_version  %Int;       ""
+ *         library_locally_modified %Bool; "no"
+ *         
+ *         library_version and library_locally_modified: Only in managed libraries inside boards or schematics
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Symbol extends LibraryElement {
+public class Symbol extends _AQuantum {
 
+    public static final String ELEMENT_NAME = "symbol";
+    
+    private final ArrayList<_AQuantum> elements = new ArrayList<>();
+    
+    private String name;
+    private String urn;
+    private boolean locallyModified = false;
+    private int libraryVersion;
+    private boolean libraryLocallyModified = false;
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the urn
+     */
+    public String getUrn() {
+        return urn;
+    }
+
+    /**
+     * @param urn the urn to set
+     */
+    public void setUrn(String urn) {
+        this.urn = urn;
+    }
+
+    /**
+     * @return the locallyModified
+     */
+    public boolean isLocallyModified() {
+        return locallyModified;
+    }
+
+    /**
+     * @param locallyModified the locallyModified to set
+     */
+    public void setLocallyModified(boolean locallyModified) {
+        this.locallyModified = locallyModified;
+    }
+
+    /**
+     * @return the libraryVersion
+     */
+    public int getLibraryVersion() {
+        return libraryVersion;
+    }
+
+    /**
+     * @param libraryVersion the libraryVersion to set
+     */
+    public void setLibraryVersion(int libraryVersion) {
+        this.libraryVersion = libraryVersion;
+    }
+
+    /**
+     * @return the libraryLocallyModified
+     */
+    public boolean isLibraryLocallyModified() {
+        return libraryLocallyModified;
+    }
+
+    /**
+     * @param libraryLocallyModified the libraryLocallyModified to set
+     */
+    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
+        this.libraryLocallyModified = libraryLocallyModified;
+    }
+
+    public List<_AQuantum> getElements() {
+        return elements;
+    }
+    
+    public String getDescription() {        
+        for ( _AQuantum item: elements ) {
+            if ( item instanceof Description descItem ) {
+                return descItem.getValue();
+            }
+        }
+        
+        return "";
+    }
 }

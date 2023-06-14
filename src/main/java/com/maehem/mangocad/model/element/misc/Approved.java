@@ -14,64 +14,38 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.misc;
+
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+
 
 /**
- *
- * @author Mark J Koch ( @maehem on GitHub)
+ * 
+ * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Vertex extends _AQuantum {
-    public static final String ELEMENT_NAME = "vertex";
+public class Approved extends _AQuantum {
 
-    private double x;
-    private double y;
-    private double curve = 0;
-
+    public static final String ELEMENT_NAME = "approved";   
+    
+    private String hash;
+    
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
+
     /**
-     * @return the x
+     * @return the name
      */
-    public double getX() {
-        return x;
+    public String getHash() {
+        return hash;
     }
 
     /**
-     * @param x the x to set
+     * @param hash to set
      */
-    public void setX(double x) {
-        this.x = x;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
-
-    /**
-     * @return the y
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * @param y the y to set
-     */
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    /**
-     * @return the curve
-     */
-    public double getCurve() {
-        return curve;
-    }
-
-    /**
-     * @param curve the curve to set
-     */
-    public void setCurve(double curve) {
-        this.curve = curve;
-    }
-
 
 }

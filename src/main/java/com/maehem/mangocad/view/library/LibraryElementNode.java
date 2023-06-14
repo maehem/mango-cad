@@ -87,8 +87,8 @@ public class LibraryElementNode {
             Path path = new Path();
 
             MoveTo moveTo = new MoveTo();
-            moveTo.setX(w.getX());
-            moveTo.setY(-w.getY());
+            moveTo.setX(w.getX1());
+            moveTo.setY(-w.getY1());
 
             ArcTo arc = new ArcTo();
             // Curve to ARC
@@ -99,7 +99,7 @@ public class LibraryElementNode {
             arc.setSweepFlag(w.getCurve() < 0.0);
 
             double sin90 = Math.sin(Math.toRadians(90.0));
-            double dist = distance(w.getX(), -w.getY(), w.getX2(), -w.getY2());
+            double dist = distance(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
             double radius = (sin90 * dist / 2.0)
                     / Math.sin(Math.toRadians(w.getCurve() / 2.0));
             arc.setRadiusX(radius);
@@ -114,7 +114,7 @@ public class LibraryElementNode {
 
             return path;
         } else {
-            Line line = new Line(w.getX(), -w.getY(), w.getX2(), -w.getY2());
+            Line line = new Line(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
             line.setStrokeLineCap(StrokeLineCap.ROUND);
             line.setStrokeWidth(w.getWidth());
             line.setStroke(color);
@@ -125,8 +125,8 @@ public class LibraryElementNode {
 
     public static Node createRectangle(ElementRectangle r, Color color) {
         Rectangle rr = new Rectangle(
-                r.getX(), -r.getY2(),
-                r.getX2() - r.getX(), r.getY2() - r.getY()
+                r.getX1(), -r.getY2(),
+                r.getX2() - r.getX1(), r.getY2() - r.getY1()
         );
         rr.setStrokeWidth(0);
         //rr.setStrokeLineCap(StrokeLineCap.ROUND);

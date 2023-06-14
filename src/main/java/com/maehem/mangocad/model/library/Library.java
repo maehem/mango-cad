@@ -27,6 +27,13 @@ import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
 
 /**
+ * library ( description?, packages?, packages3d?, symbols?, devicesets? )
+ *    name          %String;       #REQUIRED
+ *    urn           %Urn;          ""
+ *    
+ *    name: Only in libraries used inside boards or schematics
+ *    urn:  Only in online libraries used inside boards or schematics
+ * 
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
@@ -48,6 +55,9 @@ public class Library {
     private ArrayList<Package3d> packages3d = new ArrayList<>();
 
     private String filePath;
+    
+    private String name;// Only in libraries used inside boards or schematics
+    private String urn; // Only in online libraries used inside boards or schematics
 
     public Library() {
         layers[0] = new LayerElement();
@@ -179,12 +189,12 @@ public class Library {
         return notes;
     }
 
-    /**
-     * @param notes the notes to set
-     */
-    public void setNotes(ArrayList<Note> notes) {
-        this.notes = notes;
-    }
+//    /**
+//     * @param notes the notes to set
+//     */
+//    public void setNotes(ArrayList<Note> notes) {
+//        this.notes = notes;
+//    }
 
     public void addNote(String string) {
         getNotes().add(new Note(string));
@@ -226,6 +236,34 @@ public class Library {
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the urn
+     */
+    public String getUrn() {
+        return urn;
+    }
+
+    /**
+     * @param urn the urn to set
+     */
+    public void setUrn(String urn) {
+        this.urn = urn;
     }
 
 }

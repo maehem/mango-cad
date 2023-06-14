@@ -119,5 +119,15 @@ public class LayerElement {
         this.active = active;
     }
     
-    
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " +
+                "[" + number + "]" +
+                " name: " + name +
+                " index:" + colorIndex + 
+                " fill: " + fill +
+                " visible: " + (visible?"Y":"N") +
+                " active: " + (active?"Y":"N");
+                
+    }
 }

@@ -37,12 +37,12 @@ public abstract class LibraryElement {
         return displayUnits;
     }
 
-    /**
-     * @param displayUnits the displayUnits to set
-     */
-    public void setDisplayUnits(String displayUnits) {
-        this.displayUnits = displayUnits;
-    }
+//    /**
+//     * @param displayUnits the displayUnits to set
+//     */
+//    public void setDisplayUnits(String displayUnits) {
+//        this.displayUnits = displayUnits;
+//    }
 
     /**
      * @return the name

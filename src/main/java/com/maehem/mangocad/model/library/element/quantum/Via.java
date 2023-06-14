@@ -21,12 +21,50 @@ package com.maehem.mangocad.model.library.element.quantum;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Via extends _AQuantum {
+    public static final String ELEMENT_NAME = "via";
+
+    private double x;
+    private double y;
     private double extent;
     private double drill;
     private double diameter = 0.0;
     private String shape = "round";
     private boolean stop = false;
 
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setY(double y) {
+        this.y = y;
+    }
+    
     /**
      * @return the drill
      */

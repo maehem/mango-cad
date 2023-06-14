@@ -22,37 +22,44 @@ package com.maehem.mangocad.model.library.element.quantum;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public abstract class _AQuantum {
-    private double x;
-    private double y;
+//    private double x;
+//    private double y;
     private int layer;
 
     /**
-     * @return the x
+     * XML element name. Used for loading saving XML file.
+     * 
+     * @return XML element name
      */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * @param x the x to set
-     */
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    /**
-     * @return the y
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * @param y the y to set
-     */
-    public void setY(double y) {
-        this.y = y;
-    }
+    public abstract String getElementName();
+    
+//    /**
+//     * @return the x
+//     */
+//    public double getX() {
+//        return x;
+//    }
+//
+//    /**
+//     * @param x the x to set
+//     */
+//    public void setX(double x) {
+//        this.x = x;
+//    }
+//
+//    /**
+//     * @return the y
+//     */
+//    public double getY() {
+//        return y;
+//    }
+//
+//    /**
+//     * @param y the y to set
+//     */
+//    public void setY(double y) {
+//        this.y = y;
+//    }
 
     /**
      * @return the layer
@@ -68,17 +75,4 @@ public abstract class _AQuantum {
         this.layer = layer;
     }
 
-//    /**
-//     * 
-//     * Bounds does not belong here?
-//     * 
-//     * 
-//     * Get the maximum extents of the drawables of this object.
-//     * 
-//     * @return double precision floating point coordinate boundary for this object.
-//     */
-//    public Rectangle2D getBounds() {
-//        //Rectangle2D r = new Rectangle2D.Double(getX(),getY(),0,0);
-//        return new Rectangle2D(getX(),getY(),0,0);
-//    };
 }

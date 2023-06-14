@@ -14,19 +14,28 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.misc;
+
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+
 
 /**
- *
- * @author Mark J Koch ( @maehem on GitHub)
- */
-public class Hole extends _AQuantum {
-    public static final String ELEMENT_NAME = "hole";
-    
-    private double x;
-    private double y;
-    private double drill;
+ *    <class>
+ *        number        %Class;        #REQUIRED
+          name          %String;       #REQUIRED
+          width         %Dimension;    "0"
+          drill         %Dimension;    "0"
 
+ * @author Mark J Koch ( @maehem on GitHub )
+ */
+public class NetClass extends _AQuantum {
+
+    public static final String ELEMENT_NAME = "class";   
+    
+    private String name;
+    private int number;
+    private double width = 0.0;
+    private double drill = 0.0;
     
     @Override
     public String getElementName() {
@@ -34,33 +43,33 @@ public class Hole extends _AQuantum {
     }
 
     /**
-     * @return the x
+     * @return the name
      */
-    public double getX() {
-        return x;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param x the x to set
+     * @param name the name to set
      */
-    public void setX(double x) {
-        this.x = x;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * @return the y
+     * @return the width
      */
-    public double getY() {
-        return y;
+    public double getWidth() {
+        return width;
     }
 
     /**
-     * @param y the y to set
+     * @param width the width to set
      */
-    public void setY(double y) {
-        this.y = y;
+    public void setWidth(double width) {
+        this.width = width;
     }
-    
+
     /**
      * @return the drill
      */
@@ -74,4 +83,20 @@ public class Hole extends _AQuantum {
     public void setDrill(double drill) {
         this.drill = drill;
     }
+
+    /**
+     * @return the number
+     */
+    public int getNumber() {
+        return number;
+    }
+
+    /**
+     * @param number the number to set
+     */
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+
 }

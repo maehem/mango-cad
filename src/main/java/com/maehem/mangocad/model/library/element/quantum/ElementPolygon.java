@@ -27,6 +27,8 @@ import java.util.List;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementPolygon extends _AQuantum {
+    public static final String ELEMENT_NAME = "polygon";
+    
     private double width;
     private double spacing;
     private String pour = "solid";
@@ -35,6 +37,12 @@ public class ElementPolygon extends _AQuantum {
     private boolean thermals = true;
     private int rank = 0;
     private List<Vertex> vertices = new ArrayList<>();
+
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
 
     /**
      * @return the width

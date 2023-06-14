@@ -14,64 +14,52 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.basic;
+
+import com.maehem.mangocad.model.library.element.quantum.Vertex;
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import java.util.ArrayList;
 
 /**
- *
- * @author Mark J Koch ( @maehem on GitHub)
+ * 
+ * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Vertex extends _AQuantum {
-    public static final String ELEMENT_NAME = "vertex";
+public class Spline extends _AQuantum {
+    
+    public static final String ELEMENT_NAME = "spline";
+    
+    private ArrayList<Vertex> vertices = new ArrayList<>();
 
-    private double x;
-    private double y;
-    private double curve = 0;
+    //  spline (vertex)
+    //  Four simple (non-curve) vertices define the control points of a degree-3 spline curve 
+    //  ATTLIST spline
+    //          width          %Dimension;    #REQUIRED
+    private double width;
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
+
     /**
-     * @return the x
+     * @return the part
      */
-    public double getX() {
-        return x;
+    public double getWidth() {
+        return width;
     }
 
     /**
-     * @param x the x to set
+     * @param width the width to set
      */
-    public void setX(double x) {
-        this.x = x;
+    public void setWidth(double width) {
+        this.width = width;
     }
 
     /**
-     * @return the y
+     * @return the vertices
      */
-    public double getY() {
-        return y;
+    public ArrayList<Vertex> getVertices() {
+        return vertices;
     }
-
-    /**
-     * @param y the y to set
-     */
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    /**
-     * @return the curve
-     */
-    public double getCurve() {
-        return curve;
-    }
-
-    /**
-     * @param curve the curve to set
-     */
-    public void setCurve(double curve) {
-        this.curve = curve;
-    }
-
-
+    
 }

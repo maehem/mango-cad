@@ -21,8 +21,17 @@ package com.maehem.mangocad.model.library.element.quantum;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementCircle extends _AQuantum {
+    private double x;
+    private double y;
     private double radius;
     private double width;
+
+    public static final String ELEMENT_NAME = "circle";
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
 
     /**
      * @return the radius
@@ -52,12 +61,32 @@ public class ElementCircle extends _AQuantum {
         this.width = width;
     }
 
-//    @Override
-//    public Rectangle2D getBounds() {
-//        double w = getWidth()/2;
-//        double d = getRadius()*2;
-//        return new Rectangle2D.Double(getX()-getRadius()-w, getY()-getRadius()-w, d, d);
-//    }
-    
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setY(double y) {
+        this.y = y;
+    }
     
 }

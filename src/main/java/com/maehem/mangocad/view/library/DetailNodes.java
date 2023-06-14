@@ -123,7 +123,7 @@ public class DetailNodes {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
             } else if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
-                g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
+                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
             } else if (e instanceof Pin pin) {
@@ -175,6 +175,8 @@ public class DetailNodes {
 
         Symbol symbol = lib.getSymbol(gate.getSymbol());
         symbol.getElements().forEach((e) -> {
+            LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
+            int layerNum = e.getLayerNum();
             LayerElement le = layers[e.getLayerNum()];
             if (le == null) {
                 LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
@@ -193,7 +195,7 @@ public class DetailNodes {
                 }
                 //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
                 g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c));
-                g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
+                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
             } else if (e instanceof Pin pin) {
@@ -245,7 +247,7 @@ public class DetailNodes {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
             } else if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
-                g.getChildren().add(LibraryElementNode.crosshairs(e.getX(), -e.getY(), 0.5, 0.04, Color.DARKGREY));
+                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementRectangle elementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
             } else if (e instanceof ElementPolygon elementPolygon) {

@@ -25,30 +25,25 @@ import static com.maehem.mangocad.model.library.element.quantum.enums.PadShape.R
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class PadTHD extends _AQuantum {
-    private boolean first;
     
-    public static double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );
+    public static final String ELEMENT_NAME = "thd";
+    public static final double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );
     
     private String name;
+    private double x;
+    private double y;
     private double rotation = 0.0;
     private double drill;
     private PadShape shape = ROUND;
     private boolean stopmask = true;
     private boolean thermals = true;
     private double diameter = 0.0; // 0.0 == auto diamteter
+    private boolean first;
 
-    /**
-     * @return the first
-     */
-    public boolean isFirst() {
-        return first;
-    }
-
-    /**
-     * @param first
-     */
-    public void setFirst(boolean first) {
-        this.first = first;
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
     }
 
     /**
@@ -65,6 +60,34 @@ public class PadTHD extends _AQuantum {
         this.name = name;
     }
 
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setY(double y) {
+        this.y = y;
+    }
+    
     /**
      * @return the rotation
      */
@@ -157,10 +180,28 @@ public class PadTHD extends _AQuantum {
         this.diameter = diameter;
     }
 
+    /**
+     *
+     * @return layer number
+     */
     @Override
     public int getLayerNum() {
         return 17; // TODO: get from static table.
     }
     
+    /**
+     * @return the first
+     */
+    public boolean isFirst() {
+        return first;
+    }
+
+    /**
+     * @param first
+     */
+    public void setFirst(boolean first) {
+        this.first = first;
+    }
+
     
 }

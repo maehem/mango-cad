@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library;
+package com.maehem.mangocad.model.schematic;
 
 import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
 import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
@@ -29,44 +29,43 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryCache extends ArrayList<Library> {
+public class SchematicCache extends ArrayList<Schematic> {
+
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
-    private static LibraryCache instance = null;
-    
-    private LibraryCache() {
-        
-    }
-    
-    public static LibraryCache getInstance() {
+    private static SchematicCache instance = null;
+
+    private SchematicCache() {}
+
+    public static SchematicCache getInstance() {
         if (instance == null) {
-            instance = new LibraryCache();
+            instance = new SchematicCache();
         }
 
         return instance;
     }
-    
-    public Library getLibrary( File f ) {
-        for ( Library l: this ) {
-            if ( l.getFilePath().equals(f.getAbsolutePath()) ) {
-                LOGGER.log(Level.FINER, "Found cached library: " + l.getFilePath());
-                return l;
+
+    public Schematic getSchematic(File f) {
+        for (Schematic sch : this) {
+            if (sch.getFilePath().equals(f.getAbsolutePath())) {
+                LOGGER.log(Level.FINER, "Found cached schematic: " + sch.getFilePath());
+                return sch;
             }
         }
-        
+
         try {
-            Library lbr = EagleCADUtils.importLBR(f);
-            add(lbr);
-            LOGGER.log(Level.FINER, "Cached new Library: " + lbr.getFilePath());
-            return lbr;
+            Schematic sch = EagleCADUtils.importSCH(f);
+            add(sch);
+            LOGGER.log(Level.FINER, "Cached new Library: " + sch.getFilePath());
+            return sch;
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         } catch (EagleCADLibraryFileException ex) {
             LOGGER.log(Level.SEVERE, ex.toString());
             LOGGER.log(Level.SEVERE, "Error importing: " + f.getAbsolutePath(), ex);
         }
-        
-        LOGGER.log(Level.SEVERE, "ERROR: Could find or load library for requested file!");
+
+        LOGGER.log(Level.SEVERE, "ERROR: Could not find or load requested file!");
         return null;
     }
 }

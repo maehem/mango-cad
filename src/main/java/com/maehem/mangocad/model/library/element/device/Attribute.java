@@ -17,21 +17,36 @@
 package com.maehem.mangocad.model.library.element.device;
 
 import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
+import com.maehem.mangocad.model.library.element.quantum.enums.TextFont;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Attribute extends _AQuantum {
+    
+    public static final String ELEMENT_NAME = "attribute";
+    
     private String name;
+    private double x;
+    private double y;
     private String value;
     private double size;
     private int width;
     private double rotation = 0.0;
     private String display = "value";
     private boolean constant = false;
-    private String align = "center";
+    private TextAlign align = TextAlign.BOTTOM_LEFT;
+    private TextFont font = TextFont.VECTOR;
 
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    
     /**
      * @return the name
      */
@@ -46,6 +61,34 @@ public class Attribute extends _AQuantum {
         this.name = name;
     }
 
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setY(double y) {
+        this.y = y;
+    }
+    
     /**
      * @return the value
      */
@@ -133,15 +176,29 @@ public class Attribute extends _AQuantum {
     /**
      * @return the name
      */
-    public String getAlign() {
+    public TextAlign getAlign() {
         return align;
     }
 
     /**
-     * @param name the name to set
+     * @param align the alignment to set
      */
-    public void setAlign(String align) {
+    public void setAlign(TextAlign align) {
         this.align = align;
+    }
+
+    /**
+     * @return the font
+     */
+    public TextFont getFont() {
+        return font;
+    }
+
+    /**
+     * @param font the font to set
+     */
+    public void setFont(TextFont font) {
+        this.font = font;
     }
 
 }

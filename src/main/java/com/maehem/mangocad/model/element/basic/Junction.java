@@ -14,24 +14,29 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.basic;
+
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import java.util.ArrayList;
 
 /**
  *
- * @author Mark J Koch ( @maehem on GitHub)
+ * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Gate extends _AQuantum {
-    // 'layer' is not used.
-    
-    private String name;
+public class Junction extends _AQuantum {
+
+    public static final String ELEMENT_NAME = "junction";
+
+    private final ArrayList<String> grouprefs = new ArrayList<>();
+
+    //  junction EMPTY
+    //    ATTLIST
+    //          x             %Coord;        #REQUIRED
+    //          y             %Coord;        #REQUIRED
+    //          grouprefs     IDREFS         #IMPLIED
     private double x;
     private double y;
-    private String symbol;
-    private String addlevel = "next";
-    private int swapLevel = 0;
 
-    public static final String ELEMENT_NAME = "gate";
-    
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -64,63 +69,12 @@ public class Gate extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-    
-    /**
-     * @return the swapLevel
-     */
-    public int getSwapLevel() {
-        return swapLevel;
-    }
 
     /**
-     * @param swapLevel the swapLevel to set
+     * @return the grouprefs
      */
-    public void setSwapLevel(int swapLevel) {
-        this.swapLevel = swapLevel;
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
     }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the symbol
-     */
-    public String getSymbol() {
-        return symbol;
-    }
-
-    /**
-     * @param symbol the symbol to set
-     */
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    /**
-     * @return the addlevel
-     */
-    public String getAddlevel() {
-        return addlevel;
-    }
-
-    /**
-     * @param addlevel the addlevel to set
-     */
-    public void setAddlevel(String addlevel) {
-        this.addlevel = addlevel;
-    }
-    
-    
 
 }

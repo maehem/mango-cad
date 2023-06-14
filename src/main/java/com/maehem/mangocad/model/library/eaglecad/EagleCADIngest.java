@@ -17,6 +17,24 @@
 package com.maehem.mangocad.model.library.eaglecad;
 
 import com.maehem.mangocad.model.LayerElement;
+import com.maehem.mangocad.model.element.basic.Dimension;
+import com.maehem.mangocad.model.element.basic.FrameElement;
+import com.maehem.mangocad.model.element.basic.Instance;
+import com.maehem.mangocad.model.element.basic.Junction;
+import com.maehem.mangocad.model.element.basic.LabelElement;
+import com.maehem.mangocad.model.element.basic.ModuleInst;
+import com.maehem.mangocad.model.element.basic.Part;
+import com.maehem.mangocad.model.element.basic.PinRef;
+import com.maehem.mangocad.model.element.basic.PortRef;
+import com.maehem.mangocad.model.element.basic.SchematicGroup;
+import com.maehem.mangocad.model.element.basic.Spline;
+import com.maehem.mangocad.model.element.basic.VariantDefinition;
+import com.maehem.mangocad.model.element.drawing.CircuitModule;
+import com.maehem.mangocad.model.element.highlevel.Net;
+import com.maehem.mangocad.model.element.highlevel.Segment;
+import com.maehem.mangocad.model.element.highlevel.Sheet;
+import com.maehem.mangocad.model.element.misc.Approved;
+import com.maehem.mangocad.model.element.misc.NetClass;
 import com.maehem.mangocad.model.library.Library;
 import java.util.ArrayList;
 import com.maehem.mangocad.model.library.element.Description;
@@ -43,14 +61,21 @@ import com.maehem.mangocad.model.library.element.quantum.ElementText;
 import com.maehem.mangocad.model.library.element.quantum.Vertex;
 import com.maehem.mangocad.model.library.element.quantum.Via;
 import com.maehem.mangocad.model.library.element.quantum.Wire;
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import com.maehem.mangocad.model.library.element.quantum.enums.DimensionType;
+import com.maehem.mangocad.model.library.element.quantum.enums.GridUnit;
 import com.maehem.mangocad.model.library.element.quantum.enums.PadShape;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinDirection;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinLength;
 import com.maehem.mangocad.model.library.element.quantum.enums.PinVisible;
 import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
+import com.maehem.mangocad.model.library.element.quantum.enums.TextFont;
+import com.maehem.mangocad.model.library.element.quantum.enums.WireStyle;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,43 +98,9 @@ import org.w3c.dom.NodeList;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class EagleCADIngest {
-    
+
     private static final Logger LOGGER = ControlPanel.LOGGER;
-    
-    public static void ingestLayer(Node node, LayerElement[] layers) throws EagleCADLibraryFileException {
 
-        //LOGGER.log(Level.SEVERE, "Ingest Layer: " + node.getTextContent());
-//            Node item = childNodes.item(i);
-//            if (!item.getNodeName().equals("layer")) {
-//                continue;
-//            }
-        NamedNodeMap attributes = node.getAttributes();
-        
-        LayerElement layer = new LayerElement();
-        LOGGER.log(Level.FINER, "Ingest Layer: " + attributes.getNamedItem("number").getNodeValue());
-        layer.setNumber(Integer.parseInt(
-                attributes.getNamedItem("number").getNodeValue()
-        ));
-        
-        layer.setName(attributes.getNamedItem("name").getNodeValue());
-        layer.setColorIndex(Integer.parseInt(
-                attributes.getNamedItem("color").getNodeValue()
-        ));
-        layer.setFill(Integer.parseInt(
-                attributes.getNamedItem("fill").getNodeValue()
-        ));
-        layer.setVisible(
-                attributes.getNamedItem("visible").getNodeValue().equals("yes")
-        );
-        layer.setActive(
-                attributes.getNamedItem("active").getNodeValue().equals("yes")
-        );
-
-        //ingestLayerElements(item.getChildNodes(), layer);
-        layers[layer.getNumber()] = layer;
-        
-    }
-    
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -119,13 +110,13 @@ public class EagleCADIngest {
             }
             Footprint pkg = new Footprint();
             pkg.setName(item.getAttributes().getNamedItem("name").getNodeValue());
-            
+
             ingestPackageElements(item.getChildNodes(), pkg);
-            
+
             packages.add(pkg);
         }
     }
-    
+
     public static void ingestPackages3d(Node node, ArrayList<Package3d> packages3d) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -137,13 +128,26 @@ public class EagleCADIngest {
             pkg.setName(item.getAttributes().getNamedItem("name").getNodeValue());
             pkg.setUrn(item.getAttributes().getNamedItem("urn").getNodeValue());
             pkg.setType(item.getAttributes().getNamedItem("type").getNodeValue());
-            
+
             ingestPackage3dElements(item.getChildNodes(), pkg);
-            
+
             packages3d.add(pkg);
         }
     }
-    
+
+    /**
+     * symbol ( description?, (polygon | wire | text | dimension | pin | circle
+     * | rectangle | frame)* ) attributes name %String; #REQUIRED urn %Urn; ""
+     * locally_modified %Bool; "no" library_version %Int; ""
+     * library_locally_modified %Bool; "no"
+     *
+     * library_version and library_locally_modified: Only in managed libraries
+     * inside boards or schematics
+     *
+     * @param node
+     * @param symbols
+     * @throws EagleCADLibraryFileException
+     */
     public static void ingestSymbols(Node node, ArrayList<Symbol> symbols) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -153,13 +157,30 @@ public class EagleCADIngest {
             }
             Symbol symbol = new Symbol();
             symbol.setName(item.getAttributes().getNamedItem("name").getNodeValue());
-            
+
+            NamedNodeMap attributes = node.getAttributes();
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attrItem = attributes.item(j);
+                String value = attrItem.getNodeValue();
+                switch (attrItem.getNodeName()) {
+                    case "urn" ->
+                        symbol.setUrn(value);
+                    case "locally_modified" ->
+                        symbol.setLocallyModified(value.equalsIgnoreCase("yes"));
+                    case "library_version" ->
+                        symbol.setLibraryVersion(Integer.parseInt(value));
+                    case "library_locally_modified" ->
+                        symbol.setLibraryLocallyModified(value.equalsIgnoreCase("yes"));
+                    default ->
+                        throw new EagleCADLibraryFileException("Wire has unknown attribute: [" + item.getNodeName() + "]");
+                }
+            }
             ingestSymbolElements(item.getChildNodes(), symbol);
-            
+
             symbols.add(symbol);
         }
     }
-    
+
     public static void ingestDeviceSets(Node node, ArrayList<DeviceSet> deviceSets) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -171,16 +192,17 @@ public class EagleCADIngest {
             deviceSet.setName(item.getAttributes().getNamedItem("name").getNodeValue());
             deviceSet.setPrefix(item.getAttributes().getNamedItem("prefix").getNodeValue());
             deviceSet.setUservalue(item.getAttributes().getNamedItem("uservalue").getNodeValue().equals("yes"));
-            
+
             ingestDeviceSetElements(item.getChildNodes(), deviceSet);
-            
+
             deviceSets.add(deviceSet);
         }
     }
-    
+
     private static void ingestPackageElements(NodeList nodes, Footprint pkg) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
+            List<_AQuantum> elements = pkg.getElements();
             switch (node.getNodeName()) {
                 case "#text" -> {
                     continue; // skip this element
@@ -189,29 +211,29 @@ public class EagleCADIngest {
                     // Gets put into 'descriptions' instead of 'elements'.
                     ingestDescription(pkg, node);
                 case "wire" -> // Wire
-                    ingestWire(pkg, node);
+                    ingestWire(elements, node);
                 case "smd" -> // SMD
-                    ingestPadSmd(pkg, node);
+                    ingestPadSmd(elements, node);
                 case "pad" -> // Pad
-                    ingestPadThd(pkg, node);
+                    ingestPadThd(elements, node);
                 case "text" -> // ElementText
-                    ingestText(pkg, node);
+                    ingestText(elements, node);
                 case "polygon" -> // ElementPolygon
-                    ingestPolygon(pkg, node);
+                    ingestPolygon(elements, node);
                 case "rectangle" -> // ElementRectangle
-                    ingestRectangle(pkg, node);
+                    ingestRectangle(elements, node);
                 case "circle" -> // ElementCircle
-                    ingestCircle(pkg, node);
+                    ingestCircle(elements, node);
                 case "hole" -> // Hole
-                    ingestHole(pkg, node);
+                    ingestHole(elements, node);
                 case "via" -> // Via
-                    ingestVia(pkg, node);
+                    ingestVia(elements, node);
                 default ->
                     throw new EagleCADLibraryFileException("Unknown Package element encountered: " + node.getNodeName());
             }
         }
     }
-    
+
     private static void ingestPackage3dElements(NodeList nodes, Package3d pkg) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -229,63 +251,65 @@ public class EagleCADIngest {
             }
         }
     }
-    
+
     private static void ingestSymbolElements(NodeList nodes, Symbol symbol) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
+            List<_AQuantum> elements = symbol.getElements();
+            if (node.getNodeType() != 1) {
+                continue;
+            }
+            //LOGGER.log(Level.SEVERE, "ingest element: " + node.getNodeName());
             switch (node.getNodeName()) {
-                case "#text":
+                case "#text" -> {
                     continue; // skip this element
-                case "description": // Description
-                    // Gets put into 'descriptions' instead of 'elements'.
-                    ingestDescription(symbol, node);
-                    break;
-                case "wire":        // Wire
-                    ingestWire(symbol, node);
-                    break;
-                case "text":        // ElementText
-                    ingestText(symbol, node);
-                    break;
-                case "polygon":     // ElementPolygon
-                    ingestPolygon(symbol, node);
-                    break;
-                case "rectangle":   // ElementRectangle
-                    ingestRectangle(symbol, node);
-                    break;
-                case "circle":      // ElementCircle
-                    ingestCircle(symbol, node);
-                    break;
-                case "pin":      // ElementCircle
-                    ingestPin(symbol, node);
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Unknown Package element encountered: " + node.getNodeName());
+                }
+                case "description" -> {
+                    // Description. There might be multiple locale versions.
+                    Description desc = new Description();
+                    ingestDescription(desc, node);
+                    symbol.getElements().add(desc);
+                }
+                case "wire" -> // Wire
+                    ingestWire(elements, node);
+                case "text" -> // ElementText
+                    ingestText(elements, node);
+                case "polygon" -> // ElementPolygon
+                    ingestPolygon(elements, node);
+                case "rectangle" -> // ElementRectangle
+                    ingestRectangle(elements, node);
+                case "circle" -> // ElementCircle
+                    ingestCircle(elements, node);
+                case "pin" -> // ElementCircle
+                    ingestPin(elements, node);
+                case "frame" ->
+                    ingestFrame(elements, node);
+                default ->
+                    throw new EagleCADLibraryFileException("Unknown Symbol element encountered: " + node.getNodeName());
             }
         }
     }
-    
+
     private static void ingestDeviceSetElements(NodeList nodes, DeviceSet deviceSet) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             switch (node.getNodeName()) {
-                case "#text":
+                case "#text" -> {
                     continue; // skip this element
-                case "description": // Description
+                }
+                case "description" -> // Description
                     // Gets put into 'descriptions' list instead of 'elements'.
                     ingestDescription(deviceSet, node);
-                    break;
-                case "gates":        // Gates
+                case "gates" -> // Gates
                     ingestGates(deviceSet, node);
-                    break;
-                case "devices":        // Devices
+                case "devices" -> // Devices
                     ingestDevices(deviceSet, node);
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Unknown Package element encountered: " + node.getNodeName());
             }
         }
     }
-    
+
     private static void ingestDescription(LibraryElement libElement, Node node) {
         Description desc = new Description();
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -294,22 +318,45 @@ public class EagleCADIngest {
                 desc.setLocale(langAttribute.getNodeValue());
             } // else default is en_US so we don't set it.
         }
-        
+
         String serializeDoc = serializeDoc(node);
         Pattern pattern = Pattern.compile("<description language=\"..\">(.*)</description>");
-        
+
         Matcher matcher = pattern.matcher(serializeDoc);
-        
+
         if (matcher.find()) {
             //LOGGER.log(Level.SEVERE, "Matcher Outout: " + matcher.group(1));
             desc.setValue(matcher.group(1));
         } else {
             desc.setValue("");
         }
-        
+
         libElement.getDescriptions().add(desc);
     }
-    
+
+    public static void ingestDescription(Description desc, Node node) {
+        Node langAttribute = node.getAttributes().getNamedItem("language");
+        if (langAttribute != null) {
+            if (!langAttribute.getNodeValue().equals("en")) {
+                desc.setLocale(langAttribute.getNodeValue());
+            } // else default is en_US so we don't set it.
+        }
+
+        String serializeDoc = serializeDoc(node);
+        Pattern pattern = Pattern.compile("<description language=\"..\">(.*)</description>");
+
+        Matcher matcher = pattern.matcher(serializeDoc);
+
+        if (matcher.find()) {
+            //LOGGER.log(Level.SEVERE, "Matcher Outout: " + matcher.group(1));
+            desc.setValue(matcher.group(1));
+        } else {
+            desc.setValue("");
+        }
+
+        //libElement.getDescriptions().add(desc);
+    }
+
     public static void ingestLibraryDescription(Library library, Node node) {
         Description desc = new Description();
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -326,149 +373,113 @@ public class EagleCADIngest {
         }
         library.getDescriptions().add(desc);
     }
-    
-    private static void ingestWire(LibraryElement pkg, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestWire(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
         Wire wire = new Wire();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "cap":
+                case "cap" ->
                     wire.setCap(value);
-                    break;
-                case "curve":
+                case "curve" ->
                     wire.setCurve(Double.parseDouble(value));
-                    break;
-                case "layer":
+                case "layer" ->
                     wire.setLayer(Integer.parseInt(value));
-                    break;
-                case "style":
+                case "style" ->
                     wire.setStyle(value);
-                    break;
-                case "width":
+                case "width" ->
                     wire.setWidth(Double.parseDouble(value));
-                    break;
-                case "x1":
-                    wire.setX(Double.parseDouble(value));
-                    break;
-                case "x2":
+                case "x1" ->
+                    wire.setX1(Double.parseDouble(value));
+                case "x2" ->
                     wire.setX2(Double.parseDouble(value));
-                    break;
-                case "y1":
-                    wire.setY(Double.parseDouble(value));
-                    break;
-                case "y2":
+                case "y1" ->
+                    wire.setY1(Double.parseDouble(value));
+                case "y2" ->
                     wire.setY2(Double.parseDouble(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Wire has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        pkg.getElements().add(wire);
+
+        list.add(wire);
     }
-    
-    private static void ingestPadSmd(Footprint pkg, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestPadSmd(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         PadSMD smd = new PadSMD();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "cream":
+                case "cream" ->
                     smd.setCream(value.equals("yes"));
-                    break;
-                case "stop":
+                case "stop" ->
                     smd.setStopmask(value.equals("yes"));
-                    break;
-                case "thermals":
+                case "thermals" ->
                     smd.setThermals(value.equals("yes"));
-                    break;
-                case "layer":
+                case "layer" ->
                     smd.setLayer(Integer.parseInt(value));
-                    break;
-                case "name":
+                case "name" ->
                     smd.setName(value);
-                    break;
-                case "rot":
-                    // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
                     smd.setRotation(Double.parseDouble(value.substring(1)));
-                    break;
-                case "roundness":
+                case "roundness" ->
                     smd.setRoundness(Integer.parseInt(value));
-                    break;
-                case "x":
+                case "x" ->
                     smd.setX(Double.parseDouble(value));
-                    break;
-                case "y":
+                case "y" ->
                     smd.setY(Double.parseDouble(value));
-                    break;
-                case "dx":
+                case "dx" ->
                     smd.setWidth(Double.parseDouble(value));
-                    break;
-                case "dy":
+                case "dy" ->
                     smd.setHeight(Double.parseDouble(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("SMD has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        pkg.getElements().add(smd);
+
+        elements.add(smd);
     }
-    
-    private static void ingestPadThd(Footprint pkg, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestPadThd(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         PadTHD smd = new PadTHD();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "name":
+                case "name" ->
                     smd.setName(value);
-                    break;
-                case "first":
+                case "first" ->
                     smd.setFirst(value.equals("yes"));
-                    break;
-                case "stop":
+                case "stop" ->
                     smd.setStopmask(value.equals("yes"));
-                    break;
-                case "thermals":
+                case "thermals" ->
                     smd.setThermals(value.equals("yes"));
-                    break;
-// Layer not supported on THD pads.   Fetched from static value.                  
-//                case "layer":
-//                    attribute.setLayer(Integer.parseInt(value));
-//                    break;
-                case "shape":
+                case "shape" ->
                     smd.setShape(PadShape.fromCode(value));
-                    break;
-                case "rot":
-                    // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
                     smd.setRotation(Double.parseDouble(value.substring(1)));
-                    break;
-                case "diameter":
+                case "diameter" ->
                     smd.setDiameter(Double.parseDouble(value));
-                    break;
-                case "drill":
+                case "drill" ->
                     smd.setDrill(Double.parseDouble(value));
-                    break;
-                case "x":
+                case "x" ->
                     smd.setX(Double.parseDouble(value));
-                    break;
-                case "y":
+                case "y" ->
                     smd.setY(Double.parseDouble(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Pad has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        pkg.getElements().add(smd);
+
+        elements.add(smd);
     }
-    
-    private static void ingestText(LibraryElement element, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestText(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         ElementText text = new ElementText();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -526,204 +537,177 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Text has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
+
         text.setValue(node.getChildNodes().item(0).getNodeValue());
-        
-        element.getElements().add(text);
+
+        elements.add(text);
     }
-    
-    private static void ingestPolygon(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestPolygon(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         ElementPolygon poly = new ElementPolygon();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "width":
+                case "width" ->
                     poly.setWidth(Double.parseDouble(value));
-                    break;
-                case "layer":
+                case "layer" ->
                     poly.setLayer(Integer.parseInt(value));
-                    break;
-                case "spacing":
+                case "spacing" ->
                     poly.setSpacing(Double.parseDouble(value));
-                    break;
-                case "pour":
+                case "pour" ->
                     poly.setPour(value);
-                    break;
-                case "isolate":
+                case "isolate" ->
                     poly.setIsolate(Double.parseDouble(value));
-                    break;
-                case "orphans":
+                case "orphans" ->
                     poly.setOrphans(value.equals("yes"));
-                    break;
-                case "thermals":
+                case "thermals" ->
                     poly.setThermals(value.equals("yes"));
-                    break;
-                case "rank":
+                case "rank" ->
                     poly.setRank(Integer.parseInt(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
+
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
             if (!item.getNodeName().equals("vertex")) {
                 continue;
             }
-            Vertex v = new Vertex();
-            NamedNodeMap att = item.getAttributes();
-            for (int j = 0; j < att.getLength(); j++) {
-                Node it = att.item(j);
-                String value = it.getNodeValue();
-                switch (it.getNodeName()) {
-                    case "x":
-                        v.setX(Double.parseDouble(value));
-                        break;
-                    case "y":
-                        v.setY(Double.parseDouble(value));
-                        break;
-                    case "curve":
-                        v.setCurve(Double.parseDouble(value));
-                        break;
-                    default:
-                        throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
-                }
-                
-            }
-            poly.getVertices().add(v);
+            ingestVertex(poly.getVertices(), item);
+
+//            Vertex v = new Vertex();
+//            NamedNodeMap att = item.getAttributes();
+//            for (int j = 0; j < att.getLength(); j++) {
+//                Node it = att.item(j);
+//                String value = it.getNodeValue();
+//                switch (it.getNodeName()) {
+//                    case "x":
+//                        v.setX(Double.parseDouble(value));
+//                        break;
+//                    case "y":
+//                        v.setY(Double.parseDouble(value));
+//                        break;
+//                    case "curve":
+//                        v.setCurve(Double.parseDouble(value));
+//                        break;
+//                    default:
+//                        throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
+//                }
+//
+//            }
+//            poly.getVertices().add(v);
         }
-        
-        libElement.getElements().add(poly);
+
+        elements.add(poly);
     }
-    
-    private static void ingestRectangle(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestRectangle(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         ElementRectangle rect = new ElementRectangle();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "layer":
+                case "layer" ->
                     rect.setLayer(Integer.parseInt(value));
-                    break;
-                case "x1":
-                    rect.setX(Double.parseDouble(value));
-                    break;
-                case "x2":
+                case "x1" ->
+                    rect.setX1(Double.parseDouble(value));
+                case "x2" ->
                     rect.setX2(Double.parseDouble(value));
-                    break;
-                case "y1":
-                    rect.setY(Double.parseDouble(value));
-                    break;
-                case "y2":
+                case "y1" ->
+                    rect.setY1(Double.parseDouble(value));
+                case "y2" ->
                     rect.setY2(Double.parseDouble(value));
-                    break;
-                case "rot":
+                case "rot" ->
                     rect.setRotation(Double.parseDouble(value.substring(1)));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Rectangle has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        libElement.getElements().add(rect);
+
+        elements.add(rect);
     }
-    
-    private static void ingestCircle(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestCircle(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         ElementCircle circ = new ElementCircle();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "layer":
+                case "layer" ->
                     circ.setLayer(Integer.parseInt(value));
-                    break;
-                case "x":
+                case "x" ->
                     circ.setX(Double.parseDouble(value));
-                    break;
-                case "y":
+                case "y" ->
                     circ.setY(Double.parseDouble(value));
-                    break;
-                case "radius":
+                case "radius" ->
                     circ.setRadius(Double.parseDouble(value));
-                    break;
-                case "width":
+                case "width" ->
                     circ.setWidth(Double.parseDouble(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Circle has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        libElement.getElements().add(circ);
+
+        elements.add(circ);
     }
-    
-    private static void ingestHole(Footprint pkg, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestHole(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         Hole hole = new Hole();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "x":
+                case "x" ->
                     hole.setX(Double.parseDouble(value));
-                    break;
-                case "y":
+                case "y" ->
                     hole.setY(Double.parseDouble(value));
-                    break;
-                case "drill":
+                case "drill" ->
                     hole.setDrill(Double.parseDouble(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Hole has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        pkg.getElements().add(hole);
+
+        elements.add(hole);
     }
-    
-    private static void ingestVia(Footprint pkg, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestVia(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         Via via = new Via();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "x":
+                case "x" ->
                     via.setX(Double.parseDouble(value));
-                    break;
-                case "y":
+                case "y" ->
                     via.setY(Double.parseDouble(value));
-                    break;
-                case "extent":
+                case "extent" ->
                     via.setExtent(Double.parseDouble(value));
-                    break;
-                case "diameter":
+                case "diameter" ->
                     via.setDiameter(Double.parseDouble(value));
-                    break;
-                case "shape":
+                case "shape" ->
                     via.setShape(value);
-                    break;
-                case "stop":
+                case "stop" ->
                     via.setStop(value.equals("yes"));
-                    break;
-                case "drill":
+                case "drill" ->
                     via.setDrill(Double.parseDouble(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Via has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        pkg.getElements().add(via);
+
+        elements.add(via);
     }
-    
-    private static void ingestPin(Symbol symbol, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestPin(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         Pin pin = new Pin();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -761,22 +745,174 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        symbol.getElements().add(pin);
+
+        elements.add(pin);
     }
-    
+
+    private static void ingestLabel(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+        //  label EMPTY>
+        //     ATTLIST
+        //          x             %Coord;        #REQUIRED
+        //          y             %Coord;        #REQUIRED
+        //          size          %Dimension;    #REQUIRED
+        //          layer         %Layer;        #REQUIRED
+        //          font          %TextFont;     "proportional"
+        //          ratio         %Int;          "8"
+        //          rot           %Rotation;     "R0"
+        //          xref          %Bool;         "no"
+        //          align         %Align;        "bottom-left"
+        //          grouprefs     IDREFS         #IMPLIED
+        //          >
+        //          <!-- rot:  Only 0, 90, 180 or 270 -->
+        //          <!-- xref: Only in <net> context -->
+        LabelElement label = new LabelElement();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "x" ->
+                    label.setX(Double.parseDouble(value));
+                case "y" ->
+                    label.setY(Double.parseDouble(value));
+                case "size" ->
+                    label.setSize(Double.parseDouble(value));
+                case "layer" ->
+                    label.setLayer(Integer.parseInt(value));
+                case "font" ->
+                    label.setFont(TextFont.fromCode(value));
+                case "ratio" ->
+                    label.setRatio(Integer.parseInt(value));
+                case "rot" ->
+                    label.setRot(Double.parseDouble(value.substring(1)));
+                case "xref" ->
+                    label.setXref(value.equalsIgnoreCase("yes"));
+                case "align" ->
+                    label.setAlign(TextAlign.fromCode(value));
+                case "grouprefs" ->
+                    label.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
+
+                default ->
+                    throw new EagleCADLibraryFileException("Label has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        elements.add(label);
+    }
+
+    private static void ingestProbe(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+        // probe ( no sub-nodes )
+        //    ATTLIST probe
+        //        x             %Coord;        #REQUIRED
+        //        y             %Coord;        #REQUIRED
+        //        size          %Dimension;    #REQUIRED
+        //        layer         %Layer;        #REQUIRED
+        //        font          %TextFont;     "proportional"
+        //        ratio         %Int;          "8"
+        //        rot           %Rotation;     "R0"
+        //        xref          %Bool;         "no"
+        //        grouprefs     IDREFS         #IMPLIED
+        //        >
+        //        <!-- rot:  Only 0, 90, 180 or 270 -->
+        //        <!-- xref: Only in <net> context -->
+
+        LabelElement label = new LabelElement();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "x" ->
+                    label.setX(Double.parseDouble(value));
+                case "y" ->
+                    label.setY(Double.parseDouble(value));
+                case "size" ->
+                    label.setSize(Double.parseDouble(value));
+                case "layer" ->
+                    label.setLayer(Integer.parseInt(value));
+                case "font" ->
+                    label.setFont(TextFont.fromCode(value));
+                case "ratio" ->
+                    label.setRatio(Integer.parseInt(value));
+                case "rot" ->
+                    label.setRot(Double.parseDouble(value.substring(1)));
+                case "xref" ->
+                    label.setXref(value.equalsIgnoreCase("yes"));
+                case "grouprefs" ->
+                    label.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
+
+                default ->
+                    throw new EagleCADLibraryFileException("Probe has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        elements.add(label);
+    }
+
+    private static void ingestFrame(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+        FrameElement frame = new FrameElement();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "columns":
+                    frame.setColumns(Integer.parseInt(value));
+                    break;
+                case "rows":
+                    frame.setRows(Integer.parseInt(value));
+                    break;
+                case "layer":
+                    frame.setLayer(Integer.parseInt(value));
+                    break;
+                case "border-top":
+                    frame.setBorderTop(value.equalsIgnoreCase("yes"));
+                    break;
+                case "border-right":
+                    frame.setBorderRight(value.equalsIgnoreCase("yes"));
+                    break;
+                case "border-bottom":
+                    frame.setBorderBottom(value.equalsIgnoreCase("yes"));
+                    break;
+                case "border-left":
+                    frame.setBorderLeft(value.equalsIgnoreCase("yes"));
+                    break;
+                case "x1":
+                    frame.setX1(Double.parseDouble(value));
+                    break;
+                case "x2":
+                    frame.setX2(Double.parseDouble(value));
+                    break;
+                case "y1":
+                    frame.setY1(Double.parseDouble(value));
+                    break;
+                case "y2":
+                    frame.setY2(Double.parseDouble(value));
+                    break;
+                case "grouprefs":
+                    frame.getGroupRefs().addAll(Arrays.asList(value.split(" ")));
+                    break;
+
+                default:
+                    throw new EagleCADLibraryFileException("Frame has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        list.add(frame);
+    }
+
     private static void ingestGates(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals("gate")) {
+            if (!item.getNodeName().equals(Gate.ELEMENT_NAME)) {
                 continue;
             }
-            
+
             ingestGate(deviceSet, item);
         }
     }
-    
+
     private static void ingestDevices(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -784,11 +920,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("device")) {
                 continue;
             }
-            
+
             ingestDevice(deviceSet, item);
         }
     }
-    
+
     private static void ingestGate(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         Gate gate = new Gate();
         NamedNodeMap attributes = node.getAttributes();
@@ -819,13 +955,13 @@ public class EagleCADIngest {
                     gate.setSwapLevel(Integer.parseInt(value));
                     break;
                 default:
-                    throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("Gate has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
+
         deviceSet.getGates().add(gate);
     }
-    
+
     private static void ingestDevice(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
         Device device = new Device();
         NamedNodeMap attributes = node.getAttributes();
@@ -846,33 +982,30 @@ public class EagleCADIngest {
                 default:
                     throw new EagleCADLibraryFileException("Device has unknown attribute: [" + item.getNodeName() + "]");
             }
-            
+
         }
-        
+
         NodeList childNodes = node.getChildNodes();
         for (int j = 0; j < childNodes.getLength(); j++) {
             Node subItem = childNodes.item(j);
             switch (subItem.getNodeName()) {
-                case "#text":
-                    // Ignore for now.
-                    break;
-                case "connects":
+                case "#text" -> {
+                }
+                case "connects" ->
                     ingestConnections(subItem, device);
-                    break;
-                case "technologies":
+                case "technologies" ->
                     ingestTechnologies(subItem, device);
-                    break;
-                case "package3dinstances":
+                case "package3dinstances" ->
                     ingestDevicePackagesInstances3d(subItem, device);
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Device childNode has unknown attribute: [" + subItem.getNodeName() + "]");
             }
+            // Ignore for now.
         }
-        
+
         deviceSet.getDevices().add(device);
     }
-    
+
     private static void ingestConnections(Node node, Device device) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -880,11 +1013,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("connect")) {
                 continue;
             }
-            
+
             ingestConnection(device, item);
         }
     }
-    
+
     private static void ingestTechnologies(Node node, Device device) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -892,11 +1025,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("technology")) {
                 continue;
             }
-            
+
             ingestTechnology(device, item);
         }
     }
-    
+
     private static void ingestDevicePackagesInstances3d(Node node, Device device) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -904,11 +1037,11 @@ public class EagleCADIngest {
             if (!item.getNodeName().equals("package3dinstance")) {
                 continue;
             }
-            
+
             ingestDevicePackageInstance3d(device, item);
         }
     }
-    
+
     private static void ingestConnection(Device device, Node node) throws EagleCADLibraryFileException {
         Connection connection = new Connection();
         NamedNodeMap attributes = node.getAttributes();
@@ -929,13 +1062,13 @@ public class EagleCADIngest {
                     connection.setRoute(value);
                     break;
                 default:
-                    throw new EagleCADLibraryFileException("Connect has unknown attribute: [" + item.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("Connection has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
+
         device.getConnections().add(connection);
     }
-    
+
     private static void ingestTechnology(Device device, Node node) throws EagleCADLibraryFileException {
         Technology technology = new Technology();
         NamedNodeMap attributes = node.getAttributes();
@@ -949,21 +1082,21 @@ public class EagleCADIngest {
                 default:
                     throw new EagleCADLibraryFileException("Technology has unknown attribute: [" + item.getNodeName() + "]");
             }
-            
+
             NodeList childNodes = node.getChildNodes();
             for (int j = 0; j < childNodes.getLength(); j++) {
                 Node attributeNode = childNodes.item(j);
-                if (!attributeNode.getNodeName().equals("attribute")) {
+                if (!attributeNode.getNodeName().equals(Attribute.ELEMENT_NAME)) {
                     continue;
                 }
-                
-                ingestAttribute(technology, attributeNode);
+
+                ingestAttribute(technology.getAttributes(), attributeNode);
             }
         }
-        
+
         device.getTechnologies().add(technology);
     }
-    
+
     private static void ingestDevicePackageInstance3d(Device device, Node node) throws EagleCADLibraryFileException {
         DevicePackageInstance3d packageInstance = new DevicePackageInstance3d();
         NamedNodeMap attributes = node.getAttributes();
@@ -980,8 +1113,8 @@ public class EagleCADIngest {
         }
         device.getPackage3dInstances().add(packageInstance);
     }
-    
-    private static void ingestAttribute(Technology technology, Node node) throws EagleCADLibraryFileException {
+
+    private static void ingestAttribute(List<Attribute> list, Node node) throws EagleCADLibraryFileException {
         Attribute attribute = new Attribute();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -1002,8 +1135,23 @@ public class EagleCADIngest {
                     break;
                 case "rot":
                     // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    attribute.setRotation(Double.parseDouble(value.substring(1)));
-                    break;
+                    // TODO: Make a util for ROT decode.
+                    try {
+                    if (value.startsWith("SR")) { // Spin Flag
+                        LOGGER.log(Level.SEVERE, "rot encountered SR.  TODO: Upgrade ROT method.");
+                        //attribute.setSpin(true);
+                        attribute.setRotation(Double.parseDouble(value.substring(2)));
+                    } else if (value.startsWith("MR")) { // Mirror Flag
+                        LOGGER.log(Level.SEVERE, "rot encountered MR.  TODO: Upgrade ROT method.");
+                        //attribute.setMirror(true);
+                        attribute.setRotation(Double.parseDouble(value.substring(2)));
+                    } else {
+                        attribute.setRotation(Double.parseDouble(value.substring(1)));
+                    }
+                } catch (NumberFormatException ex) {
+                    LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn't parse 'text:rot': " + value);
+                }
+                break;
                 case "ratio":
                     attribute.setWidth(Integer.parseInt(value));
                     break;
@@ -1023,27 +1171,24 @@ public class EagleCADIngest {
                     // Font is ignored
                     break;
                 case "align":
-                    attribute.setAlign(value);
+                    attribute.setAlign(TextAlign.fromCode(value));
                     break;
                 default:
                     throw new EagleCADLibraryFileException("Attribute has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
-        
-        technology.getAttributes().add(attribute);
+
+        list.add(attribute);
     }
-    
+
     private static void ingestPackage3dInstances(Package3d packages, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if ( item.getNodeName().equals("74*02?")) {
-                int iii=0; // breakpoint
-            }
             if (!item.getNodeName().equals("package3dinstance")) {
                 continue;
             }
-            
+
             NamedNodeMap attributes = item.getAttributes();
             for (int j = 0; j < attributes.getLength(); j++) {
                 Node attr = attributes.item(j);
@@ -1057,7 +1202,7 @@ public class EagleCADIngest {
                         );
                 }
             }
-            
+
         }
     }
 
@@ -1090,4 +1235,988 @@ public class EagleCADIngest {
         }
         return outText.toString();
     }
+
+    /**
+     * Node has maybe multiple libraries.
+     *
+     * @param libraries
+     * @param node
+     */
+    static void ingestSchematicLibraries(ArrayList<Library> libraries, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals("library")) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            Library lib = new Library();
+            LOGGER.log(Level.SEVERE, "Ingest Schematic <library>");
+            EagleCADUtils.ingestEagleLibraryElement(lib, item);
+
+            libraries.add(lib);
+        }
+    }
+
+    /**
+     * attribute name %String; #REQUIRED value %String; #IMPLIED x %Coord;
+     * #IMPLIED y %Coord; #IMPLIED size %Dimension; #IMPLIED layer %Layer;
+     * #IMPLIED font %TextFont; #IMPLIED ratio %Int; #IMPLIED rot %Rotation;
+     * "R0" display %AttributeDisplay; "value" constant %Bool; "no" align
+     * %Align; "bottom-left" grouprefs IDREFS #IMPLIED > <!-- display: Only in
+     * <element> or
+     * <instance> context --> <!-- constant:Only in <device> context -->
+     *
+     * @param attributes
+     * @param child
+     */
+    static void ingestSchematicAttributes(ArrayList<Attribute> attributes, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(Attribute.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestAttribute(attributes, item);
+        }
+    }
+
+    static void ingestSchematicVariantDefs(ArrayList<VariantDefinition> variantDefs, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(VariantDefinition.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestVariantDef(variantDefs, item);
+        }
+    }
+
+    private static void ingestVariantDef(List<VariantDefinition> list, Node node) throws EagleCADLibraryFileException {
+        VariantDefinition variantDef = new VariantDefinition();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "name" ->
+                    variantDef.setName(value);
+                case "current" ->
+                    variantDef.setCurrent("yes".equals(value));
+                default ->
+                    throw new EagleCADLibraryFileException("VariantDef has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        list.add(variantDef);
+    }
+
+    static void ingestSchematicClasses(ArrayList<NetClass> netClasses, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(NetClass.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestNetClass(netClasses, item);
+        }
+    }
+
+    /**
+     * number %Class; #REQUIRED name %String; #REQUIRED width %Dimension; "0"
+     * drill %Dimension; "0"
+     *
+     * @param list to place new NetClass into.
+     * @param node of attributes to configure NetClass settings.
+     * @throws EagleCADLibraryFileException
+     */
+    private static void ingestNetClass(List<NetClass> list, Node node) throws EagleCADLibraryFileException {
+        NetClass netClass = new NetClass();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "number" ->
+                    netClass.setNumber(Integer.parseInt(value));
+                case "name" ->
+                    netClass.setName(value);
+                case "width" ->
+                    netClass.setWidth(Double.parseDouble(value));
+                case "drill" ->
+                    netClass.setDrill(Double.parseDouble(value));
+                default ->
+                    throw new EagleCADLibraryFileException("NetClass has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        list.add(netClass);
+    }
+
+    static void ingestSchematicModules(ArrayList<CircuitModule> modules, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(CircuitModule.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestCircuitModule(modules, item);
+        }
+    }
+
+    /**
+     * module name %String; #REQUIRED prefix %String; "" dx %Coord; #REQUIRED dy
+     * %Coord; #REQUIRED
+     *
+     * @param modules
+     * @param node
+     */
+    private static void ingestCircuitModule(ArrayList<CircuitModule> modules, Node node) throws EagleCADLibraryFileException {
+        CircuitModule module = new CircuitModule();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "name" ->
+                    module.setName(value);
+                case "prefix" ->
+                    module.setPrefix(value);
+                case "x" ->
+                    module.setX(Double.parseDouble(value));
+                case "y" ->
+                    module.setY(Double.parseDouble(value));
+                default ->
+                    throw new EagleCADLibraryFileException("CircuitModule has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        modules.add(module);
+    }
+
+    static void ingestSchematicGroups(ArrayList<SchematicGroup> groups, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(SchematicGroup.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestSchematicGroup(groups, item);
+        }
+    }
+
+    /**
+     * schematic_group name ID #REQUIRED selectable %Bool; #IMPLIED width
+     * %Dimension; #IMPLIED titleSize %Dimension; #IMPLIED titleFont %TextFont;
+     * #IMPLIED style %WireStyle; #IMPLIED showAnnotations %Bool; #IMPLIED layer
+     * %Layer; #IMPLIED grouprefs IDREFS #IMPLIED
+     *
+     * @param groups
+     * @param node
+     */
+    private static void ingestSchematicGroup(ArrayList<SchematicGroup> groups, Node node) throws EagleCADLibraryFileException {
+        SchematicGroup group = new SchematicGroup();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "name" ->
+                    group.setName(value);
+                case "selectable" ->
+                    group.setSelectable(value.equalsIgnoreCase("yes"));
+                case "width" ->
+                    group.setWidth(Double.parseDouble(value));
+                case "titleSize" ->
+                    group.setTitleSize(Double.parseDouble(value));
+                case "titleFont" ->
+                    group.setTitleFont(TextFont.fromCode(value));
+                case "style" ->
+                    group.setStyle(WireStyle.fromCode(value));
+                case "showAnnotations" ->
+                    group.setShowAnnotations(value.equalsIgnoreCase("yes"));
+                case "layer" ->
+                    group.setLayer(Integer.parseInt(value));
+                case "grouprefs" ->
+                    ingestGroupRefs(group.getGrouprefs(), value);
+                default ->
+                    throw new EagleCADLibraryFileException("SchematicGroup has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        groups.add(group);
+    }
+
+    private static void ingestGroupRefs(ArrayList<String> grouprefs, String value) {
+        String[] split = value.split(" ");
+        for (String gRef : split) {
+            grouprefs.add(gRef);
+        }
+    }
+
+    static void ingestSchematicParts(ArrayList<Part> parts, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(Part.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestSchematicPart(parts, item);
+        }
+    }
+
+    /**
+     * part name %String; #REQUIRED library %String; #REQUIRED library_urn %Urn;
+     * "" deviceset %String; #REQUIRED device %String; #REQUIRED package3d_urn
+     * %Urn; "" override_package3d_urn %Urn; "" override_package_urn %Urn; ""
+     * override_locally_modified %Bool; "no" technology %String; "" value
+     * %String; #IMPLIED
+     *
+     * @param parts
+     * @param node
+     */
+    private static void ingestSchematicPart(ArrayList<Part> parts, Node node) throws EagleCADLibraryFileException {
+        Part part = new Part();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "name" ->
+                    part.setName(value);
+                case "library" ->
+                    part.setLibrary(value);
+                case "library_urn" ->
+                    part.setLibraryUrn(value);
+                case "deviceset" ->
+                    part.setDeviceSet(value);
+                case "device" ->
+                    part.setDevice(value);
+                case "package3d_urn" ->
+                    part.setPackage3dUrn(value);
+                case "override_package3d_urn" ->
+                    part.setOverridePackage3dUrn(value);
+                case "override_package_urn" ->
+                    part.setOverridePackageUrn(value);
+                case "override_locally_modified" ->
+                    part.setOverrideLocallyModified(value.equalsIgnoreCase("yes"));
+                case "technology" ->
+                    part.setTechnology(value);
+                case "value" ->
+                    part.setValue(value);
+
+                default ->
+                    throw new EagleCADLibraryFileException("SchematicPart has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        parts.add(part);
+    }
+
+    /**
+     *
+     * @param sheets
+     * @param child
+     */
+    static void ingestSchematicSheets(ArrayList<Sheet> sheets, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(Sheet.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            ingestSchematicSheet(sheets, item);
+        }
+    }
+
+    /**
+     *
+     *
+     * @param sheets
+     * @param node
+     */
+    private static void ingestSchematicSheet(ArrayList<Sheet> sheets, Node node) throws EagleCADLibraryFileException {
+        Sheet sheet = new Sheet();
+
+        // Handle sub nodes.
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node child = nodes.item(i);
+            if (child.getNodeType() == 1) {
+                //LOGGER.log(Level.SEVERE, "Ingest Node: " + child.getNodeName());
+
+                // sheet (description?, plain?, moduleinsts?, instances?, busses?, nets?)
+                switch (child.getNodeName()) {
+                    case "description":
+                        ingestDescription(sheet.getDescription(), child);
+                        break;
+                    case "plain":
+                        ingestPlain(sheet.getPlain(), child);
+                        break;
+                    case "moduleinsts":
+                        ingestModuleInsts(sheet.getModuleInsts(), child);
+                        break;
+                    case "instances":
+                        ingestInstances(sheet.getInststances(), child);
+                        break;
+                    case "busses":
+                        ingestNets(sheet.getBusInsts(), child, true);
+                        break;
+                    case "nets":
+                        ingestNets(sheet.getNetInsts(), child, false);
+                        break;
+                    default:
+                        throw new EagleCADLibraryFileException("Unknown tag [" + child.getNodeName() + "] passed at [" + node.getNodeName() + "]");
+                }
+            }
+        }
+        sheets.add(sheet);
+    }
+
+    static void ingestApprovedErrors(ArrayList<Approved> errors, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals(Approved.ELEMENT_NAME)) {
+                // TODO: Log this exception.
+                continue;
+            }
+
+            Approved approvedError = new Approved();
+
+            NamedNodeMap attributes = item.getAttributes();
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attrItem = attributes.item(j);
+                String value = attrItem.getNodeValue();
+                switch (attrItem.getNodeName()) {
+                    case "hash" ->
+                        approvedError.setHash(value);
+
+                    default ->
+                        throw new EagleCADLibraryFileException("<approved> has unknown attribute: [" + attrItem.getNodeName() + "]");
+                }
+            }
+
+            errors.add(approvedError);
+        }
+    }
+
+    static void ingestEagleLayers(LayerElement[] layers, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
+            switch (item.getNodeName()) {
+                case "layer" -> {
+                    ingestEagleLayer(layers, item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("<layers> list has unknown child: [" + item.getNodeName() + "]");
+                }
+            }
+        }
+    }
+
+    static void ingestEagleLayer(LayerElement[] layers, Node node) throws EagleCADLibraryFileException {
+
+        LayerElement layer = new LayerElement();
+
+        // layer
+        //  number        %Layer;        #REQUIRED
+        //  name          %String;       #REQUIRED
+        //  color         %Int;          #REQUIRED
+        //  fill          %Int;          #REQUIRED
+        //  visible       %Bool;         "yes"
+        //  active        %Bool;         "yes"
+        NamedNodeMap attributes = node.getAttributes();
+        for (int j = 0; j < attributes.getLength(); j++) {
+            Node attrItem = attributes.item(j);
+            String value = attrItem.getNodeValue();
+            switch (attrItem.getNodeName()) {
+                case "number" ->
+                    layer.setNumber(Integer.parseInt(value));
+                case "name" ->
+                    layer.setName(value);
+                case "color" ->
+                    layer.setColorIndex(Integer.parseInt(value));
+                case "fill" ->
+                    layer.setFill(Integer.parseInt(value));
+                case "visible" ->
+                    layer.setVisible(value.equalsIgnoreCase(value));
+                case "active" ->
+                    layer.setActive(value.equalsIgnoreCase(value));
+
+                default ->
+                    throw new EagleCADLibraryFileException("<layer> has unknown attribute: [" + attrItem.getNodeName() + "]");
+            }
+
+        }
+        //LOGGER.log(Level.SEVERE, layer.toString());
+        layers[layer.getNumber()] = layer;
+    }
+
+    /**
+     * polygon | wire | text | dimension | circle | spline | rectangle | frame |
+     * hole
+     *
+     * @param plain
+     * @param node
+     */
+    private static void ingestPlain(List<_AQuantum> plain, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
+            switch (item.getNodeName()) {
+                case "polygon" -> {
+                    ingestPolygon(plain, node);
+                }
+                case "wire" -> {
+                    ingestWire(plain, node);
+                }
+                case "text" -> {
+                    ingestText(plain, node);
+                }
+                case "dimension" -> {
+                    ingestDimension(plain, node);
+                }
+                case "circle" -> {
+                    ingestCircle(plain, node);
+                }
+                case "spline" -> {
+                    ingestSpline(plain, node);
+                }
+                case "rectangle" -> {
+                    ingestRectangle(plain, node);
+                }
+                case "frame" -> {
+                    ingestFrame(plain, node);
+                }
+                case "hole" -> {
+                    ingestHole(plain, node);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("<plain> list has unknown child: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+    }
+
+    private static void ingestNets(List<Net> netInsts, Node node, boolean asBus) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
+            if (!item.getNodeName().equals(Net.ELEMENT_NAME_NET)) {
+                LOGGER.log(Level.SEVERE, "Unrecognized Element in Net ingest: [{0}] ... ignoring.", item.getNodeName());
+                continue;
+            }
+
+            // net (segment) // segment list
+            // ATTLIST
+            //    name          %String;       #REQUIRED
+            //    class         %Class;        "0"
+            Net net = new Net(asBus);
+
+            NamedNodeMap attributes = item.getAttributes();
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attrItem = attributes.item(j);
+                String value = attrItem.getNodeValue();
+                switch (attrItem.getNodeName()) {
+                    case "name" ->
+                        net.setName(value);
+                    case "class" -> {
+                        if (!asBus) {
+                            net.setNetClass(Integer.parseInt(value));
+                        } else {
+                            LOGGER.log(Level.SEVERE, "Bus calls out 'class' attribute, but it shouldn't have one.");
+                        }
+                    }
+
+                    default ->
+                        throw new EagleCADLibraryFileException("Approved has unknown attribute: [" + attrItem.getNodeName() + "]");
+                }
+            }
+
+            // inget Segments
+            NodeList segmentNodes = item.getChildNodes();
+            for (int j = 0; j < segmentNodes.getLength(); j++) {
+                Node segmentItem = segmentNodes.item(j);
+                if (segmentItem.getNodeType() != 1) {
+                    continue;
+                }
+                if (!segmentItem.getNodeName().equals(Segment.ELEMENT_NAME)) {
+                    LOGGER.log(Level.SEVERE, "Unrecognized Element in Segment ingest: [{0}] ... ignoring.", item.getNodeName());
+                    continue;
+                }
+
+                ingestSegment(net.getSegments(), segmentItem);
+            }
+
+            netInsts.add(net);
+        }
+    }
+
+    /**
+     * segment (pinref | portref | wire | junction | label | probe) 'pinref' and
+     * 'junction' are only valid in a <net> context
+     *
+     * @param segmentList
+     * @param node
+     */
+    private static void ingestSegment(List<Segment> segmentList, Node node) throws EagleCADLibraryFileException {
+
+        Segment seg = new Segment(); // Segment is a List
+
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
+            switch (item.getNodeName()) {
+//                case "#text" -> {
+//                    LOGGER.log(Level.SEVERE, "Node Type: " + node.getNodeType());
+//                    LOGGER.log(Level.SEVERE, "Item Type: " + item.getNodeType());
+//                }
+                case "pinref" -> {
+//                    LOGGER.log(Level.SEVERE, "PinRef Node Type: " + node.getNodeType());
+//                    LOGGER.log(Level.SEVERE, "PinRef Item Type: " + item.getNodeType());
+                    ingestPinref(seg, item);
+                }
+                case "portref" -> {
+                    ingestPortref(seg, item);
+                }
+                case "wire" -> {
+                    ingestWire(seg, item);
+                }
+                case "junction" -> {
+                    ingestJunction(seg, item);
+                }
+                case "label" -> {
+                    ingestLabel(seg, item);
+                }
+                case "probe" -> {
+                    ingestProbe(seg, item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("Segment list has unknown node: [" + item.getNodeName() + "]");
+                }
+
+            }
+            segmentList.add(seg);
+        }
+    }
+
+    private static void ingestPinref(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+        PinRef pinref = new PinRef();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "part" ->
+                    pinref.setPart(value);
+                case "gate" ->
+                    pinref.setGate(value);
+                case "pin" ->
+                    pinref.setPin(value);
+                default ->
+                    throw new EagleCADLibraryFileException("PinRef has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        list.add(pinref);
+    }
+
+    /**
+     * portref moduleinst %String; #REQUIRED port %String; #REQUIRED
+     *
+     * @param list
+     * @param node
+     * @throws EagleCADLibraryFileException
+     */
+    private static void ingestPortref(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+        PortRef pinref = new PortRef();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "moduleinst" ->
+                    pinref.setModuleInst(value);
+                case "port" ->
+                    pinref.setPort(value);
+                default ->
+                    throw new EagleCADLibraryFileException("PortRef has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        list.add(pinref);
+    }
+
+    private static void ingestModuleInsts(List<ModuleInst> moduleInsts, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            switch (item.getNodeName()) {
+                case "#text" -> {
+                }
+                case "moduleinst" -> {
+                    ingestModuleInst(moduleInsts, node);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("ModuleInsts list has unknown node: [" + item.getNodeName() + "]");
+                }
+            }
+        }
+    }
+
+    /**
+     * moduleinst (attribute) name %String; #REQUIRED module %String; #REQUIRED
+     * modulevariant %String; "" x %Coord; #REQUIRED y %Coord; #REQUIRED offset
+     * %Int; "0" smashed %Bool; "no" rot %Rotation; "R0"
+     *
+     * @param moduleInsts
+     * @param node
+     */
+    private static void ingestModuleInst(List<ModuleInst> moduleInsts, Node node) throws EagleCADLibraryFileException {
+        ModuleInst moduleInst = new ModuleInst();
+
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "name" ->
+                    moduleInst.setName(value);
+                case "module" ->
+                    moduleInst.setModule(value);
+                case "modulevariant" ->
+                    moduleInst.setModuleVariant(value);
+                case "x" ->
+                    moduleInst.setX(Double.parseDouble(value));
+                case "y" ->
+                    moduleInst.setY(Double.parseDouble(value));
+                case "offset" ->
+                    moduleInst.setOffset(Integer.parseInt(value));
+                case "smashed" ->
+                    moduleInst.setSmashed(value.equals("yes"));
+                case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                    // TODO: Make a util for ROT decode.
+                    moduleInst.setRot(Double.parseDouble(value.substring(1)));
+                default ->
+                    throw new EagleCADLibraryFileException("ModuleInst has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            switch (item.getNodeName()) {
+                case "attribute" -> {
+                    ingestAttribute(moduleInst.getAttributes(), node);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("ModuleInst attributes list has unknown node: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+        moduleInsts.add(moduleInst);
+    }
+
+    private static void ingestInstances(List<Instance> inststances, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            switch (item.getNodeName()) {
+                case "#text" -> {
+                }
+                case "instance" -> {
+                    ingestInstance(inststances, item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("Instances list has unknown node: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+    }
+
+    /**
+     * instance ( attribute(s) ) instance part %String; #REQUIRED gate %String;
+     * #REQUIRED x %Coord; #REQUIRED y %Coord; #REQUIRED smashed %Bool; "no" rot
+     * %Rotation; "R0" grouprefs IDREFS #IMPLIED
+     *
+     * rot: Only 0, 90, 180 or 270
+     *
+     * @param inststances
+     * @param child
+     */
+    private static void ingestInstance(List<Instance> instances, Node node) throws EagleCADLibraryFileException {
+        Instance instance = new Instance();
+
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "#text" -> {
+                }
+                case "part" ->
+                    instance.setPart(value);
+                case "gate" ->
+                    instance.setGate(value);
+                case "x" ->
+                    instance.setX(Double.parseDouble(value));
+                case "y" ->
+                    instance.setY(Double.parseDouble(value));
+                case "smashed" ->
+                    instance.setSmashed(value.equals("yes"));
+                case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                    // TODO: Make a util for ROT decode.
+                    instance.setRot(Double.parseDouble(value.substring(1)));
+                default ->
+                    throw new EagleCADLibraryFileException("Instance has unknown XML attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            switch (item.getNodeName()) {
+                case "#text" -> {
+                }
+                case "attribute" -> {
+                    ingestAttribute(instance.getAttributes(), item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("Instance Attribute list has unknown child: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+        instances.add(instance);
+    }
+
+    /**
+     *
+     * @param list
+     * @param node
+     */
+    private static void ingestSpline(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+        //spline (vertex)*>
+        //  Four simple (non-curve) vertices define the control points of a degree-3 spline curve
+        //  ATTLIST 
+        //     width          %Dimension;    #REQUIRED   
+        Spline spline = new Spline();
+
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "width" ->
+                    spline.setWidth(Double.parseDouble(value));
+                default ->
+                    throw new EagleCADLibraryFileException("Spline has unknown XML attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            switch (item.getNodeName()) {
+                case "vertex" -> {
+                    ingestVertex(spline.getVertices(), item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("Instance Attribute list has unknown child: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+        list.add(spline);
+    }
+
+    /**
+     *
+     * @param list
+     * @param node
+     */
+    private static void ingestVertex(List<Vertex> list, Node node) throws EagleCADLibraryFileException {
+        Vertex v = new Vertex();
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "x" ->
+                    v.setX(Double.parseDouble(value));
+                case "y" ->
+                    v.setY(Double.parseDouble(value));
+                case "curve" ->
+                    v.setCurve(Double.parseDouble(value));
+                default ->
+                    throw new EagleCADLibraryFileException("Vertex has unknown attribute: [" + node.getNodeName() + "]");
+            }
+
+        }
+        list.add(v);
+    }
+
+    /**
+     *
+     * @param list
+     * @param node
+     */
+    private static void ingestDimension(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+        Dimension dim = new Dimension();
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "x1":
+                    dim.setX1(Double.parseDouble(value));
+                    break;
+                case "y1":
+                    dim.setY1(Double.parseDouble(value));
+                    break;
+                case "x2":
+                    dim.setX1(Double.parseDouble(value));
+                    break;
+                case "y2":
+                    dim.setY1(Double.parseDouble(value));
+                    break;
+                case "x3":
+                    dim.setX1(Double.parseDouble(value));
+                    break;
+                case "y3":
+                    dim.setY1(Double.parseDouble(value));
+                    break;
+                case "layer":
+                    dim.setLayer(Integer.parseInt(value));
+                    break;
+                case "dtype":
+                    dim.setDtype(DimensionType.fromCode(value));
+                    break;
+                case "width":
+                    dim.setWidth(Double.parseDouble(value));
+                    break;
+                case "extwidth":
+                    dim.setExtwidth(Double.parseDouble(value));
+                    break;
+                case "extlength":
+                    dim.setExtlength(Double.parseDouble(value));
+                    break;
+                case "extoffset":
+                    dim.setExtoffset(Double.parseDouble(value));
+                    break;
+                case "textsize":
+                    dim.setTextsize(Double.parseDouble(value));
+                    break;
+                case "textratio":
+                    dim.setTextratio(Integer.parseInt(value));
+                    break;
+                case "unit":
+                    dim.setUnit(GridUnit.fromCode(value));
+                    break;
+                case "precision":
+                    dim.setPrecision(Integer.parseInt(value));
+                    break;
+                case "visible":
+                    dim.setVisible(value.equalsIgnoreCase("yes"));
+                case "grourefs":
+                    dim.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
+                    break;
+                default:
+                    throw new EagleCADLibraryFileException("Dimension has unknown attribute: [" + node.getNodeName() + "]");
+            }
+
+        }
+        list.add(dim);
+    }
+
+    /**
+     *
+     * @param list
+     * @param node
+     */
+    private static void ingestJunction(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+        Junction junction = new Junction();
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "x" ->
+                    junction.setX(Double.parseDouble(value));
+                case "y" ->
+                    junction.setY(Double.parseDouble(value));
+                case "grourefs" ->
+                    junction.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
+                default ->
+                    throw new EagleCADLibraryFileException("Junction has unknown attribute: [" + node.getNodeName() + "]");
+            }
+        }
+        list.add(junction);
+    }
+
+//    public static void ingestLayer(LayerElement[] layers, Node node ) throws EagleCADLibraryFileException {
+//
+//        //LOGGER.log(Level.SEVERE, "Ingest Layer: " + node.getTextContent());
+////            Node item = childNodes.item(i);
+////            if (!item.getNodeName().equals("layer")) {
+////                continue;
+////            }
+//        NamedNodeMap attributes = node.getAttributes();
+//
+//        LayerElement layer = new LayerElement();
+//        LOGGER.log(Level.FINER, "Ingest Layer: " + attributes.getNamedItem("number").getNodeValue());
+//        layer.setNumber(Integer.parseInt(
+//                attributes.getNamedItem("number").getNodeValue()
+//        ));
+//
+//        layer.setName(attributes.getNamedItem("name").getNodeValue());
+//        layer.setColorIndex(Integer.parseInt(
+//                attributes.getNamedItem("color").getNodeValue()
+//        ));
+//        layer.setFill(Integer.parseInt(
+//                attributes.getNamedItem("fill").getNodeValue()
+//        ));
+//        layer.setVisible(
+//                attributes.getNamedItem("visible").getNodeValue().equals("yes")
+//        );
+//        layer.setActive(
+//                attributes.getNamedItem("active").getNodeValue().equals("yes")
+//        );
+//
+//        //ingestLayerElements(item.getChildNodes(), layer);
+//        layers[layer.getNumber()] = layer;
+//
+//    }
 }

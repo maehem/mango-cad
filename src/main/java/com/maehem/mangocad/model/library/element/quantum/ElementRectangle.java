@@ -21,9 +21,47 @@ package com.maehem.mangocad.model.library.element.quantum;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementRectangle extends _AQuantum {
+    public static final String ELEMENT_NAME = "rectangle";
+
+    private double x1;
+    private double y1;
     private double x2;
     private double y2;
     private double rotation = 0;
+
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    /**
+     * @return the x1
+     */
+    public double getX1() {
+        return x1;
+    }
+
+    /**
+     * @param x1 the x1 to set
+     */
+    public void setX1(double x1) {
+        this.x1 = x1;
+    }
+
+    /**
+     * @return the y1
+     */
+    public double getY1() {
+        return y1;
+    }
+
+    /**
+     * @param y1 the y1 to set
+     */
+    public void setY1(double y1) {
+        this.y1 = y1;
+    }
 
     /**
      * @return the x2

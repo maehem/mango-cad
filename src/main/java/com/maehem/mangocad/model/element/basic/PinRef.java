@@ -14,64 +14,72 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.element.quantum;
+package com.maehem.mangocad.model.element.basic;
+
+import com.maehem.mangocad.model.library.element.quantum._AQuantum;
 
 /**
- *
- * @author Mark J Koch ( @maehem on GitHub)
+ * pinref EMPTY>
+ *   pinref
+          part          %String;       #REQUIRED
+          gate          %String;       #REQUIRED
+          pin           %String;       #REQUIRED
+ * 
+ * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Vertex extends _AQuantum {
-    public static final String ELEMENT_NAME = "vertex";
+public class PinRef extends _AQuantum {
+    
+    public static final String ELEMENT_NAME = "pinref";
 
-    private double x;
-    private double y;
-    private double curve = 0;
+    private String part;
+    private String gate;
+    private String pin;
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
+
     /**
-     * @return the x
+     * @return the part
      */
-    public double getX() {
-        return x;
+    public String getPart() {
+        return part;
     }
 
     /**
-     * @param x the x to set
+     * @param part the part to set
      */
-    public void setX(double x) {
-        this.x = x;
+    public void setPart(String part) {
+        this.part = part;
     }
 
     /**
-     * @return the y
+     * @return the gate
      */
-    public double getY() {
-        return y;
+    public String getGate() {
+        return gate;
     }
 
     /**
-     * @param y the y to set
+     * @param gate the gate to set
      */
-    public void setY(double y) {
-        this.y = y;
+    public void setGate(String gate) {
+        this.gate = gate;
     }
 
     /**
-     * @return the curve
+     * @return the pin
      */
-    public double getCurve() {
-        return curve;
+    public String getPin() {
+        return pin;
     }
 
     /**
-     * @param curve the curve to set
+     * @param pin the pin to set
      */
-    public void setCurve(double curve) {
-        this.curve = curve;
+    public void setPin(String pin) {
+        this.pin = pin;
     }
-
-
+    
 }

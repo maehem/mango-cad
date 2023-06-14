@@ -36,7 +36,10 @@ import com.maehem.mangocad.model.library.element.DeviceSet;
 import com.maehem.mangocad.model.library.element.Footprint;
 import com.maehem.mangocad.model.library.element.Package3d;
 import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.model.schematic.Schematic;
+import com.maehem.mangocad.model.schematic.SchematicCache;
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.controlpanel.listitem.SchematicFileItem;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -242,44 +245,26 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             populateProjectFolder(sdir, item);
         }
 
-//        File[] libs = dir.listFiles((file) -> {    // lambda expression
-//            return (file.isFile() && file.getName().endsWith(".sch"));
-//        });
-//        for (File lbrFile : libs) {
-////            try {
-//            // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
-//            //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
-//            //       for a possible solution.
-//            // Library importLBR = EagleCADUtils.importLBR(lbr);
-//            Library library = LibraryCache.getInstance().getLibrary(lbrFile);
-//            if (library != null) {
-//                TreeItem item;
-//                if (!library.getDescriptions().isEmpty()) {
-//                    item = new TreeItem(new LibraryItem(lbrFile.getName(), library.getDescriptions().get(0).getValue(), lbrFile));
-//                    parentItem.getChildren().add(item);
-//                } else {
-//                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile));
-//                    parentItem.getChildren().add(item);
-//                }
-//                populateLibraryDetailItems(library, lbrFile, item);
-//            } else {
-//                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
-//                parentItem.getChildren().add(item);
-//            }
-////            } catch (IOException ex) {
-////                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File IO Exception", null));
-////                lib.getChildren().add(item);
-////
-////                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-////            } catch (EagleCADLibraryFileException ex) {
-////                TreeItem item = new TreeItem(new LibraryItem(lbr.getName(), "File XML Error", null));
-////                lib.getChildren().add(item);
-////
-////                Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
-////            }
-//
-//        }
-//        //    }
+        File[] schs = dir.listFiles((file) -> {    // lambda expression
+            return (file.isFile() && file.getName().endsWith(".sch"));
+        });
+        for (File schFile : schs) {
+            // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
+            //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
+            //       for a possible solution.
+            // Library importLBR = EagleCADUtils.importLBR(lbr);
+            //Library library = LibraryCache.getInstance().getLibrary(schFile);
+            Schematic schem = SchematicCache.getInstance().getSchematic( schFile );
+            if (schem != null) {
+                TreeItem item;
+                item = new TreeItem(new SchematicFileItem(schFile.getName(), schem.getDescription().getValue(), schFile));
+                parentItem.getChildren().add(item);
+                //populateSchematicDetailItems(schem, schFile, item);
+            } else {
+                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
+                parentItem.getChildren().add(item);
+            }
+        }
     }
 
     private void populateLibraryDetailItems(Library library, File file, TreeItem parentItem) {
