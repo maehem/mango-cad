@@ -92,7 +92,7 @@ import org.w3c.dom.NodeList;
 
 /**
  *
- * <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+ * 
  *
  *
  * @author Mark J Koch ( @maehem on GitHub)
@@ -255,32 +255,32 @@ public class EagleCADIngest {
     private static void ingestSymbolElements(NodeList nodes, Symbol symbol) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
+            if (node.getNodeType() != 1) {
+                continue;
+            }
             List<_AQuantum> elements = symbol.getElements();
             if (node.getNodeType() != 1) {
                 continue;
             }
             //LOGGER.log(Level.SEVERE, "ingest element: " + node.getNodeName());
             switch (node.getNodeName()) {
-                case "#text" -> {
-                    continue; // skip this element
-                }
                 case "description" -> {
                     // Description. There might be multiple locale versions.
                     Description desc = new Description();
                     ingestDescription(desc, node);
                     symbol.getElements().add(desc);
                 }
-                case "wire" -> // Wire
+                case "wire" ->
                     ingestWire(elements, node);
-                case "text" -> // ElementText
+                case "text" ->
                     ingestText(elements, node);
-                case "polygon" -> // ElementPolygon
+                case "polygon" ->
                     ingestPolygon(elements, node);
-                case "rectangle" -> // ElementRectangle
+                case "rectangle" ->
                     ingestRectangle(elements, node);
-                case "circle" -> // ElementCircle
+                case "circle" ->
                     ingestCircle(elements, node);
-                case "pin" -> // ElementCircle
+                case "pin" ->
                     ingestPin(elements, node);
                 case "frame" ->
                     ingestFrame(elements, node);
