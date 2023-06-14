@@ -202,11 +202,9 @@ public class EagleCADIngest {
     private static void ingestPackageElements(NodeList nodes, Footprint pkg) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
+            if ( node.getNodeType() != 1 ) continue;
             List<_AQuantum> elements = pkg.getElements();
             switch (node.getNodeName()) {
-                case "#text" -> {
-                    continue; // skip this element
-                }
                 case "description" -> // Description
                     // Gets put into 'descriptions' instead of 'elements'.
                     ingestDescription(pkg, node);
@@ -237,10 +235,8 @@ public class EagleCADIngest {
     private static void ingestPackage3dElements(NodeList nodes, Package3d pkg) throws EagleCADLibraryFileException {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
+            if ( node.getNodeType() != 1 ) continue;
             switch (node.getNodeName()) {
-                case "#text" -> {
-                    continue; // skip this element
-                }
                 case "description" -> // Description
                     // Gets put into 'descriptions' instead of 'elements'.
                     ingestDescription(pkg, node);
@@ -486,30 +482,34 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "x":
-                    text.setX(Double.parseDouble(value));
-                    break;
-                case "y":
-                    text.setY(Double.parseDouble(value));
-                    break;
-                case "align":
-                    text.setAlign(TextAlign.fromCode(value));
-                    break;
-                case "rot":
+                case "x" -> text.setX(Double.parseDouble(value));
+                case "y" -> text.setY(Double.parseDouble(value));
+                case "align" -> text.setAlign(TextAlign.fromCode(value));
+                case "rot" -> {  // TODO:  Make ROT an object.
                     try {
-                    if (value.startsWith("SR")) { // Spin Flag
-                        text.setSpin(true);
-                        text.setRotation(Double.parseDouble(value.substring(2)));
-                    } else if (value.startsWith("MR")) { // Mirror Flag
-                        text.setMirror(true);
-                        text.setRotation(Double.parseDouble(value.substring(2)));
-                    } else {
-                        text.setRotation(Double.parseDouble(value.substring(1)));
+                        if (value.startsWith("SR")) { // Spin Flag
+                            text.setSpin(true);
+                            text.setRotation(Double.parseDouble(value.substring(2)));
+                        } else if (value.startsWith("MR")) { // Mirror Flag
+                            text.setMirror(true);
+                            text.setRotation(Double.parseDouble(value.substring(2)));
+                        } else {
+                            text.setRotation(Double.parseDouble(value.substring(1)));
+                        }
+                    } catch (NumberFormatException ex) {
+                        LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn't parse 'text:rot': " + value);
                     }
-                } catch (NumberFormatException ex) {
-                    LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn't parse 'text:rot': " + value);
                 }
-                // Eagle 'rot' attribute has the letter 'R' prefixing it.
+                case "distance" -> text.setDistance(Integer.parseInt(value));
+                case "ratio" -> text.setWidth(Integer.parseInt(value));
+                case "size" -> text.setSize(Double.parseDouble(value));
+                case "layer" -> text.setLayer(Integer.parseInt(value));
+                case "font" -> {
+                }
+                default -> throw new EagleCADLibraryFileException("Text has unknown attribute: [" + item.getNodeName() + "]");
+            }
+            // Font is ignored
+                            // Eagle 'rot' attribute has the letter 'R' prefixing it.
                 // Found an Eagle file where the Rot value was MRnn instead of Rnn
                 // But that's not in the XML spec.  Eagle CAD parses it fine though.
 //                    try {
@@ -517,25 +517,6 @@ public class EagleCADIngest {
 //                } catch (NumberFormatException ex) {
 //                    text.setRotation(Double.parseDouble(value.substring(2)));
 //                }
-                break;
-                case "distance":
-                    text.setDistance(Integer.parseInt(value));
-                    break;
-                case "ratio":
-                    text.setWidth(Integer.parseInt(value));
-                    break;
-                case "size":
-                    text.setSize(Double.parseDouble(value));
-                    break;
-                case "layer":
-                    text.setLayer(Integer.parseInt(value));
-                    break;
-                case "font":
-                    // Font is ignored
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Text has unknown attribute: [" + item.getNodeName() + "]");
-            }
         }
 
         text.setValue(node.getChildNodes().item(0).getNodeValue());
@@ -714,35 +695,16 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "name":
-                    pin.setName(value);
-                    break;
-                case "x":
-                    pin.setX(Double.parseDouble(value));
-                    break;
-                case "y":
-                    pin.setY(Double.parseDouble(value));
-                    break;
-                case "visible":
-                    pin.setVisible(PinVisible.fromCode(value));
-                    break;
-                case "length":
-                    pin.setLength(PinLength.fromCode(value));
-                    break;
-                case "direction":
-                    pin.setDirection(PinDirection.fromCode(value));
-                    break;
-                case "function":
-                    pin.setFunction(PinFunction.fromCode(value));
-                    break;
-                case "swaplevel":
-                    pin.setSwapLevel(Integer.parseInt(value));
-                    break;
-                case "rot":
-                    pin.setRotation(Double.parseDouble(value.substring(1)));
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
+                case "name" -> pin.setName(value);
+                case "x" -> pin.setX(Double.parseDouble(value));
+                case "y" -> pin.setY(Double.parseDouble(value));
+                case "visible" -> pin.setVisible(PinVisible.fromCode(value));
+                case "length" -> pin.setLength(PinLength.fromCode(value));
+                case "direction" -> pin.setDirection(PinDirection.fromCode(value));
+                case "function" -> pin.setFunction(PinFunction.fromCode(value));
+                case "swaplevel" -> pin.setSwapLevel(Integer.parseInt(value));
+                case "rot" -> pin.setRotation(Double.parseDouble(value.substring(1)));
+                default -> throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
@@ -856,45 +818,20 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "columns":
-                    frame.setColumns(Integer.parseInt(value));
-                    break;
-                case "rows":
-                    frame.setRows(Integer.parseInt(value));
-                    break;
-                case "layer":
-                    frame.setLayer(Integer.parseInt(value));
-                    break;
-                case "border-top":
-                    frame.setBorderTop(value.equalsIgnoreCase("yes"));
-                    break;
-                case "border-right":
-                    frame.setBorderRight(value.equalsIgnoreCase("yes"));
-                    break;
-                case "border-bottom":
-                    frame.setBorderBottom(value.equalsIgnoreCase("yes"));
-                    break;
-                case "border-left":
-                    frame.setBorderLeft(value.equalsIgnoreCase("yes"));
-                    break;
-                case "x1":
-                    frame.setX1(Double.parseDouble(value));
-                    break;
-                case "x2":
-                    frame.setX2(Double.parseDouble(value));
-                    break;
-                case "y1":
-                    frame.setY1(Double.parseDouble(value));
-                    break;
-                case "y2":
-                    frame.setY2(Double.parseDouble(value));
-                    break;
-                case "grouprefs":
-                    frame.getGroupRefs().addAll(Arrays.asList(value.split(" ")));
-                    break;
+                case "columns" -> frame.setColumns(Integer.parseInt(value));
+                case "rows" -> frame.setRows(Integer.parseInt(value));
+                case "layer" -> frame.setLayer(Integer.parseInt(value));
+                case "border-top" -> frame.setBorderTop(value.equalsIgnoreCase("yes"));
+                case "border-right" -> frame.setBorderRight(value.equalsIgnoreCase("yes"));
+                case "border-bottom" -> frame.setBorderBottom(value.equalsIgnoreCase("yes"));
+                case "border-left" -> frame.setBorderLeft(value.equalsIgnoreCase("yes"));
+                case "x1" -> frame.setX1(Double.parseDouble(value));
+                case "x2" -> frame.setX2(Double.parseDouble(value));
+                case "y1" -> frame.setY1(Double.parseDouble(value));
+                case "y2" -> frame.setY2(Double.parseDouble(value));
+                case "grouprefs" -> frame.getGroupRefs().addAll(Arrays.asList(value.split(" ")));
 
-                default:
-                    throw new EagleCADLibraryFileException("Frame has unknown attribute: [" + item.getNodeName() + "]");
+                default -> throw new EagleCADLibraryFileException("Frame has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
@@ -932,30 +869,13 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-// 'layer' is not supported in 'device'
-//                case "layer":
-//                    device.setLayer(Integer.parseInt(value));
-//                    break;
-                case "name":
-                    gate.setName(value);
-                    break;
-                case "x":
-                    gate.setX(Double.parseDouble(value));
-                    break;
-                case "y":
-                    gate.setY(Double.parseDouble(value));
-                    break;
-                case "symbol":
-                    gate.setSymbol(value);
-                    break;
-                case "addlevel":
-                    gate.setAddlevel(value);
-                    break;
-                case "swaplevel":
-                    gate.setSwapLevel(Integer.parseInt(value));
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Gate has unknown attribute: [" + item.getNodeName() + "]");
+                case "name" -> gate.setName(value);
+                case "x" -> gate.setX(Double.parseDouble(value));
+                case "y" -> gate.setY(Double.parseDouble(value));
+                case "symbol" -> gate.setSymbol(value);
+                case "addlevel" -> gate.setAddlevel(value);
+                case "swaplevel" -> gate.setSwapLevel(Integer.parseInt(value));
+                default -> throw new EagleCADLibraryFileException("Gate has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
@@ -969,28 +889,17 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-// 'layer' is not supported in 'device'
-//                case "layer":
-//                    device.setLayer(Integer.parseInt(value));
-//                    break;
-                case "name":
-                    device.setName(value);
-                    break;
-                case "package":
-                    device.setFootprint(value);
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Device has unknown attribute: [" + item.getNodeName() + "]");
+                case "name" -> device.setName(value);
+                case "package" -> device.setFootprint(value);
+                default -> throw new EagleCADLibraryFileException("Device has unknown attribute: [" + item.getNodeName() + "]");
             }
-
         }
 
         NodeList childNodes = node.getChildNodes();
         for (int j = 0; j < childNodes.getLength(); j++) {
             Node subItem = childNodes.item(j);
+            if ( subItem.getNodeType() != 1 ) continue;
             switch (subItem.getNodeName()) {
-                case "#text" -> {
-                }
                 case "connects" ->
                     ingestConnections(subItem, device);
                 case "technologies" ->
@@ -1000,7 +909,6 @@ public class EagleCADIngest {
                 default ->
                     throw new EagleCADLibraryFileException("Device childNode has unknown attribute: [" + subItem.getNodeName() + "]");
             }
-            // Ignore for now.
         }
 
         deviceSet.getDevices().add(device);
@@ -1049,20 +957,11 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "gate":
-                    connection.setGate(value);
-                    break;
-                case "pin":
-                    connection.setPin(value);
-                    break;
-                case "pad":
-                    connection.setPad(value);
-                    break;
-                case "route":
-                    connection.setRoute(value);
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Connection has unknown attribute: [" + item.getNodeName() + "]");
+                case "gate" -> connection.setGate(value);
+                case "pin" -> connection.setPin(value);
+                case "pad" -> connection.setPad(value);
+                case "route" -> connection.setRoute(value);
+                default -> throw new EagleCADLibraryFileException("Connection has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
@@ -1076,11 +975,8 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "name":
-                    technology.setName(value);
-                    break;
-                default:
-                    throw new EagleCADLibraryFileException("Technology has unknown attribute: [" + item.getNodeName() + "]");
+                case "name" -> technology.setName(value);
+                default -> throw new EagleCADLibraryFileException("Technology has unknown attribute: [" + item.getNodeName() + "]");
             }
 
             NodeList childNodes = node.getChildNodes();
