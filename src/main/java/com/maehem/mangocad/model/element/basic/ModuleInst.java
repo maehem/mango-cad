@@ -16,8 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.library.element.device.Attribute;
-import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import com.maehem.mangocad.model._AQuantum;
 import java.util.ArrayList;
 import java.util.List;
 

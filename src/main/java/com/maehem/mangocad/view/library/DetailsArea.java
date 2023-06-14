@@ -16,12 +16,12 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.library.Library;
-import com.maehem.mangocad.model.library.element.DeviceSet;
-import com.maehem.mangocad.model.library.element.ElementType;
-import com.maehem.mangocad.model.library.element.Footprint;
-import com.maehem.mangocad.model.library.element.Package3d;
-import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.view.ElementType;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Package3d;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.logging.Logger;
 import javafx.geometry.Orientation;

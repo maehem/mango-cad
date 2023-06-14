@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import com.maehem.mangocad.model._AQuantum;
 import java.util.ArrayList;
 
 /**

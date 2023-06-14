@@ -16,10 +16,10 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.LayerElement;
-import com.maehem.mangocad.model.library.element.quantum._AQuantum;
-import com.maehem.mangocad.model.library.element.quantum.enums.TextFont;
-import com.maehem.mangocad.model.library.element.quantum.enums.WireStyle;
+import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.enums.WireStyle;
 import java.util.ArrayList;
 
 /**

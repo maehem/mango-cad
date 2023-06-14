@@ -16,9 +16,9 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.library.element.quantum._AQuantum;
-import com.maehem.mangocad.model.library.element.quantum.enums.DimensionType;
-import com.maehem.mangocad.model.library.element.quantum.enums.GridUnit;
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.enums.DimensionType;
+import com.maehem.mangocad.model.element.enums.GridUnit;
 import java.util.ArrayList;
 
 /**

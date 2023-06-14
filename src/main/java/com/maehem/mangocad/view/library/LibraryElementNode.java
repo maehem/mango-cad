@@ -16,20 +16,20 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
-import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
-import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
-import com.maehem.mangocad.model.library.element.quantum.ElementText;
-import com.maehem.mangocad.model.library.element.quantum.PadSMD;
-import com.maehem.mangocad.model.library.element.quantum.PadTHD;
-import com.maehem.mangocad.model.library.element.quantum.Pin;
-import com.maehem.mangocad.model.library.element.quantum.Vertex;
-import com.maehem.mangocad.model.library.element.quantum.Wire;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PadShape.*;
-import com.maehem.mangocad.model.library.element.quantum.enums.PinFunction;
-import static com.maehem.mangocad.model.library.element.quantum.enums.PinLength.*;
-import com.maehem.mangocad.model.library.element.quantum.enums.TextAlign;
-import static com.maehem.mangocad.model.library.element.quantum.enums.TextAlign.*;
+import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.ElementRectangle;
+import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.PadSMD;
+import com.maehem.mangocad.model.element.basic.PadTHD;
+import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Vertex;
+import com.maehem.mangocad.model.element.basic.Wire;
+import static com.maehem.mangocad.model.element.enums.PadShape.*;
+import com.maehem.mangocad.model.element.enums.PinFunction;
+import static com.maehem.mangocad.model.element.enums.PinLength.*;
+import com.maehem.mangocad.model.element.enums.TextAlign;
+import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
 import java.util.logging.Logger;

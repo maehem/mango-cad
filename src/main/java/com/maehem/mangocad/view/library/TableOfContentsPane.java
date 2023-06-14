@@ -16,14 +16,14 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.library.Library;
-import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.DeviceSet;
-import com.maehem.mangocad.model.library.element.ElementType;
-import com.maehem.mangocad.model.library.element.Package3d;
-import com.maehem.mangocad.model.library.element.PackageInstance3d;
-import com.maehem.mangocad.model.library.element.device.Device;
-import com.maehem.mangocad.model.library.element.quantum.Gate;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.view.ElementType;
+import com.maehem.mangocad.model.element.highlevel.Package3d;
+import com.maehem.mangocad.model.element.basic.PackageInstance3d;
+import com.maehem.mangocad.model.element.highlevel.Device;
+import com.maehem.mangocad.model.element.basic.Gate;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.File;
 import java.util.logging.Level;

@@ -18,12 +18,12 @@ package com.maehem.mangocad.view.controlpanel;
 
 import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
 import com.maehem.mangocad.view.controlpanel.listitem.ProjectSubFolderItem;
-import com.maehem.mangocad.model.library.Library;
-import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.DeviceSet;
-import com.maehem.mangocad.model.library.element.Footprint;
-import com.maehem.mangocad.model.library.element.Package3d;
-import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Package3d;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.BufferedReader;
 import java.io.File;

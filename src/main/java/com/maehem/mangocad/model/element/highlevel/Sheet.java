@@ -18,8 +18,8 @@ package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.basic.ModuleInst;
-import com.maehem.mangocad.model.library.element.Description;
-import com.maehem.mangocad.model.library.element.quantum._AQuantum;
+import com.maehem.mangocad.model.element.misc.Description;
+import com.maehem.mangocad.model._AQuantum;
 import java.util.ArrayList;
 import java.util.List;
 

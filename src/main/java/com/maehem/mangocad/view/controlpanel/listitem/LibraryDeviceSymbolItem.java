@@ -16,9 +16,9 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.model.library.Library;
-import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.Symbol;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;

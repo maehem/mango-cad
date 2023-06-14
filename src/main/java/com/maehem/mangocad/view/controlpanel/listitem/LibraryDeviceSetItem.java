@@ -16,13 +16,13 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.model.library.Library;
-import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.DeviceSet;
-import com.maehem.mangocad.model.library.element.Footprint;
-import com.maehem.mangocad.model.library.element.device.Attribute;
-import com.maehem.mangocad.model.library.element.device.Device;
-import com.maehem.mangocad.model.library.element.device.Technology;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.basic.Attribute;
+import com.maehem.mangocad.model.element.highlevel.Device;
+import com.maehem.mangocad.model.element.basic.Technology;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;

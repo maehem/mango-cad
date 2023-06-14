@@ -16,9 +16,9 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.model.library.Library;
-import com.maehem.mangocad.model.library.LibraryCache;
-import com.maehem.mangocad.model.library.element.Footprint;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;

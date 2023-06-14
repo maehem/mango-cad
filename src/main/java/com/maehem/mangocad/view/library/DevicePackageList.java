@@ -16,9 +16,9 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.library.element.DeviceSet;
-import com.maehem.mangocad.model.library.element.device.Device;
-import com.maehem.mangocad.model.library.element.device.DevicePackageInstance3d;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Device;
+import com.maehem.mangocad.model.element.basic.DevicePackageInstance3d;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.HashMap;
 import java.util.Map;

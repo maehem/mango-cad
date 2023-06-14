@@ -16,29 +16,30 @@
  */
 package com.maehem.mangocad.model.library;
 
+import com.maehem.mangocad.model.element.drawing.Library;
 import com.esotericsoftware.yamlbeans.YamlConfig;
-import com.maehem.mangocad.model.library.element.Description;
-import com.maehem.mangocad.model.library.element.DeviceSet;
-import com.maehem.mangocad.model.library.element.LibraryElement;
-import com.maehem.mangocad.model.library.element.Note;
-import com.maehem.mangocad.model.library.element.Footprint;
-import com.maehem.mangocad.model.library.element.Symbol;
-import com.maehem.mangocad.model.library.element.device.Attribute;
-import com.maehem.mangocad.model.library.element.device.Connection;
-import com.maehem.mangocad.model.library.element.device.Device;
-import com.maehem.mangocad.model.library.element.device.Technology;
-import com.maehem.mangocad.model.library.element.quantum.ElementCircle;
-import com.maehem.mangocad.model.library.element.quantum.Gate;
-import com.maehem.mangocad.model.library.element.quantum.Hole;
-import com.maehem.mangocad.model.library.element.quantum.PadSMD;
-import com.maehem.mangocad.model.library.element.quantum.PadTHD;
-import com.maehem.mangocad.model.library.element.quantum.Pin;
-import com.maehem.mangocad.model.library.element.quantum.ElementPolygon;
-import com.maehem.mangocad.model.library.element.quantum.ElementRectangle;
-import com.maehem.mangocad.model.library.element.quantum.ElementText;
-import com.maehem.mangocad.model.library.element.quantum.Vertex;
-import com.maehem.mangocad.model.library.element.quantum.Via;
-import com.maehem.mangocad.model.library.element.quantum.Wire;
+import com.maehem.mangocad.model.element.misc.Description;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model.element.drawing.Note;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.basic.Attribute;
+import com.maehem.mangocad.model.element.basic.Connection;
+import com.maehem.mangocad.model.element.highlevel.Device;
+import com.maehem.mangocad.model.element.basic.Technology;
+import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.Gate;
+import com.maehem.mangocad.model.element.basic.Hole;
+import com.maehem.mangocad.model.element.basic.PadSMD;
+import com.maehem.mangocad.model.element.basic.PadTHD;
+import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.ElementRectangle;
+import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.Vertex;
+import com.maehem.mangocad.model.element.basic.Via;
+import com.maehem.mangocad.model.element.basic.Wire;
 
 /**
  *
