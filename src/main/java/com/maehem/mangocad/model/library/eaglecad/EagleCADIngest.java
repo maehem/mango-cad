@@ -62,7 +62,10 @@ import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Via;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.drawing.Filter;
+import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.enums.DimensionType;
+import com.maehem.mangocad.model.element.enums.GridStyle;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.enums.PadShape;
 import com.maehem.mangocad.model.element.enums.PinDirection;
@@ -71,7 +74,11 @@ import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.enums.VerticalText;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.misc.Grid;
+import com.maehem.mangocad.model.element.misc.Setting;
+import static com.maehem.mangocad.model.library.eaglecad.EagleCADUtils.LOGGER;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -100,6 +107,120 @@ import org.w3c.dom.NodeList;
 public class EagleCADIngest {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
+
+    /**
+     *
+     * name: Only in libraries used inside boards or schematics urn: Only in
+     * online libraries used inside boards or schematics
+     *
+     *
+     * @param lib
+     * @param node
+     * @throws EagleCADLibraryFileException
+     */
+    public static void ingestEagleLibraryElement(Library lib, Node node) throws EagleCADLibraryFileException {
+        NamedNodeMap attributes = node.getAttributes();
+        // Attributes:   name, urn
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            //LOGGER.log(Level.SEVERE, "Ingest Attribute: " + item.getNodeName() + ": " + item.getNodeValue());
+            switch (item.getNodeName()) {
+                case "name" -> {
+                    lib.setName(value);
+                }
+                case "urn" -> {
+                    lib.setUrn(value);
+                }
+                default ->
+                    throw new EagleCADLibraryFileException("Schematic has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node child = nodes.item(i);
+            if (child.getNodeType() != 1) {
+                continue;
+            }
+            // <library> sub-nodes:  description, packages, packages3d, symbols, devicesets
+            switch (child.getNodeName()) {
+                case "description" ->
+                    EagleCADIngest.ingestLibraryDescription(lib, child);
+                case "packages" ->
+                    EagleCADIngest.ingestPackages(child, lib.getPackages());
+                case "symbols" ->
+                    EagleCADIngest.ingestSymbols(child, lib.getSymbols());
+                case "devicesets" ->
+                    EagleCADIngest.ingestDeviceSets(child, lib.getDeviceSets());
+                case "packages3d" ->
+                    EagleCADIngest.ingestPackages3d(child, lib.getPackages3d());
+                default ->
+                    throw new EagleCADLibraryFileException("Unknown tag [" + child.getNodeName() + "] passed at [" + node.getNodeName() + "]");
+            }
+        }
+    }
+
+    public static void ingestEagleSchematicElement(Schematic sch, Node node) throws EagleCADLibraryFileException {
+        // Handle attributes
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            LOGGER.log(Level.SEVERE, "Ingest Node: {0}", item.getNodeName());
+            switch (item.getNodeName()) {
+                case "xreflabel" -> {
+                    sch.setXrefLabel(value);
+                }
+                case "xrefpart" -> {
+                    sch.setXrefPart(value);
+                }
+                default ->
+                    throw new EagleCADLibraryFileException("Schematic has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        // Handle sub nodes.
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node child = nodes.item(i);
+            if (child.getNodeType() != 1) {
+                continue;
+            }
+            LOGGER.log(Level.SEVERE, "Ingest <schematic> node: {0}", child.getNodeName());
+
+            // schematic->drawing children:  
+            //      description, libraries, attributes, variantdefs, 
+            //      classes, modules, groups, parts, sheets, errors
+            switch (child.getNodeName()) {
+                case "description" ->
+                    EagleCADIngest.ingestDescription(sch.getDescription(), child);
+                case "libraries" ->
+                    EagleCADIngest.ingestSchematicLibraries(sch.getLibraries(), child);
+                case "attributes" ->
+                    EagleCADIngest.ingestSchematicAttributes(sch.getAttributes(), child);
+                case "variantdefs" ->
+                    EagleCADIngest.ingestSchematicVariantDefs(sch.getVariantDefs(), child);
+                case "classes" ->
+                    EagleCADIngest.ingestSchematicClasses(sch.getNetClasses(), child);
+                case "modules" ->
+                    EagleCADIngest.ingestSchematicModules(sch.getModules(), child);
+                case "groups" ->
+                    EagleCADIngest.ingestSchematicGroups(sch.getGroups(), child);
+                case "parts" ->
+                    EagleCADIngest.ingestSchematicParts(sch.getParts(), child);
+                case "sheets" ->
+                    EagleCADIngest.ingestSchematicSheets(sch.getSheets(), child);
+                case "errors" ->
+                    EagleCADIngest.ingestApprovedErrors(sch.getErrors(), child);
+                default ->
+                    throw new EagleCADLibraryFileException("Unknown tag [" + child.getNodeName() + "] passed at [" + node.getNodeName() + "]");
+            }
+
+        }
+        LOGGER.log(Level.SEVERE, "Finished <schematic>");
+
+    }
 
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
@@ -381,7 +502,7 @@ public class EagleCADIngest {
         }
     }
 
-    private static void ingestDescription(LibraryElement libElement, Node node) {
+    private static void ingestDescription(LibraryElement libElement, Node node) throws EagleCADLibraryFileException {
         Description desc = new Description();
         Node langAttribute = node.getAttributes().getNamedItem("language");
         if (langAttribute != null) {
@@ -411,7 +532,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      */
-    public static void ingestDescription(List<Description> list, Node node) {
+    public static void ingestDescription(List<Description> list, Node node) throws EagleCADLibraryFileException {
         Description desc = new Description();
         ingestDescription(desc, node);
     }
@@ -422,7 +543,7 @@ public class EagleCADIngest {
      * @param desc
      * @param node
      */
-    public static void ingestDescription(Description desc, Node node) {
+    public static void ingestDescription(Description desc, Node node) throws EagleCADLibraryFileException {
         Node langAttribute = node.getAttributes().getNamedItem("language");
         if (langAttribute != null) {
             if (!langAttribute.getNodeValue().equals("en")) {
@@ -604,19 +725,11 @@ public class EagleCADIngest {
                 case "layer" ->
                     text.setLayer(Integer.parseInt(value));
                 case "font" -> {
+                    text.setFont(TextFont.fromCode(value));
                 }
                 default ->
                     throw new EagleCADLibraryFileException("Text has unknown attribute: [" + item.getNodeName() + "]");
             }
-            // Font is ignored
-            // Eagle 'rot' attribute has the letter 'R' prefixing it.
-            // Found an Eagle file where the Rot value was MRnn instead of Rnn
-            // But that's not in the XML spec.  Eagle CAD parses it fine though.
-//                    try {
-//                    text.setRotation(Double.parseDouble(value.substring(1)));
-//                } catch (NumberFormatException ex) {
-//                    text.setRotation(Double.parseDouble(value.substring(2)));
-//                }
         }
 
         text.setValue(node.getChildNodes().item(0).getNodeValue());
@@ -659,28 +772,6 @@ public class EagleCADIngest {
                 continue;
             }
             ingestVertex(poly.getVertices(), item);
-
-//            Vertex v = new Vertex();
-//            NamedNodeMap att = item.getAttributes();
-//            for (int j = 0; j < att.getLength(); j++) {
-//                Node it = att.item(j);
-//                String value = it.getNodeValue();
-//                switch (it.getNodeName()) {
-//                    case "x":
-//                        v.setX(Double.parseDouble(value));
-//                        break;
-//                    case "y":
-//                        v.setY(Double.parseDouble(value));
-//                        break;
-//                    case "curve":
-//                        v.setCurve(Double.parseDouble(value));
-//                        break;
-//                    default:
-//                        throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
-//                }
-//
-//            }
-//            poly.getVertices().add(v);
         }
 
         elements.add(poly);
@@ -1152,6 +1243,32 @@ public class EagleCADIngest {
         device.getPackage3dInstances().add(packageInstance);
     }
 
+    /**
+     * Ingest an \<attribute\> node.
+     * <pre>
+     * attribute
+     *      name        %String;        #REQUIRED
+     *      value       %String;        #IMPLIED
+     *      x           %Coord;         #IMPLIED
+     *      y           %Coord;         #IMPLIED
+     *      size        %Dimension;     #IMPLIED
+     *      layer       %Layer;         #IMPLIED
+     *      font        %TextFont;      #IMPLIED
+     *      ratio       %Int;           #IMPLIED
+     *      rot         %Rotation;      "R0"
+     *      display     %AttributeDisplay; "value"
+     *      constant     %Bool;          "no"
+     *      align       %Align;         "bottom-left"
+     *      grouprefs   IDREFS          #IMPLIED
+     *
+     *     display: Only in <element> or <instance> context
+     *     constant:Only in <device> context
+     * </pre>
+     *
+     * @param list
+     * @param node
+     * @throws EagleCADLibraryFileException
+     */
     private static void ingestAttribute(List<Attribute> list, Node node) throws EagleCADLibraryFileException {
         Attribute attribute = new Attribute();
         NamedNodeMap attributes = node.getAttributes();
@@ -1206,7 +1323,7 @@ public class EagleCADIngest {
                     attribute.setConstant(value.equals("yes"));
                     break;
                 case "font":
-                    // Font is ignored
+                    attribute.setFont(TextFont.fromCode(value));
                     break;
                 case "align":
                     attribute.setAlign(TextAlign.fromCode(value));
@@ -1240,7 +1357,6 @@ public class EagleCADIngest {
                         );
                 }
             }
-
         }
     }
 
@@ -1256,7 +1372,7 @@ public class EagleCADIngest {
      * @param doc node to transform
      * @return raw HTML content of the doc node.
      */
-    public static String serializeDoc(Node doc) {
+    public static String serializeDoc(Node doc) throws EagleCADLibraryFileException {
         StringWriter outText = new StringWriter();
         StreamResult sr = new StreamResult(outText);
         Properties oprops = new Properties();
@@ -1269,7 +1385,7 @@ public class EagleCADIngest {
             t.setOutputProperties(oprops);
             t.transform(new DOMSource(doc), sr);
         } catch (Exception e) {
-            System.out.println(e);
+            throw new EagleCADLibraryFileException("Could not serialize Node into a string!");
         }
         return outText.toString();
     }
@@ -1291,20 +1407,13 @@ public class EagleCADIngest {
 
             Library lib = new Library();
             LOGGER.log(Level.SEVERE, "Ingest Schematic <library>");
-            EagleCADUtils.ingestEagleLibraryElement(lib, item);
+            ingestEagleLibraryElement(lib, item);
 
             libraries.add(lib);
         }
     }
 
     /**
-     * attribute name %String; #REQUIRED value %String; #IMPLIED x %Coord;
-     * #IMPLIED y %Coord; #IMPLIED size %Dimension; #IMPLIED layer %Layer;
-     * #IMPLIED font %TextFont; #IMPLIED ratio %Int; #IMPLIED rot %Rotation;
-     * "R0" display %AttributeDisplay; "value" constant %Bool; "no" align
-     * %Align; "bottom-left" grouprefs IDREFS #IMPLIED > <!-- display: Only in
-     * <element> or
-     * <instance> context --> <!-- constant:Only in <device> context -->
      *
      * @param attributes
      * @param child
@@ -1313,9 +1422,12 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals(Attribute.ELEMENT_NAME)) {
-                // TODO: Log this exception.
+            if ( item.getNodeType() != 1 ) {
                 continue;
+            }
+            if (!item.getNodeName().equals(Attribute.ELEMENT_NAME)) {
+                // I think w3c DOM importer already handles this based on eagle.dtd. Should experiment with this.
+                throw new EagleCADLibraryFileException("Unknown node <" + item.getNodeName() + "> found in <attributes>. Should only contain <attribute> type nodes.");
             }
 
             ingestAttribute(attributes, item);
@@ -1818,8 +1930,10 @@ public class EagleCADIngest {
     }
 
     /**
-     * segment (pinref | portref | wire | junction | label | probe) 'pinref' and
-     * 'junction' are only valid in a <net> context
+     * <pre>
+     * segment (pinref | portref | wire | junction | label | probe)
+     *     'pinref' and 'junction' are only valid in a <net> context
+     * </pre>
      *
      * @param segmentList
      * @param node
@@ -1835,13 +1949,7 @@ public class EagleCADIngest {
                 continue;
             }
             switch (item.getNodeName()) {
-//                case "#text" -> {
-//                    LOGGER.log(Level.SEVERE, "Node Type: " + node.getNodeType());
-//                    LOGGER.log(Level.SEVERE, "Item Type: " + item.getNodeType());
-//                }
                 case "pinref" -> {
-//                    LOGGER.log(Level.SEVERE, "PinRef Node Type: " + node.getNodeType());
-//                    LOGGER.log(Level.SEVERE, "PinRef Item Type: " + item.getNodeType());
                     ingestPinref(seg, item);
                 }
                 case "portref" -> {
@@ -1990,9 +2098,10 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
             switch (item.getNodeName()) {
-                case "#text" -> {
-                }
                 case "instance" -> {
                     ingestInstance(inststances, item);
                 }
@@ -2224,37 +2333,147 @@ public class EagleCADIngest {
         list.add(junction);
     }
 
-//    public static void ingestLayer(LayerElement[] layers, Node node ) throws EagleCADLibraryFileException {
-//
-//        //LOGGER.log(Level.SEVERE, "Ingest Layer: " + node.getTextContent());
-////            Node item = childNodes.item(i);
-////            if (!item.getNodeName().equals("layer")) {
-////                continue;
-////            }
-//        NamedNodeMap attributes = node.getAttributes();
-//
-//        LayerElement layer = new LayerElement();
-//        LOGGER.log(Level.FINER, "Ingest Layer: " + attributes.getNamedItem("number").getNodeValue());
-//        layer.setNumber(Integer.parseInt(
-//                attributes.getNamedItem("number").getNodeValue()
-//        ));
-//
-//        layer.setName(attributes.getNamedItem("name").getNodeValue());
-//        layer.setColorIndex(Integer.parseInt(
-//                attributes.getNamedItem("color").getNodeValue()
-//        ));
-//        layer.setFill(Integer.parseInt(
-//                attributes.getNamedItem("fill").getNodeValue()
-//        ));
-//        layer.setVisible(
-//                attributes.getNamedItem("visible").getNodeValue().equals("yes")
-//        );
-//        layer.setActive(
-//                attributes.getNamedItem("active").getNodeValue().equals("yes")
-//        );
-//
-//        //ingestLayerElements(item.getChildNodes(), layer);
-//        layers[layer.getNumber()] = layer;
-//
-//    }
+    static void ingestSettings(List<Setting> settings, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
+            if (!item.getNodeName().equals(Setting.ELEMENT_NAME)) {
+                // I think w3c DOM importer already handles this based on eagle.dtd. Should experiment with this.
+                throw new EagleCADLibraryFileException("Unknown node found in <settings>. Should only contain <setting> type nodes.");
+            }
+
+            ingestSetting(settings, item);
+        }
+    }
+
+    /**
+     *
+     * <pre>
+     * setting EMPTY
+     *    ATTLIST setting
+     * alwaysvectorfont %Bool;         #IMPLIED
+     * verticaltext     %VerticalText; "up"
+     * keepoldvectorfont %Bool;        "no"
+     * </pre>
+     *
+     * @param list
+     * @param node
+     * @throws EagleCADLibraryFileException
+     */
+    private static void ingestSetting(List<Setting> list, Node node) throws EagleCADLibraryFileException {
+        Setting setting = new Setting();
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "alwaysvectorfont" ->
+                    setting.setAlwaysVectorFont(value.equalsIgnoreCase("yes"));
+                case "verticaltext" ->
+                    setting.setVerticalText(VerticalText.fromCode(value));
+                case "keepoldvectorfont" ->
+                    setting.setKeepOldVectorFont(value.equalsIgnoreCase("yes"));
+                default ->
+                    throw new EagleCADLibraryFileException("Setting has unknown attribute: [" + node.getNodeName() + "]");
+            }
+        }
+        list.add(setting);
+    }
+
+    /**
+     * <pre>
+     * grid EMPTY
+     * ATTRIBUTES
+     * distance      %Real;         #IMPLIED
+     * unitdist      %GridUnit;     #IMPLIED
+     * unit          %GridUnit;     #IMPLIED
+     * style         %GridStyle;    "lines"
+     * multiple      %Int;          "1"
+     * display       %Bool;         "no"
+     * altdistance   %Real;         #IMPLIED
+     * altunitdist   %GridUnit;     #IMPLIED
+     * altunit       %GridUnit;     #IMPLIED
+     * </pre>
+     *
+     * @param grid
+     * @param node
+     */
+    public static void ingestGrid(Grid grid, Node node) throws EagleCADLibraryFileException {
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "distance" ->
+                    grid.setDistance(Double.parseDouble(value));
+                case "unitdist" ->
+                    grid.setUnitDist(GridUnit.fromCode(value));
+                case "unit" ->
+                    grid.setUnit(GridUnit.fromCode(value));
+                case "style" ->
+                    grid.setStyle(GridStyle.fromCode(value));
+                case "multiple" ->
+                    grid.setMultiple(Integer.parseInt(value));
+                case "display" ->
+                    grid.setDisplay(value.equalsIgnoreCase("yes"));
+                case "altdistance" ->
+                    grid.setAltDistance(Double.parseDouble(value));
+                case "altunitdist" ->
+                    grid.setAltUnitDist(GridUnit.fromCode(value));
+                case "altunit" ->
+                    grid.setAltUnit(GridUnit.fromCode(value));
+                default ->
+                    throw new EagleCADLibraryFileException("Junction has unknown attribute: [" + node.getNodeName() + "]");
+            }
+        }
+    }
+
+    public static void ingestFilters(List<Filter> filters, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != 1) {
+                continue;
+            }
+            if (!item.getNodeName().equals(Filter.ELEMENT_NAME)) {
+                // I think w3c DOM importer already handles this based on eagle.dtd. Should experiment with this.
+                throw new EagleCADLibraryFileException("Unknown node found in <filters>. Should only contain <filter> type nodes.");
+            }
+
+            ingestFilter(filters, item);
+        }
+    }
+
+    /**
+     * <pre>
+     * filter EMPTY>
+     * ATTLIST filter
+     * name          %String;       #REQUIRED
+     * expression    %String;       #REQUIRED
+     * </pre>
+     *
+     * @param list
+     * @param node
+     * @throws EagleCADLibraryFileException
+     */
+    private static void ingestFilter(List<Filter> list, Node node) throws EagleCADLibraryFileException {
+        Filter filter = new Filter();
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "name" ->
+                    filter.setName(value);
+                case "expression" ->
+                    filter.setExpression(value);
+                default ->
+                    throw new EagleCADLibraryFileException("Filter has unknown attribute: [" + node.getNodeName() + "]");
+            }
+        }
+        list.add(filter);
+    }
 }

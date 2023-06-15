@@ -25,6 +25,9 @@ import com.maehem.mangocad.model.element.drawing.Note;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.misc.Grid;
+import com.maehem.mangocad.model.element.misc.Setting;
+import java.util.List;
 
 /**
  * library ( description?, packages?, packages3d?, symbols?, devicesets? )
@@ -43,16 +46,18 @@ public class Library {
 
     private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
 
-    private ArrayList<Note> notes = new ArrayList<>();
-    // Descriptions is a list of this library descriptions for each language
-    // supported.
+    private final Grid grid = new Grid();
+    private final ArrayList<Setting> settings = new ArrayList<>();
+    
+    private final ArrayList<Note> notes = new ArrayList<>();
     private final LayerElement layers[] = new LayerElement[256];
+    private final ArrayList<Filter> filters = new ArrayList<>();
 
-    private ArrayList<Description> descriptions = new ArrayList<>();
-    private ArrayList<Footprint> packages = new ArrayList<>();
-    private ArrayList<Symbol> symbols = new ArrayList<>();
-    private ArrayList<DeviceSet> deviceSets = new ArrayList<>();
-    private ArrayList<Package3d> packages3d = new ArrayList<>();
+    private final ArrayList<Description> descriptions = new ArrayList<>();
+    private final ArrayList<Footprint> packages = new ArrayList<>();
+    private final ArrayList<Symbol> symbols = new ArrayList<>();
+    private final ArrayList<DeviceSet> deviceSets = new ArrayList<>();
+    private final ArrayList<Package3d> packages3d = new ArrayList<>();
 
     private String filePath;
     
@@ -67,6 +72,10 @@ public class Library {
         return colorPalette;
     }
 
+    public Grid getGrid() {
+        return grid;
+    }
+    
     // TODO:  Add getDescription based on local.
     /**
      * @return the description
@@ -75,13 +84,13 @@ public class Library {
         return descriptions;
     }
 
-    /**
-     * @param descriptions the descriptions to set
-     */
-    public void setDescriptions(ArrayList<Description> descriptions) {
-        this.descriptions = descriptions;
-    }
-
+//    /**
+//     * @param descriptions the descriptions to set
+//     */
+//    public void setDescriptions(ArrayList<Description> descriptions) {
+//        this.descriptions = descriptions;
+//    }
+//
     public String getDescription() {
         if (!getDescriptions().isEmpty()) {
             return getDescriptions().get(0).getValue();
@@ -129,13 +138,13 @@ public class Library {
         return null;
     }
 
-    /**
-     * @param packages the packages to set
-     */
-    public void setPackages(ArrayList<Footprint> packages) {
-        this.packages = packages;
-    }
-
+//    /**
+//     * @param packages the packages to set
+//     */
+//    public void setPackages(ArrayList<Footprint> packages) {
+//        this.packages = packages;
+//    }
+//
     /**
      * @return the symbols
      */
@@ -143,13 +152,13 @@ public class Library {
         return symbols;
     }
 
-    /**
-     * @param symbols the symbols to set
-     */
-    public void setSymbols(ArrayList<Symbol> symbols) {
-        this.symbols = symbols;
-    }
-
+//    /**
+//     * @param symbols the symbols to set
+//     */
+//    public void setSymbols(ArrayList<Symbol> symbols) {
+//        this.symbols = symbols;
+//    }
+//
     public Symbol getSymbol(String symbolName) {
         for (Symbol s : getSymbols()) {
             if (s.getName().equals(symbolName)) {
@@ -175,13 +184,13 @@ public class Library {
         return null;
     }
 
-    /**
-     * @param deviceSets the devices to set
-     */
-    public void setDeviceSets(ArrayList<DeviceSet> deviceSets) {
-        this.deviceSets = deviceSets;
-    }
-
+//    /**
+//     * @param deviceSets the devices to set
+//     */
+//    public void setDeviceSets(ArrayList<DeviceSet> deviceSets) {
+//        this.deviceSets = deviceSets;
+//    }
+//
     /**
      * @return the notes
      */
@@ -217,13 +226,13 @@ public class Library {
         return null;
     }
 
-    /**
-     * @param packages3d the 3D Packages to set
-     */
-    public void setPackages3d(ArrayList<Package3d> packages3d) {
-        this.packages3d = packages3d;
-    }
-
+//    /**
+//     * @param packages3d the 3D Packages to set
+//     */
+//    public void setPackages3d(ArrayList<Package3d> packages3d) {
+//        this.packages3d = packages3d;
+//    }
+//
     /**
      * @return the filePath
      */
@@ -266,4 +275,12 @@ public class Library {
         this.urn = urn;
     }
 
+    public List<Setting> getSettings() {
+        return settings;
+    }
+    
+    public List<Filter> getFilters() {
+        return filters;
+    }
+    
 }

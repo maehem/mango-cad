@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
+import com.maehem.mangocad.model.ColorPalette;
 import java.util.ArrayList;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.basic.Part;
@@ -23,10 +24,12 @@ import com.maehem.mangocad.model.element.basic.SchematicGroup;
 import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.VariantDefinition;
-import com.maehem.mangocad.model.element.drawing.CircuitModule;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.model.element.misc.Approved;
+import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.NetClass;
+import com.maehem.mangocad.model.element.misc.Setting;
+import java.util.List;
 
 /**
  *  ELEMENT schematic (
@@ -52,10 +55,16 @@ public class Schematic {
 
     public static final String FILE_EXTENSION = "sch";
 
+    private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
+
+    private final Grid grid = new Grid();
+    private final ArrayList<Setting> settings = new ArrayList<>();
     
     private final ArrayList<Note> notes = new ArrayList<>();
     private final LayerElement layers[] = new LayerElement[256];
-
+    private final ArrayList<Filter> filters = new ArrayList<>();
+    
+    // TODO: Should be a list of localized Descriptions.
     private final Description description = new Description(); // Might have locale setting.
 
     private final ArrayList<Library> libraries = new ArrayList<>();
@@ -76,6 +85,10 @@ public class Schematic {
 
     public Schematic() {
         layers[0] = new LayerElement();
+    }
+    
+    public Grid getGrid() {
+        return grid;
     }
     
     /**
@@ -106,6 +119,10 @@ public class Schematic {
         }
     }
 
+    public List<Filter> getFilters() {
+        return filters;
+    }
+    
      /**
      * @return the filePath
      */
@@ -217,4 +234,7 @@ public class Schematic {
         this.xRefPart = value;
     }
 
+    public List<Setting> getSettings() {
+        return settings;
+    }
 }
