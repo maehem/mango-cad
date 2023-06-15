@@ -16,14 +16,31 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.enums.Severity;
+
 /**
- *
+ * <pre>
+ * note (#PCDATA)>
+ *    ATTLIST note
+          version       %Real;         #REQUIRED
+          severity      %Severity;     #REQUIRED
+          
+          version: The EAGLE file version that introduced this compatibility note
+ * </pre>
+ * 
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Note {
-    private String locale = "us_EN"; // The i18n locale code for this text. No value = en_US
-    private String value = "";       // The text
-    private int timestamp;           // When note created/modified (YYYYMMDDHHmmSS)
+public class Note extends _AQuantum {
+    public static final String ELEMENT_NAME = "note";
+    
+    private double version = 0;
+    private Severity severity = Severity.INFO;
+    
+    // A future feature?
+    // private String locale = "us_EN"; // The i18n locale code for this text. No value = en_US
+    private String value = "";       // The #PCDATA text
+    //private int timestamp;           // When note created/modified (YYYYMMDDHHmmSS)
 
     public Note() {
     }
@@ -32,24 +49,29 @@ public class Note {
         setValue(value);
     }
 
-    Note(String locale, String value) {
-        this(value);
-        setLocale(locale);
-    }
+//    Note(String locale, String value) {
+//        this(value);
+//        setLocale(locale);
+//    }
     
-    /**
-     * @return the locale
-     */
-    public String getLocale() {
-        return locale;
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
     }
 
-    /**
-     * @param locale the locale to set
-     */
-    public final void setLocale(String locale) {
-        this.locale = locale;
-    }
+//    /**
+//     * @return the locale
+//     */
+//    public String getLocale() {
+//        return locale;
+//    }
+
+//    /**
+//     * @param locale the locale to set
+//     */
+//    public final void setLocale(String locale) {
+//        this.locale = locale;
+//    }
 
     /**
      * @return the value
@@ -65,17 +87,45 @@ public class Note {
         this.value = value;
     }
 
+//    /**
+//     * @return the timestamp
+//     */
+//    public int getTimestamp() {
+//        return timestamp;
+//    }
+//
+//    /**
+//     * @param timestamp the timestamp to set
+//     */
+//    public void setTimestamp(int timestamp) {
+//        this.timestamp = timestamp;
+//    }
+
     /**
-     * @return the timestamp
+     * @return the version
      */
-    public int getTimestamp() {
-        return timestamp;
+    public double getVersion() {
+        return version;
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param version the version to set
      */
-    public void setTimestamp(int timestamp) {
-        this.timestamp = timestamp;
+    public void setVersion(double version) {
+        this.version = version;
+    }
+
+    /**
+     * @return the severity
+     */
+    public Severity getSeverity() {
+        return severity;
+    }
+
+    /**
+     * @param severity the severity to set
+     */
+    public void setSeverity(Severity severity) {
+        this.severity = severity;
     }
 }

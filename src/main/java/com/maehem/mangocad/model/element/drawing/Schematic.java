@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model.ColorPalette;
+import com.maehem.mangocad.model._AQuantum;
 import java.util.ArrayList;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.basic.Part;
@@ -51,18 +52,19 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Schematic {
+public class Schematic extends _AQuantum implements DesignObject {
 
     public static final String FILE_EXTENSION = "sch";
+    public static final String ELEMENT_NAME = "schematic";
 
-    private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
-
-    private final Grid grid = new Grid();
-    private final ArrayList<Setting> settings = new ArrayList<>();
-    
-    private final ArrayList<Note> notes = new ArrayList<>();
-    private final LayerElement layers[] = new LayerElement[256];
-    private final ArrayList<Filter> filters = new ArrayList<>();
+//    private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
+//
+//    private final Grid grid = new Grid();
+//    private final ArrayList<Setting> settings = new ArrayList<>();
+//    
+//    private final ArrayList<Note> notes = new ArrayList<>();
+//    private final LayerElement layers[] = new LayerElement[256];
+//    private final ArrayList<Filter> filters = new ArrayList<>();
     
     // TODO: Should be a list of localized Descriptions.
     private final Description description = new Description(); // Might have locale setting.
@@ -82,14 +84,26 @@ public class Schematic {
     private String xRefPart;
     
     private String filePath;
+    private Drawing parentDrawing = null;
 
     public Schematic() {
-        layers[0] = new LayerElement();
+        //layers[0] = new LayerElement();
     }
     
-    public Grid getGrid() {
-        return grid;
+    @Override
+    public Drawing getParentDrawing() {
+        return parentDrawing;
     }
+
+    @Override
+    public void setParentDrawing(Drawing parent) {
+        this.parentDrawing = parent;
+    }
+
+ 
+//    public Grid getGrid() {
+//        return grid;
+//    }
     
     /**
      * @param description the description to set
@@ -102,26 +116,26 @@ public class Schematic {
         return description;
     }
     
-    /**
-     * @return the layers
-     */
-    public LayerElement[] getLayers() {
-        return layers;
-    }
+//    /**
+//     * @return the layers
+//     */
+//    public LayerElement[] getLayers() {
+//        return layers;
+//    }
+//
+//    public int getIndexForLayer(int layerNum) {
+//        LayerElement layer = layers[layerNum];
+//
+//        if (layer != null) {
+//            return layer.getColorIndex();
+//        } else {
+//            return -1;
+//        }
+//    }
 
-    public int getIndexForLayer(int layerNum) {
-        LayerElement layer = layers[layerNum];
-
-        if (layer != null) {
-            return layer.getColorIndex();
-        } else {
-            return -1;
-        }
-    }
-
-    public List<Filter> getFilters() {
-        return filters;
-    }
+//    public List<Filter> getFilters() {
+//        return filters;
+//    }
     
      /**
      * @return the filePath
@@ -140,9 +154,9 @@ public class Schematic {
     /**
      * @return the notes
      */
-    public ArrayList<Note> getNotes() {
-        return notes;
-    }
+//    public ArrayList<Note> getNotes() {
+//        return notes;
+//    }
 
     // Should not need this.
 //    /**
@@ -152,9 +166,9 @@ public class Schematic {
 //        this.notes = notes;
 //    }
 
-    public void addNote(String string) {
-        getNotes().add(new Note(string));
-    }
+//    public void addNote(String string) {
+//        getNotes().add(new Note(string));
+//    }
 
     /**
      * @return the libraries
@@ -234,7 +248,17 @@ public class Schematic {
         this.xRefPart = value;
     }
 
-    public List<Setting> getSettings() {
-        return settings;
+//    public List<Setting> getSettings() {
+//        return settings;
+//    }
+
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    @Override
+    public String getFileExtension() {
+        return FILE_EXTENSION;
     }
 }

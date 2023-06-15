@@ -62,7 +62,10 @@ import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Via;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.drawing.DesignObject;
+import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.model.element.drawing.Filter;
+import com.maehem.mangocad.model.element.drawing.Note;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridStyle;
@@ -72,13 +75,13 @@ import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.model.element.enums.Severity;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.enums.VerticalText;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.Setting;
-import static com.maehem.mangocad.model.library.eaglecad.EagleCADUtils.LOGGER;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -107,6 +110,64 @@ import org.w3c.dom.NodeList;
 public class EagleCADIngest {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
+
+    /**
+     * <pre>
+     *     drawing (settings?, grid?, filters?, layers, (library | schematic | board))
+     * </pre>
+     *
+     * @param node
+     * @throws com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     */
+    public static Drawing ingestDrawing(Node node) throws EagleCADLibraryFileException {
+        Drawing drawing = new Drawing();
+        // drawing (settings?, grid?, filters?, layers, (library | schematic | board))
+        //LOGGER.log(Level.SEVERE, "Ingest <drawing>");
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node subNode = nodes.item(i);
+            if (subNode.getNodeType() != 1) {
+                continue;
+            }
+            switch (subNode.getNodeName()) {
+                case "settings" -> {
+                    EagleCADIngest.ingestSettings(drawing.getSettings(), subNode);
+                }
+                case "grid" -> {
+                    EagleCADIngest.ingestGrid(drawing.getGrid(), subNode);
+                }
+                case "filters" -> // Ignore 'settings', 'grid', 'filters' for now.
+                    LOGGER.log(Level.SEVERE, "*******  Ignoring Library <drawing> child <{0}>", subNode.getNodeName());
+                case "layers" -> {
+                    ingestEagleLayers(drawing.getLayers(), subNode);
+                }
+                case "library" -> {
+                    if (drawing.getDesign() == null) {
+                        drawing.setDesign(new Library());
+                        ingestEagleLibraryElement((Library) drawing.getDesign(), subNode);
+                        drawing.getDesign().setParentDrawing(drawing);
+                    } else {
+                        throw new EagleCADLibraryFileException(
+                                "Tried to ingest <library> element when there was already a DesignOnject assigned!");
+                    }
+                }
+                case "schematic" -> {
+                    if (drawing.getDesign() == null) {
+                        drawing.setDesign(new Schematic());
+                        ingestEagleSchematicElement((Schematic) drawing.getDesign(), subNode);
+                        drawing.getDesign().setParentDrawing(drawing);
+                    } else {
+                        throw new EagleCADLibraryFileException(
+                                "Tried to ingest <library> element when there was already a DesignOnject assigned!");
+                    }
+                }
+                default ->
+                    LOGGER.log(Level.SEVERE, "<drawing>:  Unknown sub-node <{0}>", subNode.getNodeName());
+            }
+        }
+        
+        return drawing;
+    }
 
     /**
      *
@@ -1422,7 +1483,7 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if ( item.getNodeType() != 1 ) {
+            if (item.getNodeType() != 1) {
                 continue;
             }
             if (!item.getNodeName().equals(Attribute.ELEMENT_NAME)) {
@@ -2475,5 +2536,68 @@ public class EagleCADIngest {
             }
         }
         list.add(filter);
+    }
+
+    static void ingestNotes(List<Note> notes, Node node) throws EagleCADLibraryFileException {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            if (!item.getNodeName().equals(Note.ELEMENT_NAME)) {
+                // I think w3c DOM importer already handles this based on eagle.dtd. Should experiment with this.
+                throw new EagleCADLibraryFileException("Unknown node found in <compatibility>. Should only contain <note> type nodes.");
+            }
+
+            ingestNote(notes, item);
+        }
+    }
+    
+    /**
+     * <pre>
+       note (#PCDATA)
+         ATTLIST
+           version       %Real;         #REQUIRED
+           severity      %Severity;     #REQUIRED
+          
+          version: The EAGLE file version that introduced this compatibility note
+     * </pre>
+
+     * @param list
+     * @param node
+     * @throws EagleCADLibraryFileException 
+     */
+    private static void ingestNote(List<Note> list, Node node) throws EagleCADLibraryFileException {
+        Note note = new Note();
+        NamedNodeMap att = node.getAttributes();
+        for (int j = 0; j < att.getLength(); j++) {
+            Node it = att.item(j);
+            String value = it.getNodeValue();
+            switch (it.getNodeName()) {
+                case "version" -> {
+                    if ( !value.isBlank() ) {
+                        note.setVersion(Double.parseDouble(value));
+                    }
+                }
+                case "severity" ->
+                    note.setSeverity(Severity.fromCode(value));
+                default ->
+                    throw new EagleCADLibraryFileException("Filter has unknown attribute: [" + node.getNodeName() + "]");
+            }
+        }
+        
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() == Node.TEXT_NODE) {
+                note.setValue(item.getTextContent());
+                //LOGGER.log(Level.SEVERE, "Ingest Note: \n" + note.getValue());
+            } else {
+                LOGGER.log(Level.SEVERE, "Note was not text????");
+            }
+        }
+        
+        list.add(note);
     }
 }

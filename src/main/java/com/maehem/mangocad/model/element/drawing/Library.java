@@ -16,18 +16,18 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.element.misc.LayerElement;
+import java.util.List;
 import java.util.ArrayList;
+import com.maehem.mangocad.model.ColorPalette;
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
-import com.maehem.mangocad.model.element.drawing.Note;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.Setting;
-import java.util.List;
 
 /**
  * library ( description?, packages?, packages3d?, symbols?, devicesets? )
@@ -40,42 +40,56 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Library {
+public class Library extends _AQuantum implements DesignObject {
 
     public static final String FILE_EXTENSION = "lbr";
+    public static final String ELEMENT_NAME = "library";
 
-    private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
+    //private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
 
-    private final Grid grid = new Grid();
-    private final ArrayList<Setting> settings = new ArrayList<>();
+    //private final Grid grid = new Grid();
+    //private final ArrayList<Setting> settings = new ArrayList<>();
     
-    private final ArrayList<Note> notes = new ArrayList<>();
-    private final LayerElement layers[] = new LayerElement[256];
-    private final ArrayList<Filter> filters = new ArrayList<>();
+    //private final ArrayList<Note> notes = new ArrayList<>();
+    //private final LayerElement layers[] = new LayerElement[256];
+    //private final ArrayList<Filter> filters = new ArrayList<>();
 
     private final ArrayList<Description> descriptions = new ArrayList<>();
     private final ArrayList<Footprint> packages = new ArrayList<>();
-    private final ArrayList<Symbol> symbols = new ArrayList<>();
-    private final ArrayList<DeviceSet> deviceSets = new ArrayList<>();
     private final ArrayList<Package3d> packages3d = new ArrayList<>();
+    private final ArrayList<DeviceSet> deviceSets = new ArrayList<>();
+    private final ArrayList<Symbol> symbols = new ArrayList<>();
 
     private String filePath;
+    private Drawing parentDrawing = null;
     
     private String name;// Only in libraries used inside boards or schematics
     private String urn; // Only in online libraries used inside boards or schematics
 
     public Library() {
-        layers[0] = new LayerElement();
+        //layers[0] = new LayerElement();
     }
 
-    public ColorPalette getPalette() {
-        return colorPalette;
+    @Override
+    public Drawing getParentDrawing() {
+        return parentDrawing;
     }
 
-    public Grid getGrid() {
-        return grid;
+    @Override
+    public void setParentDrawing(Drawing parent) {
+        this.parentDrawing = parent;
     }
+
     
+    
+//    public ColorPalette getPalette() {
+//        return colorPalette;
+//    }
+//
+//    public Grid getGrid() {
+//        return grid;
+//    }
+//    
     // TODO:  Add getDescription based on local.
     /**
      * @return the description
@@ -105,23 +119,23 @@ public class Library {
         return s2[0];
     }
 
-    /**
-     * @return the layers
-     */
-    public LayerElement[] getLayers() {
-        return layers;
-    }
-
-    public int getIndexForLayer(int layerNum) {
-        LayerElement layer = layers[layerNum];
-
-        if (layer != null) {
-            return layer.getColorIndex();
-        } else {
-            return -1;
-        }
-    }
-
+//    /**
+//     * @return the layers
+//     */
+//    public LayerElement[] getLayers() {
+//        return layers;
+//    }
+//
+//    public int getIndexForLayer(int layerNum) {
+//        LayerElement layer = layers[layerNum];
+//
+//        if (layer != null) {
+//            return layer.getColorIndex();
+//        } else {
+//            return -1;
+//        }
+//    }
+//
     /**
      * @return the packages
      */
@@ -191,12 +205,12 @@ public class Library {
 //        this.deviceSets = deviceSets;
 //    }
 //
-    /**
-     * @return the notes
-     */
-    public ArrayList<Note> getNotes() {
-        return notes;
-    }
+//    /**
+//     * @return the notes
+//     */
+//    public ArrayList<Note> getNotes() {
+//        return notes;
+//    }
 
 //    /**
 //     * @param notes the notes to set
@@ -205,9 +219,9 @@ public class Library {
 //        this.notes = notes;
 //    }
 
-    public void addNote(String string) {
-        getNotes().add(new Note(string));
-    }
+//    public void addNote(String string) {
+//        getNotes().add(new Note(string));
+//    }
 
     /**
      * @return the deviceSets
@@ -275,12 +289,22 @@ public class Library {
         this.urn = urn;
     }
 
-    public List<Setting> getSettings() {
-        return settings;
-    }
+//    public List<Setting> getSettings() {
+//        return settings;
+//    }
+//    
+//    public List<Filter> getFilters() {
+//        return filters;
+//    }
     
-    public List<Filter> getFilters() {
-        return filters;
+
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
     }
-    
+
+    @Override
+    public String getFileExtension() {
+        return FILE_EXTENSION;
+    }
 }

@@ -103,8 +103,8 @@ public class DetailNodes {
      * @return
      */
     public static Group symbolPreview(Symbol symbol, Library lib, boolean showGauge) {
-        LayerElement[] layers = lib.getLayers();
-        ColorPalette palette = lib.getPalette();
+        LayerElement[] layers = lib.getParentDrawing().getLayers();
+        ColorPalette palette = lib.getParentDrawing().getPalette();
 
         Group g = new Group();
         StackPane pane = new StackPane(g);
@@ -158,17 +158,17 @@ public class DetailNodes {
     }
 
     /**
-     * Render a preview of the symbols.
+     * Render a preview of the symbols.NOTE: Eagle Y coordinates are reversed.
      *
-     * NOTE: Eagle Y coordinates are reversed. Up is positive, Y origin at
-     * bottom.
+     * Up is positive, Y origin at bottom.
      *
      * @param gate
+     * @param lib
      * @return
      */
     public static Node deviceGatePreview(Gate gate, Library lib) {
-        LayerElement[] layers = lib.getLayers();
-        ColorPalette palette = lib.getPalette();
+        LayerElement[] layers = lib.getParentDrawing().getLayers();
+        ColorPalette palette = lib.getParentDrawing().getPalette();
 
         Group g = new Group();
         //StackPane pane = new StackPane(g);
@@ -221,8 +221,8 @@ public class DetailNodes {
      * @return
      */
     public static Group footprintPreview(Footprint footprint, Library lib, boolean showGauge) {
-        LayerElement[] layers = lib.getLayers();
-        ColorPalette palette = lib.getPalette();
+        LayerElement[] layers = lib.getParentDrawing().getLayers();
+        ColorPalette palette = lib.getParentDrawing().getPalette();
 
         Group g = new Group();
 
