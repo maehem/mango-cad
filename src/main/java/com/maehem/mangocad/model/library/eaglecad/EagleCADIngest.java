@@ -78,10 +78,10 @@ public class EagleCADIngest {
             }
             switch (subNode.getNodeName()) {
                 case "settings" -> {
-                    EagleCADIngest.ingestSettings(drawing.getSettings(), subNode);
+                    ingestSettings(drawing.getSettings(), subNode);
                 }
                 case "grid" -> {
-                    EagleCADIngest.ingestGrid(drawing.getGrid(), subNode);
+                    ingestGrid(drawing.getGrid(), subNode);
                 }
                 case "filters" -> // Ignore 'settings', 'grid', 'filters' for now.
                     LOGGER.log(Level.SEVERE, "*******  Ignoring Library <drawing> child <{0}>", subNode.getNodeName());
@@ -154,15 +154,15 @@ public class EagleCADIngest {
             // <library> sub-nodes:  description, packages, packages3d, symbols, devicesets
             switch (child.getNodeName()) {
                 case "description" ->
-                    EagleCADIngest.ingestLibraryDescription(lib, child);
+                    ingestLibraryDescription(lib, child);
                 case "packages" ->
-                    EagleCADIngest.ingestPackages(child, lib.getPackages());
+                    ingestPackages(child, lib.getPackages());
                 case "symbols" ->
-                    EagleCADIngest.ingestSymbols(child, lib.getSymbols());
+                    ingestSymbols(child, lib.getSymbols());
                 case "devicesets" ->
-                    EagleCADIngest.ingestDeviceSets(child, lib.getDeviceSets());
+                    ingestDeviceSets(child, lib.getDeviceSets());
                 case "packages3d" ->
-                    EagleCADIngest.ingestPackages3d(child, lib.getPackages3d());
+                    ingestPackages3d(child, lib.getPackages3d());
                 default ->
                     throw new EagleCADLibraryFileException("Unknown tag [" + child.getNodeName() + "] passed at [" + node.getNodeName() + "]");
             }
@@ -202,25 +202,25 @@ public class EagleCADIngest {
             //      classes, modules, groups, parts, sheets, errors
             switch (child.getNodeName()) {
                 case "description" ->
-                    EagleCADIngest.ingestDescription(sch.getDescription(), child);
+                    ingestDescription(sch.getDescription(), child);
                 case "libraries" ->
-                    EagleCADIngest.ingestSchematicLibraries(sch.getLibraries(), child);
+                    ingestSchematicLibraries(sch.getLibraries(), child);
                 case "attributes" ->
-                    EagleCADIngest.ingestSchematicAttributes(sch.getAttributes(), child);
+                    ingestSchematicAttributes(sch.getAttributes(), child);
                 case "variantdefs" ->
-                    EagleCADIngest.ingestSchematicVariantDefs(sch.getVariantDefs(), child);
+                    ingestSchematicVariantDefs(sch.getVariantDefs(), child);
                 case "classes" ->
-                    EagleCADIngest.ingestSchematicClasses(sch.getNetClasses(), child);
+                    ingestSchematicClasses(sch.getNetClasses(), child);
                 case "modules" ->
-                    EagleCADIngest.ingestSchematicModules(sch.getModules(), child);
+                    ingestSchematicModules(sch.getModules(), child);
                 case "groups" ->
-                    EagleCADIngest.ingestSchematicGroups(sch.getGroups(), child);
+                    ingestSchematicGroups(sch.getGroups(), child);
                 case "parts" ->
-                    EagleCADIngest.ingestSchematicParts(sch.getParts(), child);
+                    ingestSchematicParts(sch.getParts(), child);
                 case "sheets" ->
-                    EagleCADIngest.ingestSchematicSheets(sch.getSheets(), child);
+                    ingestSchematicSheets(sch.getSheets(), child);
                 case "errors" ->
-                    EagleCADIngest.ingestApprovedErrors(sch.getErrors(), child);
+                    ingestApprovedErrors(sch.getErrors(), child);
                 default ->
                     throw new EagleCADLibraryFileException("Unknown tag [" + child.getNodeName() + "] passed at [" + node.getNodeName() + "]");
             }
