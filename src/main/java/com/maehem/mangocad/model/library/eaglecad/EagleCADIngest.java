@@ -16,73 +16,7 @@
  */
 package com.maehem.mangocad.model.library.eaglecad;
 
-import com.maehem.mangocad.model.element.misc.LayerElement;
-import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.FrameElement;
-import com.maehem.mangocad.model.element.basic.Instance;
-import com.maehem.mangocad.model.element.basic.Junction;
-import com.maehem.mangocad.model.element.basic.LabelElement;
-import com.maehem.mangocad.model.element.basic.ModuleInst;
-import com.maehem.mangocad.model.element.basic.Part;
-import com.maehem.mangocad.model.element.basic.PinRef;
-import com.maehem.mangocad.model.element.basic.PortRef;
-import com.maehem.mangocad.model.element.basic.SchematicGroup;
-import com.maehem.mangocad.model.element.basic.Spline;
-import com.maehem.mangocad.model.element.basic.VariantDefinition;
-import com.maehem.mangocad.model.element.drawing.CircuitModule;
-import com.maehem.mangocad.model.element.highlevel.Net;
-import com.maehem.mangocad.model.element.highlevel.Segment;
-import com.maehem.mangocad.model.element.highlevel.Sheet;
-import com.maehem.mangocad.model.element.misc.Approved;
-import com.maehem.mangocad.model.element.misc.NetClass;
-import com.maehem.mangocad.model.element.drawing.Library;
 import java.util.ArrayList;
-import com.maehem.mangocad.model.element.misc.Description;
-import com.maehem.mangocad.model.element.highlevel.DeviceSet;
-import com.maehem.mangocad.model.LibraryElement;
-import com.maehem.mangocad.model.element.highlevel.Footprint;
-import com.maehem.mangocad.model.element.basic.PackageInstance;
-import com.maehem.mangocad.model.element.highlevel.Package3d;
-import com.maehem.mangocad.model.element.highlevel.Symbol;
-import com.maehem.mangocad.model.element.basic.Attribute;
-import com.maehem.mangocad.model.element.basic.Connection;
-import com.maehem.mangocad.model.element.highlevel.Device;
-import com.maehem.mangocad.model.element.basic.Package3dInstance;
-import com.maehem.mangocad.model.element.basic.Technology;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
-import com.maehem.mangocad.model.element.basic.Gate;
-import com.maehem.mangocad.model.element.basic.Hole;
-import com.maehem.mangocad.model.element.basic.PadSMD;
-import com.maehem.mangocad.model.element.basic.PadTHD;
-import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
-import com.maehem.mangocad.model.element.basic.ElementRectangle;
-import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.model.element.basic.Vertex;
-import com.maehem.mangocad.model.element.basic.Via;
-import com.maehem.mangocad.model.element.basic.Wire;
-import com.maehem.mangocad.model._AQuantum;
-import com.maehem.mangocad.model.element.drawing.DesignObject;
-import com.maehem.mangocad.model.element.drawing.Drawing;
-import com.maehem.mangocad.model.element.drawing.Filter;
-import com.maehem.mangocad.model.element.drawing.Note;
-import com.maehem.mangocad.model.element.drawing.Schematic;
-import com.maehem.mangocad.model.element.enums.DimensionType;
-import com.maehem.mangocad.model.element.enums.GridStyle;
-import com.maehem.mangocad.model.element.enums.GridUnit;
-import com.maehem.mangocad.model.element.enums.PadShape;
-import com.maehem.mangocad.model.element.enums.PinDirection;
-import com.maehem.mangocad.model.element.enums.PinFunction;
-import com.maehem.mangocad.model.element.enums.PinLength;
-import com.maehem.mangocad.model.element.enums.PinVisible;
-import com.maehem.mangocad.model.element.enums.Severity;
-import com.maehem.mangocad.model.element.enums.TextAlign;
-import com.maehem.mangocad.model.element.enums.TextFont;
-import com.maehem.mangocad.model.element.enums.VerticalText;
-import com.maehem.mangocad.model.element.enums.WireStyle;
-import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.misc.Setting;
-import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -96,9 +30,20 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.TransformerException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.misc.*;
+import com.maehem.mangocad.model.element.drawing.*;
+import com.maehem.mangocad.model.element.basic.*;
+import com.maehem.mangocad.model.element.highlevel.*;
+import com.maehem.mangocad.model.element.enums.*;
+import com.maehem.mangocad.model.element.misc.Grid;
+import com.maehem.mangocad.model.element.misc.Setting;
+import com.maehem.mangocad.view.ControlPanel;
 
 /**
  *
@@ -117,7 +62,9 @@ public class EagleCADIngest {
      * </pre>
      *
      * @param node
-     * @throws com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     * @return 
+     * @throws
+     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
      */
     public static Drawing ingestDrawing(Node node) throws EagleCADLibraryFileException {
         Drawing drawing = new Drawing();
@@ -126,7 +73,7 @@ public class EagleCADIngest {
         NodeList nodes = node.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node subNode = nodes.item(i);
-            if (subNode.getNodeType() != 1) {
+            if (subNode.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
             switch (subNode.getNodeName()) {
@@ -165,7 +112,7 @@ public class EagleCADIngest {
                     LOGGER.log(Level.SEVERE, "<drawing>:  Unknown sub-node <{0}>", subNode.getNodeName());
             }
         }
-        
+
         return drawing;
     }
 
@@ -592,6 +539,8 @@ public class EagleCADIngest {
      *
      * @param list
      * @param node
+     * @throws
+     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
      */
     public static void ingestDescription(List<Description> list, Node node) throws EagleCADLibraryFileException {
         Description desc = new Description();
@@ -603,6 +552,8 @@ public class EagleCADIngest {
      *
      * @param desc
      * @param node
+     * @throws
+     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
      */
     public static void ingestDescription(Description desc, Node node) throws EagleCADLibraryFileException {
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -774,7 +725,7 @@ public class EagleCADIngest {
                             text.setRotation(Double.parseDouble(value.substring(1)));
                         }
                     } catch (NumberFormatException ex) {
-                        LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn't parse 'text:rot': " + value);
+                        LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn''t parse ''text:rot'': {0}", value);
                     }
                 }
                 case "distance" ->
@@ -1294,10 +1245,9 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "package3d_urn":
+                case "package3d_urn" ->
                     packageInstance.setPackage3dUrn(value);
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Device PackageInstance3D has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
@@ -1337,59 +1287,48 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "name":
+                case "name" ->
                     attribute.setName(value);
-                    break;
-                case "value":
+                case "value" ->
                     attribute.setValue(value);
-                    break;
-                case "x":
+                case "x" ->
                     attribute.setX(Double.parseDouble(value));
-                    break;
-                case "y":
+                case "y" ->
                     attribute.setY(Double.parseDouble(value));
-                    break;
-                case "rot":
+                case "rot" -> {
                     // Eagle 'rot' attribute has the letter 'R' prefixing it.
                     // TODO: Make a util for ROT decode.
                     try {
-                    if (value.startsWith("SR")) { // Spin Flag
-                        LOGGER.log(Level.SEVERE, "rot encountered SR.  TODO: Upgrade ROT method.");
-                        //attribute.setSpin(true);
-                        attribute.setRotation(Double.parseDouble(value.substring(2)));
-                    } else if (value.startsWith("MR")) { // Mirror Flag
-                        LOGGER.log(Level.SEVERE, "rot encountered MR.  TODO: Upgrade ROT method.");
-                        //attribute.setMirror(true);
-                        attribute.setRotation(Double.parseDouble(value.substring(2)));
-                    } else {
-                        attribute.setRotation(Double.parseDouble(value.substring(1)));
+                        if (value.startsWith("SR")) { // Spin Flag
+                            LOGGER.log(Level.SEVERE, "rot encountered SR.  TODO: Upgrade ROT method.");
+                            //attribute.setSpin(true);
+                            attribute.setRotation(Double.parseDouble(value.substring(2)));
+                        } else if (value.startsWith("MR")) { // Mirror Flag
+                            LOGGER.log(Level.SEVERE, "rot encountered MR.  TODO: Upgrade ROT method.");
+                            //attribute.setMirror(true);
+                            attribute.setRotation(Double.parseDouble(value.substring(2)));
+                        } else {
+                            attribute.setRotation(Double.parseDouble(value.substring(1)));
+                        }
+                    } catch (NumberFormatException ex) {
+                        LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn''t parse ''text:rot'': {0}", value);
                     }
-                } catch (NumberFormatException ex) {
-                    LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn't parse 'text:rot': " + value);
                 }
-                break;
-                case "ratio":
+                case "ratio" ->
                     attribute.setWidth(Integer.parseInt(value));
-                    break;
-                case "size":
+                case "size" ->
                     attribute.setSize(Double.parseDouble(value));
-                    break;
-                case "layer":
+                case "layer" ->
                     attribute.setLayer(Integer.parseInt(value));
-                    break;
-                case "display":
+                case "display" ->
                     attribute.setDisplay(value);
-                    break;
-                case "constant":
+                case "constant" ->
                     attribute.setConstant(value.equals("yes"));
-                    break;
-                case "font":
+                case "font" ->
                     attribute.setFont(TextFont.fromCode(value));
-                    break;
-                case "align":
+                case "align" ->
                     attribute.setAlign(TextAlign.fromCode(value));
-                    break;
-                default:
+                default ->
                     throw new EagleCADLibraryFileException("Attribute has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
@@ -1423,15 +1362,15 @@ public class EagleCADIngest {
 
     /**
      * Used by description parser to get sub-HTML snippets used by legacy
-     * description tags. The XML parser tends to DOM it all out, but we need it
-     * raw to render in our content areas properly.
-     *
-     * Lifted from StackOverflow
+     * description tags.The XML parser tends to DOM it all out, but we need it
+     * raw to render in our content areas properly. Lifted from StackOverflow
      * https://stackoverflow.com/questions/8873393/get-node-raw-text
      *
      *
      * @param doc node to transform
      * @return raw HTML content of the doc node.
+     * @throws
+     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
      */
     public static String serializeDoc(Node doc) throws EagleCADLibraryFileException {
         StringWriter outText = new StringWriter();
@@ -1440,12 +1379,12 @@ public class EagleCADIngest {
         oprops.put(OutputKeys.METHOD, "html");
         //oprops.put(OutputKeys.METHOD, "xml");
         TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer t = null;
+        Transformer t;
         try {
             t = tf.newTransformer();
             t.setOutputProperties(oprops);
             t.transform(new DOMSource(doc), sr);
-        } catch (Exception e) {
+        } catch (TransformerException e) {
             throw new EagleCADLibraryFileException("Could not serialize Node into a string!");
         }
         return outText.toString();
@@ -1671,9 +1610,7 @@ public class EagleCADIngest {
 
     private static void ingestGroupRefs(ArrayList<String> grouprefs, String value) {
         String[] split = value.split(" ");
-        for (String gRef : split) {
-            grouprefs.add(gRef);
-        }
+        grouprefs.addAll(Arrays.asList(split));
     }
 
     static void ingestSchematicParts(ArrayList<Part> parts, Node node) throws EagleCADLibraryFileException {
@@ -1773,25 +1710,19 @@ public class EagleCADIngest {
 
                 // sheet (description?, plain?, moduleinsts?, instances?, busses?, nets?)
                 switch (child.getNodeName()) {
-                    case "description":
+                    case "description" ->
                         ingestDescription(sheet.getDescription(), child);
-                        break;
-                    case "plain":
+                    case "plain" ->
                         ingestPlain(sheet.getPlain(), child);
-                        break;
-                    case "moduleinsts":
+                    case "moduleinsts" ->
                         ingestModuleInsts(sheet.getModuleInsts(), child);
-                        break;
-                    case "instances":
+                    case "instances" ->
                         ingestInstances(sheet.getInststances(), child);
-                        break;
-                    case "busses":
+                    case "busses" ->
                         ingestNets(sheet.getBusInsts(), child, true);
-                        break;
-                    case "nets":
+                    case "nets" ->
                         ingestNets(sheet.getNetInsts(), child, false);
-                        break;
-                    default:
+                    default ->
                         throw new EagleCADLibraryFileException("Unknown tag [" + child.getNodeName() + "] passed at [" + node.getNodeName() + "]");
                 }
             }
@@ -2461,6 +2392,7 @@ public class EagleCADIngest {
      *
      * @param grid
      * @param node
+     * @throws com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
      */
     public static void ingestGrid(Grid grid, Node node) throws EagleCADLibraryFileException {
         NamedNodeMap att = node.getAttributes();
@@ -2553,20 +2485,20 @@ public class EagleCADIngest {
             ingestNote(notes, item);
         }
     }
-    
+
     /**
      * <pre>
-       note (#PCDATA)
-         ATTLIST
-           version       %Real;         #REQUIRED
-           severity      %Severity;     #REQUIRED
-          
-          version: The EAGLE file version that introduced this compatibility note
+     * note (#PCDATA)
+     * ATTLIST
+     * version       %Real;         #REQUIRED
+     * severity      %Severity;     #REQUIRED
+     *
+     * version: The EAGLE file version that introduced this compatibility note
      * </pre>
-
+     *
      * @param list
      * @param node
-     * @throws EagleCADLibraryFileException 
+     * @throws EagleCADLibraryFileException
      */
     private static void ingestNote(List<Note> list, Node node) throws EagleCADLibraryFileException {
         Note note = new Note();
@@ -2576,7 +2508,7 @@ public class EagleCADIngest {
             String value = it.getNodeValue();
             switch (it.getNodeName()) {
                 case "version" -> {
-                    if ( !value.isBlank() ) {
+                    if (!value.isBlank()) {
                         note.setVersion(Double.parseDouble(value));
                     }
                 }
@@ -2586,7 +2518,7 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Filter has unknown attribute: [" + node.getNodeName() + "]");
             }
         }
-        
+
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -2597,7 +2529,7 @@ public class EagleCADIngest {
                 LOGGER.log(Level.SEVERE, "Note was not text????");
             }
         }
-        
+
         list.add(note);
     }
 }

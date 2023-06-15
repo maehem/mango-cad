@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.model.library.eaglecad;
 
-import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.model.element.drawing.Eagle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +48,7 @@ public class EagleCADUtils {
 
     public static final Library importLBR(File file) throws FileNotFoundException, IOException, EagleCADLibraryFileException {
         Document eagleXML = readXML(file);
-        LOGGER.log(Level.SEVERE, "Library Import: " + file.getAbsolutePath() );
+        LOGGER.log(Level.SEVERE, "Library Import: {0}", file.getAbsolutePath());
 
         Library lib = (Library) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
         lib.setFilePath(file.getAbsolutePath());
@@ -59,7 +58,7 @@ public class EagleCADUtils {
 
     public static final Schematic importSCH(File file) throws FileNotFoundException, IOException, EagleCADLibraryFileException {
         Document eagleXML = readXML(file);
-        LOGGER.log(Level.SEVERE, "Schematic Import: " + file.getAbsolutePath() );
+        LOGGER.log(Level.SEVERE, "Schematic Import: {0}", file.getAbsolutePath());
 
         Schematic sch = (Schematic) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
         //Schematic sch = convertEagleXMLtoSCH(eagleXML);
@@ -101,7 +100,7 @@ public class EagleCADUtils {
         LOGGER.log(Level.SEVERE, "Eagle file version: {0}\t\t\t\t\t", eagleVersion);
 
         Eagle eagle = new Eagle();
-                
+
         NodeList nodeList = element.getChildNodes();
         for (int j = 0; j < nodeList.getLength(); j++) {
             Node subNode = nodeList.item(j);
@@ -110,45 +109,17 @@ public class EagleCADUtils {
             }
             switch (subNode.getNodeName()) {
                 case "drawing" -> {
-                    eagle.setDrawing( EagleCADIngest.ingestDrawing( subNode) );
-//                    // drawing (settings?, grid?, filters?, layers, (library | schematic | board))
-//                    //LOGGER.log(Level.SEVERE, "Ingest <drawing>");
-//                    NodeList nodes = nnn.getChildNodes();
-//                    // 'eagle' node should have these nodes.
-//                    for (int i = 0; i < nodes.getLength(); i++) {
-//                        Node node = nodes.item(i);
-//                        if (node.getNodeType() != 1) {
-//                            continue;
-//                        }
-//                        switch (node.getNodeName()) {
-//                            case "settings" -> {
-//                                EagleCADIngest.ingestSettings(lib.getSettings(), node);
-//                            }
-//                            case "grid" -> {
-//                                EagleCADIngest.ingestGrid(lib.getGrid(), node);
-//                            }
-//                            case "filters" -> // Ignore 'settings', 'grid', 'filters' for now.
-//                                LOGGER.log(Level.SEVERE, "*******  Ignoring Library <drawing> child <{0}>", node.getNodeName());
-//                            case "layers" -> {
-//                                LOGGER.log(Level.SEVERE, "        <layers>");                                
-//                                EagleCADIngest.ingestEagleLayers(lib.getLayers(), node);
-//                            }
-//                            case "library" ->
-//                                EagleCADIngest.ingestEagleLibraryElement(lib, node);
-//                            default ->
-//                                LOGGER.log(Level.SEVERE, "Eagle LBR:  Unknown top node <{0}>", node.getNodeName());
-//                        }
-//                    }
+                    eagle.setDrawing(EagleCADIngest.ingestDrawing(subNode));
                 }
                 case "compatibility" -> {
-                    EagleCADIngest.ingestNotes( eagle.getCompatibility().getNotes(), subNode );
+                    EagleCADIngest.ingestNotes(eagle.getCompatibility().getNotes(), subNode);
                 }
                 default -> {
                     LOGGER.log(Level.SEVERE, "Unhandled <drawing> element found: {0}", subNode.getNodeName());
                 }
             }
         }
-        if ( eagle.getDrawing() == null ) {
+        if (eagle.getDrawing() == null) {
             throw new EagleCADLibraryFileException("Eagle ingest did not encounter a required <drawing> element!");
         }
         return eagle;
@@ -216,8 +187,6 @@ public class EagleCADUtils {
 //        }
 //        return sch;
 //    }
-
-
 //    private static String getTextValue(String def, Element doc, String tag) {
 //        String value = def;
 //        NodeList nl;
@@ -278,5 +247,4 @@ public class EagleCADUtils {
 //        }
 //
 //    }
-
 }
