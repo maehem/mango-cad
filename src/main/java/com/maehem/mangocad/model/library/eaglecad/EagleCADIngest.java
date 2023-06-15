@@ -136,13 +136,19 @@ public class EagleCADIngest {
     }
 
     /**
-     * symbol ( description?, (polygon | wire | text | dimension | pin | circle
-     * | rectangle | frame)* ) attributes name %String; #REQUIRED urn %Urn; ""
-     * locally_modified %Bool; "no" library_version %Int; ""
-     * library_locally_modified %Bool; "no"
+     * <pre>
+     * symbol ( description?,
+     *    (polygon | wire | text | dimension | pin | circle| rectangle | frame)* )
+     * attributes
+     *     name %String; #REQUIRED
+     *     urn %Urn; ""
+     *     locally_modified %Bool; "no"
+     *     library_version %Int; ""
+     *     library_locally_modified %Bool; "no"
      *
-     * library_version and library_locally_modified: Only in managed libraries
-     * inside boards or schematics
+     *     library_version and library_locally_modified: Only in managed libraries
+     *     inside boards or schematics
+     * </pre>
      *
      * @param node
      * @param symbols
@@ -152,32 +158,44 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals("symbol")) {
+            if (item.getNodeType() != 1) {
                 continue;
             }
-            Symbol symbol = new Symbol();
-            symbol.setName(item.getAttributes().getNamedItem("name").getNodeValue());
+            String nodeName = item.getNodeName();
+            switch (nodeName) {
+                case Symbol.ELEMENT_NAME -> {
+                    Symbol symbol = new Symbol();
 
-            NamedNodeMap attributes = node.getAttributes();
-            for (int j = 0; j < attributes.getLength(); j++) {
-                Node attrItem = attributes.item(j);
-                String value = attrItem.getNodeValue();
-                switch (attrItem.getNodeName()) {
-                    case "urn" ->
-                        symbol.setUrn(value);
-                    case "locally_modified" ->
-                        symbol.setLocallyModified(value.equalsIgnoreCase("yes"));
-                    case "library_version" ->
-                        symbol.setLibraryVersion(Integer.parseInt(value));
-                    case "library_locally_modified" ->
-                        symbol.setLibraryLocallyModified(value.equalsIgnoreCase("yes"));
-                    default ->
-                        throw new EagleCADLibraryFileException("Wire has unknown attribute: [" + item.getNodeName() + "]");
+                    NamedNodeMap attributes = item.getAttributes();
+                    for (int j = 0; j < attributes.getLength(); j++) {
+                        Node attrItem = attributes.item(j);
+                        String value = attrItem.getNodeValue();
+                        switch (attrItem.getNodeName()) {
+                            case "name" ->
+                                symbol.setName(value);
+                            case "urn" ->
+                                symbol.setUrn(value);
+                            case "locally_modified" ->
+                                symbol.setLocallyModified(value.equalsIgnoreCase("yes"));
+                            case "library_version" -> {
+                                if (!value.isBlank()) {
+                                    symbol.setLibraryVersion(Integer.parseInt(value));
+                                }
+                            }
+                            case "library_locally_modified" ->
+                                symbol.setLibraryLocallyModified(value.equalsIgnoreCase("yes"));
+                            default ->
+                                throw new EagleCADLibraryFileException("Wire has unknown attribute: [" + item.getNodeName() + "]");
+                        }
+                    }
+                    ingestSymbolElements(item.getChildNodes(), symbol);
+
+                    symbols.add(symbol);
                 }
-            }
-            ingestSymbolElements(item.getChildNodes(), symbol);
+                default ->
+                    throw new EagleCADLibraryFileException("Symbols list has unknown child: [" + item.getNodeName() + "]");
 
-            symbols.add(symbol);
+            }
         }
     }
 
@@ -213,7 +231,7 @@ public class EagleCADIngest {
         //          <!-- library_version and library_locally_modified: Only in managed libraries inside boards or schematics -->
         NamedNodeMap attributes = node.getAttributes();
         if (attributes.getNamedItem("name") == null) {
-            LOGGER.log(Level.SEVERE, "Device Set did not have name set! Node:" + node.getTextContent());
+            LOGGER.log(Level.SEVERE, "Device Set did not have name set! Node:{0}", node.getTextContent());
         }
 
         DeviceSet deviceSet = new DeviceSet();
