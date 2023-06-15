@@ -39,7 +39,7 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
  */
 public class Library {
 
-    public static final String FILE_EXTENSION = "mclib";
+    public static final String FILE_EXTENSION = "lbr";
 
     private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
 

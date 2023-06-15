@@ -41,13 +41,13 @@ import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
-import com.maehem.mangocad.model.element.basic.PackageInstance3d;
+import com.maehem.mangocad.model.element.basic.PackageInstance;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.Connection;
 import com.maehem.mangocad.model.element.highlevel.Device;
-import com.maehem.mangocad.model.element.basic.DevicePackageInstance3d;
+import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.Technology;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.Gate;
@@ -92,7 +92,7 @@ import org.w3c.dom.NodeList;
 
 /**
  *
- * 
+ *
  *
  *
  * @author Mark J Koch ( @maehem on GitHub)
@@ -185,18 +185,91 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals("deviceset")) {
+            if (item.getNodeType() != 1) {
                 continue;
             }
-            DeviceSet deviceSet = new DeviceSet();
-            deviceSet.setName(item.getAttributes().getNamedItem("name").getNodeValue());
-            deviceSet.setPrefix(item.getAttributes().getNamedItem("prefix").getNodeValue());
-            deviceSet.setUservalue(item.getAttributes().getNamedItem("uservalue").getNodeValue().equals("yes"));
-
-            ingestDeviceSetElements(item.getChildNodes(), deviceSet);
-
-            deviceSets.add(deviceSet);
+            switch (item.getNodeName()) {
+                case DeviceSet.ELEMENT_NAME -> {
+                    ingestDeviceSet(deviceSets, item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("<devicesets> has unknown child: [" + item.getNodeName() + "]");
+                }
+            }
         }
+    }
+
+    private static void ingestDeviceSet(List<DeviceSet> list, Node node) throws EagleCADLibraryFileException {
+        //  deviceset (description?, gates, devices, spice?)>
+        //      ATTLIST deviceset
+        //          name          %String;       #REQUIRED
+        //          urn              %Urn;       ""
+        //          locally_modified %Bool;      "no"
+        //          prefix        %String;       ""
+        //          uservalue     %Bool;         "no"
+        //          library_version  %Int;       ""
+        //          library_locally_modified %Bool; "no"
+        //          >
+        //          <!-- library_version and library_locally_modified: Only in managed libraries inside boards or schematics -->
+        NamedNodeMap attributes = node.getAttributes();
+        if (attributes.getNamedItem("name") == null) {
+            LOGGER.log(Level.SEVERE, "Device Set did not have name set! Node:" + node.getTextContent());
+        }
+
+        DeviceSet deviceSet = new DeviceSet();
+        for (int j = 0; j < attributes.getLength(); j++) {
+            Node attrNode = attributes.item(j);
+            String value = attrNode.getNodeValue();
+            switch (attrNode.getNodeName()) {
+                case "name" -> {
+                    deviceSet.setName(value);
+                }
+                case "urn" -> {
+                    deviceSet.setUrn(value);
+                }
+                case "locally_modified" -> {
+                    deviceSet.setUservalue(value.equalsIgnoreCase("yes"));
+                }
+                case "prefix" -> {
+                    deviceSet.setPrefix(value);
+                }
+                case "uservalue" -> {
+                    deviceSet.setUservalue(value.equalsIgnoreCase("yes"));
+                }
+                case "library_version" -> {
+                    if (!value.isBlank()) {
+                        deviceSet.setLibraryVersion(Integer.parseInt(value));
+                    }
+                }
+                case "library_locally_modified" -> {
+                    deviceSet.setUservalue(value.equalsIgnoreCase("yes"));
+                }
+                default ->
+                    throw new EagleCADLibraryFileException("<deviceset> has unknown attribute: [" + attrNode.getNodeName() + "]");
+            }
+        }
+        // Elements
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeType() != 1) {
+                continue;
+            }
+            switch (child.getNodeName()) {
+                case "description" -> // Description
+                    // Gets put into 'descriptions' list instead of 'elements'.
+                    ingestDescription(deviceSet.getDescriptions(), child);
+                case "gates" -> // Gates
+                    ingestGates(deviceSet.getGates(), child);
+                case "devices" -> // Devices
+                    ingestDevices(deviceSet.getDevices(), child);
+                default ->
+                    throw new EagleCADLibraryFileException("Unknown Package element encountered: " + child.getNodeName());
+            }
+        }
+
+        list.add(deviceSet);
+
     }
 
     private static void ingestPackageElements(NodeList nodes, Footprint pkg) throws EagleCADLibraryFileException {
@@ -290,26 +363,6 @@ public class EagleCADIngest {
         }
     }
 
-    private static void ingestDeviceSetElements(NodeList nodes, DeviceSet deviceSet) throws EagleCADLibraryFileException {
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            switch (node.getNodeName()) {
-                case "#text" -> {
-                    continue; // skip this element
-                }
-                case "description" -> // Description
-                    // Gets put into 'descriptions' list instead of 'elements'.
-                    ingestDescription(deviceSet, node);
-                case "gates" -> // Gates
-                    ingestGates(deviceSet, node);
-                case "devices" -> // Devices
-                    ingestDevices(deviceSet, node);
-                default ->
-                    throw new EagleCADLibraryFileException("Unknown Package element encountered: " + node.getNodeName());
-            }
-        }
-    }
-
     private static void ingestDescription(LibraryElement libElement, Node node) {
         Description desc = new Description();
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -334,6 +387,23 @@ public class EagleCADIngest {
         libElement.getDescriptions().add(desc);
     }
 
+    /**
+     * Ingest a description and put it into a list.
+     *
+     * @param list
+     * @param node
+     */
+    public static void ingestDescription(List<Description> list, Node node) {
+        Description desc = new Description();
+        ingestDescription(desc, node);
+    }
+
+    /**
+     * Configure the supplied Description with the Node values.
+     *
+     * @param desc
+     * @param node
+     */
     public static void ingestDescription(Description desc, Node node) {
         Node langAttribute = node.getAttributes().getNamedItem("language");
         if (langAttribute != null) {
@@ -873,7 +943,7 @@ public class EagleCADIngest {
         list.add(frame);
     }
 
-    private static void ingestGates(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
+    private static void ingestGates(List<Gate> list, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -881,11 +951,11 @@ public class EagleCADIngest {
                 continue;
             }
 
-            ingestGate(deviceSet, item);
+            ingestGate(list, item);
         }
     }
 
-    private static void ingestDevices(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
+    private static void ingestDevices(List<Device> list, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -893,11 +963,11 @@ public class EagleCADIngest {
                 continue;
             }
 
-            ingestDevice(deviceSet, item);
+            ingestDevice(list, item);
         }
     }
 
-    private static void ingestGate(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
+    private static void ingestGate(List<Gate> list, Node node) throws EagleCADLibraryFileException {
         Gate gate = new Gate();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -921,10 +991,10 @@ public class EagleCADIngest {
             }
         }
 
-        deviceSet.getGates().add(gate);
+        list.add(gate);
     }
 
-    private static void ingestDevice(DeviceSet deviceSet, Node node) throws EagleCADLibraryFileException {
+    private static void ingestDevice(List<Device> list, Node node) throws EagleCADLibraryFileException {
         Device device = new Device();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -958,7 +1028,7 @@ public class EagleCADIngest {
             }
         }
 
-        deviceSet.getDevices().add(device);
+        list.add(device);
     }
 
     private static void ingestConnections(Node node, Device device) throws EagleCADLibraryFileException {
@@ -1048,7 +1118,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestDevicePackageInstance3d(Device device, Node node) throws EagleCADLibraryFileException {
-        DevicePackageInstance3d packageInstance = new DevicePackageInstance3d();
+        Package3dInstance packageInstance = new Package3dInstance();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -1144,7 +1214,7 @@ public class EagleCADIngest {
                 Node attr = attributes.item(j);
                 switch (attr.getNodeName()) {
                     case "name" ->
-                        packages.getPackageInstances().add(new PackageInstance3d(attr.getNodeValue())
+                        packages.getPackageInstances().add(new PackageInstance(attr.getNodeValue())
                         );
                     default ->
                         throw new EagleCADLibraryFileException(

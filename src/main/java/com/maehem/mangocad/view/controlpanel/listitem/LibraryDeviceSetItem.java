@@ -27,7 +27,7 @@ import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
-import com.maehem.mangocad.view.library.LibraryEditor;
+import com.maehem.mangocad.view.LibraryEditor;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;

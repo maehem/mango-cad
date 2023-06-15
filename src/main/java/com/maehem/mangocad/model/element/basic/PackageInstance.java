@@ -17,22 +17,24 @@
 package com.maehem.mangocad.model.element.basic;
 
 /**
- *
+ * Refers to the name of a 3D Package.
+ * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class DevicePackageInstance3d {
+public class PackageInstance {
 
-    private String package3dUrn = "";
+    private String name;
     
-    public DevicePackageInstance3d() {
+    public PackageInstance(String name) {
+        this.name = name;
     }
     
-    public String getPackage3dUrn() {
-        return package3dUrn;
+    public String getName() {
+        return name;
     }
     
-    public void setPackage3dUrn( String val ) {
-        this.package3dUrn = val;
+    public void setName( String val ) {
+        this.name = val;
     }
     
 }

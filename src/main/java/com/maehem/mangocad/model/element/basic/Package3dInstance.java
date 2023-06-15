@@ -17,23 +17,23 @@
 package com.maehem.mangocad.model.element.basic;
 
 /**
- *
+ * Refers to the URN/URL, location of the 3D file for the object.
+ * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PackageInstance3d {
+public class Package3dInstance {
 
-    private String name;
+    private String package3dUrn = "";
     
-    public PackageInstance3d(String name) {
-        this.name = name;
+    public Package3dInstance() {
     }
     
-    public String getName() {
-        return name;
+    public String getPackage3dUrn() {
+        return package3dUrn;
     }
     
-    public void setName( String val ) {
-        this.name = val;
+    public void setPackage3dUrn( String val ) {
+        this.package3dUrn = val;
     }
     
 }

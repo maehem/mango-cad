@@ -21,7 +21,7 @@ import com.maehem.mangocad.model.LibraryCache;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
-import com.maehem.mangocad.model.element.basic.PackageInstance3d;
+import com.maehem.mangocad.model.element.basic.PackageInstance;
 import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.basic.Gate;
 import com.maehem.mangocad.view.ControlPanel;
@@ -117,7 +117,7 @@ public class TableOfContentsPane extends SplitPane {
                             footprintList.select(d.getFootprint());
                             // loop through package3d where pkginst matches d.getFootprint
                             for (Package3d p3d : lib.getPackages3d()) {
-                                for (PackageInstance3d pi : p3d.getPackageInstances()) {
+                                for (PackageInstance pi : p3d.getPackageInstances()) {
                                     if (pi.getName().equals(d.getFootprint())) {
                                         package3dList.select(p3d.getName());
                                     }
@@ -143,7 +143,7 @@ public class TableOfContentsPane extends SplitPane {
                             deviceList.select(ds.getName());
                             // loop through package3d where pkginst matches d.getFootprint
                             for (Package3d p3d : lib.getPackages3d()) {
-                                for (PackageInstance3d pi : p3d.getPackageInstances()) {
+                                for (PackageInstance pi : p3d.getPackageInstances()) {
                                     if (pi.getName().equals(newValue)) {
                                         package3dList.select(p3d.getName());
                                     }
@@ -159,7 +159,7 @@ public class TableOfContentsPane extends SplitPane {
                 deviceList.clearSelections();
 
                 for (Package3d p3d : lib.getPackages3d()) {
-                    for (PackageInstance3d pi : p3d.getPackageInstances()) {
+                    for (PackageInstance pi : p3d.getPackageInstances()) {
                         if (p3d.getName().equals(newValue)) {
                             footprintList.select(pi.getName());
                             for (DeviceSet ds : lib.getDeviceSets()) {

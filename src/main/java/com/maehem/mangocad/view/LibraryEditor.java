@@ -14,8 +14,9 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.library;
+package com.maehem.mangocad.view;
 
+import com.maehem.mangocad.view.library.TableOfContentsPane;
 import java.io.File;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;

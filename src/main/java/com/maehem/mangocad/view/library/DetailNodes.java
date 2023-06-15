@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
-import com.maehem.mangocad.model.element.basic.DevicePackageInstance3d;
+import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
@@ -282,7 +282,7 @@ public class DetailNodes {
         //return g;
     }
 
-    public static ImageView package3DPreview(DevicePackageInstance3d pkg3d, Library lib) {
+    public static ImageView package3DPreview(Package3dInstance pkg3d, Library lib) {
         // pkg3d might be null
 
         Image img = new Image(DetailNodes.class.getResourceAsStream("/icons/cube-isometric.png"));

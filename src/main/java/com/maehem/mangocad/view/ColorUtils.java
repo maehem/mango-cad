@@ -27,6 +27,14 @@ import javafx.scene.paint.Color;
 public class ColorUtils {
     private static final Logger LOGGER = ControlPanel.LOGGER;
     
+    /**
+     * Eagle stores colors in web-style hex, but places the alpha byte
+     * at the beginning.   For Java, we grab it, move it to the end and
+     * return a valid Java @Color.
+     * 
+     * @param hexColor in Eagle format #AARRGGBB
+     * @return Java Color in RRGGBBAA
+     */
     public static Color getColor( String hexColor ) {
         String web = "#" + hexColor.substring(4);
         String alphaHex = hexColor.substring(2, 4);

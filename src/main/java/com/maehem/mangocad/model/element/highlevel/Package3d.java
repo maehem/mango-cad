@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.element.basic.PackageInstance3d;
+import com.maehem.mangocad.model.element.basic.PackageInstance;
 import com.maehem.mangocad.model.LibraryElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class Package3d extends LibraryElement {
 
     private String urn;
     private String type;
-    private List<PackageInstance3d> packageInstances = new ArrayList<>();
+    private List<PackageInstance> packageInstances = new ArrayList<>();
     
     public void setUrn(String urn) {
         this.urn = urn;
@@ -47,7 +47,7 @@ public class Package3d extends LibraryElement {
         return type;
     }
 
-    public List<PackageInstance3d> getPackageInstances() {
+    public List<PackageInstance> getPackageInstances() {
         return packageInstances;
     }
 }

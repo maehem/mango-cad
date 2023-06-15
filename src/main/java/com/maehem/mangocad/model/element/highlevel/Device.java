@@ -18,7 +18,7 @@ package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model.element.basic.Connection;
 import com.maehem.mangocad.model.element.basic.Technology;
-import com.maehem.mangocad.model.element.basic.DevicePackageInstance3d;
+import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class Device {
     private String footprint;  // Underbar. 'package' is a reserved Java word.
     private List<Connection> connections = new ArrayList<>();
     private List<Technology> technologies = new ArrayList<>();
-    private final List<DevicePackageInstance3d> package3dinstances = new ArrayList<>();
+    private final List<Package3dInstance> package3dinstances = new ArrayList<>();
     
     /**
      * @return the name
@@ -91,7 +91,7 @@ public class Device {
         this.technologies = technologies;
     }
     
-    public List<DevicePackageInstance3d> getPackage3dInstances() {
+    public List<Package3dInstance> getPackage3dInstances() {
         return package3dinstances;
     }
 }

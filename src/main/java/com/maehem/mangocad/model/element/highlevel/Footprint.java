@@ -19,7 +19,11 @@ package com.maehem.mangocad.model.element.highlevel;
 import com.maehem.mangocad.model.LibraryElement;
 
 /**
- *
+ * Eagle used the tern 'package' interchanably with 3d package instances which was
+ * confusing while writing this code.  So I changed 2D 'package' to footprint.
+ * Still called 'package' in the XML files.
+ * 
+ * 
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Footprint extends LibraryElement {

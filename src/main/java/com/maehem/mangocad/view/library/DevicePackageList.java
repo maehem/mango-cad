@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Device;
-import com.maehem.mangocad.model.element.basic.DevicePackageInstance3d;
+import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +62,7 @@ public class DevicePackageList extends TableView<Map> {
             String threeDexists = "";
 
             if (!d.getPackage3dInstances().isEmpty()) {
-                DevicePackageInstance3d instance = d.getPackage3dInstances().get(0);
+                Package3dInstance instance = d.getPackage3dInstances().get(0);
                 // Devices always have a initial 3d Urn defined as version 1. Usually a blank/block file.
                 if (!instance.getPackage3dUrn().endsWith("/1")) {
                     threeDexists = CUBE_EMOJI;
