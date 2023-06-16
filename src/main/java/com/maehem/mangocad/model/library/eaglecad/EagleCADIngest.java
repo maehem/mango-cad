@@ -176,7 +176,6 @@ public class EagleCADIngest {
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
-            LOGGER.log(Level.SEVERE, "Ingest Node: {0}", item.getNodeName());
             switch (item.getNodeName()) {
                 case "xreflabel" -> {
                     sch.setXrefLabel(value);
@@ -196,8 +195,6 @@ public class EagleCADIngest {
             if (child.getNodeType() != 1) {
                 continue;
             }
-            LOGGER.log(Level.SEVERE, "Ingest <schematic> node: {0}", child.getNodeName());
-
             // schematic->drawing children:  
             //      description, libraries, attributes, variantdefs, 
             //      classes, modules, groups, parts, sheets, errors
@@ -227,8 +224,6 @@ public class EagleCADIngest {
             }
 
         }
-        LOGGER.log(Level.SEVERE, "Finished <schematic>");
-
     }
 
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
@@ -1413,7 +1408,6 @@ public class EagleCADIngest {
             }
 
             Library lib = new Library();
-            LOGGER.log(Level.SEVERE, "Ingest Schematic <library>");
             ingestEagleLibraryElement(lib, item);
 
             libraries.add(lib);
@@ -1712,8 +1706,7 @@ public class EagleCADIngest {
         NodeList nodes = node.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node child = nodes.item(i);
-            if (child.getNodeType() == 1) {
-                //LOGGER.log(Level.SEVERE, "Ingest Node: " + child.getNodeName());
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
 
                 // sheet (description?, plain?, moduleinsts?, instances?, busses?, nets?)
                 switch (child.getNodeName()) {
