@@ -63,7 +63,7 @@ public class Rotation {
                 this.value = 90;
             } else if (value >= 135.0 && value < 225.0) {
                 this.value = 180;
-            } else if (value >= 225.0 || value < 315.0) {
+            } else if (value >= 225.0 && value < 315.0) {
                 this.value = 270;
             } else {
                 this.value = 0;
