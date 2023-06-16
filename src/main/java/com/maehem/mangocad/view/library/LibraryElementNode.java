@@ -165,7 +165,7 @@ public class LibraryElementNode {
         double width = tt.getBoundsInLocal().getWidth();
         double height = tt.getBoundsInLocal().getHeight();
 
-        int rot = (int) et.getRotation();
+        int rot = (int) et.getRotation().getValue();
 
         double rotX = 0.0;
         double rotY = 0.0;
@@ -177,7 +177,7 @@ public class LibraryElementNode {
                 rotY = width / 2.0 + height * 0.3;
             }
             case 180 -> {
-                if (et.isMirror()) {
+                if (et.getRotation().isMirror()) {
                     rot = 0;
                     rotY = height * 0.66;
                 }
@@ -188,7 +188,7 @@ public class LibraryElementNode {
                 rotY = -width / 2.0 + height * 0.3;
             }
             default -> {
-                if (et.isMirror()) {
+                if (et.getRotation().isMirror()) {
                     rot = 180;
                     rotY = -height * 0.66;
                 }
@@ -335,7 +335,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(smd.getName());
-        et.setRotation(smd.getRotation());
+        et.getRotation().setValue(smd.getRotation());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(smd.getX());
@@ -537,7 +537,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(thd.getName());
-        et.setRotation(thd.getRotation());
+        et.getRotation().setValue(thd.getRotation());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(thd.getX());

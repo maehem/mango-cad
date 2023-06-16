@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.PadShape;
 import static com.maehem.mangocad.model.element.enums.PadShape.ROUND;
+import com.maehem.mangocad.model.util.Rotation;
 
 
 /**
@@ -33,7 +34,7 @@ public class PadTHD extends _AQuantum {
     private String name;
     private double x;
     private double y;
-    private double rotation = 0.0;
+    private final Rotation rotation = new Rotation();
     private double drill;
     private PadShape shape = ROUND;
     private boolean stopmask = true;
@@ -93,14 +94,14 @@ public class PadTHD extends _AQuantum {
      * @return the rotation
      */
     public double getRotation() {
-        return rotation;
+        return rotation.getValue();
     }
 
     /**
-     * @param rotation the rotation to set
+     * @param val the rotation to set
      */
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
+    public void setRotation(double val) {
+        this.rotation.setValue(val);
     }
 
     /**

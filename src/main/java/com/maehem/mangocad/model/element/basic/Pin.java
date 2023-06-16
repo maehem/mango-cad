@@ -21,6 +21,7 @@ import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.model.util.Rotation;
 
 /**
  *
@@ -39,7 +40,7 @@ public class Pin extends _AQuantum {
     private PinDirection direction = PinDirection.IO;
     private PinFunction function = PinFunction.NONE;
     private int swapLevel = 0;
-    private double rotation = 0;
+    private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
 
     
     @Override
@@ -184,14 +185,14 @@ public class Pin extends _AQuantum {
      * @return the rotation
      */
     public double getRotation() {
-        return rotation;
+        return rotation.getValue();
     }
 
     /**
-     * @param rotation the rotation to set
+     * @param val the rotation to set
      */
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
+    public void setRotation(double val) {
+        this.rotation.setValue(val);
     }
 
     public int getLayerNum() {

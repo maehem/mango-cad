@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.util.Rotation;
 
 
 /**
@@ -31,7 +32,7 @@ public class PadSMD extends _AQuantum {
     private double y;
     private double width;
     private double height;
-    private double rotation = 0.0;
+    private Rotation rotation = new Rotation();
     private int roundness = 0;
     private boolean stopmask = true;
     private boolean thermals = true;
@@ -117,14 +118,14 @@ public class PadSMD extends _AQuantum {
      * @return the rotation
      */
     public double getRotation() {
-        return rotation;
+        return rotation.getValue();
     }
 
     /**
-     * @param rotation the rotation to set
+     * @param val the rotation to set
      */
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
+    public void setRotation(double val) {
+        this.rotation.setValue(val);
     }
 
     /**

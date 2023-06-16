@@ -17,8 +17,10 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.robot.Robot;
 
 /**
      * moduleinst ( attribute(s) )
@@ -48,8 +50,8 @@ public class ModuleInst extends _AQuantum {
     private double y;
     private int offset = 0;
     private boolean smashed = false;
-    private double rot = 0.0;
-    
+    private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -129,7 +131,7 @@ public class ModuleInst extends _AQuantum {
      * @return the rot
      */
     public double getRot() {
-        return rot;
+        return rotation.getValue();
     }
 
     /**
@@ -137,16 +139,17 @@ public class ModuleInst extends _AQuantum {
      * @param rot the rot to set Only 0, 90, 180 or 270
      */
     public void setRot(double rot) {
-        // Range checking. Round to nearest 90 degree angle.
-        if ( rot >= 45.0 && rot < 135.0 ) {
-            this.rot = 90;
-        } else if ( rot >= 135.0 && rot < 225.0 ) {
-            this.rot = 180;
-        } else if ( rot >= 225.0 || rot < 315.0 ) {
-            this.rot = 270;
-        } else {
-            this.rot = 0;
-        }
+        rotation.setValue(rot);
+//        // Range checking. Round to nearest 90 degree angle.
+//        if ( rot >= 45.0 && rot < 135.0 ) {
+//            this.rot = 90;
+//        } else if ( rot >= 135.0 && rot < 225.0 ) {
+//            this.rot = 180;
+//        } else if ( rot >= 225.0 || rot < 315.0 ) {
+//            this.rot = 270;
+//        } else {
+//            this.rot = 0;
+//        }
     }
 
     public double getX() {

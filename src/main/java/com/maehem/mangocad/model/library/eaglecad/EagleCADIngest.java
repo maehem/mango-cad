@@ -43,6 +43,7 @@ import com.maehem.mangocad.model.element.highlevel.*;
 import com.maehem.mangocad.model.element.enums.*;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.Setting;
+import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ControlPanel;
 
 /**
@@ -715,15 +716,21 @@ public class EagleCADIngest {
                     text.setAlign(TextAlign.fromCode(value));
                 case "rot" -> {  // TODO:  Make ROT an object.
                     try {
+                        Rotation r = text.getRotation();
+                        int idx = 1;
                         if (value.startsWith("SR")) { // Spin Flag
-                            text.setSpin(true);
-                            text.setRotation(Double.parseDouble(value.substring(2)));
+                            r.setSpin(true);
+                            idx = 2;
+                            r.setValue(Double.parseDouble(value.substring(2)));
+                            //text.setSpin(true);
+                            //text.setRotation(Double.parseDouble(value.substring(2)));
                         } else if (value.startsWith("MR")) { // Mirror Flag
-                            text.setMirror(true);
-                            text.setRotation(Double.parseDouble(value.substring(2)));
-                        } else {
-                            text.setRotation(Double.parseDouble(value.substring(1)));
+                            r.setMirror(true);
+                            idx = 2;
+                            //text.setMirror(true);
+                            //text.setRotation(Double.parseDouble(value.substring(2)));
                         }
+                        r.setValue(Double.parseDouble(value.substring(idx)));
                     } catch (NumberFormatException ex) {
                         LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn''t parse ''text:rot'': {0}", value);
                     }
@@ -1298,18 +1305,18 @@ public class EagleCADIngest {
                 case "rot" -> {
                     // Eagle 'rot' attribute has the letter 'R' prefixing it.
                     // TODO: Make a util for ROT decode.
+                    int idx = 1;
                     try {
                         if (value.startsWith("SR")) { // Spin Flag
-                            LOGGER.log(Level.SEVERE, "rot encountered SR.  TODO: Upgrade ROT method.");
+                            idx = 2;
+                            attribute.getRotation().setSpin(true);
                             //attribute.setSpin(true);
                             attribute.setRotation(Double.parseDouble(value.substring(2)));
                         } else if (value.startsWith("MR")) { // Mirror Flag
-                            LOGGER.log(Level.SEVERE, "rot encountered MR.  TODO: Upgrade ROT method.");
-                            //attribute.setMirror(true);
-                            attribute.setRotation(Double.parseDouble(value.substring(2)));
-                        } else {
-                            attribute.setRotation(Double.parseDouble(value.substring(1)));
+                            idx = 2;
+                            attribute.getRotation().setMirror(true);
                         }
+                        attribute.setRotation(Double.parseDouble(value.substring(idx)));
                     } catch (NumberFormatException ex) {
                         LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn''t parse ''text:rot'': {0}", value);
                     }

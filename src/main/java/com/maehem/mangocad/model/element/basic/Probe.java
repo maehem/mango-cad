@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 
 /**
@@ -48,7 +49,7 @@ public class Probe extends _AQuantum {
     private double size = 10;
     private TextFont font = TextFont.PROPORTIONAL;
     private int ratio = 8;
-    private double rot = 0;
+    private Rotation rot = new Rotation(Rotation.CONSTRAINED);
     private boolean xref = false;
     
     private final ArrayList<String> grouprefs = new ArrayList<>();
@@ -154,23 +155,24 @@ public class Probe extends _AQuantum {
      * @return the rot
      */
     public double getRot() {
-        return rot;
+        return rot.getValue();
     }
 
     /**
-     * @param rot the rot to set
+     * @param val the rot to set
      */
-    public void setRot(double rot) {
-        // Range checking. Round to nearest 90 degree angle.
-        if ( rot >= 45.0 && rot < 135.0 ) {
-            this.rot = 90;
-        } else if ( rot >= 135.0 && rot < 225.0 ) {
-            this.rot = 180;
-        } else if ( rot >= 225.0 || rot < 315.0 ) {
-            this.rot = 270;
-        } else {
-            this.rot = 0;
-        }
+    public void setRot(double val) {
+        this.rot.setValue(val);
+//        // Range checking. Round to nearest 90 degree angle.
+//        if ( rot >= 45.0 && rot < 135.0 ) {
+//            this.rot = 90;
+//        } else if ( rot >= 135.0 && rot < 225.0 ) {
+//            this.rot = 180;
+//        } else if ( rot >= 225.0 || rot < 315.0 ) {
+//            this.rot = 270;
+//        } else {
+//            this.rot = 0;
+//        }
     }
     
 }

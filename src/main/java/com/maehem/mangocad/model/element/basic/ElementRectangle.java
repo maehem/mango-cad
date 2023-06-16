@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.util.Rotation;
 
 /**
  *
@@ -29,8 +30,7 @@ public class ElementRectangle extends _AQuantum {
     private double y1;
     private double x2;
     private double y2;
-    private double rotation = 0;
-
+    private final Rotation rotation = new Rotation();
     
     @Override
     public String getElementName() {
@@ -97,20 +97,14 @@ public class ElementRectangle extends _AQuantum {
      * @return the rotation
      */
     public double getRotation() {
-        return rotation;
+        return rotation.getValue();
     }
 
     /**
-     * @param rotation the rotation to set
+     * @param value the rotation to set
      */
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
+    public void setRotation(double value) {
+        this.rotation.setValue(value);
     }
     
-//    @Override
-//    public Rectangle2D getBounds() {
-//        Rectangle2D r = super.getBounds();
-//        r.add(new Point2D.Double(getX2(),getY2()));
-//        return r; //To change body of generated methods, choose Tools | Templates.
-//    }
 }

@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 public class LabelElement extends _AQuantum {
 
     public static final String ELEMENT_NAME = "label";
-    
+
     //label (no sub-nodes)
     //  ATTLIST label
     //          x             %Coord;        #REQUIRED
@@ -44,18 +45,16 @@ public class LabelElement extends _AQuantum {
     //          >
     //          <!-- rot:  Only 0, 90, 180 or 270 -->
     //          <!-- xref: Only in <net> context --> 
-    
     private double x;
     private double y;
     private double size = 10;
     private TextFont font = TextFont.PROPORTIONAL;
     private int ratio = 8;
-    private double rot = 0;
+    private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
     private boolean xref = false;
     private TextAlign align = TextAlign.BOTTOM_LEFT;
-    
+
     private final ArrayList<String> grouprefs = new ArrayList<>();
-    
 
     @Override
     public String getElementName() {
@@ -157,23 +156,24 @@ public class LabelElement extends _AQuantum {
      * @return the rot
      */
     public double getRot() {
-        return rot;
+        return rotation.getValue();
     }
 
     /**
-     * @param rot the rot to set
+     * @param val the rot to set 0,90,180,270. Values will be clamped.
      */
-    public void setRot(double rot) {
-        // Range checking. Round to nearest 90 degree angle.
-        if ( rot >= 45.0 && rot < 135.0 ) {
-            this.rot = 90;
-        } else if ( rot >= 135.0 && rot < 225.0 ) {
-            this.rot = 180;
-        } else if ( rot >= 225.0 || rot < 315.0 ) {
-            this.rot = 270;
-        } else {
-            this.rot = 0;
-        }
+    public void setRot(double val) {
+        this.rotation.setValue(val);
+//        // Range checking. Round to nearest 90 degree angle.
+//        if ( rotation >= 45.0 && rotation < 135.0 ) {
+//            this.rotation = 90;
+//        } else if ( rotation >= 135.0 && rotation < 225.0 ) {
+//            this.rotation = 180;
+//        } else if ( rotation >= 225.0 || rotation < 315.0 ) {
+//            this.rotation = 270;
+//        } else {
+//            this.rotation = 0;
+//        }
     }
 
     /**
@@ -189,5 +189,5 @@ public class LabelElement extends _AQuantum {
     public void setAlign(TextAlign align) {
         this.align = align;
     }
-    
+
 }

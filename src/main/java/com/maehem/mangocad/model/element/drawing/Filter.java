@@ -19,6 +19,10 @@ package com.maehem.mangocad.model.element.drawing;
 import com.maehem.mangocad.model._AQuantum;
 
 /**
+ * High level Drawing thing called 'Filter'.  No idea what it does or how to use it.
+ * I can find no documentation for this feature.  None of my text files store
+ * this data. It might be something from older Eagle files and not used any more?
+ * 
  * <pre>
     filter EMPTY>
         ATTLIST filter

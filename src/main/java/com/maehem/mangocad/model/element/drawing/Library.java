@@ -16,18 +16,13 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import java.util.List;
 import java.util.ArrayList;
-import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
-import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
-import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.misc.Setting;
 
 /**
  * library ( description?, packages?, packages3d?, symbols?, devicesets? )

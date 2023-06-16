@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.util.Rotation;
 
 /**
  *
@@ -31,14 +32,20 @@ public class ElementText extends _AQuantum {
     private double size;
     private int    distance = 50;  // Line to line distance
     private double width = 8.0; // Eagle called it ratio
-    private double rotation = 0.0;
-    private boolean mirror = false;
-    private boolean spin = false;
+    private final Rotation rotation = new Rotation();
+//    private boolean mirror = false;
+//    private boolean spin = false;
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private TextFont font = TextFont.VECTOR;
     private String value;
 
     public static final String ELEMENT_NAME = "text";
+
+    public ElementText() {
+        rotation.setAllowMirror(true);
+        rotation.setAllowSpin(true);
+    }
+    
     
     @Override
     public String getElementName() {
@@ -118,45 +125,44 @@ public class ElementText extends _AQuantum {
     /**
      * @return the rotation
      */
-    public double getRotation() {
+    public Rotation getRotation() {
         return rotation;
     }
 
-    /**
-     * @param rotation the rotation to set
-     */
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
-    }
+//    /**value@param rotation the rotation to set
+//     */
+//    public void setRotation(double value) {
+//        this.rotation.setValue(value);
+//    }
 
-    /**
-     * @return the mirror
-     */
-    public boolean isMirror() {
-        return mirror;
-    }
-
-    /**
-     * @param mirror the mirror to set
-     */
-    public void setMirror(boolean mirror) {
-        this.mirror = mirror;
-    }
-    
-    /**
-     * @return the mirror
-     */
-    public boolean isSpin() {
-        return spin;
-    }
-
-    /**
-     * @param mirror the mirror to set
-     */
-    public void setSpin(boolean spin) {
-        this.spin = spin;
-    }
-    
+//    /**
+//     * @return the mirror
+//     */
+//    public boolean isMirror() {
+//        return rotation.isMirror();
+//    }
+//
+//    /**
+//     * @param mirror the mirror to set
+//     */
+//    public void setMirror(boolean mirror) {
+//        this.mirror = mirror;
+//    }
+//    
+//    /**
+//     * @return the mirror
+//     */
+//    public boolean isSpin() {
+//        return spin;
+//    }
+//
+//    /**
+//     * @param spin the mirror to set
+//     */
+//    public void setSpin(boolean spin) {
+//        this.spin = spin;
+//    }
+//    
     /**
      * @return the align
      */

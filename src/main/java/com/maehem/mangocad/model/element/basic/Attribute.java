@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.util.Rotation;
 
 /**
  *
@@ -34,7 +35,7 @@ public class Attribute extends _AQuantum {
     private String value;
     private double size;
     private int width;
-    private double rotation = 0.0;
+    private final Rotation rotation = new Rotation();
     private String display = "value";
     private boolean constant = false;
     private TextAlign align = TextAlign.BOTTOM_LEFT;
@@ -134,15 +135,15 @@ public class Attribute extends _AQuantum {
     /**
      * @return the rotation
      */
-    public double getRotation() {
+    public Rotation getRotation() {
         return rotation;
     }
 
     /**
-     * @param rotation the rotation to set
+     * @param value
      */
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
+    public void setRotation(double value) {
+        this.rotation.setValue(value);
     }
 
     /**
