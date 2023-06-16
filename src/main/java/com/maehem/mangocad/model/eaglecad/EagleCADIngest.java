@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.eaglecad;
+package com.maehem.mangocad.model.eaglecad;
 
 import java.util.ArrayList;
 import java.io.StringWriter;
@@ -65,7 +65,7 @@ public class EagleCADIngest {
      * @param node
      * @return 
      * @throws
-     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     * com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException
      */
     public static Drawing ingestDrawing(Node node) throws EagleCADLibraryFileException {
         Drawing drawing = new Drawing();
@@ -536,7 +536,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      * @throws
-     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     * com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException
      */
     public static void ingestDescription(List<Description> list, Node node) throws EagleCADLibraryFileException {
         Description desc = new Description();
@@ -549,7 +549,7 @@ public class EagleCADIngest {
      * @param desc
      * @param node
      * @throws
-     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     * com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException
      */
     public static void ingestDescription(Description desc, Node node) throws EagleCADLibraryFileException {
         Node langAttribute = node.getAttributes().getNamedItem("language");
@@ -1372,7 +1372,7 @@ public class EagleCADIngest {
      * @param doc node to transform
      * @return raw HTML content of the doc node.
      * @throws
-     * com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     * com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException
      */
     public static String serializeDoc(Node doc) throws EagleCADLibraryFileException {
         StringWriter outText = new StringWriter();
@@ -2392,7 +2392,7 @@ public class EagleCADIngest {
      *
      * @param grid
      * @param node
-     * @throws com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException
+     * @throws com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException
      */
     public static void ingestGrid(Grid grid, Node node) throws EagleCADLibraryFileException {
         NamedNodeMap att = node.getAttributes();

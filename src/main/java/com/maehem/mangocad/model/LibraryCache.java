@@ -17,8 +17,8 @@
 package com.maehem.mangocad.model;
 
 import com.maehem.mangocad.model.element.drawing.Library;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
+import com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException;
+import com.maehem.mangocad.model.eaglecad.EagleCADUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.File;
 import java.io.IOException;

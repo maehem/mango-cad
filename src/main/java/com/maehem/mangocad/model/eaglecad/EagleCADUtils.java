@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.model.library.eaglecad;
+package com.maehem.mangocad.model.eaglecad;
 
 import com.maehem.mangocad.model.element.drawing.Eagle;
 import java.io.File;

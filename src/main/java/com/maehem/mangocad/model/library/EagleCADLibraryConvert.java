@@ -23,8 +23,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.library.YAMLUtils;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADLibraryFileException;
-import com.maehem.mangocad.model.library.eaglecad.EagleCADUtils;
+import com.maehem.mangocad.model.eaglecad.EagleCADLibraryFileException;
+import com.maehem.mangocad.model.eaglecad.EagleCADUtils;
 
 /**
  *
