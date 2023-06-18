@@ -3,7 +3,6 @@ module com.maehem.mangocad {
     requires javafx.controls;
     requires javafx.graphics;
     requires java.base;
-    requires yamlbeans;
     requires jdk.xml.dom;
 
     exports com.maehem.mangocad;
