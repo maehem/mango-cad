@@ -280,7 +280,9 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
 
         parentItem.getChildren().add(item);
         for (Footprint f : library.getPackages()) {
-            TreeItem footprintItem = new TreeItem(new LibraryDeviceFootprintItem(f.getName(), f.getDescription(), file));
+            TreeItem footprintItem = new TreeItem(new LibraryDeviceFootprintItem(
+                    f.getName(), f.getDescription().getValue(), file
+            ));
             item.getChildren().add(footprintItem);
         }
 
@@ -296,7 +298,9 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         item = new TreeItem(new LibrarySubItem("Symbols", "", file));
         parentItem.getChildren().add(item);
         for (Symbol f : library.getSymbols()) {
-            TreeItem symbolItem = new TreeItem(new LibraryDeviceSymbolItem(f.getName(), f.getDescription(), file));
+            TreeItem symbolItem = new TreeItem(new LibraryDeviceSymbolItem(
+                    f.getName(), f.getDescription().getValue(), file
+            ));
             item.getChildren().add(symbolItem);
         }
     }

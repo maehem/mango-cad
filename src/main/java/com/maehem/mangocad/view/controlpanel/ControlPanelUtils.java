@@ -112,13 +112,13 @@ public class ControlPanelUtils {
                     // TODO: Include Parent library information.
                     for (Symbol s : library.getSymbols()) {
                         if (s.getName().equals(item.getName())) {
-                            return s.getDescription();
+                            return s.getDescription().getValue();
                         }
                     }
                     for (Footprint f : library.getPackages()) {
                         if (f.getName().equals(item.getName())) {
                             //LOGGER.log(Level.SEVERE, "Package raw desc.: " + f.getDescription());
-                            return f.getDescription();
+                            return f.getDescription().getValue();
                         }
                     }
                     for (Package3d p : library.getPackages3d()) {

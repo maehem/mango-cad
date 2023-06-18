@@ -104,6 +104,7 @@ public class EagleCADIngest {
                         drawing.setDesign(new Schematic());
                         ingestEagleSchematicElement((Schematic) drawing.getDesign(), subNode);
                         drawing.getDesign().setParentDrawing(drawing);
+                        // TODO each sub-library needs parent drawing set?
                     } else {
                         throw new EagleCADLibraryFileException(
                                 "Tried to ingest <library> element when there was already a DesignOnject assigned!");
@@ -142,7 +143,7 @@ public class EagleCADIngest {
                     lib.setUrn(value);
                 }
                 default ->
-                    throw new EagleCADLibraryFileException("Schematic has unknown attribute: [" + item.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("Library has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
@@ -407,7 +408,7 @@ public class EagleCADIngest {
                 case "devices" -> // Devices
                     ingestDevices(deviceSet.getDevices(), child);
                 default ->
-                    throw new EagleCADLibraryFileException("Unknown Package element encountered: " + child.getNodeName());
+                    throw new EagleCADLibraryFileException("Unknown DeviceSet element encountered: " + child.getNodeName());
             }
         }
 
@@ -416,36 +417,42 @@ public class EagleCADIngest {
     }
 
     private static void ingestPackageElements(NodeList nodes, Footprint pkg) throws EagleCADLibraryFileException {
+        // TODO: Add a flag to check if description appears more than once.
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() != 1) {
                 continue;
             }
             List<_AQuantum> elements = pkg.getElements();
+            // polygon | wire | text | dimension | circle | rectangle | frame | hole | pad | smd
             switch (node.getNodeName()) {
-                case "description" -> // Description
-                    // Gets put into 'descriptions' instead of 'elements'.
-                    ingestDescription(pkg, node);
-                case "wire" -> // Wire
-                    ingestWire(elements, node);
-                case "smd" -> // SMD
-                    ingestPadSmd(elements, node);
-                case "pad" -> // Pad
-                    ingestPadThd(elements, node);
-                case "text" -> // ElementText
-                    ingestText(elements, node);
                 case "polygon" -> // ElementPolygon
                     ingestPolygon(elements, node);
-                case "rectangle" -> // ElementRectangle
-                    ingestRectangle(elements, node);
+                case "wire" -> // Wire
+                    ingestWire(elements, node);
+                case "text" -> // ElementText
+                    ingestText(elements, node);
+                case "dimension" -> 
+                    ingestDimension(elements,node);
                 case "circle" -> // ElementCircle
                     ingestCircle(elements, node);
+                case "rectangle" -> // ElementRectangle
+                    ingestRectangle(elements, node);
+                case "frame" ->
+                    ingestFrame(elements, node);
                 case "hole" -> // Hole
                     ingestHole(elements, node);
-                case "via" -> // Via
-                    ingestVia(elements, node);
+                case "pad" -> // Pad
+                    ingestPadThd(elements, node);
+                case "smd" -> // SMD
+                    ingestPadSmd(elements, node);
+                case "description" -> { // Zero or One descriptions
+                    // Gets put into 'description' instead of 'elements'.
+                    // There should only be one description.
+                    ingestDescription(pkg.getDescription(), node);
+                }
                 default ->
-                    throw new EagleCADLibraryFileException("Unknown Package element encountered: " + node.getNodeName());
+                    throw new EagleCADLibraryFileException("Unknown Package element encountered: <" + node.getNodeName() + ">");
             }
         }
     }
@@ -469,35 +476,31 @@ public class EagleCADIngest {
     }
 
     private static void ingestSymbolElements(NodeList nodes, Symbol symbol) throws EagleCADLibraryFileException {
+        // TODO: Add a flag to check if description appears more than once.
+        List<_AQuantum> elements = symbol.getElements();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() != 1) {
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
-            List<_AQuantum> elements = symbol.getElements();
-            if (node.getNodeType() != 1) {
-                continue;
-            }
-            //LOGGER.log(Level.SEVERE, "ingest element: " + node.getNodeName());
+            // description?, (polygon | wire | text | dimension | pin | circle | rectangle | frame)*
             switch (node.getNodeName()) {
-                case "description" -> {
-                    // Description. There might be multiple locale versions.
-                    Description desc = new Description();
-                    ingestDescription(desc, node);
-                    symbol.getElements().add(desc);
-                }
+                case "description" -> // Only one description allowed.
+                    ingestDescription(symbol.getDescription(), node);
+                case "polygon" ->
+                    ingestPolygon(elements, node);
                 case "wire" ->
                     ingestWire(elements, node);
                 case "text" ->
                     ingestText(elements, node);
-                case "polygon" ->
-                    ingestPolygon(elements, node);
-                case "rectangle" ->
-                    ingestRectangle(elements, node);
-                case "circle" ->
-                    ingestCircle(elements, node);
+                case "dimension" ->
+                    ingestDimension(elements, node);
                 case "pin" ->
                     ingestPin(elements, node);
+                case "circle" ->
+                    ingestCircle(elements, node);
+                case "rectangle" ->
+                    ingestRectangle(elements, node);
                 case "frame" ->
                     ingestFrame(elements, node);
                 default ->
@@ -818,8 +821,24 @@ public class EagleCADIngest {
         elements.add(rect);
     }
 
+    /**
+     * <pre>
+     * circle EMPTY
+        ATTLIST circle
+          x             %Coord;        #REQUIRED
+          y             %Coord;        #REQUIRED
+          radius        %Coord;        #REQUIRED
+          width         %Dimension;    #REQUIRED
+          layer         %Layer;        #REQUIRED
+          grouprefs     IDREFS         #IMPLIED
+     * </pre>
+     * @param elements
+     * @param node
+     * @throws EagleCADLibraryFileException 
+     */
     private static void ingestCircle(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         ElementCircle circ = new ElementCircle();
+        String nodeName = node.getNodeName();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -835,6 +854,8 @@ public class EagleCADIngest {
                     circ.setRadius(Double.parseDouble(value));
                 case "width" ->
                     circ.setWidth(Double.parseDouble(value));
+                case "grouprefs" ->
+                    circ.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
                 default ->
                     throw new EagleCADLibraryFileException("Circle has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -1830,31 +1851,32 @@ public class EagleCADIngest {
             }
             switch (item.getNodeName()) {
                 case "polygon" -> {
-                    ingestPolygon(plain, node);
+                    ingestPolygon(plain, item);
                 }
                 case "wire" -> {
-                    ingestWire(plain, node);
+                    ingestWire(plain, item);
                 }
                 case "text" -> {
-                    ingestText(plain, node);
+                    ingestText(plain, item);
                 }
                 case "dimension" -> {
-                    ingestDimension(plain, node);
+                    ingestDimension(plain, item);
                 }
                 case "circle" -> {
-                    ingestCircle(plain, node);
+                    ingestCircle(plain, item);
+                    int g=0;
                 }
                 case "spline" -> {
-                    ingestSpline(plain, node);
+                    ingestSpline(plain, item);
                 }
                 case "rectangle" -> {
-                    ingestRectangle(plain, node);
+                    ingestRectangle(plain, item);
                 }
                 case "frame" -> {
-                    ingestFrame(plain, node);
+                    ingestFrame(plain, item);
                 }
                 case "hole" -> {
-                    ingestHole(plain, node);
+                    ingestHole(plain, item);
                 }
                 default -> {
                     throw new EagleCADLibraryFileException("<plain> list has unknown child: [" + item.getNodeName() + "]");

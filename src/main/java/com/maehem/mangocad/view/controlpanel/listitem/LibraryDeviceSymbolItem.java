@@ -146,7 +146,7 @@ public class LibraryDeviceSymbolItem extends ControlPanelListItem {
 
         Symbol symbol = lib.getSymbol(getName());
         Group symbolPreview = DetailNodes.symbolPreview(symbol, lib, true);
-        GroupContainer symbolContainer = new GroupContainer(symbolPreview);
+        GroupContainer symbolContainer = new GroupContainer(symbolPreview, 0.1);
 
         return symbolContainer;
     }

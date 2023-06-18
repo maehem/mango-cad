@@ -154,7 +154,7 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
 
         Footprint footprint = lib.getPackage(getName());
         Group footprintPreview = DetailNodes.footprintPreview(footprint, lib, true);
-        GroupContainer footprintContainer = new GroupContainer(footprintPreview);
+        GroupContainer footprintContainer = new GroupContainer(footprintPreview, 0.1);
 
         return footprintContainer;
     }

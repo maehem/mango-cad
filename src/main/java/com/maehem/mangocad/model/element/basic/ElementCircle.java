@@ -17,19 +17,21 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import java.util.ArrayList;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementCircle extends _AQuantum {
+    public static final String ELEMENT_NAME = "circle";
+
     private double x;
     private double y;
     private double radius;
     private double width;
+    private final ArrayList<String> grouprefs = new ArrayList<>();
 
-    public static final String ELEMENT_NAME = "circle";
-    
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -91,4 +93,11 @@ public class ElementCircle extends _AQuantum {
         this.y = y;
     }
     
+    /**
+     * @return the grouprefs
+     */
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
+    }
+
 }

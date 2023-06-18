@@ -48,7 +48,6 @@ public class FrameElement extends _AQuantum {
     private double y2;
     private int columns;
     private int rows;
-    private int layer;
     private boolean borderLeft = true;
     private boolean borderTop  = true;
     private boolean borderRight = true;
@@ -199,20 +198,6 @@ public class FrameElement extends _AQuantum {
      */
     public void setBorderBottom(boolean borderBottom) {
         this.borderBottom = borderBottom;
-    }
-
-    /**
-     * @return the layer
-     */
-    public int getLayer() {
-        return layer;
-    }
-
-    /**
-     * @param layer the layer to set
-     */
-    public void setLayer(int layer) {
-        this.layer = layer;
     }
 
     public List<String> getGroupRefs() {

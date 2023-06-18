@@ -38,6 +38,8 @@ public class Symbol extends _AQuantum {
 
     public static final String ELEMENT_NAME = "symbol";
     
+     // There can only be one description.
+    private final Description description = new Description();
     private final ArrayList<_AQuantum> elements = new ArrayList<>();
     
     private String name;
@@ -125,13 +127,7 @@ public class Symbol extends _AQuantum {
         return elements;
     }
     
-    public String getDescription() {        
-        for ( _AQuantum item: elements ) {
-            if ( item instanceof Description descItem ) {
-                return descItem.getValue();
-            }
-        }
-        
-        return "";
+    public Description getDescription() {        
+        return description;
     }
 }

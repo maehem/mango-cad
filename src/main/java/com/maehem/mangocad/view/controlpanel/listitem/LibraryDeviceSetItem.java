@@ -198,7 +198,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
         Group gateSetPreview = DetailNodes.gateSetPreview(deviceSet.getGates(), lib);
 
-        GroupContainer gatePreviewPane = new GroupContainer(gateSetPreview);
+        GroupContainer gatePreviewPane = new GroupContainer(gateSetPreview, 0.1);
         gatePreviewPane.setBorder(new Border(new BorderStroke(
                 new Color(0.1,0.1,0.1,0.5), 
                 BorderStrokeStyle.SOLID, 
@@ -210,7 +210,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         String pkgName = deviceSet.getDevices().get(0).getFootprint();
 
         Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib, true);
-        GroupContainer footprintContainer = new GroupContainer(footprintPreview);
+        GroupContainer footprintContainer = new GroupContainer(footprintPreview,0.1);
         
         // Add a border
         footprintContainer.setBorder(new Border(new BorderStroke(

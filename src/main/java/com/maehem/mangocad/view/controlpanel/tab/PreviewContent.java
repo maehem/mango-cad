@@ -19,7 +19,6 @@ package com.maehem.mangocad.view.controlpanel.tab;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Text;
 
 /**
  *

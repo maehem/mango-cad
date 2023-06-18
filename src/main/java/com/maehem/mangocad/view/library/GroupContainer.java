@@ -31,9 +31,22 @@ public class GroupContainer extends BorderPane {
 
     private final double shapW;
     private final double shapH;
+    private final double margin;
 
     public GroupContainer(Group g) {
+        this(g, 0.0);
+    }
+    
+    /**
+     * 
+     * @param g
+     * @param margin 0.0-1.0. Add margin around container. 0 to 100 percent of content width.
+     */
+    public GroupContainer(Group g, double margin) {
         super(g);
+        if ( margin < 0.0 ) margin = 0.0;
+        if ( margin > 1.0 ) margin = 1.0;
+        this.margin = margin;
         this.shapeGroup = g;
 
         shapW = shapeGroup.getBoundsInLocal().getWidth();
@@ -55,7 +68,9 @@ public class GroupContainer extends BorderPane {
             scale = wScale;
         }
 
-        shapeGroup.setScaleX(scale * 0.8);
-        shapeGroup.setScaleY(scale * 0.8);
+        //shapeGroup.setScaleX(scale * 0.8);
+        //shapeGroup.setScaleY(scale * 0.8);
+        shapeGroup.setScaleX(scale * (1.0-margin));
+        shapeGroup.setScaleY(scale * (1.0-margin));
     }
 }

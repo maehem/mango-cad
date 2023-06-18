@@ -18,11 +18,14 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.SchematicCache;
+import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,11 +39,20 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -113,7 +125,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 
     @Override
     public Node getPreviewTabNode() {
-        Text itemName = new Text("Footprint: " + getName());
+        Text itemName = new Text("Schematic: " + getName());
         itemName.setId("control-panel-preview-area-heading");
 
         Pane spacer = new Pane();
@@ -133,32 +145,35 @@ public class SchematicFileItem extends ControlPanelListItem {
 
         VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
 
-        Node footprintPreviewNode = footprintPreviewNode();
-        VBox.setVgrow(footprintPreviewNode, Priority.ALWAYS);
+        Node schematicPreviewNode = schematicPreviewNode();
+        VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
         VBox contentArea = new VBox(
                 heading,
                 ControlPanelUtils.markdownNode(
                         1.5,
                         ControlPanelUtils.getItemDescriptionFull(this)
                 ),
-                footprintPreviewNode
+                schematicPreviewNode
         );
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
     }
 
-    private Node footprintPreviewNode() {
-        Library lib = LibraryCache.getInstance().getLibrary(getFile());
-        if (lib == null) {
-            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
+    private Node schematicPreviewNode() {
+        Schematic sch = SchematicCache.getInstance().getSchematic(getFile());
+        if (sch == null) {
+            LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
         }
 
-        Footprint footprint = lib.getPackage(getName());
-        Group footprintPreview = DetailNodes.footprintPreview(footprint, lib, true);
-        GroupContainer footprintContainer = new GroupContainer(footprintPreview);
+        Group schematicPreview = new SchematicPreview(sch);
+        StackPane sp = new StackPane(schematicPreview);
+        sp.setBackground(new Background(new BackgroundFill(new Color(0.1,0.1,0.1,1.0), CornerRadii.EMPTY, Insets.EMPTY)));
+        Group schemPreviewGroup = new Group(sp);
+        GroupContainer container = new GroupContainer(schemPreviewGroup);
+        container.setBorder(new Border(new BorderStroke(Color.AQUAMARINE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
-        return footprintContainer;
+        return container;
     }
 
     @Override

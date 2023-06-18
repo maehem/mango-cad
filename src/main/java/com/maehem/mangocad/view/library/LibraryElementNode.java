@@ -16,10 +16,13 @@
  */
 package com.maehem.mangocad.view.library;
 
+import com.maehem.mangocad.model.ColorPalette;
+import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.FrameElement;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -30,8 +33,12 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import static com.maehem.mangocad.model.element.enums.PinLength.*;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -39,6 +46,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.ArcTo;
@@ -47,8 +55,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
@@ -69,15 +79,24 @@ public class LibraryElementNode {
     private static final double MASK_W_DEFAULT = 0.1;
 
     /**
+     * <pre>
+     * ATTLIST wire 
+     *     x1 %Coord; #REQUIRED 
+     *     y1 %Coord; #REQUIRED 
+     *     x2 %Coord; #REQUIRED 
+     *     y2 %Coord; #REQUIRED 
+     *     width %Dimension; #REQUIRED 
+     *     layer %Layer; #REQUIRED 
+     *     extent %Extent; #IMPLIED 
+     *     style %WireStyle; "continuous" 
+     *     curve %WireCurve; "0" 
+     *     cap %WireCap; "round" 
+     *     grouprefs IDREFS #IMPLIED
      *
-     * ATTLIST wire x1 %Coord; #REQUIRED y1 %Coord; #REQUIRED x2 %Coord;
-     * #REQUIRED y2 %Coord; #REQUIRED width %Dimension; #REQUIRED layer %Layer;
-     * #REQUIRED extent %Extent; #IMPLIED style %WireStyle; "continuous" curve
-     * %WireCurve; "0" cap %WireCap; "round" grouprefs IDREFS #IMPLIED
-     *
-     * extent: Only applicable for airwires cap : Only applicable if 'curve' is
-     * not zero
-     *
+     *     extent: Only applicable for airwires 
+     *     cap : Only applicable if 'curve' is not zero
+     * </pre>
+     * 
      * @param w
      * @param color
      * @return
@@ -133,6 +152,25 @@ public class LibraryElementNode {
         rr.setFill(color);
         rr.setRotate(r.getRotation());
         return rr;
+    }
+
+    public static Node createFrameNode(FrameElement fe, Color color) {
+        Group frameGroup = new Group();
+        Polygon border = new Polygon(
+                fe.getX1(), -fe.getY1(),
+                fe.getX2(), -fe.getY1(),
+                fe.getX2(), -fe.getY2(),
+                fe.getX1(), -fe.getY2()
+        );
+        //border.setLayoutY(-fe.getY2());
+        LOGGER.log(Level.SEVERE, "Make a frame: {0},{1} .. {2},{3}", new Object[]{fe.getX1(), fe.getY1(), fe.getX2(), fe.getY2()});
+        border.setStroke(color);
+        border.setFill(Color.TRANSPARENT);
+        border.setStrokeType(StrokeType.CENTERED);
+        border.setStrokeWidth(0.1524); // 6 mil
+        frameGroup.getChildren().add(border);
+        
+        return frameGroup;
     }
 
     public static Node createPolygon(ElementPolygon poly, Color color) {
@@ -877,4 +915,44 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
+    public static Node createSymbolNode( Symbol symbol, LayerElement[] layers, ColorPalette palette) {
+        Group g = new Group();
+        StackPane pane = new StackPane(g);
+
+        symbol.getElements().forEach((e) -> {
+            int layerNum = e.getLayerNum();
+            LayerElement le = layers[e.getLayerNum()];
+            if (le == null) {
+                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
+            }
+            int colorIndex = le.getColorIndex();
+            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+
+            // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
+            if (e instanceof ElementPolygon ep) {
+                g.getChildren().add(LibraryElementNode.createPolygon(ep, c));
+            } else if (e instanceof Wire w) {
+                g.getChildren().add(LibraryElementNode.createWireNode(w, c));
+            } else if (e instanceof ElementText et) {
+                g.getChildren().add(LibraryElementNode.createText(et, c));
+                g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
+            } else if (e instanceof Dimension dim) {
+                //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));
+                LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
+            } else if (e instanceof Pin pin) {
+                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
+            } else if (e instanceof ElementCircle ec) {
+                g.getChildren().add(LibraryElementNode.createCircleNode(ec, c));
+            } else if (e instanceof ElementRectangle rect) {
+                g.getChildren().add(LibraryElementNode.createRectangle(rect, c));
+            } else if (e instanceof FrameElement frm) {
+                g.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
+            }
+        });
+        g.getChildren().add(LibraryElementNode.crosshairs(
+                0, 0, 0.5, 0.05, Color.RED
+        ));
+        
+        return g;
+    }
 }

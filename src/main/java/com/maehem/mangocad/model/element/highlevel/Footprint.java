@@ -16,20 +16,64 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.misc.Description;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Eagle used the tern 'package' interchanably with 3d package instances which was
+ * Eagle used the tern 'package' interchangeably with 3d package instances which was
  * confusing while writing this code.  So I changed 2D 'package' to footprint.
  * Still called 'package' in the XML files.
- * 
+ * <pre>
+ * package (description?, (polygon | wire | text | dimension | circle | rectangle | frame | hole | pad | smd)*)>
+ *    ATTLIST
+          name          %String;       #REQUIRED
+          urn              %Urn;       ""
+          locally_modified %Bool;      "no"
+          library_version  %Int;       ""
+          library_locally_modified %Bool; "no"
+          
+          library_version and library_locally_modified: 
+              Only in managed libraries inside boards or schematics
+
+ * </pre>
  * 
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Footprint extends LibraryElement {
+public class Footprint extends _AQuantum {
 
-    private String urn;
+    public static final String ELEMENT_NAME = "package";
     
+     // There can only be one description.
+    private final Description description = new Description();
+    private final ArrayList<_AQuantum> elements = new ArrayList<>();
+
+    private String name;
+    private String urn;
+    private boolean locallyModified = false;
+    private int libraryVersion = 0;
+    private boolean libraryLocallyModified = false;
+    
+    @Override
+    public String getElementName() {
+        return ELEMENT_NAME;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setUrn(String urn) {
         this.urn = urn;
     }
@@ -37,4 +81,55 @@ public class Footprint extends LibraryElement {
     public String getUrn() {
         return urn;
     }
+    
+    /**
+     * @return the locallyModified
+     */
+    public boolean isLocallyModified() {
+        return locallyModified;
+    }
+
+    /**
+     * @param locallyModified the locallyModified to set
+     */
+    public void setLocallyModified(boolean locallyModified) {
+        this.locallyModified = locallyModified;
+    }
+
+    /**
+     * @return the libraryVersion
+     */
+    public int getLibraryVersion() {
+        return libraryVersion;
+    }
+
+    /**
+     * @param libraryVersion the libraryVersion to set
+     */
+    public void setLibraryVersion(int libraryVersion) {
+        this.libraryVersion = libraryVersion;
+    }
+
+    /**
+     * @return the libraryLocallyModified
+     */
+    public boolean isLibraryLocallyModified() {
+        return libraryLocallyModified;
+    }
+
+    /**
+     * @param libraryLocallyModified the libraryLocallyModified to set
+     */
+    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
+        this.libraryLocallyModified = libraryLocallyModified;
+    }
+
+    public Description getDescription() {
+        return description;
+    }
+    
+    public List<_AQuantum> getElements() {
+        return elements;
+    }
+    
 }

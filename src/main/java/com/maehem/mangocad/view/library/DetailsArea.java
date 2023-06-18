@@ -73,10 +73,12 @@ public class DetailsArea extends SplitPane {
                 for (Footprint footprint : lib.getPackages()) {
                     if (footprint.getName().equals(newValue)) {
                         Group footprintPreview = DetailNodes.footprintPreview(footprint, lib, true);
-                        GroupContainer nodeContainer = new GroupContainer(footprintPreview);
+                        GroupContainer nodeContainer = new GroupContainer(footprintPreview, 0.1);
 
                         getItems().add(nodeContainer);
-                        getItems().add(DetailNodes.descriptionNode(footprint.getDescription()));
+                        getItems().add(DetailNodes.descriptionNode(
+                                footprint.getDescription().getValue()
+                        ));
 
                         getDividers().get(0).setPosition(0.5);
 
@@ -99,7 +101,9 @@ public class DetailsArea extends SplitPane {
                         GroupContainer nodeContainer = new GroupContainer(symbolPreview);
 
                         getItems().add(nodeContainer);
-                        getItems().add(DetailNodes.descriptionNode(s.getDescription()));
+                        getItems().add(DetailNodes.descriptionNode(
+                                s.getDescription().getValue()
+                        ));
                         getDividers().get(0).setPosition(0.5);
 
                         return;

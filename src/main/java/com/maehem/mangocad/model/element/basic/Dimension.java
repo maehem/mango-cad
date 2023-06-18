@@ -66,7 +66,7 @@ public class Dimension extends _AQuantum {
     private GridUnit unit = GridUnit.MM;
     private int precision = 2;
     private boolean visible = false;
-    private ArrayList<String> grouprefs = new ArrayList<>();
+    private final ArrayList<String> grouprefs = new ArrayList<>();
     
 
     @Override
