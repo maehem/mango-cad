@@ -21,23 +21,34 @@ import com.maehem.mangocad.model.LibraryCache;
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
 import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -145,35 +156,82 @@ public class SchematicFileItem extends ControlPanelListItem {
 
         VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
 
-        Node schematicPreviewNode = schematicPreviewNode();
+        Schematic sch = SchematicCache.getInstance().getSchematic(getFile());
+        if (sch == null) {
+            LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
+        }
+
+        Node schematicPreviewNode = schematicPreviewNode(sch);
         VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
+        
+        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList(sch) );
+        spPane.setOrientation(Orientation.VERTICAL);
+        spPane.setDividerPosition(0, 0.8);
+        VBox.setVgrow(spPane, Priority.ALWAYS);
+        
+        
+
         VBox contentArea = new VBox(
                 heading,
                 ControlPanelUtils.markdownNode(
                         1.5,
-                        ControlPanelUtils.getItemDescriptionFull(this)
+                        sch.getDescription().getValue()
                 ),
-                schematicPreviewNode
+                spPane
         );
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
     }
 
-    private Node schematicPreviewNode() {
-        Schematic sch = SchematicCache.getInstance().getSchematic(getFile());
-        if (sch == null) {
-            LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
-        }
+    private Node schematicPreviewNode(Schematic sch) {
 
         Group schematicPreview = new SchematicPreview(sch);
         StackPane sp = new StackPane(schematicPreview);
         sp.setBackground(new Background(new BackgroundFill(new Color(0.1,0.1,0.1,1.0), CornerRadii.EMPTY, Insets.EMPTY)));
         Group schemPreviewGroup = new Group(sp);
         GroupContainer container = new GroupContainer(schemPreviewGroup);
-        container.setBorder(new Border(new BorderStroke(Color.AQUAMARINE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+        //container.setBorder(new Border(new BorderStroke(Color.AQUAMARINE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
         return container;
+    }
+
+    private Node sheetList(Schematic sch) {
+
+        TableView tableView = new TableView();
+        tableView.setPlaceholder( new Label("No rows to display"));
+        
+        TableColumn<Map, String> sheetname = new TableColumn<>("Sheet");
+        sheetname.setCellValueFactory(new MapValueFactory<>("sheet"));
+
+        TableColumn<Map, String> size = new TableColumn<>("Size");
+        size.setCellValueFactory(new MapValueFactory<>("size"));
+        
+        TableColumn<Map, String> desc = new TableColumn<>("Description");
+        desc.setCellValueFactory(new MapValueFactory<>("description"));
+
+        tableView.getColumns().add(sheetname);
+        tableView.getColumns().add(size);
+        tableView.getColumns().add(desc);
+
+        ObservableList<Map<String, Object>> items
+                = FXCollections.<Map<String, Object>>observableArrayList();
+
+        int sheetIndex = 1;
+        for ( Sheet sheet : sch.getSheets() ) {
+            Map<String, Object> item = new HashMap<>();
+
+            item.put("sheet", "Sheet " + sheetIndex);
+            item.put("size", "???");
+            item.put("description", sheet.getDescription().getValue());
+            items.add(item);
+            
+            sheetIndex++;
+        }
+
+        tableView.getItems().addAll(items);
+
+        return tableView;
     }
 
     @Override

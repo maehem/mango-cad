@@ -25,7 +25,6 @@ import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.controlpanel.listitem.SchematicFileItem;
-import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.LibraryElementNode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,8 +56,6 @@ public class SchematicPreview extends Group {
         if ( sheet.getPlain().isEmpty() ) {
             LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
         }
-//        Text t = new Text("Schematic Preview");
-//        getChildren().add(t);
         for ( _AQuantum element: sheet.getPlain() ) {
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if ( element instanceof ElementPolygon e) {
@@ -91,16 +88,10 @@ public class SchematicPreview extends Group {
                 //getChildren().add(LibraryElementNode.createHoleNode(e, Color.RED));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Hole Node");
             }
-//            if ( element instanceof FrameElement e) {
-//                getChildren().add(LibraryElementNode.createFrame(e, Color.CORAL));
-//            } else
 
         }
         
         for ( Instance inst : sheet.getInststances() ) {
-            //Circle c = new Circle(inst.getX(), -inst.getY(), 2, Color.GREEN);
-            //getChildren().add(c);
-            
             String partName = inst.getPart();
             for ( Part p: schem.getParts() ) {
                 if ( partName.equals(p.getName()) ) {
