@@ -194,5 +194,14 @@ public class DeviceSet extends _AQuantum {
         // TODO: Return based on user's locale if avaialble.
         return descriptions.get(0).getValue();
     }
+
+    public Device getNamedDevice(String named) {
+        for ( Device device : devices ) {
+            if ( device.getName().equals(named) ) {
+                return device;
+            }
+        }
+        return null;
+    }
     
 }

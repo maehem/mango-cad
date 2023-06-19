@@ -166,14 +166,30 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
         VBox.setMargin(headingBox, new Insets(5, 10, 5, 10));
 
-        ScrollPane scrollPane = new ScrollPane(devicePreviewNode());
+        ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
-        SplitPane spPane = new SplitPane(scrollPane, deviceSetList());
+        TableView deviceSetList = deviceSetList(0);
+        SplitPane spPane = new SplitPane(scrollPane, deviceSetList);
         spPane.setOrientation(Orientation.VERTICAL);
         spPane.setDividerPosition(0, 0.72);
         VBox.setVgrow(spPane, Priority.ALWAYS);
+        
+//        Map<String, Object> selectedItem = (Map<String, Object>) deviceSetList.getSelectionModel().getSelectedItem();
+//        LOGGER.log(Level.SEVERE, 
+//                "First Item:" + selectedItem.toString()
+//        );
+        scrollPane.setContent(devicePreviewNode(
+                (Map<String, Object>) deviceSetList.getSelectionModel().getSelectedItem()
+        ));
+        
+        deviceSetList.setOnMouseClicked((t) -> {
+            LOGGER.log(Level.SEVERE, "User Clicked: " + deviceSetList.getSelectionModel().getSelectedIndex());
+            TableView.TableViewSelectionModel model = deviceSetList.getSelectionModel();
+            Map<String, Object> item = (Map<String, Object>) model.getSelectedItem();
+            scrollPane.setContent(devicePreviewNode(item));
+        });
         
         VBox contentArea = new VBox(
                 heading,
@@ -188,7 +204,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         return pane;
     }
 
-    private Node devicePreviewNode() {
+    private Node devicePreviewNode( Map<String, Object> item ) {
         Library lib = LibraryCache.getInstance().getLibrary(getFile());
         if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
@@ -207,8 +223,8 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 new Insets(6)
         )));
 
-        String pkgName = deviceSet.getDevices().get(0).getFootprint();
-
+        String pkgName = (String) item.get("footprint");
+        LOGGER.log(Level.SEVERE, "Selected Footprint:" + pkgName);
         Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib, true);
         GroupContainer footprintContainer = new GroupContainer(footprintPreview,0.1);
         
@@ -222,7 +238,9 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         )));
 
         
-        Node deviceTechnologyAttrList = deviceTechnologyAttrList(lib);
+        Node deviceTechnologyAttrList = deviceTechnologyAttrList(
+                lib, deviceSet.getNamedDevice((String)item.get("device"))
+        );
         VBox.setMargin(deviceTechnologyAttrList, new Insets(8));
         VBox footAttrVertArea = new VBox(footprintContainer, deviceTechnologyAttrList);
         VBox.setVgrow(footprintContainer, Priority.ALWAYS);
@@ -245,7 +263,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         return contentArea;
     }
 
-    private Node deviceSetList() {
+    private TableView deviceSetList(int index) {
         Library lib = LibraryCache.getInstance().getLibrary(getFile());
         if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
@@ -291,7 +309,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 item.put("device", d.getName());
                 item.put("footprint", d.getFootprint());
                 item.put("has3D", haz3d);
-                item.put("description", pkg.getDescription());
+                item.put("description", pkg.getDescription().getValue());
                 items.add(item);
             } else {
                 for ( Technology t: technologies ) {
@@ -309,7 +327,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                     item.put("device", name);
                     item.put("footprint", d.getFootprint());
                     item.put("has3D", haz3d);
-                    item.put("description", pkg.getDescription());
+                    item.put("description", pkg.getDescription().getValue());
                     items.add(item);
                 }
             }
@@ -318,14 +336,19 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
         tableView.getItems().addAll(items);
 
+        if ( tableView.getItems().size() > index ) {
+            tableView.getSelectionModel().select(index);
+        }
+        
         return tableView;
     }
 
-    private Node deviceTechnologyAttrList(Library lib) {
+    private Node deviceTechnologyAttrList(Library lib, Device device) {
         
         DeviceSet deviceSet = lib.getDeviceSet(getName());
-        Technology tech = deviceSet.getDevices().get(0).getTechnologies().get(0);
-
+        //Technology tech = deviceSet.getDevices().get(0).getTechnologies().get(0);
+        Technology tech = device.getTechnologies().get(0);
+        
         TableView tableView = new TableView();
         tableView.setId("technology-attributes-table"); // Makes the font smaller
         tableView.setPlaceholder( new Label("No attrributes to display"));

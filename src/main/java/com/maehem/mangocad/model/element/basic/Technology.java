@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.element.basic.Attribute;
 import java.util.ArrayList;
 import java.util.List;
 

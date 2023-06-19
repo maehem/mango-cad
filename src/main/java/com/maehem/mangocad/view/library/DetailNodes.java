@@ -149,7 +149,7 @@ public class DetailNodes {
 
         Symbol symbol = lib.getSymbol(gate.getSymbol());
         symbol.getElements().forEach((e) -> {
-            LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
+            //LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
             int layerNum = e.getLayerNum();
             LayerElement le = layers[e.getLayerNum()];
             if (le == null) {

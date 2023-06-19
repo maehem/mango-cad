@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.LibraryCache;
 import com.maehem.mangocad.model.SchematicCache;
+import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -164,7 +166,14 @@ public class SchematicFileItem extends ControlPanelListItem {
         Node schematicPreviewNode = schematicPreviewNode(sch);
         VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
         
-        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList(sch) );
+        TableView sheetList = sheetList(sch);
+        sheetList.setOnMouseClicked((mouseEvent) -> {
+            // What row is clicked?
+            // Tell schematic preview to update to that sheet preview.
+            LOGGER.log(Level.SEVERE, "User clicked: " + sheetList.getSelectionModel().getSelectedItem().toString());
+        });
+        
+        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList );
         spPane.setOrientation(Orientation.VERTICAL);
         spPane.setDividerPosition(0, 0.8);
         VBox.setVgrow(spPane, Priority.ALWAYS);
@@ -196,7 +205,7 @@ public class SchematicFileItem extends ControlPanelListItem {
         return container;
     }
 
-    private Node sheetList(Schematic sch) {
+    private TableView sheetList(Schematic sch) {
 
         TableView tableView = new TableView();
         tableView.setPlaceholder( new Label("No rows to display"));
@@ -204,14 +213,17 @@ public class SchematicFileItem extends ControlPanelListItem {
         TableColumn<Map, String> sheetname = new TableColumn<>("Sheet");
         sheetname.setCellValueFactory(new MapValueFactory<>("sheet"));
 
-        TableColumn<Map, String> size = new TableColumn<>("Size");
-        size.setCellValueFactory(new MapValueFactory<>("size"));
+        // Size can't be computed without loading all the sheets.
+        // It is also somewhat unimportant here. So maybe we'll add it
+        // someday but not right now.
+//        TableColumn<Map, String> size = new TableColumn<>("Size");
+//        size.setCellValueFactory(new MapValueFactory<>("size"));
         
         TableColumn<Map, String> desc = new TableColumn<>("Description");
         desc.setCellValueFactory(new MapValueFactory<>("description"));
 
         tableView.getColumns().add(sheetname);
-        tableView.getColumns().add(size);
+        //tableView.getColumns().add(size);
         tableView.getColumns().add(desc);
 
         ObservableList<Map<String, Object>> items
@@ -222,7 +234,7 @@ public class SchematicFileItem extends ControlPanelListItem {
             Map<String, Object> item = new HashMap<>();
 
             item.put("sheet", "Sheet " + sheetIndex);
-            item.put("size", "???");
+            //item.put("size", "???");
             item.put("description", sheet.getDescription().getValue());
             items.add(item);
             
@@ -230,7 +242,7 @@ public class SchematicFileItem extends ControlPanelListItem {
         }
 
         tableView.getItems().addAll(items);
-
+            
         return tableView;
     }
 
