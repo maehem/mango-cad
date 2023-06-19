@@ -176,16 +176,12 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         spPane.setDividerPosition(0, 0.72);
         VBox.setVgrow(spPane, Priority.ALWAYS);
         
-//        Map<String, Object> selectedItem = (Map<String, Object>) deviceSetList.getSelectionModel().getSelectedItem();
-//        LOGGER.log(Level.SEVERE, 
-//                "First Item:" + selectedItem.toString()
-//        );
         scrollPane.setContent(devicePreviewNode(
                 (Map<String, Object>) deviceSetList.getSelectionModel().getSelectedItem()
         ));
         
         deviceSetList.setOnMouseClicked((t) -> {
-            LOGGER.log(Level.SEVERE, "User Clicked: " + deviceSetList.getSelectionModel().getSelectedIndex());
+            LOGGER.log(Level.FINEST, "User Clicked: {0}", deviceSetList.getSelectionModel().getSelectedIndex());
             TableView.TableViewSelectionModel model = deviceSetList.getSelectionModel();
             Map<String, Object> item = (Map<String, Object>) model.getSelectedItem();
             scrollPane.setContent(devicePreviewNode(item));
@@ -200,8 +196,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 spPane
         );
 
-        BorderPane pane = new BorderPane(contentArea);
-        return pane;
+        return new BorderPane(contentArea);
     }
 
     private Node devicePreviewNode( Map<String, Object> item ) {
@@ -224,8 +219,9 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         )));
 
         String pkgName = (String) item.get("footprint");
-        LOGGER.log(Level.SEVERE, "Selected Footprint:" + pkgName);
-        Group footprintPreview = DetailNodes.footprintPreview(lib.getPackage(pkgName), lib, true);
+        LOGGER.log(Level.FINEST, "Selected Footprint:{0}", pkgName);
+
+        Group footprintPreview = DetailNodes.footprintPreview((Footprint) item.get("f"), lib, true);
         GroupContainer footprintContainer = new GroupContainer(footprintPreview,0.1);
         
         // Add a border
@@ -238,9 +234,8 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         )));
 
         
-        Node deviceTechnologyAttrList = deviceTechnologyAttrList(
-                lib, deviceSet.getNamedDevice((String)item.get("device"))
-        );
+        Node deviceTechnologyAttrList = deviceTechnologyAttrList((Technology) item.get("t"));
+
         VBox.setMargin(deviceTechnologyAttrList, new Insets(8));
         VBox footAttrVertArea = new VBox(footprintContainer, deviceTechnologyAttrList);
         VBox.setVgrow(footprintContainer, Priority.ALWAYS);
@@ -253,7 +248,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         HBox.setHgrow(footAttrVertArea, Priority.SOMETIMES);
 
         ImageView package3DPreview = DetailNodes.package3DPreview(
-                deviceSet.getDevices().get(0).getPackage3dInstances().get(0),
+                ((Device)item.get("d")).getPackage3dInstances().get(0),
                 lib
         );
         package3DPreview.setFitHeight(200);
@@ -264,15 +259,8 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
     }
 
     private TableView deviceSetList(int index) {
-        Library lib = LibraryCache.getInstance().getLibrary(getFile());
-        if (lib == null) {
-            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
-        }
-        DeviceSet deviceSet = lib.getDeviceSet(getName());
-
         TableView tableView = new TableView();
         tableView.setPlaceholder( new Label("No rows to display"));
-        
         TableColumn<Map, String> deviceName = new TableColumn<>("Device");
         deviceName.setCellValueFactory(new MapValueFactory<>("device"));
 
@@ -289,6 +277,15 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         tableView.getColumns().add(footprint);
         tableView.getColumns().add(has3DCol);
         tableView.getColumns().add(desc);
+        
+        Library lib = LibraryCache.getInstance().getLibrary(getFile());
+        if (lib == null) {
+            LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
+            tableView.setPlaceholder( new Label("OOPS! Library File didn't load!"));
+            return tableView;
+        }
+        
+        DeviceSet deviceSet = lib.getDeviceSet(getName());
 
         ObservableList<Map<String, Object>> items
                 = FXCollections.<Map<String, Object>>observableArrayList();
@@ -307,6 +304,9 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 Map<String, Object> item = new HashMap<>();
 
                 item.put("device", d.getName());
+                item.put("d", d); // Device Object
+                item.put("t", null); // Technology Object
+                item.put("f", lib.getPackage(d.getFootprint()));
                 item.put("footprint", d.getFootprint());
                 item.put("has3D", haz3d);
                 item.put("description", pkg.getDescription().getValue());
@@ -325,6 +325,9 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                         name += d.getName();
                     }
                     item.put("device", name);
+                    item.put("d", d); // Device Object
+                    item.put("t", t); // Technology Object
+                    item.put("f", lib.getPackage(d.getFootprint()));
                     item.put("footprint", d.getFootprint());
                     item.put("has3D", haz3d);
                     item.put("description", pkg.getDescription().getValue());
@@ -343,11 +346,19 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         return tableView;
     }
 
-    private Node deviceTechnologyAttrList(Library lib, Device device) {
+    //private Node deviceTechnologyAttrList(Library lib, Device device) {
+    private Node deviceTechnologyAttrList(Technology tech) {
         
-        DeviceSet deviceSet = lib.getDeviceSet(getName());
-        //Technology tech = deviceSet.getDevices().get(0).getTechnologies().get(0);
-        Technology tech = device.getTechnologies().get(0);
+//        DeviceSet deviceSet = lib.getDeviceSet(getName());
+//        LOGGER.log(Level.SEVERE, "Device Set: " + getName());
+//        deviceSet.getDevices().forEach((d) -> {
+//            LOGGER.log(Level.SEVERE, "Device: " + d.getName());
+//            d.getTechnologies().forEach((t) -> {
+//                LOGGER.log(Level.SEVERE, "Tech: " + t.getName());
+//            });
+//        });
+//        //Technology tech = deviceSet.getDevices().get(0).getTechnologies().get(0);
+//        //sTechnology tech = device.getTechnologies().get(0);
         
         TableView tableView = new TableView();
         tableView.setId("technology-attributes-table"); // Makes the font smaller
@@ -365,12 +376,14 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         ObservableList<Map<String, Object>> items
                 = FXCollections.<Map<String, Object>>observableArrayList();
 
-        for ( Attribute d: tech.getAttributes() ) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("attribute", d.getName());
-            item.put("value", d.getValue());
+        if (tech != null) {
+            for (Attribute d : tech.getAttributes()) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("attribute", d.getName());
+                item.put("value", d.getValue());
 
-            items.add(item);
+                items.add(item);
+            }
         }
 
         tableView.getItems().addAll(items);
