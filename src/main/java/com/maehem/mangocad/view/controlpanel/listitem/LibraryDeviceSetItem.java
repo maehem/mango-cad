@@ -346,20 +346,8 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         return tableView;
     }
 
-    //private Node deviceTechnologyAttrList(Library lib, Device device) {
     private Node deviceTechnologyAttrList(Technology tech) {
-        
-//        DeviceSet deviceSet = lib.getDeviceSet(getName());
-//        LOGGER.log(Level.SEVERE, "Device Set: " + getName());
-//        deviceSet.getDevices().forEach((d) -> {
-//            LOGGER.log(Level.SEVERE, "Device: " + d.getName());
-//            d.getTechnologies().forEach((t) -> {
-//                LOGGER.log(Level.SEVERE, "Tech: " + t.getName());
-//            });
-//        });
-//        //Technology tech = deviceSet.getDevices().get(0).getTechnologies().get(0);
-//        //sTechnology tech = device.getTechnologies().get(0);
-        
+                
         TableView tableView = new TableView();
         tableView.setId("technology-attributes-table"); // Makes the font smaller
         tableView.setPlaceholder( new Label("No attrributes to display"));
