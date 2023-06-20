@@ -47,6 +47,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
@@ -65,6 +66,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 /**
@@ -169,16 +171,21 @@ public class SchematicFileItem extends ControlPanelListItem {
 
         for ( int i=0; i < sch.getSheets().size(); i++) {
             GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
-            VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
+            VBox.setVgrow(schematicPreviewNode, Priority.SOMETIMES);
 
-            //VBox tabContent = new VBox(schematicPreviewNode);
-            //tabContent.setFillWidth(true);
-            
-            BorderPane tabContent = new BorderPane(schematicPreviewNode);
             Text descText = new Text(sch.getSheets().get(i).getDescription().getValue());
+            descText.getStyleClass().add("label"); // .label from CSS sheet.
+            TextFlow textFlow = new TextFlow(descText);
+            textFlow.setMinHeight(100);
+            textFlow.setPrefHeight(100);
+            //VBox.setVgrow(textFlow, Priority.SOMETIMES);
+            VBox tabContent = new VBox(schematicPreviewNode,textFlow);
+            tabContent.setFillWidth(true);
+            
+            //BorderPane tabContent = new BorderPane(schematicPreviewNode);
             //descText.setFill(Color.LIGHTGRAY);
             
-            tabContent.setBottom(descText);
+            //tabContent.setBottom(descText);
             
             Tab tab = new Tab("Sheet " + (i+1), tabContent);
 
