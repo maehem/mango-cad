@@ -41,18 +41,24 @@ public class SchematicPreview extends Group {
     
     private static final Logger LOGGER = Logger.getLogger(SchematicFileItem.class.getSimpleName());
 
-    public SchematicPreview(Schematic schematic) {
+    private final Schematic schematic;
+    private int index;
+    
+    public SchematicPreview(Schematic schematic, int index) {
         super();
-        if ( schematic.getSheets().get(0) != null ) {
-            populateNode(schematic);
+        this.schematic = schematic;
+        this.index = index;
+        
+        if ( schematic.getSheets().get(index) != null ) {
+            populateNode(schematic, index);
         } else {
-            Text t = new Text("No sheets to show!");
+            Text t = new Text("No sheet to show! No sheet found at index " + index);
             getChildren().add(t);
         }
     }
     
-    private void populateNode( Schematic schem ) {
-        Sheet sheet = schem.getSheets().get(0);
+    private void populateNode( Schematic schem, int index ) {
+        Sheet sheet = schem.getSheets().get(index);
         if ( sheet.getPlain().isEmpty() ) {
             LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
         }

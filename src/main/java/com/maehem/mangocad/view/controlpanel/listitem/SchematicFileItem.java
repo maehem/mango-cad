@@ -16,15 +16,10 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.model.element.drawing.Library;
-import com.maehem.mangocad.model.LibraryCache;
 import com.maehem.mangocad.model.SchematicCache;
-import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.drawing.Schematic;
-import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
-import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
 import com.maehem.mangocad.view.schematic.SchematicPreview;
@@ -33,8 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -48,8 +43,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -163,39 +161,88 @@ public class SchematicFileItem extends ControlPanelListItem {
             LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
         }
 
-        Node schematicPreviewNode = schematicPreviewNode(sch);
-        VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
+        //GroupContainer schematicPreviewNode = schematicPreviewNode(sch, 0);
+        //VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
         
-        TableView sheetList = sheetList(sch);
-        sheetList.setOnMouseClicked((mouseEvent) -> {
-            // What row is clicked?
-            // Tell schematic preview to update to that sheet preview.
-            LOGGER.log(Level.SEVERE, "User clicked: " + sheetList.getSelectionModel().getSelectedItem().toString());
-        });
-        
-        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList );
-        spPane.setOrientation(Orientation.VERTICAL);
-        spPane.setDividerPosition(0, 0.8);
-        VBox.setVgrow(spPane, Priority.ALWAYS);
-        
-        
+        TabPane tabPane = new TabPane();
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
 
+        for ( int i=0; i < sch.getSheets().size(); i++) {
+            GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
+            VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
+
+            //VBox tabContent = new VBox(schematicPreviewNode);
+            //tabContent.setFillWidth(true);
+            
+            BorderPane tabContent = new BorderPane(schematicPreviewNode);
+            Text descText = new Text(sch.getSheets().get(i).getDescription().getValue());
+            //descText.setFill(Color.LIGHTGRAY);
+            
+            tabContent.setBottom(descText);
+            
+            Tab tab = new Tab("Sheet " + (i+1), tabContent);
+
+            tab.setClosable(false);
+            tab.setTooltip(new Tooltip(sch.getSheets().get(i).getDescription().getValue()));
+            tabPane.getTabs().add(tab);
+            
+            // TODO.  Put in VBox with page description and dimesions at bottom.
+        }
+        
+        //TableView sheetList = sheetList(sch);
+        //SplitPane splitPane = getSplitPane(sch, sheetList);
         VBox contentArea = new VBox(
                 heading,
                 ControlPanelUtils.markdownNode(
                         1.5,
                         sch.getDescription().getValue()
                 ),
-                spPane
+                tabPane
         );
+        contentArea.setFillWidth(true);
+        
+
+        tabPane.requestLayout();
+//        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList );
+//        spPane.setOrientation(Orientation.VERTICAL);
+//        spPane.setDividerPosition(0, 0.8);
+//        VBox.setVgrow(spPane, Priority.ALWAYS);
+
+//        sheetList.setOnMouseClicked((mouseEvent) -> {
+//            // What row is clicked?
+//            // Tell schematic preview to update to that sheet preview.
+//            TableView.TableViewSelectionModel model = sheetList.getSelectionModel();
+//            Map<String, Object> item = (Map<String, Object>) model.getSelectedItem();
+//            int index = (int) item.get("index");
+//            LOGGER.log(Level.SEVERE, "User clicked: {0}", sheetList.getSelectionModel().getSelectedItem().toString());
+//
+//
+//            schematicPreview.setPageIndex(index);
+//        });
+        
+        
+        
+
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
     }
 
-    private Node schematicPreviewNode(Schematic sch) {
+//    private SplitPane getSplitPane(Schematic sch, Node sheetList) {
+//        GroupContainer schematicPreviewNode = schematicPreviewNode(sch, 0);
+//        VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
+//
+//        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList );
+//        spPane.setOrientation(Orientation.VERTICAL);
+//        spPane.setDividerPosition(0, 0.8);
+//        VBox.setVgrow(spPane, Priority.ALWAYS);
+//        
+//        return spPane;
+//    }
+    
+    private GroupContainer schematicPreviewNode(Schematic sch, int index) {
 
-        Group schematicPreview = new SchematicPreview(sch);
+        SchematicPreview schematicPreview = new SchematicPreview(sch, index);
         StackPane sp = new StackPane(schematicPreview);
         sp.setBackground(new Background(new BackgroundFill(new Color(0.1,0.1,0.1,1.0), CornerRadii.EMPTY, Insets.EMPTY)));
         Group schemPreviewGroup = new Group(sp);
@@ -205,46 +252,47 @@ public class SchematicFileItem extends ControlPanelListItem {
         return container;
     }
 
-    private TableView sheetList(Schematic sch) {
-
-        TableView tableView = new TableView();
-        tableView.setPlaceholder( new Label("No rows to display"));
-        
-        TableColumn<Map, String> sheetname = new TableColumn<>("Sheet");
-        sheetname.setCellValueFactory(new MapValueFactory<>("sheet"));
-
-        // Size can't be computed without loading all the sheets.
-        // It is also somewhat unimportant here. So maybe we'll add it
-        // someday but not right now.
-//        TableColumn<Map, String> size = new TableColumn<>("Size");
-//        size.setCellValueFactory(new MapValueFactory<>("size"));
-        
-        TableColumn<Map, String> desc = new TableColumn<>("Description");
-        desc.setCellValueFactory(new MapValueFactory<>("description"));
-
-        tableView.getColumns().add(sheetname);
-        //tableView.getColumns().add(size);
-        tableView.getColumns().add(desc);
-
-        ObservableList<Map<String, Object>> items
-                = FXCollections.<Map<String, Object>>observableArrayList();
-
-        int sheetIndex = 1;
-        for ( Sheet sheet : sch.getSheets() ) {
-            Map<String, Object> item = new HashMap<>();
-
-            item.put("sheet", "Sheet " + sheetIndex);
-            //item.put("size", "???");
-            item.put("description", sheet.getDescription().getValue());
-            items.add(item);
-            
-            sheetIndex++;
-        }
-
-        tableView.getItems().addAll(items);
-            
-        return tableView;
-    }
+//    private TableView sheetList(Schematic sch) {
+//
+//        TableView tableView = new TableView();
+//        tableView.setPlaceholder( new Label("No rows to display"));
+//        
+//        TableColumn<Map, String> sheetname = new TableColumn<>("Sheet");
+//        sheetname.setCellValueFactory(new MapValueFactory<>("sheet"));
+//
+//        // Size can't be computed without loading all the sheets.
+//        // It is also somewhat unimportant here. So maybe we'll add it
+//        // someday but not right now.
+////        TableColumn<Map, String> size = new TableColumn<>("Size");
+////        size.setCellValueFactory(new MapValueFactory<>("size"));
+//        
+//        TableColumn<Map, String> desc = new TableColumn<>("Description");
+//        desc.setCellValueFactory(new MapValueFactory<>("description"));
+//
+//        tableView.getColumns().add(sheetname);
+//        //tableView.getColumns().add(size);
+//        tableView.getColumns().add(desc);
+//
+//        ObservableList<Map<String, Object>> items
+//                = FXCollections.<Map<String, Object>>observableArrayList();
+//
+//        int sheetIndex = 1;
+//        for ( Sheet sheet : sch.getSheets() ) {
+//            Map<String, Object> item = new HashMap<>();
+//
+//            item.put("sheet", "Sheet " + sheetIndex);
+//            item.put("index", sheetIndex-1);
+//            //item.put("size", "???");
+//            item.put("description", sheet.getDescription().getValue());
+//            items.add(item);
+//            
+//            sheetIndex++;
+//        }
+//
+//        tableView.getItems().addAll(items);
+//            
+//        return tableView;
+//    }
 
     @Override
     public Image getImage() {
