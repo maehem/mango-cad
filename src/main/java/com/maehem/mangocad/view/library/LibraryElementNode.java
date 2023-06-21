@@ -193,16 +193,25 @@ public class LibraryElementNode {
     }
     
     public static Node createText(ElementText et, String altText, Color color) {
+        double fontSizeMult =  0.72272; // Multiply font size
+        double fontSize = et.getSize()/fontSizeMult;
+        
         //String fontPath = "/fonts/Source_Code_Pro/SourceCodePro-VariableFont_wght.ttf";
         String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
-        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), et.getSize());
+        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), fontSize);
         Text tt = new Text(altText!=null?altText:et.getValue());
         tt.setFont(font);
         tt.setFill(color);
+        
+        
         double width = tt.getBoundsInLocal().getWidth();
         double height = tt.getBoundsInLocal().getHeight();
+        // JavaFX has not yet exposed FontMetrics so we make these assumtions.
+        double fontAsc = height * 0.58; // Font ascends this much.
+        double fontDes = height * 0.27;   // Font descends this much.
 
         int rot = (int) et.getRotation().getValue();
+        boolean mir = et.getRotation().isMirror();
 
         double rotX = 0.0;
         double rotY = 0.0;
@@ -210,24 +219,31 @@ public class LibraryElementNode {
         switch (rot) {
             case 270 -> {
                 tt.setRotate(270);
-                rotX = -width / 2.0 + height * 0.3;
-                rotY = width / 2.0 + height * 0.3;
+                rotX = -width / 2.0 + fontDes;
+                rotY = width / 2.0 + fontDes;
             }
             case 180 -> {
-                if (et.getRotation().isMirror()) {
+                if (mir) {
                     rot = 0;
-                    rotY = height * 0.66;
+                    rotY = fontAsc;
                 }
             }
             case 90 -> {
                 tt.setRotate(270);
-                rotX = -width / 2.0 - height * 0.3;
-                rotY = -width / 2.0 + height * 0.3;
+                rotX = -width / 2.0 - fontDes;
+                rotY = -width / 2.0 + fontDes;
             }
             default -> {
-                if (et.getRotation().isMirror()) {
+                if (mir) {
                     rot = 180;
-                    rotY = -height * 0.66;
+                    switch( et.getAlign() ) {
+                        case TOP_CENTER,TOP_LEFT,TOP_RIGHT -> {
+                            rotY = fontAsc;
+                        }
+                        default -> {
+                            rotY = -fontAsc;
+                        }
+                    }
                 }
             }
         }
@@ -235,15 +251,15 @@ public class LibraryElementNode {
         double pxL = et.getX() + rotX;
         double pxR = et.getX() - width + rotX;
         double pL = rot == 180 ? pxR : pxL;
-        double pR = rot == 180 ? pxL : pxL;
+        double pR = rot == 180 ? pxL : pxR;
 
-        double pyT = -et.getY() + height * 0.66 + rotY;
+        double pyT = -et.getY() + rotY + fontAsc;
         double pyB = -et.getY() + rotY;
         double pT = rot == 180 ? pyB : pyT;
         double pB = rot == 180 ? pyT : pyB;
 
         double cX = et.getX() - width / 2.0;
-        double cY = -et.getY() + height * 0.3;
+        double cY = -et.getY() + fontDes;
 
         Pane ttG = new Pane(tt);
         ttG.setPrefHeight(et.getSize());
