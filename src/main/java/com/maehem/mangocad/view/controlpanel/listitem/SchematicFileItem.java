@@ -52,6 +52,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -163,17 +164,18 @@ public class SchematicFileItem extends ControlPanelListItem {
                 );
             VBox.setVgrow(pageDesc, Priority.SOMETIMES);
 
-            // TODO.  dimesion values before description..
             MessageFormat mf = new MessageFormat("Size: {0}W x {1}H ({2}x{3}cm)");
-           Double MM2INCH = 0.0393701;
+            Double MM2INCH = 0.0393701;
             Text pageSizeText = new Text( mf.format(new Object[]{ 
                 schematicPreviewNode.getNativeWidth()*MM2INCH,
                 schematicPreviewNode.getNativeHeight()*MM2INCH,
                 schematicPreviewNode.getNativeWidth()/10.0,
                 schematicPreviewNode.getNativeHeight()/10.0
             }));
-
+            pageSizeText.setId("preview-document-dimensions-text");
+            
             HBox pageInfo = new HBox(pageSizeText);
+            pageInfo.setAlignment(Pos.CENTER);
             
             VBox pageDetails = new VBox(pageInfo, pageDesc);
             

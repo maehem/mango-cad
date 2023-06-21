@@ -83,3 +83,7 @@
 #technology-attributes-table{
     -fx-font-size:70%;
 }
+
+#preview-document-dimensions-text{
+    -fx-font-size:120%;
+}
