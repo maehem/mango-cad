@@ -18,11 +18,13 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
+import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
 import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
@@ -151,25 +153,38 @@ public class SchematicFileItem extends ControlPanelListItem {
         VBox.setVgrow(tabPane, Priority.ALWAYS);
 
         for ( int i=0; i < sch.getSheets().size(); i++) {
+            Sheet sheet = sch.getSheets().get(i);
             GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
             VBox.setVgrow(schematicPreviewNode, Priority.SOMETIMES);
 
             Node pageDesc = ControlPanelUtils.markdownNode(
                         1.0,
-                        sch.getSheets().get(i).getDescription().getValue()
+                        sheet.getDescription().getValue()
                 );
             VBox.setVgrow(pageDesc, Priority.SOMETIMES);
 
             // TODO.  dimesion values before description..
-            SplitPane spPane = new SplitPane(schematicPreviewNode, pageDesc );
+            MessageFormat mf = new MessageFormat("Size: {0}W x {1}H ({2}x{3}cm)");
+           Double MM2INCH = 0.0393701;
+            Text pageSizeText = new Text( mf.format(new Object[]{ 
+                schematicPreviewNode.getNativeWidth()*MM2INCH,
+                schematicPreviewNode.getNativeHeight()*MM2INCH,
+                schematicPreviewNode.getNativeWidth()/10.0,
+                schematicPreviewNode.getNativeHeight()/10.0
+            }));
+
+            HBox pageInfo = new HBox(pageSizeText);
+            
+            VBox pageDetails = new VBox(pageInfo, pageDesc);
+            
+            SplitPane spPane = new SplitPane(schematicPreviewNode, pageDetails );
             spPane.setOrientation(Orientation.VERTICAL);
             spPane.setDividerPosition(0, 0.8);
-            
             
             Tab tab = new Tab("Sheet " + (i+1), spPane);
 
             tab.setClosable(false);
-            tab.setTooltip(new Tooltip(sch.getSheets().get(i).getDescription().getValue()));
+            tab.setTooltip(new Tooltip(sheet.getDescription().getValue()));
             tabPane.getTabs().add(tab);
             
         }

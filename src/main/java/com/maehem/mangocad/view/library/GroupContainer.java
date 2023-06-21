@@ -73,4 +73,12 @@ public class GroupContainer extends BorderPane {
         shapeGroup.setScaleX(scale * (1.0-margin));
         shapeGroup.setScaleY(scale * (1.0-margin));
     }
+    
+    public Double getNativeWidth() {
+        return shapW;
+    }
+    
+    public Double getNativeHeight() {
+        return shapH;
+    }
 }
