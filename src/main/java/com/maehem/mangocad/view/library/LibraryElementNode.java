@@ -193,7 +193,7 @@ public class LibraryElementNode {
     }
     
     public static Node createText(ElementText et, String altText, Color color) {
-        double fontSizeMult =  0.72272; // Multiply font size
+        double fontSizeMult =  0.72272; // IN to Point ratio
         double fontSize = et.getSize()/fontSizeMult;
         
         //String fontPath = "/fonts/Source_Code_Pro/SourceCodePro-VariableFont_wght.ttf";
