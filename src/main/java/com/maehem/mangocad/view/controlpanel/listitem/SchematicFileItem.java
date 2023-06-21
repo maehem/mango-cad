@@ -18,19 +18,13 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
-import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
 import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -38,26 +32,17 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -66,7 +51,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 /**
@@ -162,9 +146,6 @@ public class SchematicFileItem extends ControlPanelListItem {
         if (sch == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
         }
-
-        //GroupContainer schematicPreviewNode = schematicPreviewNode(sch, 0);
-        //VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
         
         TabPane tabPane = new TabPane();
         VBox.setVgrow(tabPane, Priority.ALWAYS);
@@ -173,31 +154,26 @@ public class SchematicFileItem extends ControlPanelListItem {
             GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
             VBox.setVgrow(schematicPreviewNode, Priority.SOMETIMES);
 
-            Text descText = new Text(sch.getSheets().get(i).getDescription().getValue());
-            descText.getStyleClass().add("label"); // .label from CSS sheet.
-            TextFlow textFlow = new TextFlow(descText);
-            textFlow.setMinHeight(100);
-            textFlow.setPrefHeight(100);
-            //VBox.setVgrow(textFlow, Priority.SOMETIMES);
-            VBox tabContent = new VBox(schematicPreviewNode,textFlow);
-            tabContent.setFillWidth(true);
+            Node pageDesc = ControlPanelUtils.markdownNode(
+                        1.0,
+                        sch.getSheets().get(i).getDescription().getValue()
+                );
+            VBox.setVgrow(pageDesc, Priority.SOMETIMES);
+
+            // TODO.  dimesion values before description..
+            SplitPane spPane = new SplitPane(schematicPreviewNode, pageDesc );
+            spPane.setOrientation(Orientation.VERTICAL);
+            spPane.setDividerPosition(0, 0.8);
             
-            //BorderPane tabContent = new BorderPane(schematicPreviewNode);
-            //descText.setFill(Color.LIGHTGRAY);
             
-            //tabContent.setBottom(descText);
-            
-            Tab tab = new Tab("Sheet " + (i+1), tabContent);
+            Tab tab = new Tab("Sheet " + (i+1), spPane);
 
             tab.setClosable(false);
             tab.setTooltip(new Tooltip(sch.getSheets().get(i).getDescription().getValue()));
             tabPane.getTabs().add(tab);
             
-            // TODO.  Put in VBox with page description and dimesions at bottom.
         }
         
-        //TableView sheetList = sheetList(sch);
-        //SplitPane splitPane = getSplitPane(sch, sheetList);
         VBox contentArea = new VBox(
                 heading,
                 ControlPanelUtils.markdownNode(
@@ -208,28 +184,6 @@ public class SchematicFileItem extends ControlPanelListItem {
         );
         contentArea.setFillWidth(true);
         
-
-        tabPane.requestLayout();
-//        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList );
-//        spPane.setOrientation(Orientation.VERTICAL);
-//        spPane.setDividerPosition(0, 0.8);
-//        VBox.setVgrow(spPane, Priority.ALWAYS);
-
-//        sheetList.setOnMouseClicked((mouseEvent) -> {
-//            // What row is clicked?
-//            // Tell schematic preview to update to that sheet preview.
-//            TableView.TableViewSelectionModel model = sheetList.getSelectionModel();
-//            Map<String, Object> item = (Map<String, Object>) model.getSelectedItem();
-//            int index = (int) item.get("index");
-//            LOGGER.log(Level.SEVERE, "User clicked: {0}", sheetList.getSelectionModel().getSelectedItem().toString());
-//
-//
-//            schematicPreview.setPageIndex(index);
-//        });
-        
-        
-        
-
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
@@ -246,7 +200,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 //        
 //        return spPane;
 //    }
-    
+        
     private GroupContainer schematicPreviewNode(Schematic sch, int index) {
 
         SchematicPreview schematicPreview = new SchematicPreview(sch, index);
