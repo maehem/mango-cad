@@ -102,6 +102,11 @@ public class LibraryElementNode {
      * @return
      */
     public static Node createWireNode(Wire w, Color color) {
+        double strokeWidth = w.getWidth();
+        if ( strokeWidth <= 0.0 ) {
+            // Wires can't be 0 width.
+            strokeWidth = 0.1524; // 6mil
+        }
         if (w.getCurve() != 0.0) {
             Path path = new Path();
 
@@ -128,14 +133,14 @@ public class LibraryElementNode {
             path.getElements().add(arc);
 
             path.setStrokeLineCap(StrokeLineCap.ROUND);
-            path.setStrokeWidth(w.getWidth());
+            path.setStrokeWidth(strokeWidth);
             path.setStroke(color);
 
             return path;
         } else {
             Line line = new Line(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
             line.setStrokeLineCap(StrokeLineCap.ROUND);
-            line.setStrokeWidth(w.getWidth());
+            line.setStrokeWidth(strokeWidth);
             line.setStroke(color);
 
             return line;

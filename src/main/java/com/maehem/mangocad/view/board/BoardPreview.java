@@ -85,7 +85,11 @@ public class BoardPreview extends Group {
 
             if (!libSearch.isEmpty()) {
                 Footprint pkg = libSearch.get().getPackage(element.getFootprint());
-                Node pkgPreview = DetailNodes.footprintPreview(pkg, libSearch.get(), false);
+                Node pkgPreview = LibraryElementNode.createPackageNode(
+                        pkg, board.getParentDrawing().getLayers(), 
+                        board.getParentDrawing().getPalette()
+                );
+                //Node pkgPreview = DetailNodes.footprintPreview(pkg, libSearch.get(), false);
                 pkgPreview.setLayoutX(element.getX());
                 pkgPreview.setLayoutY(-element.getY());
                 pkgPreview.setRotate(element.getRot());
