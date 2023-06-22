@@ -2669,7 +2669,7 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (!item.getNodeName().equals(Part.ELEMENT_NAME)) {
+            if (!item.getNodeName().equals(ElementElement.ELEMENT_NAME)) {
                 // TODO: Log this exception.
                 continue;
             }
