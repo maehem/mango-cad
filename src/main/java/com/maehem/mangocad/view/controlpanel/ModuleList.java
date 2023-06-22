@@ -30,6 +30,7 @@ import com.maehem.mangocad.view.controlpanel.listitem.ProjectFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.ProjectSubFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.ProjectModuleItem;
 import com.maehem.mangocad.AppProperties;
+import com.maehem.mangocad.model.BoardCache;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.LibraryCache;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
@@ -38,7 +39,9 @@ import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.SchematicCache;
+import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.controlpanel.listitem.BoardFileItem;
 import com.maehem.mangocad.view.controlpanel.listitem.SchematicFileItem;
 import java.io.BufferedReader;
 import java.io.File;
@@ -262,6 +265,27 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
                 //populateSchematicDetailItems(schem, schFile, item);
             } else {
                 TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
+                parentItem.getChildren().add(item);
+            }
+        }
+        
+        // TODO: Combine Library, Schematic and Board into one "Design" Cache.
+        File[] brds = dir.listFiles((file) -> {    // lambda expression
+            return (file.isFile() && file.getName().endsWith("." + Board.FILE_EXTENSION));
+        });
+        for (File brdFile : brds) {
+            // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
+            //       See: https://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
+            //       for a possible solution.
+            // Library importLBR = EagleCADUtils.importLBR(lbr);
+            //Library library = LibraryCache.getInstance().getLibrary(schFile);
+            Board board = BoardCache.getInstance().getBoard( brdFile );
+            if (board != null) {
+                TreeItem item;
+                item = new TreeItem(new BoardFileItem(brdFile.getName(), board.getDescription().getValue(), brdFile));
+                parentItem.getChildren().add(item);
+            } else {
+                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Board Error", null));
                 parentItem.getChildren().add(item);
             }
         }

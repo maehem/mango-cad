@@ -17,24 +17,48 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
-
+import com.maehem.mangocad.model.element.enums.WireCap;
+import com.maehem.mangocad.model.element.enums.WireStyle;
+import java.util.ArrayList;
 
 /**
+ * <pre>
+ * wire EMPTY
+ *    ATTLIST wire
+ *      x1            %Coord;        #REQUIRED
+ *      y1            %Coord;        #REQUIRED
+ *      x2            %Coord;        #REQUIRED
+ *      y2            %Coord;        #REQUIRED
+ *      width         %Dimension;    #REQUIRED
+ *      layer         %Layer;        #REQUIRED
+ *      extent        %Extent;       #IMPLIED
+ *      style         %WireStyle;    "continuous"
+ *      curve         %WireCurve;    "0"
+ *      cap           %WireCap;      "round"
+ *      grouprefs     IDREFS         #IMPLIED
+ *
+ *      extent: Only applicable for airwires -->
+ *      cap   : Only applicable if 'curve' is not zero -->
+ * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Wire extends _AQuantum {
+
+    public static final String ELEMENT_NAME = "wire";
+    
     private double x1;
     private double y1;
     private double x2;
     private double y2;
     private double width;
+    private String extent = "";  // TODO: Store as 'extent' object. 
+    private WireStyle style = WireStyle.CONTINUOUS;
     private double curve = 0.0;
-    private String cap = "round";
-    private String style = "continuous";
+    private WireCap cap = WireCap.ROUND;
 
-    public static final String ELEMENT_NAME = "wire";
-    
+    private final ArrayList<String> grouprefs = new ArrayList<>();
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -127,37 +151,50 @@ public class Wire extends _AQuantum {
     /**
      * @return the cap
      */
-    public String getCap() {
+    public WireCap getCap() {
         return cap;
     }
 
     /**
      * @param cap the cap to set
      */
-    public void setCap(String cap) {
+    public void setCap(WireCap cap) {
         this.cap = cap;
+    }
+
+
+    /**
+     * @return the extent
+     */
+    public String getExtent() {
+        return extent;
+    }
+
+    /**
+     * @param extent the extent to set
+     */
+    public void setExtent(String extent) {
+        this.extent = extent;
     }
 
     /**
      * @return the style
      */
-    public String getStyle() {
+    public WireStyle getStyle() {
         return style;
     }
 
     /**
      * @param style the style to set
      */
-    public void setStyle(String style) {
+    public void setStyle(WireStyle style) {
         this.style = style;
     }
 
-//    @Override
-//    public Rectangle2D getBounds() {
-//        Rectangle2D r = super.getBounds();
-//        r.add(new Point2D(getX2(),getY2()));
-//        return r; //To change body of generated methods, choose Tools | Templates.
-//    }
-    
-    
+    /**
+     * @return the grouprefs
+     */
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
+    }
 }

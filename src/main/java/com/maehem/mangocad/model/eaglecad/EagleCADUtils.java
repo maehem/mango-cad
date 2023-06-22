@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.model.eaglecad;
 
+import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.model.element.drawing.Eagle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,6 +62,17 @@ public class EagleCADUtils {
         LOGGER.log(Level.SEVERE, "Schematic Import: {0}", file.getAbsolutePath());
 
         Schematic sch = (Schematic) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
+        //Schematic sch = convertEagleXMLtoSCH(eagleXML);
+        sch.setFilePath(file.getAbsolutePath());
+
+        return sch;
+    }
+
+    public static final Board importBRD(File file) throws FileNotFoundException, IOException, EagleCADLibraryFileException {
+        Document eagleXML = readXML(file);
+        LOGGER.log(Level.SEVERE, "Board Import: {0}", file.getAbsolutePath());
+
+        Board sch = (Board) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
         //Schematic sch = convertEagleXMLtoSCH(eagleXML);
         sch.setFilePath(file.getAbsolutePath());
 

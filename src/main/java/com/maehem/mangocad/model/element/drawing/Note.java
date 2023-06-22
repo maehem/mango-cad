@@ -20,10 +20,13 @@ import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.Severity;
 
 /**
+ * Autodesk added 'minversion' at some point.
+ * 
  * <pre>
  * note (#PCDATA)>
  *    ATTLIST note
           version       %Real;         #REQUIRED
+          minversion    %Real;         ""
           severity      %Severity;     #REQUIRED
           
           version: The EAGLE file version that introduced this compatibility note
@@ -34,13 +37,11 @@ import com.maehem.mangocad.model.element.enums.Severity;
 public class Note extends _AQuantum {
     public static final String ELEMENT_NAME = "note";
     
-    private double version = 0;
+    private String version = "";
+    private String minVersion = "";
     private Severity severity = Severity.INFO;
     
-    // A future feature?
-    // private String locale = "us_EN"; // The i18n locale code for this text. No value = en_US
     private String value = "";       // The #PCDATA text
-    //private int timestamp;           // When note created/modified (YYYYMMDDHHmmSS)
 
     public Note() {
     }
@@ -59,20 +60,6 @@ public class Note extends _AQuantum {
         return ELEMENT_NAME;
     }
 
-//    /**
-//     * @return the locale
-//     */
-//    public String getLocale() {
-//        return locale;
-//    }
-
-//    /**
-//     * @param locale the locale to set
-//     */
-//    public final void setLocale(String locale) {
-//        this.locale = locale;
-//    }
-
     /**
      * @return the value
      */
@@ -87,31 +74,17 @@ public class Note extends _AQuantum {
         this.value = value;
     }
 
-//    /**
-//     * @return the timestamp
-//     */
-//    public int getTimestamp() {
-//        return timestamp;
-//    }
-//
-//    /**
-//     * @param timestamp the timestamp to set
-//     */
-//    public void setTimestamp(int timestamp) {
-//        this.timestamp = timestamp;
-//    }
-
     /**
      * @return the version
      */
-    public double getVersion() {
+    public String getVersion() {
         return version;
     }
 
     /**
      * @param version the version to set
      */
-    public void setVersion(double version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
@@ -128,4 +101,19 @@ public class Note extends _AQuantum {
     public void setSeverity(Severity severity) {
         this.severity = severity;
     }
+    
+    /**
+     * @return the version
+     */
+    public String getMinVersion() {
+        return minVersion;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setMinVersion(String version) {
+        this.minVersion = version;
+    }
+
 }

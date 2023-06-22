@@ -677,6 +677,30 @@ public class EagleCADIngest {
         library.getDescriptions().add(desc);
     }
 
+    /**
+     * <pre>
+     * wire EMPTY
+     *    ATTLIST wire
+     *      x1            %Coord;        #REQUIRED
+     *      y1            %Coord;        #REQUIRED
+     *      x2            %Coord;        #REQUIRED
+     *      y2            %Coord;        #REQUIRED
+     *      width         %Dimension;    #REQUIRED
+     *      layer         %Layer;        #REQUIRED
+     *      extent        %Extent;       #IMPLIED
+     *      style         %WireStyle;    "continuous"
+     *      curve         %WireCurve;    "0"
+     *      cap           %WireCap;      "round"
+     *      grouprefs     IDREFS         #IMPLIED
+     *
+     *      extent: Only applicable for airwires -->
+     *      cap   : Only applicable if 'curve' is not zero -->
+     * </pre>
+     *
+     * @param list
+     * @param node
+     * @throws EagleCADLibraryFileException
+     */
     private static void ingestWire(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
         Wire wire = new Wire();
         NamedNodeMap attributes = node.getAttributes();
@@ -684,16 +708,6 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "cap" ->
-                    wire.setCap(value);
-                case "curve" ->
-                    wire.setCurve(Double.parseDouble(value));
-                case "layer" ->
-                    wire.setLayer(Integer.parseInt(value));
-                case "style" ->
-                    wire.setStyle(value);
-                case "width" ->
-                    wire.setWidth(Double.parseDouble(value));
                 case "x1" ->
                     wire.setX1(Double.parseDouble(value));
                 case "x2" ->
@@ -702,6 +716,20 @@ public class EagleCADIngest {
                     wire.setY1(Double.parseDouble(value));
                 case "y2" ->
                     wire.setY2(Double.parseDouble(value));
+                case "width" ->
+                    wire.setWidth(Double.parseDouble(value));
+                case "layer" ->
+                    wire.setLayer(Integer.parseInt(value));
+                case "extent" ->
+                    wire.setExtent(value);
+                case "style" ->
+                    wire.setStyle(WireStyle.fromCode(value));
+                case "curve" ->
+                    wire.setCurve(Double.parseDouble(value));
+                case "cap" ->
+                    wire.setCap(WireCap.fromCode(value));
+                case "grouprefs" ->
+                    wire.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
                 default ->
                     throw new EagleCADLibraryFileException("Wire has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -922,7 +950,6 @@ public class EagleCADIngest {
      */
     private static void ingestCircle(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
         ElementCircle circ = new ElementCircle();
-        String nodeName = node.getNodeName();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -1947,7 +1974,6 @@ public class EagleCADIngest {
                 }
                 case "circle" -> {
                     ingestCircle(plain, item);
-                    int g = 0;
                 }
                 case "spline" -> {
                     ingestSpline(plain, item);
@@ -2533,7 +2559,7 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (item.getNodeType() != 1) {
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
             if (!item.getNodeName().equals(Filter.ELEMENT_NAME)) {
@@ -2613,14 +2639,15 @@ public class EagleCADIngest {
             String value = it.getNodeValue();
             switch (it.getNodeName()) {
                 case "version" -> {
-                    if (!value.isBlank()) {
-                        note.setVersion(Double.parseDouble(value));
-                    }
+                    note.setVersion(value);
+                }
+                case "minversion" -> {
+                    note.setVersion(value);
                 }
                 case "severity" ->
                     note.setSeverity(Severity.fromCode(value));
                 default ->
-                    throw new EagleCADLibraryFileException("Filter has unknown attribute: [" + node.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("Note has unknown attribute: [" + it.getNodeName() + "]");
             }
         }
 
@@ -2978,7 +3005,7 @@ public class EagleCADIngest {
             }
             switch (item.getNodeName()) {
                 case "signal" -> {
-                    ingestSignal(dr, node);
+                    ingestSignal(dr, item);
                 }
                 default -> {
                     throw new EagleCADLibraryFileException("<signals> has unknown child: <" + item.getNodeName() + ">");
@@ -3045,7 +3072,7 @@ public class EagleCADIngest {
      */
     private static void ingestElement(List<_AQuantum> list, Node item) throws EagleCADLibraryFileException {
         switch (item.getNodeName()) {
-            case "contractref" -> {
+            case "contactref" -> {
                 ingestContactRef(list, item);
             }
             case "polygon" -> {
