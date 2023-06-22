@@ -33,6 +33,7 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import static com.maehem.mangocad.model.element.enums.PinLength.*;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
@@ -964,6 +965,77 @@ public class LibraryElementNode {
                 g.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
             }
         });
+        g.getChildren().add(LibraryElementNode.crosshairs(
+                0, 0, 0.5, 0.05, Color.RED
+        ));
+        
+        return g;
+    }
+    
+    public static Node createPackageNode( Footprint pkg, LayerElement[] layers, ColorPalette palette) {
+        Group g = new Group();
+
+        pkg.getElements().forEach((e) -> {
+            LayerElement le = layers[e.getLayerNum()];
+            int colorIndex = le.getColorIndex();
+            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+
+            if (e instanceof PadSMD padSMD) {
+                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor);
+                g.getChildren().add(n);
+                n.toBack();
+            } else if (e instanceof PadTHD padTHD) {
+                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                Node n = LibraryElementNode.createThd(padTHD, c, maskColor);
+                g.getChildren().add(n);
+                n.toBack();
+            } else if (e instanceof Wire wire) {
+                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
+            } else if (e instanceof ElementRectangle elementRectangle) {
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+            } else if (e instanceof ElementText elementText) {
+                g.getChildren().add(LibraryElementNode.createText(elementText, c));
+                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
+            } else if (e instanceof ElementRectangle elementRectangle) {
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+            } else if (e instanceof ElementPolygon elementPolygon) {
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+            } else if (e instanceof ElementCircle elementCircle) {
+                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
+            }
+        });
+
+//        pkg.getElements().forEach((e) -> {
+//            int layerNum = e.getLayerNum();
+//            LayerElement le = layers[e.getLayerNum()];
+//            if (le == null) {
+//                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
+//            }
+//            int colorIndex = le.getColorIndex();
+//            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+//
+//            // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
+//            if (e instanceof ElementPolygon ep) {
+//                g.getChildren().add(LibraryElementNode.createPolygon(ep, c));
+//            } else if (e instanceof Wire w) {
+//                g.getChildren().add(LibraryElementNode.createWireNode(w, c));
+//            } else if (e instanceof ElementText et) {
+//                g.getChildren().add(LibraryElementNode.createText(et, c));
+//                g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
+//            } else if (e instanceof Dimension dim) {
+//                //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));
+//                LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
+//            } else if (e instanceof Pin pin) {
+//                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
+//            } else if (e instanceof ElementCircle ec) {
+//                g.getChildren().add(LibraryElementNode.createCircleNode(ec, c));
+//            } else if (e instanceof ElementRectangle rect) {
+//                g.getChildren().add(LibraryElementNode.createRectangle(rect, c));
+//            } else if (e instanceof FrameElement frm) {
+//                g.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
+//            }
+//        });
         g.getChildren().add(LibraryElementNode.crosshairs(
                 0, 0, 0.5, 0.05, Color.RED
         ));

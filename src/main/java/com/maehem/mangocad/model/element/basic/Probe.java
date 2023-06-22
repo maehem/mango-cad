@@ -49,7 +49,7 @@ public class Probe extends _AQuantum {
     private double size = 10;
     private TextFont font = TextFont.PROPORTIONAL;
     private int ratio = 8;
-    private Rotation rot = new Rotation(Rotation.CONSTRAINED);
+    private final Rotation rot = new Rotation(Rotation.CONSTRAINED);
     private boolean xref = false;
     
     private final ArrayList<String> grouprefs = new ArrayList<>();

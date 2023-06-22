@@ -53,6 +53,21 @@ public class Rotation {
         return value;
     }
 
+    public void setValue( String strValue ) {
+        if ( strValue.startsWith("MR")) {
+            // Mirror
+            setMirror(true);
+            setValue(Double.parseDouble(strValue.substring(2)));
+        } else if ( strValue.startsWith("SR") ) {
+            // Spin
+            setSpin(true);
+            setValue(Double.parseDouble(strValue.substring(2)));
+        } else {
+            // Normal
+            setValue(Double.parseDouble(strValue.substring(1)));
+        }
+    }
+    
     /**
      * @param value the value to set
      */

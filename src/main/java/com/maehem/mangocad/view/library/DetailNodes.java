@@ -198,41 +198,42 @@ public class DetailNodes {
         LayerElement[] layers = lib.getParentDrawing().getLayers();
         ColorPalette palette = lib.getParentDrawing().getPalette();
 
-        Group g = new Group();
+        //Group g = new Group();
+        Node g = LibraryElementNode.createPackageNode(footprint, layers, palette);
 
-        footprint.getElements().forEach((e) -> {
-            LayerElement le = layers[e.getLayerNum()];
-            int colorIndex = le.getColorIndex();
-            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-
-            if (e instanceof PadSMD padSMD) {
-                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor);
-                g.getChildren().add(n);
-                n.toBack();
-            } else if (e instanceof PadTHD padTHD) {
-                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                Node n = LibraryElementNode.createThd(padTHD, c, maskColor);
-                g.getChildren().add(n);
-                n.toBack();
-            } else if (e instanceof Wire wire) {
-                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
-            } else if (e instanceof ElementRectangle elementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
-            } else if (e instanceof ElementText elementText) {
-                g.getChildren().add(LibraryElementNode.createText(elementText, c));
-                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if (e instanceof ElementRectangle elementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
-            } else if (e instanceof ElementPolygon elementPolygon) {
-                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
-            } else if (e instanceof ElementCircle elementCircle) {
-                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
-            }
-        });
-        g.getChildren().add(LibraryElementNode.crosshairs(
-                0, 0, 0.5, 0.05, Color.RED
-        ));
+//        footprint.getElements().forEach((e) -> {
+//            LayerElement le = layers[e.getLayerNum()];
+//            int colorIndex = le.getColorIndex();
+//            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+//
+//            if (e instanceof PadSMD padSMD) {
+//                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+//                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor);
+//                g.getChildren().add(n);
+//                n.toBack();
+//            } else if (e instanceof PadTHD padTHD) {
+//                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+//                Node n = LibraryElementNode.createThd(padTHD, c, maskColor);
+//                g.getChildren().add(n);
+//                n.toBack();
+//            } else if (e instanceof Wire wire) {
+//                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
+//            } else if (e instanceof ElementRectangle elementRectangle) {
+//                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+//            } else if (e instanceof ElementText elementText) {
+//                g.getChildren().add(LibraryElementNode.createText(elementText, c));
+//                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
+//            } else if (e instanceof ElementRectangle elementRectangle) {
+//                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+//            } else if (e instanceof ElementPolygon elementPolygon) {
+//                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+//            } else if (e instanceof ElementCircle elementCircle) {
+//                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
+//            }
+//        });
+//        g.getChildren().add(LibraryElementNode.crosshairs(
+//                0, 0, 0.5, 0.05, Color.RED
+//        ));
 
         StackPane stackPane = new StackPane(g); // Centers the symbol
         Group nodeGroup = new Group(stackPane);
@@ -253,7 +254,6 @@ public class DetailNodes {
         }
 
         return nodeGroup;
-        //return g;
     }
 
     public static ImageView package3DPreview(Package3dInstance pkg3d, Library lib) {
