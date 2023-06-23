@@ -28,7 +28,13 @@ import com.maehem.mangocad.model._AQuantum;
  *      pcbguid                  %String;       #REQUIRED
  *      lastsyncedchangeguid     %String;       #REQUIRED
  *      lastpulledtime           %String;       #REQUIRED
- *
+ *      // Added recently        %String;       #REQUIRED
+ *      latestrevisionid         %String;       #REQUIRED
+ *      lastsyncedrevisionid     %String;       #REQUIRED
+ *      lastboardhashguid        %String;       #REQUIRED
+ *      lastpushedtime           %String;       #REQUIRED
+ *      linktopcb3d="true"     ( true | false ) #REQUIRED
+
  * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub )
@@ -43,6 +49,12 @@ public class FusionSync extends _AQuantum {
     private String pcbUid;
     private String lastSyncChangeUid;
     private String lastPulledTime;
+
+    private String latestRevisionId;
+    private String lastSyncedRevisionId;
+    private String lastBoardHashGuid;
+    private String lastPushedTime;
+    private boolean linkToPcb3d = false;
 
     @Override
     public String getElementName() {
@@ -131,6 +143,76 @@ public class FusionSync extends _AQuantum {
      */
     public void setLastPulledTime(String lastPulledTime) {
         this.lastPulledTime = lastPulledTime;
+    }
+
+    /**
+     * @return the latestRevisionId
+     */
+    public String getLatestRevisionId() {
+        return latestRevisionId;
+    }
+
+    /**
+     * @param latestRevisionId the latestRevisionId to set
+     */
+    public void setLatestRevisionId(String latestRevisionId) {
+        this.latestRevisionId = latestRevisionId;
+    }
+
+    /**
+     * @return the lastSyncedRevisionId
+     */
+    public String getLastSyncedRevisionId() {
+        return lastSyncedRevisionId;
+    }
+
+    /**
+     * @param lastSyncedRevisionId the lastSyncedRevisionId to set
+     */
+    public void setLastSyncedRevisionId(String lastSyncedRevisionId) {
+        this.lastSyncedRevisionId = lastSyncedRevisionId;
+    }
+
+    /**
+     * @return the lastBoardHashGuid
+     */
+    public String getLastBoardHashGuid() {
+        return lastBoardHashGuid;
+    }
+
+    /**
+     * @param lastBoardHashGuid the lastBoardHashGuid to set
+     */
+    public void setLastBoardHashGuid(String lastBoardHashGuid) {
+        this.lastBoardHashGuid = lastBoardHashGuid;
+    }
+
+    /**
+     * @return the lastPushedTime
+     */
+    public String getLastPushedTime() {
+        return lastPushedTime;
+    }
+
+    /**
+     * @param lastPushedTime the lastPushedTime to set
+     */
+    public void setLastPushedTime(String lastPushedTime) {
+        this.lastPushedTime = lastPushedTime;
+    }
+
+    /**
+     * @return the linkToPcb3d
+     */
+    public boolean isLinkToPcb3d() {
+        return linkToPcb3d;
+    }
+
+    /**
+     * @param linkToPcb3d the linkToPcb3d to set
+     */
+    public void setLinkToPcb3d(boolean linkToPcb3d) {
+        this.linkToPcb3d = linkToPcb3d;
     }
 
 }
