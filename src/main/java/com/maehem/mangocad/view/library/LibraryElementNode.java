@@ -103,9 +103,9 @@ public class LibraryElementNode {
      */
     public static Node createWireNode(Wire w, Color color) {
         double strokeWidth = w.getWidth();
-        if ( strokeWidth <= 0.0 ) {
+        if ( strokeWidth < 0.03 ) {
             // Wires can't be 0 width.
-            strokeWidth = 0.1524; // 6mil
+            strokeWidth = 0.03; // 6mil
         }
         if (w.getCurve() != 0.0) {
             Path path = new Path();
@@ -142,6 +142,7 @@ public class LibraryElementNode {
             line.setStrokeLineCap(StrokeLineCap.ROUND);
             line.setStrokeWidth(strokeWidth);
             line.setStroke(color);
+            line.setSmooth(true);
 
             return line;
         }
