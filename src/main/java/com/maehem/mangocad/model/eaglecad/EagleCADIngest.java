@@ -124,7 +124,6 @@ public class EagleCADIngest {
                     LOGGER.log(Level.SEVERE, "<drawing>:  Unknown sub-node <{0}>", subNode.getNodeName());
             }
         }
-
         return drawing;
     }
 
