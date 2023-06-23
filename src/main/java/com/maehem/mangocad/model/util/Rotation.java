@@ -62,6 +62,11 @@ public class Rotation {
             // Spin
             setSpin(true);
             setValue(Double.parseDouble(strValue.substring(2)));
+        } else if ( strValue.startsWith("SMR") ) {
+            // Spin
+            setSpin(true);
+            setMirror(true);
+            setValue(Double.parseDouble(strValue.substring(3)));
         } else {
             // Normal
             setValue(Double.parseDouble(strValue.substring(1)));
