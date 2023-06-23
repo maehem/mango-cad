@@ -152,6 +152,10 @@ public class LabelElement extends _AQuantum {
         this.font = font;
     }
 
+    public Rotation getRotation() {
+        return rotation;
+    }
+    
     /**
      * @return the rot
      */

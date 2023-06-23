@@ -181,17 +181,21 @@ public class Pin extends _AQuantum {
         this.swapLevel = swapLevel;
     }
 
+    public Rotation getRotation() {
+        return rotation;
+    }
+    
     /**
      * @return the rotation
      */
-    public double getRotation() {
+    public double getRot() {
         return rotation.getValue();
     }
 
     /**
      * @param val the rotation to set
      */
-    public void setRotation(double val) {
+    public void setRot(double val) {
         this.rotation.setValue(val);
     }
 

@@ -68,6 +68,10 @@ public class Instance extends _AQuantum {
         this.smashed = smashed;
     }
 
+    public Rotation getRotation() {
+        return rotation;
+    }
+    
     /**
      * @return the rot
      */

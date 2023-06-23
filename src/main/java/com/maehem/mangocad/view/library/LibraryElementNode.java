@@ -156,7 +156,7 @@ public class LibraryElementNode {
         rr.setStrokeWidth(0);
         //rr.setStrokeLineCap(StrokeLineCap.ROUND);
         rr.setFill(color);
-        rr.setRotate(r.getRotation());
+        rr.setRotate(r.getRot());
         return rr;
     }
 
@@ -345,7 +345,7 @@ public class LibraryElementNode {
         pad.setY(cY);
         pad.setWidth(w);
         pad.setHeight(h);
-        pad.setRotate(smd.getRotation());
+        pad.setRotate(smd.getRot());
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
@@ -376,7 +376,7 @@ public class LibraryElementNode {
         mask.setStrokeWidth(0.02);
         mask.setStroke(maskColor);
         mask.setFill(maskPattern);
-        mask.setRotate(smd.getRotation());
+        mask.setRotate(smd.getRot());
 
         // arcW/H is half of the shortest side.
         // TODO: Won't render right if I use h/2 or w/2. Not sure why.
@@ -395,7 +395,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(smd.getName());
-        et.getRotation().setValue(smd.getRotation());
+        et.getRotation().setValue(smd.getRot());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(smd.getX());
@@ -422,7 +422,7 @@ public class LibraryElementNode {
 
         //padColor = Color.GREEN;
         Color drillColor = Color.BLACK;
-        //int rot = (int) thd.getRotation();
+        //int rot = (int) thd.getRot();
 
         switch (thd.getShape()) {
             case SQUARE -> {
@@ -461,7 +461,7 @@ public class LibraryElementNode {
                 pad.setArcWidth(padDia);
                 pad.setStroke(null);
 
-                Rotate rotate = new Rotate(360 - thd.getRotation());
+                Rotate rotate = new Rotate(360 - thd.getRot());
                 rotate.setPivotX(padDia);
                 rotate.setPivotY(padDia / 2);
                 pad.setLayoutX(thd.getX() - pad.getWidth() / 2.0);
@@ -481,7 +481,7 @@ public class LibraryElementNode {
                 mask.setStrokeWidth(0.02);
                 mask.setStroke(maskColor);
                 mask.setFill(maskPattern);
-                Rotate rotateM = new Rotate(360 - thd.getRotation());
+                Rotate rotateM = new Rotate(360 - thd.getRot());
                 rotateM.setPivotX(padDia + MASK_W_DEFAULT);
                 rotateM.setPivotY(padDia / 2 + MASK_W_DEFAULT);
                 mask.setLayoutX(thd.getX() - pad.getWidth() / 2.0 - MASK_W_DEFAULT);
@@ -542,7 +542,7 @@ public class LibraryElementNode {
                 pad.setStroke(null);
                 pad.setLayoutX(thd.getX() - pad.getWidth() / 4.0);
                 pad.setLayoutY(-thd.getY() - padDia / 2);
-                Rotate rotate = new Rotate(360 - thd.getRotation());
+                Rotate rotate = new Rotate(360 - thd.getRot());
                 rotate.setPivotX(padDia / 2);
                 rotate.setPivotY(padDia / 2);
                 pad.getTransforms().add(rotate);
@@ -560,7 +560,7 @@ public class LibraryElementNode {
                 mask.setFill(maskPattern);
                 mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
                 mask.setLayoutY(-thd.getY() - mask.getHeight() / 2.0);
-                Rotate rotateMask = new Rotate(360 - thd.getRotation());
+                Rotate rotateMask = new Rotate(360 - thd.getRot());
                 rotateMask.setPivotX(padDia / 2 + MASK_W_DEFAULT);
                 rotateMask.setPivotY(padDia / 2 + MASK_W_DEFAULT);
                 mask.getTransforms().add(rotateMask);
@@ -597,7 +597,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(thd.getName());
-        et.getRotation().setValue(thd.getRotation());
+        et.getRotation().setValue(thd.getRot());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(thd.getX());
@@ -659,7 +659,7 @@ public class LibraryElementNode {
 
         double pinLen = padHang * 2.54 - dotRadius * 2.0;
 
-        int rot = (int) p.getRotation(); // 0, 90, 180, 270
+        int rot = (int) p.getRot(); // 0, 90, 180, 270
 
         Group g = new Group();
 

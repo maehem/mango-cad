@@ -114,17 +114,21 @@ public class PadSMD extends _AQuantum {
         this.height = height;
     }
 
+    public Rotation getRotation() {
+        return rotation;
+    }
+    
     /**
      * @return the rotation
      */
-    public double getRotation() {
+    public double getRot() {
         return rotation.getValue();
     }
 
     /**
      * @param val the rotation to set
      */
-    public void setRotation(double val) {
+    public void setRot(double val) {
         this.rotation.setValue(val);
     }
 

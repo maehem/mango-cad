@@ -93,17 +93,21 @@ public class ElementRectangle extends _AQuantum {
         this.y2 = y2;
     }
 
+    public Rotation getRotation() {
+        return rotation;
+    }
+    
     /**
      * @return the rotation
      */
-    public double getRotation() {
+    public double getRot() {
         return rotation.getValue();
     }
 
     /**
      * @param value the rotation to set
      */
-    public void setRotation(double value) {
+    public void setRot(double value) {
         this.rotation.setValue(value);
     }
     
