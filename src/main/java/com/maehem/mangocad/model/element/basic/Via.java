@@ -17,23 +17,39 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.enums.ViaShape;
+import java.util.ArrayList;
 
 /**
+ * <pre>
+ * via EMPTY>
+ *    ATTLIST via
+ *      x             %Coord;        #REQUIRED
+ *      y             %Coord;        #REQUIRED
+ *      extent        %Extent;       #REQUIRED
+ *      drill         %Dimension;    #REQUIRED
+ *      diameter      %Dimension;    "0"
+ *      shape         %ViaShape;     "round"
+ *      alwaysstop    %Bool;         "no"
+ *      grouprefs     IDREFS         #IMPLIED
+ * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Via extends _AQuantum {
+
     public static final String ELEMENT_NAME = "via";
 
     private double x;
     private double y;
-    private double extent;
+    private String extent;
     private double drill;
     private double diameter = 0.0;
-    private String shape = "round";
-    private boolean stop = false;
-
+    private ViaShape shape = ViaShape.ROUND;
+    private boolean alwaysstop = false;
     
+    private final ArrayList<String> grouprefs = new ArrayList<>();
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -66,7 +82,7 @@ public class Via extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-    
+
     /**
      * @return the drill
      */
@@ -84,14 +100,14 @@ public class Via extends _AQuantum {
     /**
      * @return the extent
      */
-    public double getExtent() {
+    public String getExtent() {
         return extent;
     }
 
     /**
      * @param extent the extent to set
      */
-    public void setExtent(double extent) {
+    public void setExtent(String extent) {
         this.extent = extent;
     }
 
@@ -112,28 +128,35 @@ public class Via extends _AQuantum {
     /**
      * @return the shape
      */
-    public String getShape() {
+    public ViaShape getShape() {
         return shape;
     }
 
     /**
      * @param shape the shape to set
      */
-    public void setShape(String shape) {
+    public void setShape(ViaShape shape) {
         this.shape = shape;
     }
 
     /**
-     * @return the stop
+     * @return the alwaysstop
      */
-    public boolean isStop() {
-        return stop;
+    public boolean isAlwaysstop() {
+        return alwaysstop;
     }
 
     /**
-     * @param stop the stop to set
+     * @param alwaysstop the alwaysstop to set
      */
-    public void setStop(boolean stop) {
-        this.stop = stop;
+    public void setAlwaysstop(boolean alwaysstop) {
+        this.alwaysstop = alwaysstop;
+    }
+    
+    /**
+     * @return the grouprefs
+     */
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
     }
 }

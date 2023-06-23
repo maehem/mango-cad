@@ -756,7 +756,7 @@ public class EagleCADIngest {
                 case "name" ->
                     smd.setName(value);
                 case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    smd.setRotation(Double.parseDouble(value.substring(1)));
+                    smd.getRotation().setValue(value);
                 case "roundness" ->
                     smd.setRoundness(Integer.parseInt(value));
                 case "x" ->
@@ -776,38 +776,38 @@ public class EagleCADIngest {
     }
 
     private static void ingestPadThd(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
-        PadTHD smd = new PadTHD();
+        PadTHD thd = new PadTHD();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
                 case "name" ->
-                    smd.setName(value);
+                    thd.setName(value);
                 case "first" ->
-                    smd.setFirst(value.equals("yes"));
+                    thd.setFirst(value.equals("yes"));
                 case "stop" ->
-                    smd.setStopmask(value.equals("yes"));
+                    thd.setStopmask(value.equals("yes"));
                 case "thermals" ->
-                    smd.setThermals(value.equals("yes"));
+                    thd.setThermals(value.equals("yes"));
                 case "shape" ->
-                    smd.setShape(PadShape.fromCode(value));
+                    thd.setShape(PadShape.fromCode(value));
                 case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    smd.setRotation(Double.parseDouble(value.substring(1)));
+                    thd.getRotation().setValue(value);
                 case "diameter" ->
-                    smd.setDiameter(Double.parseDouble(value));
+                    thd.setDiameter(Double.parseDouble(value));
                 case "drill" ->
-                    smd.setDrill(Double.parseDouble(value));
+                    thd.setDrill(Double.parseDouble(value));
                 case "x" ->
-                    smd.setX(Double.parseDouble(value));
+                    thd.setX(Double.parseDouble(value));
                 case "y" ->
-                    smd.setY(Double.parseDouble(value));
+                    thd.setY(Double.parseDouble(value));
                 default ->
                     throw new EagleCADLibraryFileException("Pad has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
-        elements.add(smd);
+        elements.add(thd);
     }
 
     private static void ingestText(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
@@ -823,27 +823,8 @@ public class EagleCADIngest {
                     text.setY(Double.parseDouble(value));
                 case "align" ->
                     text.setAlign(TextAlign.fromCode(value));
-                case "rot" -> {  // TODO:  Make ROT an object.
-                    try {
-                        Rotation r = text.getRotation();
-                        int idx = 1;
-                        if (value.startsWith("SR")) { // Spin Flag
-                            r.setSpin(true);
-                            idx = 2;
-                            r.setValue(Double.parseDouble(value.substring(2)));
-                            //text.setSpin(true);
-                            //text.setRotation(Double.parseDouble(value.substring(2)));
-                        } else if (value.startsWith("MR")) { // Mirror Flag
-                            r.setMirror(true);
-                            idx = 2;
-                            //text.setMirror(true);
-                            //text.setRotation(Double.parseDouble(value.substring(2)));
-                        }
-                        r.setValue(Double.parseDouble(value.substring(idx)));
-                    } catch (NumberFormatException ex) {
-                        LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn''t parse ''text:rot'': {0}", value);
-                    }
-                }
+                case "rot" ->
+                    text.getRotation().setValue(value);
                 case "distance" ->
                     text.setDistance(Integer.parseInt(value));
                 case "ratio" ->
@@ -923,7 +904,7 @@ public class EagleCADIngest {
                 case "y2" ->
                     rect.setY2(Double.parseDouble(value));
                 case "rot" ->
-                    rect.setRotation(Double.parseDouble(value.substring(1)));
+                    rect.getRotation().setValue(value);
                 default ->
                     throw new EagleCADLibraryFileException("Rectangle has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -1008,17 +989,20 @@ public class EagleCADIngest {
                 case "y" ->
                     via.setY(Double.parseDouble(value));
                 case "extent" ->
-                    via.setExtent(Double.parseDouble(value));
+                    via.setExtent(value);
+                case "drill" ->
+                    via.setDrill(Double.parseDouble(value));
                 case "diameter" ->
                     via.setDiameter(Double.parseDouble(value));
                 case "shape" ->
-                    via.setShape(value);
-                case "stop" ->
-                    via.setStop(value.equals("yes"));
-                case "drill" ->
-                    via.setDrill(Double.parseDouble(value));
-                default ->
+                    via.setShape(ViaShape.fromCode(value));
+                case "alwaysstop" ->
+                    via.setAlwaysstop(value.equals("yes"));
+                case "grouprefs" ->
+                    via.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
+                default -> {
                     throw new EagleCADLibraryFileException("Via has unknown attribute: [" + item.getNodeName() + "]");
+                }
             }
         }
 
@@ -1049,7 +1033,7 @@ public class EagleCADIngest {
                 case "swaplevel" ->
                     pin.setSwapLevel(Integer.parseInt(value));
                 case "rot" ->
-                    pin.setRotation(Double.parseDouble(value.substring(1)));
+                    pin.getRotation().setValue(value);
                 default ->
                     throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -1093,7 +1077,7 @@ public class EagleCADIngest {
                 case "ratio" ->
                     label.setRatio(Integer.parseInt(value));
                 case "rot" ->
-                    label.setRot(Double.parseDouble(value.substring(1)));
+                    label.getRotation().setValue(value);
                 case "xref" ->
                     label.setXref(value.equalsIgnoreCase("yes"));
                 case "align" ->
@@ -1144,7 +1128,7 @@ public class EagleCADIngest {
                 case "ratio" ->
                     label.setRatio(Integer.parseInt(value));
                 case "rot" ->
-                    label.setRot(Double.parseDouble(value.substring(1)));
+                    label.getRotation().setValue(value);
                 case "xref" ->
                     label.setXref(value.equalsIgnoreCase("yes"));
                 case "grouprefs" ->
@@ -1429,25 +1413,8 @@ public class EagleCADIngest {
                     attribute.setX(Double.parseDouble(value));
                 case "y" ->
                     attribute.setY(Double.parseDouble(value));
-                case "rot" -> {
-                    // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    // TODO: Make a util for ROT decode.
-                    int idx = 1;
-                    try {
-                        if (value.startsWith("SR")) { // Spin Flag
-                            idx = 2;
-                            attribute.getRotation().setSpin(true);
-                            //attribute.setSpin(true);
-                            attribute.setRotation(Double.parseDouble(value.substring(2)));
-                        } else if (value.startsWith("MR")) { // Mirror Flag
-                            idx = 2;
-                            attribute.getRotation().setMirror(true);
-                        }
-                        attribute.setRotation(Double.parseDouble(value.substring(idx)));
-                    } catch (NumberFormatException ex) {
-                        LOGGER.log(Level.SEVERE, "Eagle Ingest: Couldn''t parse ''text:rot'': {0}", value);
-                    }
-                }
+                case "rot" -> 
+                    attribute.getRotation().setValue(value);
                 case "ratio" ->
                     attribute.setWidth(Integer.parseInt(value));
                 case "size" ->
@@ -2194,8 +2161,7 @@ public class EagleCADIngest {
                 case "smashed" ->
                     moduleInst.setSmashed(value.equals("yes"));
                 case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    // TODO: Make a util for ROT decode.
-                    moduleInst.setRot(Double.parseDouble(value.substring(1)));
+                    moduleInst.getRotation().setValue(value);
                 default ->
                     throw new EagleCADLibraryFileException("ModuleInst has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -2266,9 +2232,8 @@ public class EagleCADIngest {
                     instance.setY(Double.parseDouble(value));
                 case "smashed" ->
                     instance.setSmashed(value.equals("yes"));
-                case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
-                    // TODO: Make a util for ROT decode.
-                    instance.setRot(Double.parseDouble(value.substring(1)));
+                case "rot" ->
+                    instance.getRotation().setValue(value);
                 default ->
                     throw new EagleCADLibraryFileException("Instance has unknown XML attribute: [" + item.getNodeName() + "]");
             }
@@ -2791,6 +2756,17 @@ public class EagleCADIngest {
                     fs.setLastSyncChangeUid(value);
                 case "lastpulledtime" ->
                     fs.setLastPulledTime(value);
+
+                case "latestrevisionid" ->
+                    fs.setLatestRevisionId(value);
+                case "lastsyncedrevisionid" ->
+                    fs.setLastSyncedRevisionId(value);
+                case "lastboardhashguid" ->
+                    fs.setLastBoardHashGuid(value);
+                case "lastpushedtime" ->
+                    fs.setLastPushedTime(value);
+                case "linktopcb3d" ->
+                    fs.setLinkToPcb3d(value.equalsIgnoreCase("true"));
                 default ->
                     throw new EagleCADLibraryFileException("FusionSync has unknown attribute: [" + item.getNodeName() + "]");
             }
