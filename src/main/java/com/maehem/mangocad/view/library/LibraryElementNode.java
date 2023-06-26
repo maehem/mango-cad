@@ -57,7 +57,6 @@ import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.ArcTo;
@@ -275,40 +274,40 @@ public class LibraryElementNode {
                     double dX = le.getX() - w.getAverageX();
                     double dY = le.getY() - w.getAverageY();
                     double distW = Math.abs(Math.hypot(dX, dY));
-                    
+
                     double dCX = le.getX() - closestWire.getAverageX();
                     double dCY = le.getY() - closestWire.getAverageY();
                     double distCW = Math.abs(Math.hypot(dCX, dCY));
 
                     // If this is closer than the last one make it the new reference.
-                    if ( distW < distCW ) {
+                    if (distW < distCW) {
                         closestWire = w;
                         //LOGGER.log(Level.SEVERE, "New closest: " + closestWire.toString());
                     }
                 }
             }
         }
-        if ( closestWire == null ) {
+        if (closestWire == null) {
             LOGGER.log(Level.SEVERE, "Could not determine closest wire to Probe!");
         } else {
             // Find halfway point on line and make it X2,Y2 for probe line.
             double averageX = closestWire.getAverageX();
             double averageY = -closestWire.getAverageY();
-            
-            Line l = new Line(le.getX(), -le.getY(),averageX, averageY );
+
+            Line l = new Line(le.getX(), -le.getY(), averageX, averageY);
             l.setStrokeWidth(lineW);
             l.setStroke(color);
-            
-            Rectangle r = new Rectangle(dotRadius*2.0, dotRadius*2.0, color);
-            r.setLayoutX(averageX-dotRadius);
-            r.setLayoutY(averageY-dotRadius);
 
-            labelGroup.getChildren().addAll(l,r);
+            Rectangle r = new Rectangle(dotRadius * 2.0, dotRadius * 2.0, color);
+            r.setLayoutX(averageX - dotRadius);
+            r.setLayoutY(averageY - dotRadius);
+
+            labelGroup.getChildren().addAll(l, r);
         }
 
         return labelGroup;
     }
-    
+
     public static Node createLabelNode(LabelElement le, Color color) {
         Group labelGroup = new Group();
         int rot = (int) le.getRot();
