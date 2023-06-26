@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class Junction extends _AQuantum {
 
     public static final String ELEMENT_NAME = "junction";
+    public static final int DEFAULT_LAYER = 91; // Nets
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -37,6 +38,11 @@ public class Junction extends _AQuantum {
     private double x;
     private double y;
 
+    public Junction() {
+        setLayer(DEFAULT_LAYER);
+    }
+
+    
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
