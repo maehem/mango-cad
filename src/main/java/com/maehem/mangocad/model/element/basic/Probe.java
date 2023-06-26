@@ -16,10 +16,6 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.element.enums.TextFont;
-import com.maehem.mangocad.model.util.Rotation;
-import java.util.ArrayList;
-
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
@@ -32,91 +28,33 @@ public class Probe extends ElementText {
 
     // probe ( no sub-nodes )
     //    ATTLIST probe
-    //        x             %Coord;        #REQUIRED
-    //        y             %Coord;        #REQUIRED
-    //        size          %Dimension;    #REQUIRED
-    //        layer         %Layer;        #REQUIRED
-    //        font          %TextFont;     "proportional"
-    //        ratio         %Int;          "8"
-    //        rot           %Rotation;     "R0"
-    //        xref          %Bool;         "no"
-    //        grouprefs     IDREFS         #IMPLIED
+    //        x             %Coord;        #REQUIRED    (parent)
+    //        y             %Coord;        #REQUIRED    (parent)
+    //        size          %Dimension;    #REQUIRED    (parent)
+    //        layer         %Layer;        #REQUIRED    (parent)
+    //        font          %TextFont;     "proportional"  (parent)
+    //        ratio         %Int;          "8"          (parent)
+    //        rot           %Rotation;     "R0"         (parent)
+    //        xref          %Bool;         "no"         
+    //        grouprefs     IDREFS         #IMPLIED     (parent)
     //        
     //      Added recently:
     //        probetype    %Int             "0"  0=voltage, 1=phase
     //
     //        <!-- rot:  Only 0, 90, 180 or 270 -->
     //        <!-- xref: Only in <net> context -->
-    private double x;
-    private double y;
-    private double size = 10;
-    private TextFont font = TextFont.PROPORTIONAL;
-    private int ratio = 8;
-    private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
+
     private boolean xref = false;
     private int probetype = PROBETYPE_VOLTAGE;
 
-    private final ArrayList<String> grouprefs = new ArrayList<>();
+    public Probe() {
+        setSize(10.0);
+    }
+    
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
-    }
-
-    /**
-     * @return the x
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * @param x the x to set
-     */
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    /**
-     * @return the y
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * @param y the y to set
-     */
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    /**
-     * @return the size
-     */
-    public double getSize() {
-        return size;
-    }
-
-    /**
-     * @param size the size to set
-     */
-    public void setSize(double size) {
-        this.size = size;
-    }
-
-    /**
-     * @return the ratio
-     */
-    public int getRatio() {
-        return ratio;
-    }
-
-    /**
-     * @param ratio the ratio to set
-     */
-    public void setRatio(int ratio) {
-        this.ratio = ratio;
     }
 
     /**
@@ -131,45 +69,6 @@ public class Probe extends ElementText {
      */
     public void setXref(boolean xref) {
         this.xref = xref;
-    }
-
-    /**
-     * @return the grouprefs
-     */
-    public ArrayList<String> getGrouprefs() {
-        return grouprefs;
-    }
-
-    /**
-     * @return the font
-     */
-    public TextFont getFont() {
-        return font;
-    }
-
-    /**
-     * @param font the font to set
-     */
-    public void setFont(TextFont font) {
-        this.font = font;
-    }
-
-    public Rotation getRotation() {
-        return rotation;
-    }
-
-    /**
-     * @return the rot
-     */
-    public double getRot() {
-        return rotation.getValue();
-    }
-
-    /**
-     * @param val the rot to set
-     */
-    public void setRot(double val) {
-        this.rotation.setValue(val);
     }
 
     /**
