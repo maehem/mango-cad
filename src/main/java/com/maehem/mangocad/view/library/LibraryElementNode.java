@@ -219,7 +219,17 @@ public class LibraryElementNode {
         // Spec says "xref" possible, but Eagle has no option to enable it.
         le.setAlign(BOTTOM_LEFT);
 
-        Node textNode = createText(le, color);
+        String probeText;
+        switch (le.getProbeType()) {
+            case Probe.PROBETYPE_VOLTAGE ->
+                probeText = "V(" + le.getValue() + ")";
+            case Probe.PROBETYPE_PHASE ->
+                probeText = "Vp(" + le.getValue() + ")";
+            default ->
+                probeText = "V???(" + le.getValue() + ")";
+        }
+        Node textNode = createText(le, probeText, color);
+
         double x = le.getX();
         double y = -le.getY();
         double size = le.getSize();
