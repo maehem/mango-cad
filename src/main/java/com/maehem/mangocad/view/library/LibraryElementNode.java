@@ -1157,12 +1157,8 @@ public class LibraryElementNode {
      * @return
      */
     public static Node createJunctionNode(Junction junc, Color color) {
-        final double JUNC_RAD = 0.7;
 
-        Circle c = new Circle(junc.getX(), -junc.getY(), JUNC_RAD);
-
-        //c.setStroke();
-        //c.setStrokeWidth(junc.getWidth());
+        Circle c = new Circle(junc.getX(), -junc.getY(), Junction.DOT_RADIUS);
         c.setFill(color);
 
         return c;
