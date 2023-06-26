@@ -43,7 +43,6 @@ import com.maehem.mangocad.model.element.highlevel.*;
 import com.maehem.mangocad.model.element.enums.*;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.Setting;
-import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ControlPanel;
 
 /**
@@ -1093,7 +1092,7 @@ public class EagleCADIngest {
         elements.add(label);
     }
 
-    private static void ingestProbe(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestProbe(List<_AQuantum> elements, Node node, String netName) throws EagleCADLibraryFileException {
         // probe ( no sub-nodes )
         //    ATTLIST probe
         //        x             %Coord;        #REQUIRED
@@ -1113,6 +1112,7 @@ public class EagleCADIngest {
         //        <!-- xref: Only in <net> context -->
 
         Probe probe = new Probe();
+        probe.setValue(netName);
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
@@ -2065,7 +2065,7 @@ public class EagleCADIngest {
                     ingestLabel(seg, item, netName);
                 }
                 case "probe" -> {
-                    ingestProbe(seg, item);
+                    ingestProbe(seg, item, netName);
                 }
                 default -> {
                     throw new EagleCADLibraryFileException("Segment list has unknown node: [" + item.getNodeName() + "]");
