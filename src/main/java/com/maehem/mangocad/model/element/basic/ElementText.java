@@ -20,33 +20,49 @@ import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
+import java.util.ArrayList;
 
 /**
+ * <pre>
+ * text (#PCDATA)>
+ *    ATTLIST text
+ *      x             %Coord;        #REQUIRED
+ *      y             %Coord;        #REQUIRED
+ *      size          %Dimension;    #REQUIRED
+ *      layer         %Layer;        #REQUIRED
+ *      font          %TextFont;     "proportional"
+ *      ratio         %Int;          "8"
+ *      rot           %Rotation;     "R0"
+ *      align         %Align;        "bottom-left"
+ *      distance      %Int;          "50"
+ *      grouprefs     IDREFS         #IMPLIED
+ * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementText extends _AQuantum {
-    // No FONT.  We only support line-font right now.
+
+    public static final String ELEMENT_NAME = "text";
+
     private double x;
     private double y;
     private double size;
-    private int    distance = 50;  // Line to line distance
-    private double width = 8.0; // Eagle called it ratio
-    private final Rotation rotation = new Rotation();
-//    private boolean mirror = false;
-//    private boolean spin = false;
-    private TextAlign align = TextAlign.BOTTOM_LEFT;
-    private TextFont font = TextFont.VECTOR;
-    private String value;
 
-    public static final String ELEMENT_NAME = "text";
+    private TextFont font = TextFont.PROPORTIONAL;
+    private int ratio = 8; // Eagle called it ratio
+    private final Rotation rotation = new Rotation();
+    private TextAlign align = TextAlign.BOTTOM_LEFT;
+    private int distance = 50;  // Line to line distance
+
+    private String value;  // #PCDATA Content
+
+    private final ArrayList<String> grouprefs = new ArrayList<>();
 
     public ElementText() {
         rotation.setAllowMirror(true);
         rotation.setAllowSpin(true);
     }
-    
-    
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -79,7 +95,7 @@ public class ElementText extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-    
+
     /**
      * @return the size
      */
@@ -109,17 +125,17 @@ public class ElementText extends _AQuantum {
     }
 
     /**
-     * @return the width
+     * @return the ratio
      */
-    public double getWidth() {
-        return width;
+    public int getRatio() {
+        return ratio;
     }
 
     /**
-     * @param width the width to set
+     * @param ratio the ratio to set
      */
-    public void setWidth(double width) {
-        this.width = width;
+    public void setRatio(int ratio) {
+        this.ratio = ratio;
     }
 
     /**
@@ -129,40 +145,14 @@ public class ElementText extends _AQuantum {
         return rotation;
     }
 
-//    /**value@param rotation the rotation to set
-//     */
-//    public void setRotation(double value) {
-//        this.rotation.setValue(value);
-//    }
+    public double getRot() {
+        return rotation.getValue();
+    }
 
-//    /**
-//     * @return the mirror
-//     */
-//    public boolean isMirror() {
-//        return rotation.isMirror();
-//    }
-//
-//    /**
-//     * @param mirror the mirror to set
-//     */
-//    public void setMirror(boolean mirror) {
-//        this.mirror = mirror;
-//    }
-//    
-//    /**
-//     * @return the mirror
-//     */
-//    public boolean isSpin() {
-//        return spin;
-//    }
-//
-//    /**
-//     * @param spin the mirror to set
-//     */
-//    public void setSpin(boolean spin) {
-//        this.spin = spin;
-//    }
-//    
+    public void setRot(double rot) {
+        getRotation().setValue(rot);
+    }
+
     /**
      * @return the align
      */
@@ -205,6 +195,11 @@ public class ElementText extends _AQuantum {
         this.font = font;
     }
 
+    /**
+     * @return the grouprefs
+     */
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
+    }
 
-    
 }

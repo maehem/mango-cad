@@ -23,6 +23,7 @@ import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
+import com.maehem.mangocad.model.element.basic.LabelElement;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -46,6 +47,11 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -62,6 +68,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 
 /**
  *
@@ -80,30 +87,30 @@ public class LibraryElementNode {
 
     /**
      * <pre>
-     * ATTLIST wire 
-     *     x1 %Coord; #REQUIRED 
-     *     y1 %Coord; #REQUIRED 
-     *     x2 %Coord; #REQUIRED 
-     *     y2 %Coord; #REQUIRED 
-     *     width %Dimension; #REQUIRED 
-     *     layer %Layer; #REQUIRED 
-     *     extent %Extent; #IMPLIED 
-     *     style %WireStyle; "continuous" 
-     *     curve %WireCurve; "0" 
-     *     cap %WireCap; "round" 
+     * ATTLIST wire
+     *     x1 %Coord; #REQUIRED
+     *     y1 %Coord; #REQUIRED
+     *     x2 %Coord; #REQUIRED
+     *     y2 %Coord; #REQUIRED
+     *     width %Dimension; #REQUIRED
+     *     layer %Layer; #REQUIRED
+     *     extent %Extent; #IMPLIED
+     *     style %WireStyle; "continuous"
+     *     curve %WireCurve; "0"
+     *     cap %WireCap; "round"
      *     grouprefs IDREFS #IMPLIED
      *
-     *     extent: Only applicable for airwires 
+     *     extent: Only applicable for airwires
      *     cap : Only applicable if 'curve' is not zero
      * </pre>
-     * 
+     *
      * @param w
      * @param color
      * @return
      */
     public static Node createWireNode(Wire w, Color color) {
         double strokeWidth = w.getWidth();
-        if ( strokeWidth < 0.03 ) {
+        if (strokeWidth < 0.03) {
             // Wires can't be 0 width.
             strokeWidth = 0.03; // 6mil
         }
@@ -175,7 +182,7 @@ public class LibraryElementNode {
         border.setStrokeType(StrokeType.CENTERED);
         border.setStrokeWidth(0.1524); // 6 mil
         frameGroup.getChildren().add(border);
-        
+
         return frameGroup;
     }
 
@@ -195,129 +202,285 @@ public class LibraryElementNode {
         return p;
     }
 
+    public static Node createLabelNode(LabelElement le, Color color) {
+        Group labelGroup = new Group();
+        int rot = (int) le.getRot();
+
+        // TODO:   Test Text Render at all rotations and alignments.
+        switch (rot) {
+            case 270 -> {
+                //le.setAlign(TOP_CENTER);
+            }
+            case 180 -> {
+                //le.setAlign(CENTER_LEFT);
+            }
+            case 90 -> {
+                //le.setAlign(BOTTOM_CENTER);
+            }
+            default -> {
+                le.setAlign(le.isXref() ? CENTER_LEFT : BOTTOM_LEFT);
+            }
+        }
+        Node textNode = createText(le, color);
+        double x = le.getX();
+        double y = -le.getY();
+        double size = le.getSize();
+        double length = le.getValue().length();
+        switch (rot) {
+            case 270 -> {
+                //textNode.setTranslateY(-le.getSize());
+            }
+            case 180 -> {
+                textNode.setTranslateX(-size);
+            }
+            case 90 -> {
+                textNode.setTranslateY(-le.getSize());
+            }
+            default -> {
+                textNode.setTranslateX(le.getSize());
+            }
+        }
+
+        labelGroup.getChildren().add(textNode);
+
+        if (le.isXref()) {
+            Polygon outline = new Polygon(
+                    x, y,
+                    x + size, y + size,
+                    x + ((length + 1) * size), y + size,
+                    x + ((length + 1) * size), y - size,
+                    x + size, y - size
+            );
+            outline.setStroke(color);
+            outline.setStrokeWidth(0.3);
+            outline.setFill(Color.TRANSPARENT);
+            Transform rTf = new Rotate(-le.getRot(), x, y);
+            outline.getTransforms().add(rTf);
+            labelGroup.getChildren().add(outline);
+        }
+
+        return labelGroup;
+    }
+
     public static Node createText(ElementText et, Color color) {
         return createText(et, null, color);
     }
-    
+
     public static Node createText(ElementText et, String altText, Color color) {
-        double fontSizeMult =  0.72272; // IN to Point ratio
-        double fontSize = et.getSize()/fontSizeMult;
-        
+        double fontSizeMult = 0.72272; // IN to Point ratio
+        double fontSize = et.getSize() / fontSizeMult;
+
         //String fontPath = "/fonts/Source_Code_Pro/SourceCodePro-VariableFont_wght.ttf";
         String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), fontSize);
-        Text tt = new Text(altText!=null?altText:et.getValue());
+        Text tt = new Text(altText != null ? altText : et.getValue());
         tt.setFont(font);
         tt.setFill(color);
-        
-        
+
         double width = tt.getBoundsInLocal().getWidth();
         double height = tt.getBoundsInLocal().getHeight();
+        double borderW = 0.1;
         // JavaFX has not yet exposed FontMetrics so we make these assumtions.
-        double fontAsc = height * 0.58; // Font ascends this much.
-        double fontDes = height * 0.27;   // Font descends this much.
+        double fontAsc = height * 0.53; // Font ascends this much.
+        double fontDes = height * 0.27; // Font descends this much.
 
-        int rot = (int) et.getRotation().getValue();
+        tt.setLayoutY(fontAsc + borderW);
+        if (et.getRot() > 90.0 && et.getRot() <= 270.0) {
+            Rotate rT = new Rotate(180, width / 2.0, -fontAsc / 2.0);
+            tt.getTransforms().add(rT);
+        }
+
         boolean mir = et.getRotation().isMirror();
 
-        double rotX = 0.0;
-        double rotY = 0.0;
+        // jfxRot is the JavaFX rotation and is visually mirroed from EagleCAD rotation.
+        double rot = et.getRotation().getValue();
+        double jfxRot = 360.0 - rot;
 
-        switch (rot) {
-            case 270 -> {
-                tt.setRotate(270);
-                rotX = -width / 2.0 + fontDes;
-                rotY = width / 2.0 + fontDes;
-            }
-            case 180 -> {
-                if (mir) {
-                    rot = 0;
-                    rotY = fontAsc;
+        // Text lives inside a Pane area that might be 
+        // colored/backgrounded based on DRC error.
+        Pane ttG = new Pane(tt);
+        ttG.setPrefHeight(fontAsc + borderW * 2.0);
+
+        // Pivot Sizes
+        double pivL = borderW;
+        double pivR = borderW + width;
+        double pivT = borderW;
+        double pivB = fontAsc + borderW;
+        double pivXC = borderW + width / 2.0;
+        double pivYC = fontAsc / 2.0 + borderW;
+
+        // Locations
+        double pivotX = borderW;
+        double pivotY = fontAsc;
+        double left = et.getX() - borderW;
+        double right = et.getX() - width;
+        double centerX = et.getX() - (width / 2.0);
+        double top = -et.getY() - borderW;
+        double bottom = -et.getY() - fontAsc - borderW;
+        double centerY = -et.getY() - fontAsc / 2.0 - borderW;
+
+        boolean sideways = (rot > 45.0 && rot < 135.0)
+                || (rot > 225.0 && rot < 315.0);
+        boolean gt135 = et.getRotation().getValue() > 135.0;
+
+        switch (et.getAlign()) {
+            case BOTTOM_LEFT -> {
+                pivotX = pivL;
+                pivotY = pivB;
+                ttG.setLayoutY(bottom);
+                if (sideways) {
+                    if (gt135) { // LOWER
+                        ttG.setLayoutX(mir ? left - fontAsc : left); // BOT-LEFT-270-*
+                    } else {
+                        ttG.setLayoutX(mir ? left + fontAsc : left); // BOT-LEFT-90-*
+                    }
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? left + width : right + width); // BOT-LEFT-180-*
+                    } else {
+                        ttG.setLayoutX(mir ? right : left);  // BOT-LEFT-0-*
+                    }
                 }
             }
-            case 90 -> {
-                tt.setRotate(270);
-                rotX = -width / 2.0 - fontDes;
-                rotY = -width / 2.0 + fontDes;
+            case CENTER_LEFT -> {
+                pivotX = pivL;
+                pivotY = pivYC;
+                ttG.setLayoutY(centerY);
+                if (sideways) {
+                    ttG.setLayoutX(left);
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? left + width : right + width);
+                    } else {
+                        ttG.setLayoutX(mir ? right : left);
+                    }
+                }
             }
-            default -> {
-                if (mir) {
-                    rot = 180;
-                    switch( et.getAlign() ) {
-                        case TOP_CENTER,TOP_LEFT,TOP_RIGHT -> {
-                            rotY = fontAsc;
-                        }
-                        default -> {
-                            rotY = -fontAsc;
-                        }
+            case TOP_LEFT -> {
+                pivotX = pivL;
+                pivotY = pivT;
+                ttG.setLayoutY(top);
+                if (sideways) {
+                    if (gt135) { // LOWER
+                        ttG.setLayoutX(mir ? left + fontAsc : left);
+                    } else {
+                        ttG.setLayoutX(mir ? left - fontAsc : left);
+                    }
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? left + width : right + width);
+                    } else {
+                        ttG.setLayoutX(mir ? right : left);
+                    }
+                }
+            }
+            case BOTTOM_RIGHT -> {
+                pivotX = pivR;
+                pivotY = pivB;
+                ttG.setLayoutY(bottom);
+                if (sideways) {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? right - fontAsc : right);
+                    } else {
+                        ttG.setLayoutX(mir ? right + fontAsc : right);
+                    }
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? right - width : left - width);
+                    } else {
+                        ttG.setLayoutX(mir ? left : right);
+                    }
+                }
+            }
+            case CENTER_RIGHT -> {
+                pivotX = pivR;
+                pivotY = pivYC;
+                ttG.setLayoutY(centerY);
+                if (sideways) {
+                    ttG.setLayoutX(right);
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? right - width : left - width);
+                    } else {
+                        ttG.setLayoutX(mir ? left : right);
+                    }
+                }
+            }
+            case TOP_RIGHT -> {
+                pivotX = pivR;
+                pivotY = borderW;
+                ttG.setLayoutY(top);
+                if (sideways) {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? right + fontAsc : right);
+                    } else {
+                        ttG.setLayoutX(mir ? right - fontAsc : right);
+                    }
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? right - width : left - width);
+                    } else {
+                        ttG.setLayoutX(mir ? left : right);
+                    }
+                }
+            }
+            case BOTTOM_CENTER -> {
+                pivotX = pivXC;
+                pivotY = pivB;
+                ttG.setLayoutY(bottom);
+                if (sideways) {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? centerX - fontAsc : centerX);
+                    } else {
+                        ttG.setLayoutX(mir ? centerX + fontAsc : centerX);
+                    }
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(centerX);
+                    } else {
+                        ttG.setLayoutX(centerX);
+                    }
+                }
+            }
+            case CENTER -> {
+                pivotX = pivXC;
+                pivotY = pivYC;
+                ttG.setLayoutX(centerX);
+                ttG.setLayoutY(centerY);
+            }
+            case TOP_CENTER -> {
+                pivotX = pivXC;
+                pivotY = pivT;
+                ttG.setLayoutY(top);
+                if (sideways) {
+                    if (gt135) {
+                        ttG.setLayoutX(mir ? centerX + fontAsc : centerX);
+                    } else {
+                        ttG.setLayoutX(mir ? centerX - fontAsc : centerX);
+                    }
+                } else {
+                    if (gt135) {
+                        ttG.setLayoutX(centerX);
+                    } else {
+                        ttG.setLayoutX(centerX);
                     }
                 }
             }
         }
 
-        double pxL = et.getX() + rotX;
-        double pxR = et.getX() - width + rotX;
-        double pL = rot == 180 ? pxR : pxL;
-        double pR = rot == 180 ? pxL : pxR;
-
-        double pyT = -et.getY() + rotY + fontAsc;
-        double pyB = -et.getY() + rotY;
-        double pT = rot == 180 ? pyB : pyT;
-        double pB = rot == 180 ? pyT : pyB;
-
-        double cX = et.getX() - width / 2.0;
-        double cY = -et.getY() + fontDes;
-
-        Pane ttG = new Pane(tt);
-        ttG.setPrefHeight(et.getSize());
-
-        // Text alignment.
-        switch (et.getAlign()) {
-            case BOTTOM_CENTER -> {
-                ttG.setLayoutX(cX);
-                ttG.setLayoutY(pB);
-            }
-            case BOTTOM_LEFT -> {
-                ttG.setLayoutX(pL);
-                ttG.setLayoutY(pB);
-            }
-            case BOTTOM_RIGHT -> {
-                ttG.setLayoutX(pR);
-                ttG.setLayoutY(pB);
-            }
-            case CENTER -> {
-                ttG.setLayoutX(cX);
-                ttG.setLayoutY(cY);
-            }
-            case CENTER_LEFT -> {
-                ttG.setLayoutX(pL);
-                ttG.setLayoutY(cY);
-            }
-            case CENTER_RIGHT -> {
-                ttG.setLayoutX(pR);
-                ttG.setLayoutY(cY);
-            }
-            case TOP_CENTER -> {
-                ttG.setLayoutX(cX);
-                ttG.setLayoutY(pT);
-            }
-            case TOP_LEFT -> {
-                ttG.setLayoutX(pL);
-                ttG.setLayoutY(pT);
-            }
-            case TOP_RIGHT -> {
-                ttG.setLayoutX(pR);
-                ttG.setLayoutY(pT);
-            }
-
-        }
+        Rotate rTT = new Rotate(jfxRot, pivotX, pivotY);
+        ttG.getTransforms().add(rTT);
+        ttG.setBorder(new Border(new BorderStroke(
+                Color.BLUE, BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY,
+                new BorderWidths(0.1))));
 
         return ttG;
     }
 
     /**
-     * Create a SMD node for the pattern: 
-     * xml ==> smd name="1" x="-0.751840625" y="0" dx="0.7112" dy="0.762" layer="1" roundness="20"
+     * Create a SMD node for the pattern: xml ==> smd name="1" x="-0.751840625"
+     * y="0" dx="0.7112" dy="0.762" layer="1" roundness="20"
      *
      * TODO: Solder Mask
      *
@@ -922,7 +1085,6 @@ public class LibraryElementNode {
         p.setBackground(Background.EMPTY);
         p.setClip(new Rectangle(64, 64));
 
-
         double inc = (double) size / nLines;
         for (int i = 0; i < nLines * 2; i++) {
             Line l = new Line(i * inc, 0, i * inc - size, size);
@@ -937,7 +1099,7 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Node createSymbolNode( Symbol symbol, LayerElement[] layers, ColorPalette palette) {
+    public static Node createSymbolNode(Symbol symbol, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
         StackPane pane = new StackPane(g);
 
@@ -974,11 +1136,11 @@ public class LibraryElementNode {
         g.getChildren().add(LibraryElementNode.crosshairs(
                 0, 0, 0.5, 0.05, Color.RED
         ));
-        
+
         return g;
     }
-    
-    public static Node createPackageNode( Footprint pkg, LayerElement[] layers, ColorPalette palette) {
+
+    public static Node createPackageNode(Footprint pkg, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
 
         pkg.getElements().forEach((e) -> {
@@ -1045,7 +1207,7 @@ public class LibraryElementNode {
         g.getChildren().add(LibraryElementNode.crosshairs(
                 0, 0, 0.5, 0.05, Color.RED
         ));
-        
+
         return g;
     }
 }

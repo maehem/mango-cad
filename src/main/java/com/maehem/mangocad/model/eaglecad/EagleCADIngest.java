@@ -827,7 +827,7 @@ public class EagleCADIngest {
                 case "distance" ->
                     text.setDistance(Integer.parseInt(value));
                 case "ratio" ->
-                    text.setWidth(Integer.parseInt(value));
+                    text.setRatio(Integer.parseInt(value));
                 case "size" ->
                     text.setSize(Double.parseDouble(value));
                 case "layer" ->
@@ -1041,7 +1041,7 @@ public class EagleCADIngest {
         elements.add(pin);
     }
 
-    private static void ingestLabel(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestLabel(List<_AQuantum> elements, Node node, String lblText) throws EagleCADLibraryFileException {
         //  label EMPTY>
         //     ATTLIST
         //          x             %Coord;        #REQUIRED
@@ -1088,6 +1088,7 @@ public class EagleCADIngest {
                     throw new EagleCADLibraryFileException("Label has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
+        label.setValue(lblText);
 
         elements.add(label);
     }
@@ -1104,41 +1105,46 @@ public class EagleCADIngest {
         //        rot           %Rotation;     "R0"
         //        xref          %Bool;         "no"
         //        grouprefs     IDREFS         #IMPLIED
-        //        >
+        //        
+        //      Added recently:
+        //        probetype    %Int             "0"
+        //
         //        <!-- rot:  Only 0, 90, 180 or 270 -->
         //        <!-- xref: Only in <net> context -->
 
-        LabelElement label = new LabelElement();
+        Probe probe = new Probe();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
                 case "x" ->
-                    label.setX(Double.parseDouble(value));
+                    probe.setX(Double.parseDouble(value));
                 case "y" ->
-                    label.setY(Double.parseDouble(value));
+                    probe.setY(Double.parseDouble(value));
                 case "size" ->
-                    label.setSize(Double.parseDouble(value));
+                    probe.setSize(Double.parseDouble(value));
                 case "layer" ->
-                    label.setLayer(Integer.parseInt(value));
+                    probe.setLayer(Integer.parseInt(value));
                 case "font" ->
-                    label.setFont(TextFont.fromCode(value));
+                    probe.setFont(TextFont.fromCode(value));
                 case "ratio" ->
-                    label.setRatio(Integer.parseInt(value));
+                    probe.setRatio(Integer.parseInt(value));
                 case "rot" ->
-                    label.getRotation().setValue(value);
+                    probe.getRotation().setValue(value);
                 case "xref" ->
-                    label.setXref(value.equalsIgnoreCase("yes"));
+                    probe.setXref(value.equalsIgnoreCase("yes"));
+                case "probetype" ->
+                    probe.setProbeType(Integer.parseInt(value));
                 case "grouprefs" ->
-                    label.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
+                    probe.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
 
                 default ->
                     throw new EagleCADLibraryFileException("Probe has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
-        elements.add(label);
+        elements.add(probe);
     }
 
     private static void ingestFrame(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
@@ -1965,14 +1971,14 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (item.getNodeType() != 1) {
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
             if (!item.getNodeName().equals(Net.ELEMENT_NAME_NET)) {
                 LOGGER.log(Level.SEVERE, "Unrecognized Element in Net ingest: [{0}] ... ignoring.", item.getNodeName());
                 continue;
             }
-
+            //LOGGER.log(Level.SEVERE, "Ingest <net>");
             // net (segment) // segment list
             // ATTLIST
             //    name          %String;       #REQUIRED
@@ -1984,8 +1990,10 @@ public class EagleCADIngest {
                 Node attrItem = attributes.item(j);
                 String value = attrItem.getNodeValue();
                 switch (attrItem.getNodeName()) {
-                    case "name" ->
+                    case "name" -> {
+                        //LOGGER.log(Level.SEVERE, "    name: " + value);
                         net.setName(value);
+                    }
                     case "class" -> {
                         if (!asBus) {
                             net.setNetClass(Integer.parseInt(value));
@@ -2003,7 +2011,7 @@ public class EagleCADIngest {
             NodeList segmentNodes = item.getChildNodes();
             for (int j = 0; j < segmentNodes.getLength(); j++) {
                 Node segmentItem = segmentNodes.item(j);
-                if (segmentItem.getNodeType() != 1) {
+                if (segmentItem.getNodeType() != Node.ELEMENT_NODE) {
                     continue;
                 }
                 if (!segmentItem.getNodeName().equals(Segment.ELEMENT_NAME)) {
@@ -2011,11 +2019,13 @@ public class EagleCADIngest {
                     continue;
                 }
 
-                ingestSegment(net.getSegments(), segmentItem);
+                ingestSegment(net.getSegments(), segmentItem, net.getName());
             }
 
+            //LOGGER.log(Level.SEVERE, "Net [{0}] has {1} elements.", new Object[]{net.getName(), net.getSegments().size()});
             netInsts.add(net);
         }
+        //LOGGER.log(Level.SEVERE, "Ingested " + netInsts.size() + " netInsts.");
     }
 
     /**
@@ -2027,16 +2037,17 @@ public class EagleCADIngest {
      * @param segmentList
      * @param node
      */
-    private static void ingestSegment(List<Segment> segmentList, Node node) throws EagleCADLibraryFileException {
+    private static void ingestSegment(List<Segment> segmentList, Node node, String netName) throws EagleCADLibraryFileException {
 
         Segment seg = new Segment(); // Segment is a List
-
+        //LOGGER.log(Level.SEVERE, "        <segment>");
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (item.getNodeType() != 1) {
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
+            //LOGGER.log(Level.SEVERE, "            Attribute: " + item.getNodeName());
             switch (item.getNodeName()) {
                 case "pinref" -> {
                     ingestPinref(seg, item);
@@ -2051,7 +2062,7 @@ public class EagleCADIngest {
                     ingestJunction(seg, item);
                 }
                 case "label" -> {
-                    ingestLabel(seg, item);
+                    ingestLabel(seg, item, netName);
                 }
                 case "probe" -> {
                     ingestProbe(seg, item);
@@ -2061,8 +2072,8 @@ public class EagleCADIngest {
                 }
 
             }
-            segmentList.add(seg);
         }
+        segmentList.add(seg);
     }
 
     private static void ingestPinref(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
@@ -2116,9 +2127,10 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
             switch (item.getNodeName()) {
-                case "#text" -> {
-                }
                 case "moduleinst" -> {
                     ingestModuleInst(moduleInsts, node);
                 }

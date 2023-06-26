@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
@@ -25,27 +26,25 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Probe extends _AQuantum {
+public class LabelElementOld extends _AQuantum {
 
     public static final String ELEMENT_NAME = "label";
 
-    // probe ( no sub-nodes )
-    //    ATTLIST probe
-    //        x             %Coord;        #REQUIRED
-    //        y             %Coord;        #REQUIRED
-    //        size          %Dimension;    #REQUIRED
-    //        layer         %Layer;        #REQUIRED
-    //        font          %TextFont;     "proportional"
-    //        ratio         %Int;          "8"
-    //        rot           %Rotation;     "R0"
-    //        xref          %Bool;         "no"
-    //        grouprefs     IDREFS         #IMPLIED
-    //        
-    //      Added recently:
-    //        probetype    %Int             "0"
-    //
-    //        <!-- rot:  Only 0, 90, 180 or 270 -->
-    //        <!-- xref: Only in <net> context -->
+    //label (no sub-nodes)
+    //  ATTLIST label
+    //          x             %Coord;        #REQUIRED
+    //          y             %Coord;        #REQUIRED
+    //          size          %Dimension;    #REQUIRED
+    //          layer         %Layer;        #REQUIRED
+    //          font          %TextFont;     "proportional"
+    //          ratio         %Int;          "8"
+    //          rot           %Rotation;     "R0"
+    //          xref          %Bool;         "no"
+    //          align         %Align;        "bottom-left"
+    //          grouprefs     IDREFS         #IMPLIED
+    //          >
+    //          <!-- rot:  Only 0, 90, 180 or 270 -->
+    //          <!-- xref: Only in <net> context --> 
     private double x;
     private double y;
     private double size = 10;
@@ -53,7 +52,7 @@ public class Probe extends _AQuantum {
     private int ratio = 8;
     private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
     private boolean xref = false;
-    private int probetype = 0;
+    private TextAlign align = TextAlign.BOTTOM_LEFT;
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -156,7 +155,7 @@ public class Probe extends _AQuantum {
     public Rotation getRotation() {
         return rotation;
     }
-
+    
     /**
      * @return the rot
      */
@@ -165,24 +164,34 @@ public class Probe extends _AQuantum {
     }
 
     /**
-     * @param val the rot to set
+     * @param val the rot to set 0,90,180,270. Values will be clamped.
      */
     public void setRot(double val) {
         this.rotation.setValue(val);
+//        // Range checking. Round to nearest 90 degree angle.
+//        if ( rotation >= 45.0 && rotation < 135.0 ) {
+//            this.rotation = 90;
+//        } else if ( rotation >= 135.0 && rotation < 225.0 ) {
+//            this.rotation = 180;
+//        } else if ( rotation >= 225.0 || rotation < 315.0 ) {
+//            this.rotation = 270;
+//        } else {
+//            this.rotation = 0;
+//        }
     }
 
     /**
-     * @return the probetype
+     * @return the align
      */
-    public int getProbeType() {
-        return probetype;
+    public TextAlign getAlign() {
+        return align;
     }
 
     /**
-     * @param probetype the probetype to set
+     * @param align the align to set
      */
-    public void setProbeType(int probetype) {
-        this.probetype = probetype;
+    public void setAlign(TextAlign align) {
+        this.align = align;
     }
 
 }
