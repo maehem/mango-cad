@@ -29,13 +29,14 @@ public class Junction extends _AQuantum {
     public static final int DEFAULT_LAYER = 91; // Nets
     public static final double DOT_RADIUS = 0.6;
     
-    private final ArrayList<String> grouprefs = new ArrayList<>();
-
     //  junction EMPTY
     //    ATTLIST
     //          x             %Coord;        #REQUIRED
     //          y             %Coord;        #REQUIRED
     //          grouprefs     IDREFS         #IMPLIED
+
+    private final ArrayList<String> grouprefs = new ArrayList<>();
+
     private double x;
     private double y;
 
