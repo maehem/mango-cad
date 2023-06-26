@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
@@ -25,9 +24,11 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Probe extends _AQuantum {
+public class Probe extends ElementText {
 
-    public static final String ELEMENT_NAME = "label";
+    public static final String ELEMENT_NAME = "probe";
+    public static final int PROBETYPE_VOLTAGE = 0;
+    public static final int PROBETYPE_PHASE = 1;
 
     // probe ( no sub-nodes )
     //    ATTLIST probe
@@ -42,7 +43,7 @@ public class Probe extends _AQuantum {
     //        grouprefs     IDREFS         #IMPLIED
     //        
     //      Added recently:
-    //        probetype    %Int             "0"
+    //        probetype    %Int             "0"  0=voltage, 1=phase
     //
     //        <!-- rot:  Only 0, 90, 180 or 270 -->
     //        <!-- xref: Only in <net> context -->
@@ -53,7 +54,7 @@ public class Probe extends _AQuantum {
     private int ratio = 8;
     private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
     private boolean xref = false;
-    private int probetype = 0;
+    private int probetype = PROBETYPE_VOLTAGE;
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 

@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 public class Wire extends _AQuantum {
 
     public static final String ELEMENT_NAME = "wire";
+    public static final int DEFAULT_LAYER = 94; // Nets
     
     private double x1;
     private double y1;
@@ -111,6 +113,14 @@ public class Wire extends _AQuantum {
      */
     public double getY2() {
         return y2;
+    }
+    
+    public double getAverageX() {
+        return (x1+x2)/2.0;
+    }
+
+    public double getAverageY() {
+        return (y1+y2)/2.0;
     }
 
     /**
@@ -196,5 +206,15 @@ public class Wire extends _AQuantum {
      */
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
+    }
+    
+    @Override
+    public String toString() {
+        MessageFormat mf = new MessageFormat("wire: {0},{1} to {2},{3}  avg:{4},{5} layer:{6}");
+        Object[] o = new Object[]{
+            getX1(), getY1(), getX2(), getY2(),
+            getAverageX(), getAverageY(),
+            getLayerNum()};
+        return mf.format(o);
     }
 }

@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.highlevel.Net;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryElementNode;
 import java.util.logging.Level;
@@ -59,17 +60,21 @@ public class SchematicPreview extends Group {
     }
 
     private void populateNode(Schematic schem, int index) {
+        LayerElement[] layers = schem.getParentDrawing().getLayers();
+        ColorPalette palette = schem.getParentDrawing().getPalette();
         //LOGGER.log(Level.SEVERE, "Populate Page: " + (index+1));
         Sheet sheet = schem.getSheets().get(index);
         if (sheet.getPlain().isEmpty()) {
             LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
         }
         for (_AQuantum element : sheet.getPlain()) {
+            LayerElement layer = layers[element.getLayerNum()];
+            Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
                 getChildren().add(LibraryElementNode.createPolygon(e, Color.CORAL));
             } else if (element instanceof Wire e) {
-                getChildren().add(LibraryElementNode.createWireNode(e, Color.RED));
+                getChildren().add(LibraryElementNode.createWireNode(e, c));
             } else if (element instanceof ElementText e) {
                 getChildren().add(LibraryElementNode.createText(e, Color.CORAL));
             } else if (element instanceof Dimension e) {
@@ -103,8 +108,8 @@ public class SchematicPreview extends Group {
                             deviceSet.getGates().forEach((gate) -> {
                                 if (inst.getGate().equals(gate.getName())) {
                                     Symbol symbol = lib.getSymbol(gate.getSymbol());
-                                    LayerElement[] layers = lib.getParentDrawing().getLayers();
-                                    ColorPalette palette = lib.getParentDrawing().getPalette();
+//                                    LayerElement[] layers = lib.getParentDrawing().getLayers();
+//                                    ColorPalette palette = lib.getParentDrawing().getPalette();
 
                                     Node symbolPreview = LibraryElementNode.createSymbolNode(symbol, layers, palette);
                                     symbolPreview.setLayoutX(inst.getX());
@@ -128,6 +133,8 @@ public class SchematicPreview extends Group {
                 //LOGGER.log(Level.SEVERE, "Draw Seg");
 
                 seg.forEach((element) -> {
+                     int colorIndex = layers[element.getLayerNum()].getColorIndex();
+                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     if (element instanceof PinRef e) {
                         // Might not have any visual element.
                         //        LOGGER.log(Level.SEVERE, "TODO: Draw PinRef Node");
@@ -136,16 +143,13 @@ public class SchematicPreview extends Group {
                         LOGGER.log(Level.SEVERE, "TODO: Draw PortRef Node");
                         //getChildren().add(LibraryElementNode.createPortNode(e., Color.PALEGREEN));
                     } else if (element instanceof Wire e) {
-                        getChildren().add(LibraryElementNode.createWireNode(e, Color.PALEGREEN));
+                        getChildren().add(LibraryElementNode.createWireNode(e, c));
                     } else if (element instanceof Junction e) {
-                        LOGGER.log(Level.SEVERE, "TODO: Draw Junction Node");
-                        //getChildren().add(LibraryElementNode.createWireNode(e, Color.RED));
+                        getChildren().add(LibraryElementNode.createJunctionNode(e, c));
                     } else if (element instanceof LabelElement e) {
-                        //LOGGER.log(Level.SEVERE, "TODO: Draw Label Node: {0} obj: {1}", new Object[]{e.getValue(), e.toString()});
-                        getChildren().add(LibraryElementNode.createLabelNode(e, Color.WHITE));
+                        getChildren().add(LibraryElementNode.createLabelNode(e, c));
                     } else if (element instanceof Probe e) {
-                        LOGGER.log(Level.SEVERE, "TODO: Draw Probe Node");
-                        //getChildren().add(LibraryElementNode.createWireNode(e, Color.RED));
+                        getChildren().add(LibraryElementNode.createProbeNode(e, c, seg));
                     } else {
                         LOGGER.log(Level.SEVERE, "Unknown Element in Segment List: " + element.getElementName());
                     }

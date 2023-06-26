@@ -17,16 +17,19 @@
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
+import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
+import com.maehem.mangocad.model.element.basic.Junction;
 import com.maehem.mangocad.model.element.basic.LabelElement;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Probe;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import static com.maehem.mangocad.model.element.enums.PadShape.*;
@@ -35,6 +38,7 @@ import static com.maehem.mangocad.model.element.enums.PinLength.*;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Segment;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
@@ -202,25 +206,114 @@ public class LibraryElementNode {
         return p;
     }
 
+    public static Node createProbeNode(Probe le, Color color, Segment seg) {
+        Group labelGroup = new Group();
+        int rot = (int) le.getRot();
+        double dotRadius = 0.8;
+        double lineW = 0.5;
+
+        // Dot at x,y
+        // Label with align bottom/left
+        // Use mirror to medify align.
+        // Line to segment. Nearest?
+        // rounded square at segment x,y.
+        // Spec says "xref" possible, but Eagle has no option to enable it.
+        le.setAlign(BOTTOM_LEFT);
+
+        Node textNode = createText(le, color);
+        double x = le.getX();
+        double y = -le.getY();
+        double size = le.getSize();
+        double length = le.getValue().length();
+        double spacer = le.getSize() / 2.0;
+        switch (rot) {
+            case 270 -> {
+                textNode.setTranslateY(spacer);
+            }
+            case 180 -> {
+                textNode.setTranslateX(-spacer);
+            }
+            case 90 -> {
+                textNode.setTranslateY(-spacer);
+            }
+            default -> {
+                textNode.setTranslateX(spacer);
+            }
+        }
+
+        labelGroup.getChildren().add(textNode);
+
+        Circle c = new Circle(le.getX(), -le.getY(), dotRadius, color);
+        labelGroup.getChildren().add(c);
+
+        // Pretty sure this is not ever used in Eagle.
+        if (le.isXref()) {
+            Polygon outline = new Polygon(
+                    x, y,
+                    x + size, y + size,
+                    x + ((length + 1) * size), y + size,
+                    x + ((length + 1) * size), y - size,
+                    x + size, y - size
+            );
+            outline.setStroke(color);
+            outline.setStrokeWidth(0.3);
+            outline.setFill(Color.TRANSPARENT);
+            Transform rTf = new Rotate(-le.getRot(), x, y);
+            outline.getTransforms().add(rTf);
+            labelGroup.getChildren().add(outline);
+        }
+
+        // Find closest x,y on a Wire Segment and make that the anchor.
+        // Calculate Probe line and square-anchor location.
+        Wire closestWire = null;
+        for (_AQuantum element : seg) {
+            if (element instanceof Wire w) {
+                if (closestWire == null) {
+                    closestWire = w;
+                    //LOGGER.log(Level.SEVERE, "Closest: " + closestWire.toString());
+                } else {
+                    double dX = le.getX() - w.getAverageX();
+                    double dY = le.getY() - w.getAverageY();
+                    double distW = Math.abs(Math.hypot(dX, dY));
+                    
+                    double dCX = le.getX() - closestWire.getAverageX();
+                    double dCY = le.getY() - closestWire.getAverageY();
+                    double distCW = Math.abs(Math.hypot(dCX, dCY));
+
+                    // If this is closer than the last one make it the new reference.
+                    if ( distW < distCW ) {
+                        closestWire = w;
+                        //LOGGER.log(Level.SEVERE, "New closest: " + closestWire.toString());
+                    }
+                }
+            }
+        }
+        if ( closestWire == null ) {
+            LOGGER.log(Level.SEVERE, "Could not determine closest wire to Probe!");
+        } else {
+            // Find halfway point on line and make it X2,Y2 for probe line.
+            double averageX = closestWire.getAverageX();
+            double averageY = -closestWire.getAverageY();
+            
+            Line l = new Line(le.getX(), -le.getY(),averageX, averageY );
+            l.setStrokeWidth(lineW);
+            l.setStroke(color);
+            
+            Rectangle r = new Rectangle(dotRadius*2.0, dotRadius*2.0, color);
+            r.setLayoutX(averageX-dotRadius);
+            r.setLayoutY(averageY-dotRadius);
+
+            labelGroup.getChildren().addAll(l,r);
+        }
+
+        return labelGroup;
+    }
+    
     public static Node createLabelNode(LabelElement le, Color color) {
         Group labelGroup = new Group();
         int rot = (int) le.getRot();
 
-        // TODO:   Test Text Render at all rotations and alignments.
-        switch (rot) {
-            case 270 -> {
-                //le.setAlign(TOP_CENTER);
-            }
-            case 180 -> {
-                //le.setAlign(CENTER_LEFT);
-            }
-            case 90 -> {
-                //le.setAlign(BOTTOM_CENTER);
-            }
-            default -> {
-                le.setAlign(le.isXref() ? CENTER_LEFT : BOTTOM_LEFT);
-            }
-        }
+        le.setAlign(le.isXref() ? CENTER_LEFT : BOTTOM_LEFT);
         Node textNode = createText(le, color);
         double x = le.getX();
         double y = -le.getY();
@@ -228,7 +321,7 @@ public class LibraryElementNode {
         double length = le.getValue().length();
         switch (rot) {
             case 270 -> {
-                //textNode.setTranslateY(-le.getSize());
+                textNode.setTranslateY(le.getSize());
             }
             case 180 -> {
                 textNode.setTranslateX(-size);
@@ -267,6 +360,8 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, String altText, Color color) {
+        boolean showBorder = false;
+
         double fontSizeMult = 0.72272; // IN to Point ratio
         double fontSize = et.getSize() / fontSizeMult;
 
@@ -282,7 +377,7 @@ public class LibraryElementNode {
         double borderW = 0.1;
         // JavaFX has not yet exposed FontMetrics so we make these assumtions.
         double fontAsc = height * 0.53; // Font ascends this much.
-        double fontDes = height * 0.27; // Font descends this much.
+        //double fontDes = height * 0.27; // Font descends this much.
 
         tt.setLayoutY(fontAsc + borderW);
         if (et.getRot() > 90.0 && et.getRot() <= 270.0) {
@@ -470,11 +565,12 @@ public class LibraryElementNode {
 
         Rotate rTT = new Rotate(jfxRot, pivotX, pivotY);
         ttG.getTransforms().add(rTT);
-        ttG.setBorder(new Border(new BorderStroke(
-                Color.BLUE, BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY,
-                new BorderWidths(0.1))));
-
+        if (showBorder) {
+            ttG.setBorder(new Border(new BorderStroke(
+                    Color.BLUE, BorderStrokeStyle.SOLID,
+                    CornerRadii.EMPTY,
+                    new BorderWidths(0.1))));
+        }
         return ttG;
     }
 
@@ -1055,6 +1151,24 @@ public class LibraryElementNode {
         return c;
     }
 
+    /**
+     *
+     * @param junc Junction object
+     * @param color to make the circle
+     * @return
+     */
+    public static Node createJunctionNode(Junction junc, Color color) {
+        final double JUNC_RAD = 0.7;
+
+        Circle c = new Circle(junc.getX(), -junc.getY(), JUNC_RAD);
+
+        //c.setStroke();
+        //c.setStrokeWidth(junc.getWidth());
+        c.setFill(color);
+
+        return c;
+    }
+
     public static Node crosshairs(double x, double y, double size, double strokeWidth, Color color) {
         // Crosshairss
         Group g = new Group();
@@ -1101,10 +1215,8 @@ public class LibraryElementNode {
 
     public static Node createSymbolNode(Symbol symbol, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
-        StackPane pane = new StackPane(g);
 
         symbol.getElements().forEach((e) -> {
-            int layerNum = e.getLayerNum();
             LayerElement le = layers[e.getLayerNum()];
             if (le == null) {
                 LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
@@ -1174,36 +1286,6 @@ public class LibraryElementNode {
             }
         });
 
-//        pkg.getElements().forEach((e) -> {
-//            int layerNum = e.getLayerNum();
-//            LayerElement le = layers[e.getLayerNum()];
-//            if (le == null) {
-//                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
-//            }
-//            int colorIndex = le.getColorIndex();
-//            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-//
-//            // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
-//            if (e instanceof ElementPolygon ep) {
-//                g.getChildren().add(LibraryElementNode.createPolygon(ep, c));
-//            } else if (e instanceof Wire w) {
-//                g.getChildren().add(LibraryElementNode.createWireNode(w, c));
-//            } else if (e instanceof ElementText et) {
-//                g.getChildren().add(LibraryElementNode.createText(et, c));
-//                g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
-//            } else if (e instanceof Dimension dim) {
-//                //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));
-//                LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
-//            } else if (e instanceof Pin pin) {
-//                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
-//            } else if (e instanceof ElementCircle ec) {
-//                g.getChildren().add(LibraryElementNode.createCircleNode(ec, c));
-//            } else if (e instanceof ElementRectangle rect) {
-//                g.getChildren().add(LibraryElementNode.createRectangle(rect, c));
-//            } else if (e instanceof FrameElement frm) {
-//                g.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
-//            }
-//        });
         g.getChildren().add(LibraryElementNode.crosshairs(
                 0, 0, 0.5, 0.05, Color.RED
         ));
