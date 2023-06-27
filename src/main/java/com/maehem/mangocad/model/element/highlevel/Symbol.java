@@ -18,6 +18,8 @@ package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.enums.PinDirection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,5 +131,22 @@ public class Symbol extends _AQuantum {
     
     public Description getDescription() {        
         return description;
+    }
+    
+    /**
+     * 
+     * @return VALUE of pin if Supply or null if symbol is not a Supply pin.
+     */
+    public String supplyPin() {
+        List<_AQuantum> list = elements.stream().filter((el) -> ( el instanceof Pin)  ).toList();
+        
+        if ( list.size() == 1 ) {
+            Pin pin = (Pin)(list.get(0));
+            if ( pin.getDirection().equals(PinDirection.SUPPLY) ) {
+                return pin.getName();
+            }
+        }
+
+        return null;
     }
 }
