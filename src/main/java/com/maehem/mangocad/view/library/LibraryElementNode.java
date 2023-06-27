@@ -171,7 +171,70 @@ public class LibraryElementNode {
     }
 
     public static Node createFrameNode(FrameElement fe, Color color) {
+        double thick = 3.81;
+        double strokeOuter = 0.2;
+        double strokeInner = 0.1;
+
         Group frameGroup = new Group();
+
+        if (fe.isBorderLeft()) {
+            Line line = new Line(
+                    fe.getX1() + thick, -fe.getY1() - thick,
+                    fe.getX1() + thick, -fe.getY2() + thick
+            );
+            line.setStrokeWidth(strokeInner);
+            line.setStroke(color);
+            frameGroup.getChildren().add(line);
+
+            // Row Legend
+            addFrameRows(frameGroup,
+                    fe.getX1(), fe.getY1(), fe.getX2(), fe.getY2(),
+                    thick, strokeInner, color, fe.getRows()
+            );
+        }
+        if (fe.isBorderRight()) {
+            Line line = new Line(
+                    fe.getX2() - thick, -fe.getY1() - thick,
+                    fe.getX2() - thick, -fe.getY2() + thick
+            );
+            line.setStrokeWidth(strokeInner);
+            line.setStroke(color);
+            frameGroup.getChildren().add(line);
+            // Row Legend
+            addFrameRows(frameGroup,
+                    fe.getX2() - thick, fe.getY1(), fe.getX2(), fe.getY2(),
+                    thick, strokeInner, color, fe.getRows()
+            );
+        }
+        if (fe.isBorderTop()) {
+            Line line = new Line(
+                    fe.getX1() + thick, -fe.getY1() - thick,
+                    fe.getX2() - thick, -fe.getY1() - thick
+            );
+            line.setStrokeWidth(strokeInner);
+            line.setStroke(color);
+            frameGroup.getChildren().add(line);
+
+            addFrameColumns(frameGroup,
+                    fe.getX1(), fe.getY1(), fe.getX2(), fe.getY2(),
+                    thick, strokeInner, color, fe.getColumns()
+            );
+        }
+        if (fe.isBorderBottom()) {
+            Line line = new Line(
+                    fe.getX1() + thick, -fe.getY2() + thick,
+                    fe.getX2() - thick, -fe.getY2() + thick
+            );
+            line.setStrokeWidth(strokeInner);
+            line.setStroke(color);
+            frameGroup.getChildren().add(line);
+            
+            addFrameColumns(frameGroup,
+                    fe.getX1(), fe.getY2()-thick, fe.getX2(), fe.getY2(),
+                    thick, strokeInner, color, fe.getColumns()
+            );
+        }
+
         Polygon border = new Polygon(
                 fe.getX1(), -fe.getY1(),
                 fe.getX2(), -fe.getY1(),
@@ -183,10 +246,62 @@ public class LibraryElementNode {
         border.setStroke(color);
         border.setFill(Color.TRANSPARENT);
         border.setStrokeType(StrokeType.CENTERED);
-        border.setStrokeWidth(0.1524); // 6 mil
+        border.setStrokeWidth(strokeOuter); // 6 mil
         frameGroup.getChildren().add(border);
 
         return frameGroup;
+    }
+
+    private static void addFrameRows(Group g, double x1, double y1, double x2, double y2, double thick, double stroke, Color color, double nRows) {
+        if (nRows <= 0) {
+            return;
+        }
+        double rowH = (Math.abs(y1 - y2) - 2 * thick) / nRows;
+        for (int r = 0; r < nRows; r++) {
+            Text t = new Text(String.valueOf((char) ('A' + r)));
+            t.setFont(Font.font(3));
+            t.setLayoutX(x1 + 0.8);
+            t.setLayoutY(-y2 + thick + rowH * r + rowH / 2.0);
+            t.setFill(color);
+            g.getChildren().add(t);
+
+            // Row divider (no first row, placed above)
+            if (r > 0) {
+                Line divLine = new Line(
+                        x1, -thick - rowH * r,
+                        x1 + thick, -thick - rowH * r
+                );
+                divLine.setStrokeWidth(stroke);
+                divLine.setStroke(color);
+                g.getChildren().add(divLine);
+            }
+        }
+    }
+
+    private static void addFrameColumns(Group g, double x1, double y1, double x2, double y2, double thick, double stroke, Color color, double nCols) {
+        if (nCols <= 0) {
+            return;
+        }
+        double colW = (Math.abs(x1 - x2) - 2 * thick) / nCols;
+        for (int c = 0; c < nCols; c++) {
+            Text t = new Text(String.valueOf(1 + c));
+            t.setFont(Font.font(3));
+            t.setLayoutX(x1 + thick + colW * c + colW / 2.0);
+            t.setLayoutY(-y1 - 0.8);
+            t.setFill(color);
+            g.getChildren().add(t);
+
+            // Row divider (no first row, placed above)
+            if (c > 0) {
+                Line divLine = new Line(
+                        thick + colW * c, -y1, 
+                        thick + colW * c, -y1 - thick
+                );
+                divLine.setStrokeWidth(stroke);
+                divLine.setStroke(color);
+                g.getChildren().add(divLine);
+            }
+        }
     }
 
     public static Node createPolygon(ElementPolygon poly, Color color) {
