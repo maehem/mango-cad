@@ -18,12 +18,14 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
+import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.basic.Junction;
 import com.maehem.mangocad.model.element.basic.LabelElement;
 import com.maehem.mangocad.model.element.basic.PadSMD;
@@ -43,6 +45,7 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1333,7 +1336,7 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Node createSymbolNode(Symbol symbol, LayerElement[] layers, ColorPalette palette) {
+    public static Node createSymbolNode(Symbol symbol, Instance inst, String value, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
 
         symbol.getElements().forEach((e) -> {
@@ -1350,7 +1353,32 @@ public class LibraryElementNode {
             } else if (e instanceof Wire w) {
                 g.getChildren().add(LibraryElementNode.createWireNode(w, c));
             } else if (e instanceof ElementText et) {
-                g.getChildren().add(LibraryElementNode.createText(et, c));
+                // Replace Text for things that start with '>'
+                
+                
+                if (inst == null || !et.getValue().startsWith(">") ) {
+                    // Library preview of Part 
+                    //  or @value was over-ridden (like <text> in a part).
+                    g.getChildren().add(LibraryElementNode.createText(et, c));
+                } else {
+                    // There is an instance or >VALUE/>NAME was set.
+                    String altText = "FooBar";
+                    for ( Attribute attr: inst.getAttributes() ) {
+                        // Attr like >NAME or >VALUE matches the textValue.
+                        String name = ">" + attr.getName();
+                        if ( name.equals(et.getValue()) ) {
+                            // Perform substitute.
+                            // Schematic instance of Part.
+                            if( et.getValue().equals(">VALUE") ) {
+                                altText = value;
+                            } else if ( et.getValue().equals(">NAME")) {
+                                altText = inst.getPart();
+                            }                            
+                        }
+                    }
+                    
+                    g.getChildren().add(LibraryElementNode.createText(et, altText, c));
+                }
                 g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof Dimension dim) {
                 //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));

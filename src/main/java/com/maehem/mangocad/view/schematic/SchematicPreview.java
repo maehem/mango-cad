@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.schematic;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.*;
+import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Net;
@@ -28,6 +29,7 @@ import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryElementNode;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
@@ -86,9 +88,9 @@ public class SchematicPreview extends Group {
                 //getChildren().add(LibraryElementNode.createSplineNode(e, Color.CORAL));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Spline Node");
             } else if (element instanceof ElementRectangle e) {
-                getChildren().add(LibraryElementNode.createRectangle(e, Color.RED));
+                getChildren().add(LibraryElementNode.createRectangle(e, c));
             } else if (element instanceof FrameElement e) {
-                getChildren().add(LibraryElementNode.createFrameNode(e, Color.RED));
+                getChildren().add(LibraryElementNode.createFrameNode(e, c));
             } else if (element instanceof Hole e) {
                 //getChildren().add(LibraryElementNode.createHoleNode(e, Color.RED));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Hole Node");
@@ -99,25 +101,39 @@ public class SchematicPreview extends Group {
         // Instances
         for (Instance inst : sheet.getInststances()) {
             String partName = inst.getPart();
-            for (Part p : schem.getParts()) {
-                if (partName.equals(p.getName())) {
-                    String library = p.getLibrary();
-                    schem.getLibraries().forEach((lib) -> {
-                        if (lib.getName().equals(library)) {
-                            DeviceSet deviceSet = lib.getDeviceSet(p.getDeviceSet());
-                            deviceSet.getGates().forEach((gate) -> {
-                                if (inst.getGate().equals(gate.getName())) {
-                                    Symbol symbol = lib.getSymbol(gate.getSymbol());
-//                                    LayerElement[] layers = lib.getParentDrawing().getLayers();
-//                                    ColorPalette palette = lib.getParentDrawing().getPalette();
-
-                                    Node symbolPreview = LibraryElementNode.createSymbolNode(symbol, layers, palette);
-                                    symbolPreview.setLayoutX(inst.getX());
-                                    symbolPreview.setLayoutY(-inst.getY());
-                                    symbolPreview.setRotate(inst.getRot());
-                                    getChildren().add(symbolPreview);
+            Optional<Part> lookupPart = schem.lookupPart(partName);
+            if (lookupPart.isPresent()) {
+                Part part = lookupPart.get();
+                Optional<Library> lookupLibrary = schem.lookupLibrary(part.getLibrary());
+                if (lookupLibrary.isPresent()) {
+                    Library lib = lookupLibrary.get();
+                    DeviceSet deviceSet = lib.getDeviceSet(part.getDeviceSet());
+                    deviceSet.getGates().forEach((gate) -> {
+                        if (inst.getGate().equals(gate.getName())) {
+                            //LOGGER.log(Level.SEVERE, "Gate Symbol: {0}   Name: {1}", new Object[]{gate.getSymbol(), gate.getName()});
+                            Symbol symbol = lib.getSymbol(gate.getSymbol());
+//                            if ( gate.getSymbol().equals("VCC")) {
+//                                int a=0; // breakpoint
+//                            }
+                            // Pass attribute key/value list to symbol preview.
+                            String val;
+                            if ( part.getValue() == null ) {
+                                String supplyPin = symbol.supplyPin();
+                                if ( supplyPin != null ) {
+                                    val = supplyPin;
+                                } else {
+                                    val = gate.getName(); // Maybe it's the gate name?
                                 }
-                            });
+                            } else {
+                                val = part.getValue();
+                            }
+                            Node symbolPreview = LibraryElementNode.createSymbolNode(
+                                    symbol, inst, val, layers, palette
+                            );
+                            symbolPreview.setLayoutX(inst.getX());
+                            symbolPreview.setLayoutY(-inst.getY());
+                            symbolPreview.setRotate(inst.getRot());
+                            getChildren().add(symbolPreview);
                         }
                     });
                 }
@@ -133,8 +149,8 @@ public class SchematicPreview extends Group {
                 //LOGGER.log(Level.SEVERE, "Draw Seg");
 
                 seg.forEach((element) -> {
-                     int colorIndex = layers[element.getLayerNum()].getColorIndex();
-                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+                    int colorIndex = layers[element.getLayerNum()].getColorIndex();
+                    Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     if (element instanceof PinRef e) {
                         // Might not have any visual element.
                         //        LOGGER.log(Level.SEVERE, "TODO: Draw PinRef Node");

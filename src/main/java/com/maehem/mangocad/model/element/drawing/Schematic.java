@@ -26,6 +26,8 @@ import com.maehem.mangocad.model.element.basic.VariantDefinition;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.model.element.misc.Approved;
 import com.maehem.mangocad.model.element.misc.NetClass;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  *  ELEMENT schematic (
@@ -121,6 +123,10 @@ public class Schematic extends _AQuantum implements DesignObject {
         return libraries;
     }
 
+    public Optional<Library> lookupLibrary( String libName ) {
+        return libraries.stream().filter((library) -> library.getName().equals(libName)).findFirst();
+    }
+    
     /**
      * @return the attributes
      */
@@ -163,6 +169,10 @@ public class Schematic extends _AQuantum implements DesignObject {
         return parts;
     }
 
+    public Optional<Part> lookupPart( String partName ) {
+        return parts.stream().filter((part) -> part.getName().equals(partName)).findFirst();
+    }
+    
     /**
      * @return the sheets
      */
