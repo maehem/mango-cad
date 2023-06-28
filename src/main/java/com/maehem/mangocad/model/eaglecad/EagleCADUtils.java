@@ -75,7 +75,7 @@ public class EagleCADUtils {
         String lastModified = simpleDateFormat.format(new Date(file.lastModified()));
         vars.put("LAST_DATE_TIME", lastModified);
 
-        //TODO:
+        //Text Variables TODO:
 //        Help>Editor Commands>Text>Text Variables lists the following:
 //          >NAME                   Component name (ev.+gate name)          1)
 //          >VALUE                  Comp. value/type                        1)
