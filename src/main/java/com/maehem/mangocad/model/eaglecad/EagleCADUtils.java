@@ -27,6 +27,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.view.ControlPanel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.w3c.dom.Document;
@@ -64,7 +67,34 @@ public class EagleCADUtils {
         Schematic sch = (Schematic) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
         //Schematic sch = convertEagleXMLtoSCH(eagleXML);
         sch.setFilePath(file.getAbsolutePath());
+        Map vars = sch.getParentDrawing().getVars();
+        // Split off the last dot in the file name.
+        vars.put("DRAWING_NAME", file.getName().split("\\.(?=[^\\.]+$)")[0]);
+        // LAST_DATE_TIME "MM/dd/yy h:mm a"
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy h:mm a");
+        String lastModified = simpleDateFormat.format(new Date(file.lastModified()));
+        vars.put("LAST_DATE_TIME", lastModified);
 
+        //TODO:
+//        Help>Editor Commands>Text>Text Variables lists the following:
+//          >NAME                   Component name (ev.+gate name)          1)
+//          >VALUE                  Comp. value/type                        1)
+//          >PART                   Component name                          2)
+//          >GATE                   Gate name                               2)
+//          >XREF                   Part cross-reference                    2)
+//          >CONTACT_XREF           Contact cross-reference                 2)
+//          >ASSEMBLY_VARIANT       Name of the current assembly variant
+//          >DRAWING_NAME           Drawing name
+//          >LAST_DATE_TIME         Time of the last modification
+//          >PLOT_DATE_TIME         Time of the plot creation
+//          >SHEETNR                Sheet number of a schematic             3)
+//          >SHEETS                 Total number of sheets of a schematic   3)
+//          >SHEET                  equivalent to ">SHEETNR/>SHEETS"        3)
+//
+//          1) Only for package or symbol
+//          2) Only for symbol
+//          3) Only for symbol or schematic
+        
         return sch;
     }
 

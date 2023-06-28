@@ -18,10 +18,13 @@ package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.misc.Setting;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <pre>
@@ -40,6 +43,11 @@ public class Drawing extends _AQuantum {
     private final ArrayList<Filter> filters = new ArrayList<>();    
     private final LayerElement layers[] = new LayerElement[256];
 
+    // Non-savable and ephemeral things
+    // DRAWING_NAME,  SHEET (x of xx), LAST_DATE_TIME
+    // Compute these during file load/ingest.
+    HashMap<String, String> vars = new HashMap<String, String>();
+    
     private DesignObject design;
 
     public Drawing() {
@@ -106,4 +114,7 @@ public class Drawing extends _AQuantum {
         this.design = design;
     }
   
+    public Map getVars() {
+        return vars;
+    }
 }

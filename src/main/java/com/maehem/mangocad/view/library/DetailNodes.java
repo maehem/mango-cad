@@ -108,7 +108,7 @@ public class DetailNodes {
         LayerElement[] layers = lib.getParentDrawing().getLayers();
         ColorPalette palette = lib.getParentDrawing().getPalette();
 
-        Node g = LibraryElementNode.createSymbolNode(symbol, null, null, layers, palette);
+        Node g = LibraryElementNode.createSymbolNode(symbol, null, null, null, layers, palette);
         
         StackPane stackPane = new StackPane(g); // Centers the symbol
         Group nodeGroup = new Group(stackPane);

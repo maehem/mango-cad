@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import java.util.ArrayList;
+import java.util.Optional;
 
 /**
 // *  part  (attribute*, variant*, spice?)
@@ -51,6 +53,10 @@ public class Part extends _AQuantum {
     private String technology;
     private String value;
     
+    private final ArrayList<Attribute> attributes = new ArrayList<>();
+    private final ArrayList<Variant> variants = new ArrayList<>();
+    
+    // TODO:  Spices.
 
     @Override
     public String getElementName() {
@@ -211,5 +217,20 @@ public class Part extends _AQuantum {
         this.value = value;
     }
 
-     
+    public ArrayList<Attribute> getAttributes() {
+        return attributes;
+    }
+    
+    public Optional<Attribute> getNamedAttribute( String attName ) {
+        return attributes.stream().filter((att) -> att.getName().equals(attName)).findFirst();
+    }
+
+    /**
+     * @return the variants
+     */
+    public ArrayList<Variant> getVariants() {
+        return variants;
+    }
+
+    
 }

@@ -69,6 +69,7 @@ public class EagleCADIngest {
         Drawing drawing = new Drawing();
         // drawing (settings?, grid?, filters?, layers, (library | schematic | board))
         //LOGGER.log(Level.SEVERE, "Ingest <drawing>");
+        
         NodeList nodes = node.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node subNode = nodes.item(i);
@@ -1775,6 +1776,23 @@ public class EagleCADIngest {
             }
         }
 
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            switch (item.getNodeName()) {
+                case "attribute" -> {
+                    ingestAttribute(part.getAttributes(), item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("Part <attributes> list has unknown child: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+        
         parts.add(part);
     }
 
@@ -2198,7 +2216,7 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if (item.getNodeType() != 1) {
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
             switch (item.getNodeName()) {
@@ -2232,6 +2250,7 @@ public class EagleCADIngest {
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
                 case "#text" -> {
+                    LOGGER.log(Level.SEVERE, "ingestInstance: handle #text for node type: " + item.getNodeType());
                 }
                 case "part" ->
                     instance.setPart(value);
@@ -2253,9 +2272,10 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
             switch (item.getNodeName()) {
-                case "#text" -> {
-                }
                 case "attribute" -> {
                     ingestAttribute(instance.getAttributes(), item);
                 }

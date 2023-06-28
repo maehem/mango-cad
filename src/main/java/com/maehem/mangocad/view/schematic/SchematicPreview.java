@@ -29,6 +29,8 @@ import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryElementNode;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,9 +68,13 @@ public class SchematicPreview extends Group {
         ColorPalette palette = schem.getParentDrawing().getPalette();
         //LOGGER.log(Level.SEVERE, "Populate Page: " + (index+1));
         Sheet sheet = schem.getSheets().get(index);
-        if (sheet.getPlain().isEmpty()) {
-            LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
-        }
+        Map<String,String> vars = new HashMap();
+        vars.putAll(schem.getParentDrawing().getVars());
+        vars.put("SHEET", (index+1) + "/" + schem.getSheets().size() );
+        
+//        if (sheet.getPlain().isEmpty()) {
+//            LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
+//        }
         for (_AQuantum element : sheet.getPlain()) {
             LayerElement layer = layers[element.getLayerNum()];
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
@@ -95,7 +101,6 @@ public class SchematicPreview extends Group {
                 //getChildren().add(LibraryElementNode.createHoleNode(e, Color.RED));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Hole Node");
             }
-
         }
 
         // Instances
@@ -110,25 +115,33 @@ public class SchematicPreview extends Group {
                     DeviceSet deviceSet = lib.getDeviceSet(part.getDeviceSet());
                     deviceSet.getGates().forEach((gate) -> {
                         if (inst.getGate().equals(gate.getName())) {
-                            //LOGGER.log(Level.SEVERE, "Gate Symbol: {0}   Name: {1}", new Object[]{gate.getSymbol(), gate.getName()});
                             Symbol symbol = lib.getSymbol(gate.getSymbol());
-//                            if ( gate.getSymbol().equals("VCC")) {
-//                                int a=0; // breakpoint
-//                            }
                             // Pass attribute key/value list to symbol preview.
                             String val;
                             if ( part.getValue() == null ) {
                                 String supplyPin = symbol.supplyPin();
                                 if ( supplyPin != null ) {
                                     val = supplyPin;
-                                } else {
+                                }
+                               // Check if it's a global value
+                                // >LAST_DATE_TIME  -  File mod date
+                                // >SHEET (n of 99)  -  sheet num / num sheets
+                                // >DRAWING_NAME   - file.getName()
+                                // Match any attributes:
+                                // >DOCUMENT_NUMBER - schem.attribute
+                                // >FOO    schem.attribute
+                                // >BAR    schem.attribute
+                                
+                                
+                                else {
                                     val = gate.getName(); // Maybe it's the gate name?
                                 }
                             } else {
                                 val = part.getValue();
                             }
+                            vars.put("VALUE", val);
                             Node symbolPreview = LibraryElementNode.createSymbolNode(
-                                    symbol, inst, val, layers, palette
+                                    symbol, inst, part, vars, layers, palette
                             );
                             symbolPreview.setLayoutX(inst.getX());
                             symbolPreview.setLayoutY(-inst.getY());

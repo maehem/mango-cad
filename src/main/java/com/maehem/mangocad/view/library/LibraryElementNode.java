@@ -30,6 +30,7 @@ import com.maehem.mangocad.model.element.basic.Junction;
 import com.maehem.mangocad.model.element.basic.LabelElement;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
+import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Probe;
 import com.maehem.mangocad.model.element.basic.Vertex;
@@ -45,8 +46,9 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
@@ -1336,7 +1338,7 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Node createSymbolNode(Symbol symbol, Instance inst, String value, LayerElement[] layers, ColorPalette palette) {
+    public static Node createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String,String> vars, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
 
         symbol.getElements().forEach((e) -> {
@@ -1355,25 +1357,35 @@ public class LibraryElementNode {
             } else if (e instanceof ElementText et) {
                 // Replace Text for things that start with '>'
                 
-                
                 if (inst == null || !et.getValue().startsWith(">") ) {
                     // Library preview of Part 
                     //  or @value was over-ridden (like <text> in a part).
                     g.getChildren().add(LibraryElementNode.createText(et, c));
                 } else {
                     // There is an instance or >VALUE/>NAME was set.
-                    String altText = "FooBar";
+                    String altText = et.getValue();
                     for ( Attribute attr: inst.getAttributes() ) {
                         // Attr like >NAME or >VALUE matches the textValue.
                         String name = ">" + attr.getName();
                         if ( name.equals(et.getValue()) ) {
+
                             // Perform substitute.
                             // Schematic instance of Part.
                             if( et.getValue().equals(">VALUE") ) {
-                                altText = value;
+                                altText = vars.get("VALUE");
                             } else if ( et.getValue().equals(">NAME")) {
                                 altText = inst.getPart();
-                            }                            
+                            } else {
+                                Optional<Attribute> namedAttribute = part.getNamedAttribute(attr.getName());
+                                if ( !namedAttribute.isEmpty() ) {
+                                    altText = namedAttribute.get().getValue();
+                                } else if ( vars.containsKey(et.getValue().substring(1) )) {
+                                    altText = vars.get(et.getValue().substring(1));
+                                } else {
+                                    altText = attr.getValue();
+                                }
+                            }
+                            break;
                         }
                     }
                     

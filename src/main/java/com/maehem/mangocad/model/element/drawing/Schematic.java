@@ -27,7 +27,6 @@ import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.model.element.misc.Approved;
 import com.maehem.mangocad.model.element.misc.NetClass;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  *  ELEMENT schematic (
@@ -58,8 +57,11 @@ public class Schematic extends _AQuantum implements DesignObject {
     private final Description description = new Description(); // Might have locale setting.
 
     private final ArrayList<Library> libraries = new ArrayList<>();
-    private final ArrayList<Attribute> attributes = new ArrayList<>();
     
+    // This does not seem to be used in Eagle nor is there a way to
+    // affect Schematic attributes.
+    private final ArrayList<Attribute> attributes = new ArrayList<>();
+        
     private final ArrayList<VariantDefinition> variantDefs = new ArrayList<>();
     private final ArrayList<NetClass> netClasses = new ArrayList<>();
     private final ArrayList<CircuitModule> modules = new ArrayList<>();
