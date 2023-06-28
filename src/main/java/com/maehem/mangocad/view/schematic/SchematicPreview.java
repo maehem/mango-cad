@@ -38,6 +38,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -145,7 +146,8 @@ public class SchematicPreview extends Group {
                             );
                             symbolPreview.setLayoutX(inst.getX());
                             symbolPreview.setLayoutY(-inst.getY());
-                            symbolPreview.setRotate(inst.getRot());
+                            // Rotation direction is negative versus Eagle.
+                            symbolPreview.getTransforms().add(new Rotate(-inst.getRot(), 0, 0));
                             getChildren().add(symbolPreview);
                         }
                     });

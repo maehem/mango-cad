@@ -1338,7 +1338,7 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Node createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String,String> vars, LayerElement[] layers, ColorPalette palette) {
+    public static Group createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String,String> vars, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
 
         symbol.getElements().forEach((e) -> {
