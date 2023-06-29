@@ -81,21 +81,21 @@ public class SchematicPreview extends Group {
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
-                getChildren().add(LibraryElementNode.createPolygon(e, Color.CORAL));
+                getChildren().add(LibraryElementNode.createPolygon(e, Color.CORAL,false));
             } else if (element instanceof Wire e) {
-                getChildren().add(LibraryElementNode.createWireNode(e, c));
+                getChildren().add(LibraryElementNode.createWireNode(e, c, false));
             } else if (element instanceof ElementText e) {
                 getChildren().add(LibraryElementNode.createText(e, Color.CORAL));
             } else if (element instanceof Dimension e) {
                 //getChildren().add(LibraryElementNode.createDimensionNode(e, Color.RED));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Dimension Node");
             } else if (element instanceof ElementCircle e) {
-                getChildren().add(LibraryElementNode.createCircleNode(e, Color.CORAL));
+                getChildren().add(LibraryElementNode.createCircleNode(e, Color.CORAL, false));
             } else if (element instanceof Spline e) {
                 //getChildren().add(LibraryElementNode.createSplineNode(e, Color.CORAL));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Spline Node");
             } else if (element instanceof ElementRectangle e) {
-                getChildren().add(LibraryElementNode.createRectangle(e, c));
+                getChildren().add(LibraryElementNode.createRectangle(e, c, false));
             } else if (element instanceof FrameElement e) {
                 getChildren().add(LibraryElementNode.createFrameNode(e, c));
             } else if (element instanceof Hole e) {
@@ -146,8 +146,9 @@ public class SchematicPreview extends Group {
                             );
                             symbolPreview.setLayoutX(inst.getX());
                             symbolPreview.setLayoutY(-inst.getY());
+                            // Can't just rotate part since sub-texts need to be upright.
                             // Rotation direction is negative versus Eagle.
-                            symbolPreview.getTransforms().add(new Rotate(-inst.getRot(), 0, 0));
+                            //symbolPreview.getTransforms().add(new Rotate(-inst.getRot(), 0, 0));
                             getChildren().add(symbolPreview);
                         }
                     });
@@ -174,13 +175,13 @@ public class SchematicPreview extends Group {
                         LOGGER.log(Level.SEVERE, "TODO: Draw PortRef Node");
                         //getChildren().add(LibraryElementNode.createPortNode(e., Color.PALEGREEN));
                     } else if (element instanceof Wire e) {
-                        getChildren().add(LibraryElementNode.createWireNode(e, c));
+                        getChildren().add(LibraryElementNode.createWireNode(e, c, false));
                     } else if (element instanceof Junction e) {
                         getChildren().add(LibraryElementNode.createJunctionNode(e, c));
                     } else if (element instanceof LabelElement e) {
                         getChildren().add(LibraryElementNode.createLabelNode(e, c));
                     } else if (element instanceof Probe e) {
-                        getChildren().add(LibraryElementNode.createProbeNode(e, c, seg));
+                        getChildren().add(LibraryElementNode.createProbeNode(e, c, seg, false));
                     } else {
                         LOGGER.log(Level.SEVERE, "Unknown Element in Segment List: " + element.getElementName());
                     }

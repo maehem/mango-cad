@@ -116,8 +116,13 @@ public class LibraryElementNode {
      * @param color
      * @return
      */
-    public static Node createWireNode(Wire w, Color color) {
+    public static Node createWireNode(Wire w, Color color, boolean mirror) {
         double strokeWidth = w.getWidth();
+        double x1 = mirror ? -w.getX1() : w.getX1();
+        double x2 = mirror ? -w.getX2() : w.getX2();
+        double y1 = w.getY1();
+        double y2 = w.getY2();
+
         if (strokeWidth < 0.03) {
             // Wires can't be 0 width.
             strokeWidth = 0.03; // 6mil
@@ -126,19 +131,19 @@ public class LibraryElementNode {
             Path path = new Path();
 
             MoveTo moveTo = new MoveTo();
-            moveTo.setX(w.getX1());
-            moveTo.setY(-w.getY1());
+            moveTo.setX(x1);
+            moveTo.setY(-y1);
 
             ArcTo arc = new ArcTo();
             // Curve to ARC
-            arc.setX(w.getX2());
-            arc.setY(-w.getY2());
+            arc.setX(x2);
+            arc.setY(-y2);
 
             // SWEEP on negative curve value.
             arc.setSweepFlag(w.getCurve() < 0.0);
 
             double sin90 = Math.sin(Math.toRadians(90.0));
-            double dist = distance(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
+            double dist = distance(x1, -y1, x2, -y2);
             double radius = (sin90 * dist / 2.0)
                     / Math.sin(Math.toRadians(w.getCurve() / 2.0));
             arc.setRadiusX(radius);
@@ -153,7 +158,7 @@ public class LibraryElementNode {
 
             return path;
         } else {
-            Line line = new Line(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
+            Line line = new Line(x1, -y1, x2, -y2);
             line.setStrokeLineCap(StrokeLineCap.ROUND);
             line.setStrokeWidth(strokeWidth);
             line.setStroke(color);
@@ -163,10 +168,13 @@ public class LibraryElementNode {
         }
     }
 
-    public static Node createRectangle(ElementRectangle r, Color color) {
+    public static Node createRectangle(ElementRectangle r, Color color, boolean mirror) {
+        double x1 = mirror ? -r.getX1() : r.getX1();
+        double x2 = mirror ? -r.getX2() : r.getX2();
+
         Rectangle rr = new Rectangle(
-                r.getX1(), -r.getY2(),
-                r.getX2() - r.getX1(), r.getY2() - r.getY1()
+                x1, -r.getY2(),
+                x2 - x1, r.getY2() - r.getY1()
         );
         rr.setStrokeWidth(0);
         //rr.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -233,9 +241,9 @@ public class LibraryElementNode {
             line.setStrokeWidth(strokeInner);
             line.setStroke(color);
             frameGroup.getChildren().add(line);
-            
+
             addFrameColumns(frameGroup,
-                    fe.getX1(), fe.getY2()-thick, fe.getX2(), fe.getY2(),
+                    fe.getX1(), fe.getY2() - thick, fe.getX2(), fe.getY2(),
                     thick, strokeInner, color, fe.getColumns()
             );
         }
@@ -299,7 +307,7 @@ public class LibraryElementNode {
             // Row divider (no first row, placed above)
             if (c > 0) {
                 Line divLine = new Line(
-                        thick + colW * c, -y1, 
+                        thick + colW * c, -y1,
                         thick + colW * c, -y1 - thick
                 );
                 divLine.setStrokeWidth(stroke);
@@ -309,7 +317,7 @@ public class LibraryElementNode {
         }
     }
 
-    public static Node createPolygon(ElementPolygon poly, Color color) {
+    public static Node createPolygon(ElementPolygon poly, Color color, boolean mirror) {
         List<Vertex> vertices = poly.getVertices();
         double verts[] = new double[vertices.size() * 2];
 
@@ -325,7 +333,7 @@ public class LibraryElementNode {
         return p;
     }
 
-    public static Node createProbeNode(Probe le, Color color, Segment seg) {
+    public static Node createProbeNode(Probe le, Color color, Segment seg, boolean mirror) {
         Group labelGroup = new Group();
         int rot = (int) le.getRot();
         double dotRadius = 0.8;
@@ -348,7 +356,7 @@ public class LibraryElementNode {
             default ->
                 probeText = "V???(" + le.getValue() + ")";
         }
-        Node textNode = createText(le, probeText, color);
+        Node textNode = createText(le, probeText, color, mirror, false);
 
         double x = le.getX();
         double y = -le.getY();
@@ -485,16 +493,19 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, Color color) {
-        return createText(et, null, color);
+        return createText(et, null, color, false, false);
     }
 
-    public static Node createText(ElementText et, String altText, Color color) {
+    public static Node createText(ElementText et, Color color, boolean mirror, boolean upIsDown) {
+        return createText(et, null, color, mirror, upIsDown);
+    }
+
+    public static Node createText(ElementText et, String altText, Color color, boolean leftIsRight, boolean upIsDown) {
         boolean showBorder = false;
 
-        double fontSizeMult = 0.72272; // IN to Point ratio
+        double fontSizeMult = 0.72272; // INCH to Point ratio
         double fontSize = et.getSize() / fontSizeMult;
 
-        //String fontPath = "/fonts/Source_Code_Pro/SourceCodePro-VariableFont_wght.ttf";
         String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), fontSize);
         Text tt = new Text(altText != null ? altText : et.getValue());
@@ -514,7 +525,8 @@ public class LibraryElementNode {
             tt.getTransforms().add(rT);
         }
 
-        boolean mir = et.getRotation().isMirror();
+        // Apply parent mirror
+        boolean mir = leftIsRight ? !et.getRotation().isMirror() : et.getRotation().isMirror();
 
         // jfxRot is the JavaFX rotation and is visually mirroed from EagleCAD rotation.
         double rot = et.getRotation().getValue();
@@ -995,7 +1007,7 @@ public class LibraryElementNode {
         return g;
     }
 
-    public static Node createPinNode(Pin p, Color c) {
+    public static Node createPinNode(Pin p, Color c, boolean mirror) {
         final double PIN_NAME_MARGIN = 1.5;
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
         final double PIN_FONT_SIZE = 2.0;
@@ -1011,6 +1023,8 @@ public class LibraryElementNode {
         final double DOT_CIRCLE_RADIUS = 0.7;
         final double DOT_CIRCLE_LINE_WIDTH = PIN_STROKE_WIDTH * 1.7;
         final double CLK_SIZE = 1.3;
+
+        double pX = mirror ? -p.getX() : p.getX();
 
         int padHang = 0;
         switch (p.getLength()) {
@@ -1051,7 +1065,7 @@ public class LibraryElementNode {
 
         Group g = new Group();
 
-        Line line = new Line(p.getX(), -p.getY(), p.getX(), -p.getY());
+        Line line = new Line(pX, -p.getY(), pX, -p.getY());
         line.setStroke(c);
         line.setStrokeLineCap(StrokeLineCap.BUTT);
         line.setStrokeWidth(PIN_STROKE_WIDTH);
@@ -1078,11 +1092,11 @@ public class LibraryElementNode {
             case 270 ->
                 line.setEndY(-p.getY() + pinLen);
             case 180 ->
-                line.setEndX(p.getX() - pinLen);
+                line.setEndX(pX - (mirror ? -pinLen : pinLen));
             case 90 ->
                 line.setEndY(-p.getY() - pinLen);
             default ->
-                line.setEndX(p.getX() + pinLen);
+                line.setEndX(pX + (mirror ? -pinLen : pinLen));
         }
 
         // When you need some dots.
@@ -1111,7 +1125,7 @@ public class LibraryElementNode {
                 }
             }
 
-            g.getChildren().add(createCircleNode(dotCircle, c));
+            g.getChildren().add(createCircleNode(dotCircle, c, mirror));
         }
 
         // Clock Function
@@ -1126,50 +1140,64 @@ public class LibraryElementNode {
             line2.setStrokeLineCap(StrokeLineCap.ROUND);
             line2.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
 
-            switch (rot) {
-                case 270 -> {
-                    line1.setStartX(line.getEndX() - CLK_SIZE / 2.0);
-                    line1.setStartY(line.getEndY() + dotRadius * 2.0);
-                    line1.setEndX(line.getEndX());
-                    line1.setEndY(line1.getStartY() + CLK_SIZE);
-                    line2.setStartX(line.getEndX() + CLK_SIZE / 2.0);
-                    line2.setStartY(line.getEndY() + dotRadius * 2.0);
-                    line2.setEndX(line.getEndX());
-                    line2.setEndY(line1.getStartY() + CLK_SIZE);
-                }
-                case 180 -> {
-                    line1.setStartX(line.getEndX());
-                    line1.setStartY(line.getEndY() + CLK_SIZE / 2.0);
-                    line1.setEndX(line1.getStartX() - CLK_SIZE);
-                    line1.setEndY(-p.getY());
-                    line2.setStartX(line.getEndX());
-                    line2.setStartY(line.getEndY() - CLK_SIZE / 2.0);
-                    line2.setEndX(line1.getStartX() - CLK_SIZE);
-                    line2.setEndY(-p.getY());
-                }
-                case 90 -> {
-                    line1.setStartX(line.getEndX() - CLK_SIZE / 2.0);
-                    line1.setStartY(line.getEndY() - dotRadius * 2.0);
-                    line1.setEndX(line.getEndX());
-                    line1.setEndY(line1.getStartY() - CLK_SIZE);
-                    line2.setStartX(line.getEndX() + CLK_SIZE / 2.0);
-                    line2.setStartY(line.getEndY() - dotRadius * 2.0);
-                    line2.setEndX(line.getEndX());
-                    line2.setEndY(line1.getStartY() - CLK_SIZE);
-                }
-                default -> {
-                    line1.setStartX(line.getEndX() + dotRadius * 2.0);
-                    line1.setStartY(line.getEndY() + CLK_SIZE / 2.0);
-                    line1.setEndX(line1.getStartX() + CLK_SIZE);
-                    line1.setEndY(-p.getY());
-                    line2.setStartX(line.getEndX() + dotRadius * 2.0);
-                    line2.setStartY(line.getEndY() - CLK_SIZE / 2.0);
-                    line2.setEndX(line1.getStartX() + CLK_SIZE);
-                    line2.setEndY(-p.getY());
-                }
-            }
+            // TODO: Maybe put lines in a group and then rotate that?
+            line1.setStartX(line.getEndX() + dotRadius * 2.0);
+            line1.setStartY(line.getEndY() + CLK_SIZE / 2.0);
+            line1.setEndX(line1.getStartX() + CLK_SIZE);
+            line1.setEndY(-p.getY());
+            line2.setStartX(line.getEndX() + dotRadius * 2.0);
+            line2.setStartY(line.getEndY() - CLK_SIZE / 2.0);
+            line2.setEndX(line1.getStartX() + CLK_SIZE);
+            line2.setEndY(-p.getY());
 
-            g.getChildren().addAll(line1, line2);
+            Group lineGroup = new Group(line1, line2);
+            Rotate r = new Rotate(rot, pX, p.getY());
+            lineGroup.getTransforms().add(r);
+
+//            switch (rot) {
+//                case 270 -> {
+//                    line1.setStartX(line.getEndX() - CLK_SIZE / 2.0);
+//                    line1.setStartY(line.getEndY() + dotRadius * 2.0);
+//                    line1.setEndX(line.getEndX());
+//                    line1.setEndY(line1.getStartY() + CLK_SIZE);
+//                    line2.setStartX(line.getEndX() + CLK_SIZE / 2.0);
+//                    line2.setStartY(line.getEndY() + dotRadius * 2.0);
+//                    line2.setEndX(line.getEndX());
+//                    line2.setEndY(line1.getStartY() + CLK_SIZE);
+//                }
+//                case 180 -> {
+//                    line1.setStartX(line.getEndX());
+//                    line1.setStartY(line.getEndY() + CLK_SIZE / 2.0);
+//                    line1.setEndX(line1.getStartX() - CLK_SIZE);
+//                    line1.setEndY(-p.getY());
+//                    line2.setStartX(line.getEndX());
+//                    line2.setStartY(line.getEndY() - CLK_SIZE / 2.0);
+//                    line2.setEndX(line1.getStartX() - CLK_SIZE);
+//                    line2.setEndY(-p.getY());
+//                }
+//                case 90 -> {
+//                    line1.setStartX(line.getEndX() - CLK_SIZE / 2.0);
+//                    line1.setStartY(line.getEndY() - dotRadius * 2.0);
+//                    line1.setEndX(line.getEndX());
+//                    line1.setEndY(line1.getStartY() - CLK_SIZE);
+//                    line2.setStartX(line.getEndX() + CLK_SIZE / 2.0);
+//                    line2.setStartY(line.getEndY() - dotRadius * 2.0);
+//                    line2.setEndX(line.getEndX());
+//                    line2.setEndY(line1.getStartY() - CLK_SIZE);
+//                }
+//                default -> {
+//                    line1.setStartX(line.getEndX() + dotRadius * 2.0);
+//                    line1.setStartY(line.getEndY() + CLK_SIZE / 2.0);
+//                    line1.setEndX(line1.getStartX() + CLK_SIZE);
+//                    line1.setEndY(-p.getY());
+//                    line2.setStartX(line.getEndX() + dotRadius * 2.0);
+//                    line2.setStartY(line.getEndY() - CLK_SIZE / 2.0);
+//                    line2.setEndX(line1.getStartX() + CLK_SIZE);
+//                    line2.setEndY(-p.getY());
+//                }
+//            }
+            //g.getChildren().addAll(line1, line2);
+            g.getChildren().add(lineGroup);
         }
 
         // Pin Name
@@ -1200,52 +1228,53 @@ public class LibraryElementNode {
         double dsHeight = dirSwap.getBoundsInLocal().getHeight();
         g.getChildren().add(dirSwap);
 
+        double mir = mirror ? -1.0 : 1.0;
         switch (rot) {
             case 270 -> {
-                pinName.setLayoutX(p.getX() - width / 2);
+                pinName.setLayoutX(mir * (p.getX() - width / 2));
                 pinName.setLayoutY(-p.getY() + width / 2 + height * 0.3 + pinLen + dotRadius * 2.0 + PIN_NAME_MARGIN);
                 pinName.setRotate(90);
 
-                padName.setLayoutX(p.getX() - padWidth / 2 + padHeight * 0.5);
+                padName.setLayoutX(mir * (p.getX() - padWidth / 2 + padHeight * 0.5));
                 padName.setLayoutY(-p.getY() - padWidth / 2 + padHeight * 0.3 + padCharWidth * padHang);
                 padName.setRotate(90);
 
-                dirSwap.setLayoutX(p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight / 2 - dsWidth / 2);
+                dirSwap.setLayoutX(mir * (p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight / 2 - dsWidth / 2));
                 dirSwap.setLayoutY(-p.getY() - dsWidth / 3 - PIN_DIR_SWAP_OFFSET);
                 dirSwap.setRotate(270);
             }
             case 180 -> {
-                pinName.setLayoutX(p.getX() - pinLen - dotRadius * 2.0 - width - PIN_NAME_MARGIN);
+                pinName.setLayoutX(mir * (p.getX() - pinLen - dotRadius * 2.0 - width - PIN_NAME_MARGIN));
                 pinName.setLayoutY(-p.getY() + height * 0.3);
 
-                padName.setLayoutX(p.getX() - padCharWidth * padHang);
+                padName.setLayoutX(mir * (p.getX() - padCharWidth * padHang));
                 padName.setLayoutY(-p.getY() - padHeight * 0.2);
 
-                dirSwap.setLayoutX(p.getX() + PIN_DIR_SWAP_OFFSET);
+                dirSwap.setLayoutX(mir * (p.getX() + PIN_DIR_SWAP_OFFSET));
                 dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET);
             }
             case 90 -> {
                 // Rotate Node rotates on center, so we need to compensate for that.
-                pinName.setLayoutX(p.getX() - width / 2);
+                pinName.setLayoutX(mir * (p.getX() - width / 2));
                 pinName.setLayoutY(-p.getY() - width / 2 + height * 0.3 - pinLen - dotRadius * 2.0 - PIN_NAME_MARGIN);
                 pinName.setRotate(90);
 
-                padName.setLayoutX(p.getX() - padWidth / 2 + padHeight / 2 /*+ padHeight*0.3*/);
+                padName.setLayoutX(mir * (p.getX() - padWidth / 2 + padHeight / 2 /*+ padHeight*0.3*/));
                 padName.setLayoutY(-p.getY() + padHeight * 0.3 - padCharWidth * padHang + padWidth / 2.0);
                 padName.setRotate(90);
 
-                dirSwap.setLayoutX(p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight / 2 - dsWidth / 2);
+                dirSwap.setLayoutX(mir * (p.getX() + PIN_DIR_SWAP_OFFSET + dsHeight / 2 - dsWidth / 2));
                 dirSwap.setLayoutY(-p.getY() + dsWidth / 2 + dsHeight / 3 + PIN_DIR_SWAP_OFFSET);
                 dirSwap.setRotate(90);
             }
             default -> {
-                pinName.setLayoutX(p.getX() + pinLen + dotRadius * 2.0 + PIN_NAME_MARGIN);
+                pinName.setLayoutX(mir * (p.getX() + pinLen + dotRadius * 2.0 + PIN_NAME_MARGIN));
                 pinName.setLayoutY(-p.getY() + height * 0.3);
 
-                padName.setLayoutX(p.getX() - padWidth + padCharWidth * padHang); // Hang over the pin by one char.
+                padName.setLayoutX(mir * (p.getX() - padWidth + padCharWidth * padHang)); // Hang over the pin by one char.
                 padName.setLayoutY(-p.getY() - padHeight * 0.2);
 
-                dirSwap.setLayoutX(p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth);
+                dirSwap.setLayoutX(mir * (p.getX() - PIN_DIR_SWAP_OFFSET - dsWidth));
                 dirSwap.setLayoutY(-p.getY() - PIN_DIR_SWAP_OFFSET);
             }
         }
@@ -1253,12 +1282,12 @@ public class LibraryElementNode {
         g.getChildren().add(line);
 
         ElementCircle originCircle = new ElementCircle();
-        originCircle.setX(p.getX());
+        originCircle.setX(p.getX()); // mirror happens in the createCircleNode()
         originCircle.setY(p.getY());
         originCircle.setRadius(ORIGIN_CIRCLE_RADIUS);
         originCircle.setWidth(ORIGIN_CIRCLE_LINE_WIDTH);
         // Origin Circle
-        g.getChildren().add(createCircleNode(originCircle, ORIGIN_CIRCLE_COLOR));
+        g.getChildren().add(createCircleNode(originCircle, ORIGIN_CIRCLE_COLOR, mirror));
 
         return g;
     }
@@ -1270,8 +1299,8 @@ public class LibraryElementNode {
      * @param color to make the circle
      * @return
      */
-    public static Node createCircleNode(ElementCircle ec, Color color) {
-        Circle c = new Circle(ec.getX(), -ec.getY(), ec.getRadius());
+    public static Node createCircleNode(ElementCircle ec, Color color, boolean mirror) {
+        Circle c = new Circle(mirror ? -ec.getX() : ec.getX(), -ec.getY(), ec.getRadius());
 
         c.setStroke(color);
         c.setStrokeWidth(ec.getWidth());
@@ -1338,8 +1367,37 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Group createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String,String> vars, LayerElement[] layers, ColorPalette palette) {
+    public static Group createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
+
+        boolean lr = false;
+        boolean ud = false;
+
+        boolean instMir = inst.getRotation().isMirror();
+        
+        if (inst != null) {
+            double rot = inst.getRot();
+            if (rot == 270.0) {
+                Rotate r = new Rotate(instMir?270:90);
+                g.getTransforms().add(r);
+                lr = instMir;
+                //ud = true;
+            } else if (rot == 180) {
+                lr = !inst.getRotation().isMirror();
+                //ud = true;
+            } else if (rot == 90) {
+                Rotate r = new Rotate(instMir?90:270);
+                g.getTransforms().add(r);
+                lr = instMir;
+                ud = true; // This case only, all text must be spun 180-degrees.
+            } else {
+                lr = inst.getRotation().isMirror();
+                //ud = false;
+            }
+        }
+        
+        final boolean leftIsRight = lr;
+        final boolean upIsDown = ud;
 
         symbol.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -1351,35 +1409,35 @@ public class LibraryElementNode {
 
             // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
             if (e instanceof ElementPolygon ep) {
-                g.getChildren().add(LibraryElementNode.createPolygon(ep, c));
+                g.getChildren().add(LibraryElementNode.createPolygon(ep, c, leftIsRight));
             } else if (e instanceof Wire w) {
-                g.getChildren().add(LibraryElementNode.createWireNode(w, c));
+                g.getChildren().add(LibraryElementNode.createWireNode(w, c, leftIsRight));
             } else if (e instanceof ElementText et) {
                 // Replace Text for things that start with '>'
-                
-                if (inst == null || !et.getValue().startsWith(">") ) {
+
+                if (inst == null || !et.getValue().startsWith(">")) {
                     // Library preview of Part 
                     //  or @value was over-ridden (like <text> in a part).
                     g.getChildren().add(LibraryElementNode.createText(et, c));
                 } else {
                     // There is an instance or >VALUE/>NAME was set.
                     String altText = et.getValue();
-                    for ( Attribute attr: inst.getAttributes() ) {
+                    for (Attribute attr : inst.getAttributes()) {
                         // Attr like >NAME or >VALUE matches the textValue.
                         String name = ">" + attr.getName();
-                        if ( name.equals(et.getValue()) ) {
+                        if (name.equals(et.getValue())) {
 
                             // Perform substitute.
                             // Schematic instance of Part.
-                            if( et.getValue().equals(">VALUE") ) {
+                            if (et.getValue().equals(">VALUE")) {
                                 altText = vars.get("VALUE");
-                            } else if ( et.getValue().equals(">NAME")) {
+                            } else if (et.getValue().equals(">NAME")) {
                                 altText = inst.getPart();
                             } else {
                                 Optional<Attribute> namedAttribute = part.getNamedAttribute(attr.getName());
-                                if ( !namedAttribute.isEmpty() ) {
+                                if (!namedAttribute.isEmpty()) {
                                     altText = namedAttribute.get().getValue();
-                                } else if ( vars.containsKey(et.getValue().substring(1) )) {
+                                } else if (vars.containsKey(et.getValue().substring(1))) {
                                     altText = vars.get(et.getValue().substring(1));
                                 } else {
                                     altText = attr.getValue();
@@ -1388,19 +1446,20 @@ public class LibraryElementNode {
                             break;
                         }
                     }
-                    
-                    g.getChildren().add(LibraryElementNode.createText(et, altText, c));
+
+                    Node elementText = createText(et, altText, c, leftIsRight, upIsDown);
+                    g.getChildren().add(elementText);
                 }
                 g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof Dimension dim) {
                 //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));
                 LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
             } else if (e instanceof Pin pin) {
-                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
+                g.getChildren().add(LibraryElementNode.createPinNode(pin, c, leftIsRight));
             } else if (e instanceof ElementCircle ec) {
-                g.getChildren().add(LibraryElementNode.createCircleNode(ec, c));
+                g.getChildren().add(LibraryElementNode.createCircleNode(ec, c, leftIsRight));
             } else if (e instanceof ElementRectangle rect) {
-                g.getChildren().add(LibraryElementNode.createRectangle(rect, c));
+                g.getChildren().add(LibraryElementNode.createRectangle(rect, c, leftIsRight));
             } else if (e instanceof FrameElement frm) {
                 g.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
             }
@@ -1431,18 +1490,16 @@ public class LibraryElementNode {
                 g.getChildren().add(n);
                 n.toBack();
             } else if (e instanceof Wire wire) {
-                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
-            } else if (e instanceof ElementRectangle elementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+                g.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
             } else if (e instanceof ElementText elementText) {
                 g.getChildren().add(LibraryElementNode.createText(elementText, c));
                 g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementRectangle elementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
             } else if (e instanceof ElementPolygon elementPolygon) {
-                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
             } else if (e instanceof ElementCircle elementCircle) {
-                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
+                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
             }
         });
 

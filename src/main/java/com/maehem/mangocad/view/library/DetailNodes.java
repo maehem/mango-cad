@@ -17,7 +17,6 @@
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
@@ -28,10 +27,7 @@ import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.model.element.basic.FrameElement;
 import com.maehem.mangocad.model.element.basic.Gate;
-import com.maehem.mangocad.model.element.basic.PadSMD;
-import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.view.ColorUtils;
@@ -159,23 +155,23 @@ public class DetailNodes {
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
             if (e instanceof Wire wire) {
-                g.getChildren().add(LibraryElementNode.createWireNode(wire, c));
+                g.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
             } else if (e instanceof ElementRectangle elementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c));
+                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
             } else if (e instanceof ElementText elementText) {
                 String gateName = null;
                 if (elementText.getValue().equals(">NAME")) {
                     gateName = gate.getName();
                 }
                 //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
-                g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c));
+                g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c, false, false));
                 g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementPolygon elementPolygon) {
-                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c));
+                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
             } else if (e instanceof Pin pin) {
-                g.getChildren().add(LibraryElementNode.createPinNode(pin, c));
+                g.getChildren().add(LibraryElementNode.createPinNode(pin, c, false));
             } else if (e instanceof ElementCircle elementCircle) {
-                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c));
+                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
             }
         });
         g.getChildren().add(LibraryElementNode.crosshairs(

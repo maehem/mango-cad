@@ -22,7 +22,6 @@ import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.view.ControlPanel;
-import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.LibraryElementNode;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -53,21 +52,21 @@ public class BoardPreview extends Group {
         for (_AQuantum element : board.getPlain()) {
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
-                getChildren().add(LibraryElementNode.createPolygon(e, Color.CORAL));
+                getChildren().add(LibraryElementNode.createPolygon(e, Color.CORAL, false));
             } else if (element instanceof Wire e) {
-                getChildren().add(LibraryElementNode.createWireNode(e, Color.RED));
+                getChildren().add(LibraryElementNode.createWireNode(e, Color.RED, false));
             } else if (element instanceof ElementText e) {
                 getChildren().add(LibraryElementNode.createText(e, Color.CORAL));
             } else if (element instanceof Dimension e) {
                 //getChildren().add(LibraryElementNode.createDimensionNode(e, Color.RED));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Dimension Node");
             } else if (element instanceof ElementCircle e) {
-                getChildren().add(LibraryElementNode.createCircleNode(e, Color.CORAL));
+                getChildren().add(LibraryElementNode.createCircleNode(e, Color.CORAL, false));
             } else if (element instanceof Spline e) {
                 //getChildren().add(LibraryElementNode.createSplineNode(e, Color.CORAL));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Spline Node");
             } else if (element instanceof ElementRectangle e) {
-                getChildren().add(LibraryElementNode.createRectangle(e, Color.RED));
+                getChildren().add(LibraryElementNode.createRectangle(e, Color.RED, false));
             } else if (element instanceof FrameElement e) {
                 getChildren().add(LibraryElementNode.createFrameNode(e, Color.RED));
             } else if (element instanceof Hole e) {
