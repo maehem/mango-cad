@@ -169,7 +169,7 @@ public class DetailNodes {
             } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
             } else if (e instanceof Pin pin) {
-                g.getChildren().add(LibraryElementNode.createPinNode(pin, c, false));
+                g.getChildren().add(LibraryElementNode.createPinNode(pin, c, null, false, false));
             } else if (e instanceof ElementCircle elementCircle) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
             }
