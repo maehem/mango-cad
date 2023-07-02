@@ -449,6 +449,60 @@ public class LibraryElementNode {
 
     public static Node createLabelNode(LabelElement le, Color color) {
         Group labelGroup = new Group();
+        double x = le.getX();
+        double y = -le.getY();
+        double size = le.getSize();
+        double length = le.getValue().length();
+
+        Text t = new Text(le.getValue());
+        double fontSizeMult = 0.72272; // INCH to Point ratio
+        double fontSize = le.getSize() / fontSizeMult;
+
+        String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
+        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), fontSize);
+        t.setFont(font);
+        labelGroup.getChildren().add(t);
+        t.setFill(color);
+        double height = t.getBoundsInLocal().getHeight();
+        double width = t.getBoundsInLocal().getWidth();
+        t.setLayoutX(le.getX() + le.getSize());
+        t.setLayoutY(-le.getY() + height*0.25);
+                
+        if (    ( le.getRot() == 0 && le.getRotation().isMirror() ) ||
+                ( le.getRot() == 180 && !le.getRotation().isMirror() ) || 
+                le.getRot() == 270 
+        ) { // Flip Text
+            Rotate r = new Rotate(180, width/2.0, -height*0.25);
+            t.getTransforms().add(r);
+        }
+                
+        if (le.isXref()) {
+            Polygon outline = new Polygon(
+                    x, y,
+                    x + size, y + size,
+                    x + ((length + 1) * size), y + size,
+                    x + ((length + 1) * size), y - size,
+                    x + size, y - size
+            );
+            outline.setStroke(color);
+            outline.setStrokeWidth(0.3);
+            outline.setFill(Color.TRANSPARENT);
+            labelGroup.getChildren().add(outline);
+        }
+        
+        double rot = -le.getRot();
+        if ( le.getRotation().isMirror() && (le.getRot() == 0 || le.getRot() == 180) ) {
+            rot += 180.00;
+            rot %= 360;
+        }
+        Rotate r = new Rotate(rot, le.getX( ), -le.getY() );
+        labelGroup.getTransforms().add(r);
+
+        return labelGroup;
+    }
+    
+    public static Node createLabelNodeOld(LabelElement le, Color color) {
+        Group labelGroup = new Group();
         int rot = (int) le.getRot();
 
         le.setAlign(le.isXref() ? CENTER_LEFT : BOTTOM_LEFT);
