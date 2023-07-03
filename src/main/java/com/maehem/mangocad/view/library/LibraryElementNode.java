@@ -334,7 +334,7 @@ public class LibraryElementNode {
         return p;
     }
 
-    public static Node createProbeNode(Probe le, Color color, Segment seg, boolean mirror) {
+    public static Node createProbeNode(Probe le, Color color, Segment seg) {
         Group labelGroup = new Group();
         int rot = (int) le.getRot();
         double dotRadius = 0.8;
@@ -357,7 +357,7 @@ public class LibraryElementNode {
             default ->
                 probeText = "V???(" + le.getValue() + ")";
         }
-        Node textNode = createText(le, probeText, color, mirror, false);
+        Node textNode = createText(le, probeText, color, null);
 
         double x = le.getX();
         double y = -le.getY();
@@ -548,14 +548,152 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, Color color) {
-        return createText(et, null, color, false, false);
+        return createText(et, null, color, null);
     }
 
-    public static Node createText(ElementText et, Color color, boolean mirror, boolean upIsDown) {
-        return createText(et, null, color, mirror, upIsDown);
+    public static Node createText(ElementText et, Color color, Rotation parentRotation) {
+        return createText(et, null, color, parentRotation);
     }
 
-    public static Node createText(ElementText et, String altText, Color color, boolean leftIsRight, boolean upIsDown) {
+    public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation) {
+        Group g = new Group();
+        Rotation rotation = et.getRotation();
+        double  rot = rotation.getValue();
+        boolean mir = rotation.isMirror();
+        
+        boolean showBorder = true;
+
+        double fontSizeMult = 0.72272; // INCH to Point ratio
+        double fontSize = et.getSize() / fontSizeMult;
+
+        String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
+        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(fontPath), fontSize);
+        Text tt = new Text(altText != null ? altText : et.getValue());
+        tt.setFont(font);
+        tt.setFill(color);
+
+        double textWidth = tt.getBoundsInLocal().getWidth();
+        double textHeight = tt.getBoundsInLocal().getHeight();
+        double borderW = 0.05;
+        // JavaFX has not yet exposed FontMetrics so we make these assumtions.
+        double fontAsc = textHeight * 0.53; // Font ascends this much.
+        tt.setLayoutY(fontAsc + borderW);
+
+        // Flip text 180 for certain rotations.
+        if (       rot == 180 ||
+                (  mir && rotation.getValue() == 90 ) ||
+                ( !mir && rotation.getValue() == 270 ) 
+        ) {
+            Rotate tR = new Rotate(180.0, textWidth/2.0, -textHeight*0.263);
+            tt.getTransforms().add(tR);
+        }
+        
+        // Text lives inside a Pane area that might be 
+        // colored/backgrounded based on DRC error.
+        Pane ttG = new Pane(tt);
+        
+        ttG.setPrefHeight(fontAsc + borderW * 2.0);
+
+        // Text Area Width
+        double taWidth = tt.getBoundsInLocal().getWidth();
+        //double taHeight = ttG.getBoundsInLocal().getHeight();
+        double taHeight = ttG.getPrefHeight();
+
+        double x = et.getX();
+        double y = et.getY();
+        
+        double pivotX;
+        double pivotY;
+
+        
+        switch (et.getAlign()) {
+            case BOTTOM_LEFT -> {
+                pivotX = mir?taWidth:0;
+                pivotY = - taHeight;                
+            }
+            case BOTTOM_CENTER -> {
+                pivotX = taWidth/2.0;
+                pivotY = - taHeight;                                
+            }
+            case BOTTOM_RIGHT -> {
+                pivotX = mir?0:taWidth;
+                pivotY = - taHeight;                
+            }
+            case CENTER_LEFT -> {
+                pivotX = mir?taWidth:0;
+                pivotY = - taHeight/2.0;
+                
+            }
+            case CENTER -> {
+                pivotX = taWidth/2.0;
+                pivotY = - taHeight/2.0;
+            }
+            case CENTER_RIGHT -> {
+                pivotX = mir?0:taWidth;
+                pivotY = - taHeight/2.0;
+                
+            }
+            case TOP_LEFT -> {
+                pivotX = mir?taWidth:0;
+                pivotY = 0;
+                
+            }
+            case TOP_CENTER -> {
+                pivotX = taWidth/2.0;
+                pivotY = 0;                
+            }
+            default -> { // TOP_RIGHT
+                pivotX = mir?0:taWidth;
+                pivotY = 0;                
+            }
+        }
+                
+        if (showBorder) {
+            ttG.setBorder(new Border(new BorderStroke(
+                    Color.BLUE, BorderStrokeStyle.SOLID,
+                    CornerRadii.EMPTY,
+                    new BorderWidths(borderW))));
+        }
+        ttG.setLayoutX(x - pivotX);
+        ttG.setLayoutY(-y + pivotY);
+        
+//        // Crosshairs
+//        double chSize = 0.4;
+//        Line chP = new Line(x - pivotX-chSize, -y+pivotY, x-pivotX+chSize, -y+pivotY);
+//        chP.setStroke(Color.MAGENTA);
+//        chP.setStrokeWidth(0.03);
+//        Line cvP = new Line(x-pivotX, -y+pivotY-chSize, x-pivotX, -y+pivotY+chSize);
+//        cvP.setStroke(Color.MAGENTA);
+//        cvP.setStrokeWidth(0.03);
+//        ttG.getChildren().addAll(chP,cvP);
+        // Crosshairs
+        double chSize = 0.4;
+        Line chP = new Line(-chSize, 0, chSize, 0);
+        chP.setStroke(Color.MAGENTA);
+        chP.setStrokeWidth(0.03);
+        Line cvP = new Line(0, -chSize, 0, +chSize);
+        cvP.setStroke(Color.MAGENTA);
+        cvP.setStrokeWidth(0.03);
+        ttG.getChildren().addAll(chP,cvP);
+        
+        // Crosshairs
+        //double chSize = 0.4;
+        Line ch = new Line(x-chSize, -y, x+chSize, -y);
+        ch.setStroke(Color.WHITE);
+        ch.setStrokeWidth(0.03);
+        Line cv = new Line(x, -y-chSize, x, -y+chSize);
+        cv.setStroke(Color.WHITE);
+        cv.setStrokeWidth(0.03);
+
+        g.getChildren().addAll(ttG, ch, cv );
+        double rotG = mir?et.getRot():-et.getRot();
+        Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
+        ttG.getTransforms().add(rTTG);
+
+        return g;
+    }
+    
+    public static Node createTextOld(ElementText et, String altText, Color color, boolean leftIsRight, boolean upIsDown) {
         boolean showBorder = false;
 
         double fontSizeMult = 0.72272; // INCH to Point ratio
@@ -1724,7 +1862,8 @@ public class LibraryElementNode {
                         }
                     }
 
-                    Node elementText = createText(et, altText, c, leftIsRight, upIsDown);
+                    //Node elementText = createText(et, altText, c, leftIsRight, upIsDown);
+                    Node elementText = createText(et, altText, c, inst.getRotation());
                     g.getChildren().add(elementText);
                 }
                 g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));

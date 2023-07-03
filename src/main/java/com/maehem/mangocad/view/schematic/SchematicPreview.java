@@ -181,7 +181,7 @@ public class SchematicPreview extends Group {
                     } else if (element instanceof LabelElement e) {
                         getChildren().add(LibraryElementNode.createLabelNode(e, c));
                     } else if (element instanceof Probe e) {
-                        getChildren().add(LibraryElementNode.createProbeNode(e, c, seg, false));
+                        getChildren().add(LibraryElementNode.createProbeNode(e, c, seg));
                     } else {
                         LOGGER.log(Level.SEVERE, "Unknown Element in Segment List: " + element.getElementName());
                     }
