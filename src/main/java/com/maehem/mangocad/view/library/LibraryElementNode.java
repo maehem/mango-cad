@@ -76,6 +76,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 
@@ -556,14 +557,16 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation) {
+        boolean showBorder = false;
+        
         Group g = new Group();
+        final double fontAsentPct = 0.526; // 53%   (0.0 - 1.0)
         Rotation rotation = et.getRotation();
         double  rot = rotation.getValue();
         boolean mir = rotation.isMirror();
         
-        boolean showBorder = true;
 
-        double fontSizeMult = 0.72272; // INCH to Point ratio
+        double fontSizeMult = 0.666; // INCH to Point ratio
         double fontSize = et.getSize() / fontSizeMult;
 
         String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
@@ -571,12 +574,26 @@ public class LibraryElementNode {
         Text tt = new Text(altText != null ? altText : et.getValue());
         tt.setFont(font);
         tt.setFill(color);
+        
+        Text exLine = new Text("EXAMPLE");
+        exLine.setFont(font);
+        double lineHeight = exLine.getBoundsInLocal().getHeight();
 
+        // JavaFX has not yet exposed FontMetrics so we make these assumtions.
+        double fontAsc = lineHeight * fontAsentPct; // Font ascends this much.
+        double fontDesc = lineHeight * (1.0-fontAsentPct);
+        tt.setLineSpacing(fontAsc * et.getDistance()  * 0.01 - fontDesc);
+        
         double textWidth = tt.getBoundsInLocal().getWidth();
         double textHeight = tt.getBoundsInLocal().getHeight();
         double borderW = 0.05;
-        // JavaFX has not yet exposed FontMetrics so we make these assumtions.
-        double fontAsc = textHeight * 0.53; // Font ascends this much.
+        
+        LOGGER.log(Level.SEVERE, 
+                "Font Size: {0}   Text Hight: {1}  Line Height: {2}", 
+                new Object[]{fontSize, textHeight, lineHeight}
+        );
+        
+
         tt.setLayoutY(fontAsc + borderW);
 
         // Flip text 180 for certain rotations.
@@ -584,7 +601,7 @@ public class LibraryElementNode {
                 (  mir && rotation.getValue() == 90 ) ||
                 ( !mir && rotation.getValue() == 270 ) 
         ) {
-            Rotate tR = new Rotate(180.0, textWidth/2.0, -textHeight*0.263);
+            Rotate tR = new Rotate(180.0, textWidth/2.0, -textHeight*fontAsentPct/2.0);
             tt.getTransforms().add(tR);
         }
         
@@ -592,11 +609,19 @@ public class LibraryElementNode {
         // colored/backgrounded based on DRC error.
         Pane ttG = new Pane(tt);
         
-        ttG.setPrefHeight(fontAsc + borderW * 2.0);
+        // Debug Box for entire text area.
+//        Rectangle textAreaRect = new Rectangle(textWidth, textHeight, Color.TRANSPARENT);
+//        textAreaRect.setStroke(Color.GREENYELLOW);
+//        textAreaRect.setStrokeWidth(0.08);
+//        ttG.getChildren().add(textAreaRect);
+        
+        ttG.setPrefHeight( textHeight  - fontDesc + borderW * 2.0);
+        ttG.setPrefWidth(textWidth);
 
         // Text Area Width
-        double taWidth = tt.getBoundsInLocal().getWidth();
+        //double taWidth = tt.getBoundsInLocal().getWidth();
         //double taHeight = ttG.getBoundsInLocal().getHeight();
+        double taWidth = ttG.getPrefWidth();
         double taHeight = ttG.getPrefHeight();
 
         double x = et.getX();
@@ -617,7 +642,8 @@ public class LibraryElementNode {
             }
             case BOTTOM_RIGHT -> {
                 pivotX = mir?0:taWidth;
-                pivotY = - taHeight;                
+                pivotY = - taHeight;
+                tt.setTextAlignment(TextAlignment.RIGHT);
             }
             case CENTER_LEFT -> {
                 pivotX = mir?taWidth:0;
@@ -631,7 +657,7 @@ public class LibraryElementNode {
             case CENTER_RIGHT -> {
                 pivotX = mir?0:taWidth;
                 pivotY = - taHeight/2.0;
-                
+                tt.setTextAlignment(TextAlignment.RIGHT);
             }
             case TOP_LEFT -> {
                 pivotX = mir?taWidth:0;
@@ -645,6 +671,7 @@ public class LibraryElementNode {
             default -> { // TOP_RIGHT
                 pivotX = mir?0:taWidth;
                 pivotY = 0;                
+                tt.setTextAlignment(TextAlignment.RIGHT);
             }
         }
                 
@@ -657,33 +684,26 @@ public class LibraryElementNode {
         ttG.setLayoutX(x - pivotX);
         ttG.setLayoutY(-y + pivotY);
         
-//        // Crosshairs
-//        double chSize = 0.4;
-//        Line chP = new Line(x - pivotX-chSize, -y+pivotY, x-pivotX+chSize, -y+pivotY);
-//        chP.setStroke(Color.MAGENTA);
-//        chP.setStrokeWidth(0.03);
-//        Line cvP = new Line(x-pivotX, -y+pivotY-chSize, x-pivotX, -y+pivotY+chSize);
-//        cvP.setStroke(Color.MAGENTA);
-//        cvP.setStrokeWidth(0.03);
-//        ttG.getChildren().addAll(chP,cvP);
-        // Crosshairs
-        double chSize = 0.4;
-        Line chP = new Line(-chSize, 0, chSize, 0);
-        chP.setStroke(Color.MAGENTA);
-        chP.setStrokeWidth(0.03);
-        Line cvP = new Line(0, -chSize, 0, +chSize);
-        cvP.setStroke(Color.MAGENTA);
-        cvP.setStrokeWidth(0.03);
-        ttG.getChildren().addAll(chP,cvP);
+        double chSize = 0.8; // Crosshairs size
+        double chStroke = 0.05;
         
-        // Crosshairs
-        //double chSize = 0.4;
+        // Crosshairs (original axis)
+// For Debug
+//        Line chP = new Line(-chSize, 0, chSize, 0);
+//        chP.setStroke(Color.MAGENTA);
+//        chP.setStrokeWidth(chStroke);
+//        Line cvP = new Line(0, -chSize, 0, +chSize);
+//        cvP.setStroke(Color.MAGENTA);
+//        cvP.setStrokeWidth(chStroke);
+//        ttG.getChildren().addAll(chP,cvP);
+        
+        // Crosshairs ( visible )
         Line ch = new Line(x-chSize, -y, x+chSize, -y);
         ch.setStroke(Color.WHITE);
-        ch.setStrokeWidth(0.03);
+        ch.setStrokeWidth(chStroke);
         Line cv = new Line(x, -y-chSize, x, -y+chSize);
         cv.setStroke(Color.WHITE);
-        cv.setStrokeWidth(0.03);
+        cv.setStrokeWidth(chStroke);
 
         g.getChildren().addAll(ttG, ch, cv );
         double rotG = mir?et.getRot():-et.getRot();
