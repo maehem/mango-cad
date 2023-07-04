@@ -27,7 +27,7 @@ public class Junction extends _AQuantum {
 
     public static final String ELEMENT_NAME = "junction";
     public static final int DEFAULT_LAYER = 91; // Nets
-    public static final double DOT_RADIUS = 0.6;
+    public static final double DOT_RADIUS = 0.5;
     
     //  junction EMPTY
     //    ATTLIST
