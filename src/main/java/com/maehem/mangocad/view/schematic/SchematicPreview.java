@@ -81,25 +81,25 @@ public class SchematicPreview extends Group {
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
-                getChildren().add(LibraryElementNode.createPolygon(e, Color.CORAL,false));
+                getChildren().add(LibraryElementNode.createPolygon(e, c,false));
             } else if (element instanceof Wire e) {
                 getChildren().add(LibraryElementNode.createWireNode(e, c, false));
             } else if (element instanceof ElementText e) {
-                getChildren().add(LibraryElementNode.createText(e, Color.CORAL));
+                getChildren().add(LibraryElementNode.createText(e, c));
             } else if (element instanceof Dimension e) {
                 //getChildren().add(LibraryElementNode.createDimensionNode(e, Color.RED));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Dimension Node");
             } else if (element instanceof ElementCircle e) {
-                getChildren().add(LibraryElementNode.createCircleNode(e, Color.CORAL, false));
+                getChildren().add(LibraryElementNode.createCircleNode(e, c, false));
             } else if (element instanceof Spline e) {
-                //getChildren().add(LibraryElementNode.createSplineNode(e, Color.CORAL));
+                //getChildren().add(LibraryElementNode.createSplineNode(e, c));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Spline Node");
             } else if (element instanceof ElementRectangle e) {
                 getChildren().add(LibraryElementNode.createRectangle(e, c, false));
             } else if (element instanceof FrameElement e) {
                 getChildren().add(LibraryElementNode.createFrameNode(e, c));
             } else if (element instanceof Hole e) {
-                //getChildren().add(LibraryElementNode.createHoleNode(e, Color.RED));
+                //getChildren().add(LibraryElementNode.createHoleNode(e, c));
                 LOGGER.log(Level.SEVERE, "TODO: Implement Hole Node");
             }
         }

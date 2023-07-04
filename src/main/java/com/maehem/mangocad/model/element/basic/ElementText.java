@@ -202,4 +202,20 @@ public class ElementText extends _AQuantum {
         return grouprefs;
     }
 
+    public ElementText copy() {
+        ElementText copy = new ElementText();
+        
+        copy.setX(x);
+        copy.setY(y);
+        copy.setAlign(align);
+        copy.setDistance(distance);
+        copy.setFont(font);
+        copy.setLayer(getLayerNum());
+        copy.setRatio(ratio);
+        copy.setRot(getRot());
+        copy.setSize(size);
+        copy.setValue(value);
+        
+        return copy;
+    }
 }

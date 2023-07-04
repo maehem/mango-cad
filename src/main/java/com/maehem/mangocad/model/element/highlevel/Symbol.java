@@ -39,6 +39,7 @@ import java.util.List;
 public class Symbol extends _AQuantum {
 
     public static final String ELEMENT_NAME = "symbol";
+    public static final int LAYER_NUMBER = 94;
     
      // There can only be one description.
     private final Description description = new Description();
@@ -49,6 +50,10 @@ public class Symbol extends _AQuantum {
     private boolean locallyModified = false;
     private int libraryVersion;
     private boolean libraryLocallyModified = false;
+
+    public Symbol() {
+        setLayer(LAYER_NUMBER);
+    }
     
     @Override
     public String getElementName() {
