@@ -87,15 +87,14 @@ import javafx.scene.transform.Transform;
 public class LibraryElementNode {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
-    
+
     //public static final String FONT_PATH = "/fonts/OCR-A/OCRA.ttf";
     //public static final String FONT_PATH = "/fonts/Source_Code_Pro/static/SourceCodePro-Medium.ttf";
     //private static final double FONT_ASC_PCT = 0.526; // 53%   (0.0 - 1.0)
-
     public static final String FONT_PATH = "/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
     public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
     private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
-    
+
     private enum PatternStyle {
         DARK_THIN, DARK_MED, DARK_THICK, LIGHT_THIN, LIGHT_MED, LIGHT_THICK
     }
@@ -477,16 +476,15 @@ public class LibraryElementNode {
         double height = t.getBoundsInLocal().getHeight();
         double width = t.getBoundsInLocal().getWidth();
         t.setLayoutX(le.getX() + le.getSize());
-        t.setLayoutY(-le.getY() + height*0.25);
-                
-        if (    ( le.getRot() == 0 && le.getRotation().isMirror() ) ||
-                ( le.getRot() == 180 && !le.getRotation().isMirror() ) || 
-                le.getRot() == 270 
-        ) { // Flip Text
-            Rotate r = new Rotate(180, width/2.0, -height*0.25);
+        t.setLayoutY(-le.getY() + height * 0.25);
+
+        if ((le.getRot() == 0 && le.getRotation().isMirror())
+                || (le.getRot() == 180 && !le.getRotation().isMirror())
+                || le.getRot() == 270) { // Flip Text
+            Rotate r = new Rotate(180, width / 2.0, -height * 0.25);
             t.getTransforms().add(r);
         }
-                
+
         if (le.isXref()) {
             Polygon outline = new Polygon(
                     x, y,
@@ -500,18 +498,18 @@ public class LibraryElementNode {
             outline.setFill(Color.TRANSPARENT);
             labelGroup.getChildren().add(outline);
         }
-        
+
         double rot = -le.getRot();
-        if ( le.getRotation().isMirror() && (le.getRot() == 0 || le.getRot() == 180) ) {
+        if (le.getRotation().isMirror() && (le.getRot() == 0 || le.getRot() == 180)) {
             rot += 180.00;
             rot %= 360;
         }
-        Rotate r = new Rotate(rot, le.getX( ), -le.getY() );
+        Rotate r = new Rotate(rot, le.getX(), -le.getY());
         labelGroup.getTransforms().add(r);
 
         return labelGroup;
     }
-    
+
     public static Node createLabelNodeOld(LabelElement le, Color color) {
         Group labelGroup = new Group();
         int rot = (int) le.getRot();
@@ -567,13 +565,12 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation) {
-        boolean showBorder = true;
-        
+        boolean showBorder = false;
+
         Group g = new Group();
         Rotation rotation = et.getRotation();
-        double  rot = rotation.getValue();
+        double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
-        
 
         //double fontSizeMult = 0.666; // INCH to Point ratio
         double fontSizeMult = 0.7272; // INCH to Point ratio
@@ -585,48 +582,44 @@ public class LibraryElementNode {
         Text tt = new Text(altText != null ? altText : et.getValue());
         tt.setFont(font);
         tt.setFill(color);
-        
+
         Text exLine = new Text("EXAMPLE");
         exLine.setFont(font);
         double lineHeight = exLine.getBoundsInLocal().getHeight();
 
         // JavaFX has not yet exposed FontMetrics so we make these assumtions.
         double fontAsc = lineHeight * FONT_ASC_PCT; // Font ascends this much.
-        double fontDesc = lineHeight * (1.0-FONT_ASC_PCT);
-        tt.setLineSpacing(fontAsc * et.getDistance()  * 0.01 - fontDesc);
-        
+        double fontDesc = lineHeight * (1.0 - FONT_ASC_PCT);
+        tt.setLineSpacing(fontAsc * et.getDistance() * 0.01 - fontDesc);
+
         double textWidth = tt.getBoundsInLocal().getWidth();
         double textHeight = tt.getBoundsInLocal().getHeight();
         double borderW = 0.05;
-        
+
 //        LOGGER.log(Level.SEVERE, 
 //                "Font Size: {0}   Text Hight: {1}  Line Height: {2}", 
 //                new Object[]{fontSize, textHeight, lineHeight}
 //        );
-        
-
         tt.setLayoutY(fontAsc + borderW);
 
         // Flip text 180 for certain rotations.
-        if (       rot == 180 ||
-                (  mir && rotation.getValue() == 90 ) ||
-                ( !mir && rotation.getValue() == 270 ) 
-        ) {
-            Rotate tR = new Rotate(180.0, textWidth/2.0, -textHeight*FONT_ASC_PCT/2.0);
+        if (rot == 180
+                || (mir && rotation.getValue() == 90)
+                || (!mir && rotation.getValue() == 270)) {
+            Rotate tR = new Rotate(180.0, textWidth / 2.0, -textHeight * FONT_ASC_PCT / 2.0);
             tt.getTransforms().add(tR);
         }
-        
+
         // Text lives inside a Pane area that might be 
         // colored/backgrounded based on DRC error.
         Pane ttG = new Pane(tt);
-        
+
         // Debug Box for entire text area.
 //        Rectangle textAreaRect = new Rectangle(textWidth, textHeight, Color.TRANSPARENT);
 //        textAreaRect.setStroke(Color.GREENYELLOW);
 //        textAreaRect.setStrokeWidth(0.08);
 //        ttG.getChildren().add(textAreaRect);
-        
-        ttG.setPrefHeight( textHeight  - fontDesc + borderW * 2.0);
+        ttG.setPrefHeight(textHeight - fontDesc + borderW * 2.0);
         ttG.setPrefWidth(textWidth);
 
         // Text Area Width
@@ -637,55 +630,54 @@ public class LibraryElementNode {
 
         double x = et.getX();
         double y = et.getY();
-        
+
         double pivotX;
         double pivotY;
 
-        
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
-                pivotX = mir?taWidth:0;
-                pivotY = - taHeight;                
+                pivotX = mir ? taWidth : 0;
+                pivotY = -taHeight;
             }
             case BOTTOM_CENTER -> {
-                pivotX = taWidth/2.0;
-                pivotY = - taHeight;                                
+                pivotX = taWidth / 2.0;
+                pivotY = -taHeight;
             }
             case BOTTOM_RIGHT -> {
-                pivotX = mir?0:taWidth;
-                pivotY = - taHeight;
+                pivotX = mir ? 0 : taWidth;
+                pivotY = -taHeight;
                 tt.setTextAlignment(TextAlignment.RIGHT);
             }
             case CENTER_LEFT -> {
-                pivotX = mir?taWidth:0;
-                pivotY = - taHeight/2.0;
-                
+                pivotX = mir ? taWidth : 0;
+                pivotY = -taHeight / 2.0;
+
             }
             case CENTER -> {
-                pivotX = taWidth/2.0;
-                pivotY = - taHeight/2.0;
+                pivotX = taWidth / 2.0;
+                pivotY = -taHeight / 2.0;
             }
             case CENTER_RIGHT -> {
-                pivotX = mir?0:taWidth;
-                pivotY = - taHeight/2.0;
+                pivotX = mir ? 0 : taWidth;
+                pivotY = -taHeight / 2.0;
                 tt.setTextAlignment(TextAlignment.RIGHT);
             }
             case TOP_LEFT -> {
-                pivotX = mir?taWidth:0;
+                pivotX = mir ? taWidth : 0;
                 pivotY = 0;
-                
+
             }
             case TOP_CENTER -> {
-                pivotX = taWidth/2.0;
-                pivotY = 0;                
+                pivotX = taWidth / 2.0;
+                pivotY = 0;
             }
             default -> { // TOP_RIGHT
-                pivotX = mir?0:taWidth;
-                pivotY = 0;                
+                pivotX = mir ? 0 : taWidth;
+                pivotY = 0;
                 tt.setTextAlignment(TextAlignment.RIGHT);
             }
         }
-                
+
         if (showBorder) {
             ttG.setBorder(new Border(new BorderStroke(
                     Color.BLUE, BorderStrokeStyle.SOLID,
@@ -694,10 +686,10 @@ public class LibraryElementNode {
         }
         ttG.setLayoutX(x - pivotX);
         ttG.setLayoutY(-y + pivotY);
-        
+
         double chSize = 0.8; // Crosshairs size
         double chStroke = 0.05;
-        
+
         // Crosshairs (original axis)
 // For Debug
 //        Line chP = new Line(-chSize, 0, chSize, 0);
@@ -707,23 +699,22 @@ public class LibraryElementNode {
 //        cvP.setStroke(Color.MAGENTA);
 //        cvP.setStrokeWidth(chStroke);
 //        ttG.getChildren().addAll(chP,cvP);
-        
         // Crosshairs ( visible )
-        Line ch = new Line(x-chSize, -y, x+chSize, -y);
+        Line ch = new Line(x - chSize, -y, x + chSize, -y);
         ch.setStroke(Color.WHITE);
         ch.setStrokeWidth(chStroke);
-        Line cv = new Line(x, -y-chSize, x, -y+chSize);
+        Line cv = new Line(x, -y - chSize, x, -y + chSize);
         cv.setStroke(Color.WHITE);
         cv.setStrokeWidth(chStroke);
 
-        g.getChildren().addAll(ttG, ch, cv );
-        double rotG = mir?et.getRot():-et.getRot();
+        g.getChildren().addAll(ttG, ch, cv);
+        double rotG = mir ? et.getRot() : -et.getRot();
         Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
         ttG.getTransforms().add(rTTG);
 
         return g;
     }
-    
+
     public static Node createTextOld(ElementText et, String altText, Color color, boolean leftIsRight, boolean upIsDown) {
         boolean showBorder = false;
 
@@ -745,7 +736,7 @@ public class LibraryElementNode {
 
         double rot = et.getRot();
         tt.setLayoutY(fontAsc + borderW);
-        if (  upIsDown ) {
+        if (upIsDown) {
             Rotate rT = new Rotate(180, width / 2.0, -fontAsc / 2.0);
             tt.getTransforms().add(rT);
         }
@@ -765,8 +756,8 @@ public class LibraryElementNode {
         Pane ttG = new Pane(tt);
         ttG.setPrefHeight(fontAsc + borderW * 2.0);
 
-        double x = mir?-et.getX():et.getX();
-        
+        double x = mir ? -et.getX() : et.getX();
+
         // Pivot Sizes
         double pivL = borderW;
         double pivR = borderW + width;
@@ -1236,23 +1227,25 @@ public class LibraryElementNode {
 
         return g;
     }
-    
+
     /**
-     * 
+     *
      * @param p pin to create node for
      * @param c color of pin.
      * @param parentRot @Rotation of parent node. Might be null.
-     * @param showDetails show pin details like hidden name/pin/direction. Usually off in schematic, on in library.
-     * @return 
+     * @param showDetails show pin details like hidden name/pin/direction.
+     * Usually off in schematic, on in library.
+     * @return
      */
     public static Node createPinNode(Pin p, Color c, Rotation parentRot, boolean showDetails) {
         final Group g = new Group();
-        
-        final Color  ORIGIN_CIRCLE_COLOR = new Color(1.0, 1.0, 1.0, 0.2);
+
+        final Color ORIGIN_CIRCLE_COLOR = new Color(1.0, 1.0, 1.0, 0.2);
         final double ORIGIN_CIRCLE_RADIUS = 0.635;
         final double ORIGIN_CIRCLE_LINE_WIDTH = 0.07;
 
         final Color PAD_NAME_COLOR = new Color(0.8, 0.8, 0.2, 0.8);
+        final Color PAD_COLOR_GHOST = new Color(0.8, 0.8, 0.2, 0.2);
 
         final double PIN_NAME_MARGIN = 1.5;
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
@@ -1263,34 +1256,34 @@ public class LibraryElementNode {
 
         final double DOT_CIRCLE_RADIUS = 0.7;
         final double DOT_CIRCLE_LINE_WIDTH = PIN_STROKE_WIDTH * 1.7;
-        final double CLK_SIZE = DOT_CIRCLE_RADIUS*2.0;
-        
+        final double CLK_SIZE = DOT_CIRCLE_RADIUS * 2.0;
+
         double pX = p.getX();
         double pY = -p.getY();
-        
+
         double pRot = 0;
         boolean pMir = false;
-        if ( parentRot!= null ) {
+        if (parentRot != null) {
             pRot = parentRot.getValue();
             pMir = parentRot.isMirror();
-            if ( pMir ) {
+            if (pMir) {
                 pX = -p.getX();
             }
         }
-        
+
         boolean pinMirror = false;
-         // How the pin appears to be rotated after 
-         // parent and local rotations cosidered.
+        // How the pin appears to be rotated after 
+        // parent and local rotations cosidered.
         double vizPinRot = p.getRot() + pRot;
-        if ( pMir && (pRot == 90 || pRot == 270) ) { // Sideways mirrored.
+        if (pMir && (pRot == 90 || pRot == 270)) { // Sideways mirrored.
             vizPinRot += 180.0;
-        }        
+        }
         vizPinRot %= 360;
-                
-        if ( pMir && ( p.getRot() == 0 || p.getRot() == 180 ) ) {
+
+        if (pMir && (p.getRot() == 0 || p.getRot() == 180)) {
             pinMirror = true;
         }
-        
+
         // Pin Length Multiplier
         int padHang = 0;
         switch (p.getLength()) {
@@ -1307,7 +1300,7 @@ public class LibraryElementNode {
                 padHang = 0;
             }
         }
-        
+
         // There might be a dot on pin.
         double dotRadius = 0;
         if (p.getFunction() == PinFunction.DOT || p.getFunction() == PinFunction.DOTCLK) {
@@ -1315,50 +1308,50 @@ public class LibraryElementNode {
         }
 
         double rawPinLen = padHang * 2.54;
-        double symbX = pX + (pinMirror?-rawPinLen:rawPinLen); // Symbol Outline X
+        double symbX = pX + (pinMirror ? -rawPinLen : rawPinLen); // Symbol Outline X
         double pinLen = rawPinLen - dotRadius * 2.0;
 
-        
         // Draw wire
-        Line pinLine = new Line(pX, pY, pX + (pinMirror?-pinLen:pinLen), pY);
+        Line pinLine = new Line(pX, pY, pX + (pinMirror ? -pinLen : pinLen), pY);
         pinLine.setStroke(c);
         pinLine.setStrokeLineCap(StrokeLineCap.BUTT);
         pinLine.setStrokeWidth(PIN_STROKE_WIDTH);
         g.getChildren().add(pinLine);
-        
+
         // Dot Function
         if (dotRadius > 0.0) {
             Circle dotC = new Circle(dotRadius, Color.TRANSPARENT);
-            dotC.setLayoutX(symbX + (pinMirror?dotRadius:-dotRadius) );
+            dotC.setLayoutX(symbX + (pinMirror ? dotRadius : -dotRadius));
             dotC.setLayoutY(pY);
             dotC.setStroke(c);
             dotC.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
             g.getChildren().add(dotC);
         }
-        
-        // Pin Origin Circle
-        Circle originCirc = new Circle(
-                pX, pY, ORIGIN_CIRCLE_RADIUS, Color.TRANSPARENT
-        );
-        originCirc.setStroke(ORIGIN_CIRCLE_COLOR);
-        originCirc.setStrokeWidth(ORIGIN_CIRCLE_LINE_WIDTH);
-        g.getChildren().add(originCirc);
 
+        // Pin Origin Circle
+        if (showDetails) {
+            Circle originCirc = new Circle(
+                    pX, pY, ORIGIN_CIRCLE_RADIUS, Color.TRANSPARENT
+            );
+            originCirc.setStroke(ORIGIN_CIRCLE_COLOR);
+            originCirc.setStrokeWidth(ORIGIN_CIRCLE_LINE_WIDTH);
+            g.getChildren().add(originCirc);
+        }
         // Clock Function
         if (p.getFunction() == PinFunction.CLK || p.getFunction() == PinFunction.DOTCLK) {
-            Line line1 = new Line(symbX, pY-CLK_SIZE/2.0, symbX + (pinMirror?-CLK_SIZE:CLK_SIZE), pY);
+            Line line1 = new Line(symbX, pY - CLK_SIZE / 2.0, symbX + (pinMirror ? -CLK_SIZE : CLK_SIZE), pY);
             line1.setStroke(c);
             line1.setStrokeLineCap(StrokeLineCap.ROUND);
             line1.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
 
-            Line line2 = new Line(symbX, pY+CLK_SIZE/2.0, symbX + (pinMirror?-CLK_SIZE:CLK_SIZE), pY);
+            Line line2 = new Line(symbX, pY + CLK_SIZE / 2.0, symbX + (pinMirror ? -CLK_SIZE : CLK_SIZE), pY);
             line2.setStroke(c);
             line2.setStrokeLineCap(StrokeLineCap.ROUND);
             line2.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
 
-            g.getChildren().addAll(line1,line2);
+            g.getChildren().addAll(line1, line2);
         }
-        
+
         Color pinNameColor = PIN_NAME_COLOR;
         Color padColor = PAD_NAME_COLOR;
 
@@ -1366,34 +1359,33 @@ public class LibraryElementNode {
             case BOTH -> {
             }
             case PAD -> {
-                pinNameColor = PIN_COLOR_GHOST;
+                pinNameColor = showDetails?PIN_COLOR_GHOST:Color.TRANSPARENT;
             }
             case PIN -> {
-                padColor = PIN_COLOR_GHOST;
+                padColor = showDetails?PAD_COLOR_GHOST:Color.TRANSPARENT;
             }
             case OFF -> {
-                pinNameColor = PIN_COLOR_GHOST;
-                padColor = PIN_COLOR_GHOST;
+                pinNameColor = showDetails?PIN_COLOR_GHOST:Color.TRANSPARENT;
+                padColor = showDetails?PAD_COLOR_GHOST:Color.TRANSPARENT;
             }
         }
-        
+
         // Pin Name (inside component, pin function name)
         Text pinName = new Text(p.getName());
-        
+
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), PIN_FONT_SIZE);
         pinName.setFont(font);
         pinName.setFill(pinNameColor);
         double pinNameTextWidth = pinName.getBoundsInLocal().getWidth();
         double pinNameTextHeight = pinName.getBoundsInLocal().getHeight();
-        pinName.setLayoutX(symbX + (pinMirror?-PIN_NAME_MARGIN:PIN_NAME_MARGIN) + (pinMirror?-pinNameTextWidth:0.0) );
-        pinName.setLayoutY(pY + pinNameTextHeight*0.3 );
-        if ( vizPinRot > 90.0 ) { // Flip Text
-            Rotate r = new Rotate(180, pinNameTextWidth/2.0, -pinNameTextHeight*0.3);
+        pinName.setLayoutX(symbX + (pinMirror ? -PIN_NAME_MARGIN : PIN_NAME_MARGIN) + (pinMirror ? -pinNameTextWidth : 0.0));
+        pinName.setLayoutY(pY + pinNameTextHeight * 0.3);
+        if (vizPinRot > 90.0) { // Flip Text
+            Rotate r = new Rotate(180, pinNameTextWidth / 2.0, -pinNameTextHeight * 0.3);
             pinName.getTransforms().add(r);
         }
         g.getChildren().add(pinName);
-        
-        
+
         // Pad Name (outside component, usually a number)
         // Use the padValue from DeviceSet if it exists.
         String padValue;
@@ -1407,7 +1399,7 @@ public class LibraryElementNode {
         }
         Text padName = new Text(padValue);
         Font padFont = Font.loadFont(
-                LibraryElementNode.class.getResourceAsStream(FONT_PATH), 
+                LibraryElementNode.class.getResourceAsStream(FONT_PATH),
                 PIN_FONT_SIZE * 0.8
         );
         padName.setFont(padFont);
@@ -1415,44 +1407,45 @@ public class LibraryElementNode {
         double padWidth = padName.getBoundsInLocal().getWidth();
         double padHeight = padName.getBoundsInLocal().getHeight();
         double textDescend = 0.15;
-        padName.setLayoutX(pX - (pinMirror?padWidth:0.0));
+        padName.setLayoutX(pX - (pinMirror ? padWidth : 0.0));
         padName.setLayoutY(pY - textDescend);
-        if ( vizPinRot > 90.0 ) { // Flip Text
-            Rotate r = new Rotate(180, padWidth/2.0, textDescend);
+        if (vizPinRot > 90.0) { // Flip Text
+            Rotate r = new Rotate(180, padWidth / 2.0, textDescend);
             padName.getTransforms().add(r);
         }
         g.getChildren().add(padName);
 
         // Direction and Swap-Level  ( ex.   io 0  )
-        Text dirSwap = new Text(p.getDirection().code() + "  " + p.getSwapLevel());
-        Font dirSwapFont = Font.loadFont(
-                LibraryElementNode.class.getResourceAsStream(FONT_PATH), 
-                PIN_FONT_SIZE * 0.7
-        );
-        dirSwap.setFont(dirSwapFont);
-        dirSwap.setFill(PIN_DIR_SWAP_COLOR);
-        double dsWidth = dirSwap.getBoundsInLocal().getWidth();
-        double dsHeight = dirSwap.getBoundsInLocal().getHeight();
-        double xyOffset = ORIGIN_CIRCLE_RADIUS*0.71;
-        dirSwap.setLayoutX(pX - (pinMirror?0.0:dsWidth) + (pinMirror?xyOffset:-xyOffset));
-        dirSwap.setLayoutY(pY - xyOffset);
-        if ( vizPinRot > 90.0 ) { // Flip Text
-            Rotate r = new Rotate(180, dsWidth/2.0, xyOffset);
-            dirSwap.getTransforms().add(r);
+        if (showDetails) {
+            Text dirSwap = new Text(p.getDirection().code() + "  " + p.getSwapLevel());
+            Font dirSwapFont = Font.loadFont(
+                    LibraryElementNode.class.getResourceAsStream(FONT_PATH),
+                    PIN_FONT_SIZE * 0.7
+            );
+            dirSwap.setFont(dirSwapFont);
+            dirSwap.setFill(PIN_DIR_SWAP_COLOR);
+            double dsWidth = dirSwap.getBoundsInLocal().getWidth();
+            double dsHeight = dirSwap.getBoundsInLocal().getHeight();
+            double xyOffset = ORIGIN_CIRCLE_RADIUS * 0.71;
+            dirSwap.setLayoutX(pX - (pinMirror ? 0.0 : dsWidth) + (pinMirror ? xyOffset : -xyOffset));
+            dirSwap.setLayoutY(pY - xyOffset);
+            if (vizPinRot > 90.0) { // Flip Text
+                Rotate r = new Rotate(180, dsWidth / 2.0, xyOffset);
+                dirSwap.getTransforms().add(r);
+            }
+            g.getChildren().add(dirSwap);
         }
-        g.getChildren().add(dirSwap);
 
+        double rot = 360 - p.getRot();
 
-        double rot = 360-p.getRot();
-        
         Rotate r = new Rotate(rot, pX, pY);
         g.getTransforms().add(r);
 
         return g;
     }
-    
+
     public static Node createPinNodeOld(Pin p, Color c, boolean mirror, boolean upIsDown) {
-        
+
         final double PIN_NAME_MARGIN = 1.5;
         final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
         final double PIN_FONT_SIZE = 2.0;
@@ -1543,7 +1536,7 @@ public class LibraryElementNode {
             default ->
                 line.setEndX(pX + (mirror ? -pinLen : pinLen));
         }
-        
+
         g.getChildren().add(line);
 
         // When you need some dots.
@@ -1603,7 +1596,7 @@ public class LibraryElementNode {
 
             g.getChildren().add(lineGroup);
         }
-        
+
         // Pin Name
         Text pinName = new Text(p.getName());
         pinName.setFont(Font.font(PIN_FONT_SIZE));
@@ -1624,7 +1617,7 @@ public class LibraryElementNode {
         padName.setFill(padColor);
         double padWidth = padName.getBoundsInLocal().getWidth();
         double padHeight = padName.getBoundsInLocal().getHeight();
-        if (  upIsDown ) {
+        if (upIsDown) {
             Rotate rT = new Rotate(180, padWidth / 2.0, -padHeight / 2.0);
             padName.getTransforms().add(rT);
         }
@@ -1641,7 +1634,7 @@ public class LibraryElementNode {
         dirSwap.setFill(PIN_DIR_SWAP_COLOR);
         double dsWidth = dirSwap.getBoundsInLocal().getWidth();
         double dsHeight = dirSwap.getBoundsInLocal().getHeight();
-        if (  upIsDown ) {
+        if (upIsDown) {
             //Rotate rT = new Rotate(180, dsWidth / 2.0, -dsHeight / 2.0);
             Rotate rT = new Rotate(180, dsWidth / 2.0, -dsHeight / 2.0);
             dirSwap.getTransforms().add(rT);
@@ -1649,7 +1642,7 @@ public class LibraryElementNode {
         g.getChildren().add(dirSwap);
 
         double pinNameOffset = pinLen + dotRadius * 2.0 + PIN_NAME_MARGIN;
-        
+
         double mir = mirror ? -1.0 : 1.0;
         double upDown = upIsDown ? -1.0 : 1.0;
         switch (rot) {
@@ -1661,9 +1654,9 @@ public class LibraryElementNode {
 
                 padName.setText("D");
                 //padName.setLayoutX(mir * (p.getX() - padWidth / 2 + padHeight * 0.5));
-                padName.setLayoutX(mir * (p.getX()  ));
+                padName.setLayoutX(mir * (p.getX()));
                 //padName.setLayoutY(upDown * (-p.getY() - padWidth / 2 - padHeight * 0.3 + padCharWidth * padHang));
-                padName.setLayoutY(upDown * (-p.getY() ) + padHeight );
+                padName.setLayoutY(upDown * (-p.getY()) + padHeight);
                 padName.setRotate(90);
 
                 dirSwap.setLayoutX(mir * (p.getX() - PIN_DIR_SWAP_OFFSET - dsHeight / 2 - dsWidth / 2));
@@ -1672,22 +1665,22 @@ public class LibraryElementNode {
             }
             case 180 -> {
                 //pinName.setText("CCC");
-                if (  upIsDown ) {
+                if (upIsDown) {
                     Rotate rT = new Rotate(180);
                     pinName.getTransforms().add(rT);
-                    pinName.setLayoutX(mir * (p.getX() - pinNameOffset) + (mirror?width:0.0) );
-                    pinName.setLayoutY(-p.getY() - height*0.30 );
+                    pinName.setLayoutX(mir * (p.getX() - pinNameOffset) + (mirror ? width : 0.0));
+                    pinName.setLayoutY(-p.getY() - height * 0.30);
                 } else {
-                    pinName.setLayoutX(mir * (p.getX() - pinNameOffset) - (mirror?0.0:width) );
-                    pinName.setLayoutY(-p.getY() + height*0.30 );
+                    pinName.setLayoutX(mir * (p.getX() - pinNameOffset) - (mirror ? 0.0 : width));
+                    pinName.setLayoutY(-p.getY() + height * 0.30);
                 }
 
                 padName.setText("C");
-                padName.setLayoutX(mir * (p.getX() - padCharWidth * padHang) - (mirror?0.0:padWidth) );
-                padName.setLayoutY(upDown * (-p.getY() - padHeight * 0.2 ) + (upIsDown?padHeight:0.0));
+                padName.setLayoutX(mir * (p.getX() - padCharWidth * padHang) - (mirror ? 0.0 : padWidth));
+                padName.setLayoutY(upDown * (-p.getY() - padHeight * 0.2) + (upIsDown ? padHeight : 0.0));
 
-                dirSwap.setLayoutX(   mir * ( p.getX() + PIN_DIR_SWAP_OFFSET) - (mirror?dsWidth:0.0));
-                dirSwap.setLayoutY(upDown * (-p.getY() - PIN_DIR_SWAP_OFFSET) + (upIsDown?dsHeight:0.0));
+                dirSwap.setLayoutX(mir * (p.getX() + PIN_DIR_SWAP_OFFSET) - (mirror ? dsWidth : 0.0));
+                dirSwap.setLayoutY(upDown * (-p.getY() - PIN_DIR_SWAP_OFFSET) + (upIsDown ? dsHeight : 0.0));
             }
             case 90 -> {
                 // Rotate Node rotates on center, so we need to compensate for that.
@@ -1709,35 +1702,35 @@ public class LibraryElementNode {
                 //pinName.setText("T");
                 //pinName.setLayoutX(mir * (p.getX() + pinNameOffset));
                 //pinName.setLayoutY(-p.getY() + height * 0.30 - (mirror?0.0:width));
-                if (  upIsDown ) {
-                //pinName.setText("W");
+                if (upIsDown) {
+                    //pinName.setText("W");
                     Rotate rT = new Rotate(180);
                     pinName.getTransforms().add(rT);
-                    pinName.setLayoutX(mir * (p.getX() + pinNameOffset) + (mirror?width:0.0) );
-                    pinName.setLayoutY(-p.getY() - height*0.30 );
+                    pinName.setLayoutX(mir * (p.getX() + pinNameOffset) + (mirror ? width : 0.0));
+                    pinName.setLayoutY(-p.getY() - height * 0.30);
                 } else {
-                pinName.setText("X");
-                    pinName.setLayoutX(mir * (p.getX() + pinNameOffset) - (mirror?width:0.0) );
-                    pinName.setLayoutY(-p.getY() + height*0.30 );
+                    pinName.setText("X");
+                    pinName.setLayoutX(mir * (p.getX() + pinNameOffset) - (mirror ? width : 0.0));
+                    pinName.setLayoutY(-p.getY() + height * 0.30);
                 }
 
                 padName.setText("A");
-                padName.setLayoutX(mir * (p.getX() - padWidth + padCharWidth * padHang) - (mirror?padWidth:0.0)); // Hang over the pin by one char.
-                padName.setLayoutY(upDown * (-p.getY() - padHeight * 0.2) + (upIsDown?padHeight:0.0));
+                padName.setLayoutX(mir * (p.getX() - padWidth + padCharWidth * padHang) - (mirror ? padWidth : 0.0)); // Hang over the pin by one char.
+                padName.setLayoutY(upDown * (-p.getY() - padHeight * 0.2) + (upIsDown ? padHeight : 0.0));
 
-                dirSwap.setLayoutX( mir * (p.getX() - PIN_DIR_SWAP_OFFSET ) - (mirror?0.0:dsWidth));
-                dirSwap.setLayoutY( -p.getY() - upDown*PIN_DIR_SWAP_OFFSET + (upIsDown?dsHeight:0.0) );
+                dirSwap.setLayoutX(mir * (p.getX() - PIN_DIR_SWAP_OFFSET) - (mirror ? 0.0 : dsWidth));
+                dirSwap.setLayoutY(-p.getY() - upDown * PIN_DIR_SWAP_OFFSET + (upIsDown ? dsHeight : 0.0));
             }
         }
 
-        Line cH = new Line(pinName.getLayoutX()-0.5, pinName.getLayoutY(), pinName.getLayoutX()+0.5, pinName.getLayoutY());
-        Line cV = new Line(pinName.getLayoutX(), pinName.getLayoutY() - 0.5, pinName.getLayoutX(), pinName.getLayoutY()+0.5);
+        Line cH = new Line(pinName.getLayoutX() - 0.5, pinName.getLayoutY(), pinName.getLayoutX() + 0.5, pinName.getLayoutY());
+        Line cV = new Line(pinName.getLayoutX(), pinName.getLayoutY() - 0.5, pinName.getLayoutX(), pinName.getLayoutY() + 0.5);
         cH.setStroke(Color.WHITE);
         cH.setStrokeWidth(0.1);
         cV.setStroke(Color.WHITE);
         cV.setStrokeWidth(0.1);
         g.getChildren().addAll(cH, cV);
-        
+
         ElementCircle originCircle = new ElementCircle();
         originCircle.setX(p.getX()); // mirror happens in the createCircleNode()
         originCircle.setY(p.getY());
@@ -1830,13 +1823,13 @@ public class LibraryElementNode {
         boolean lr = false;
         boolean ud = false;
 
-        final Rotation rotation = inst==null?null:inst.getRotation();
-        
+        final Rotation rotation = inst == null ? null : inst.getRotation();
+
         if (inst != null) {
             boolean instMir = rotation.isMirror();
             double rot = inst.getRot();
             if (rot == 270.0) {
-                Rotate r = new Rotate(instMir?270:90);
+                Rotate r = new Rotate(instMir ? 270 : 90);
                 g.getTransforms().add(r);
                 lr = instMir;
                 ud = !instMir;
@@ -1846,7 +1839,7 @@ public class LibraryElementNode {
                 lr = instMir;
                 ud = true;
             } else if (rot == 90) {
-                Rotate r = new Rotate(instMir?90:270);
+                Rotate r = new Rotate(instMir ? 90 : 270);
                 g.getTransforms().add(r);
                 lr = instMir;
                 ud = instMir;
@@ -1855,7 +1848,7 @@ public class LibraryElementNode {
                 //ud = false;
             }
         }
-        
+
         final boolean leftIsRight = lr;
         final boolean upIsDown = ud;
 
@@ -1904,19 +1897,18 @@ public class LibraryElementNode {
                                     altText = attr.getValue();
                                 }
                             }
-                            
+
                             // Set position of element.  attr x/y minus inst x/y
-                            
                             // TODO install this at ingest and store difference?
-                            proxyTxt.setX(attr.getX()-inst.getX());
-                            proxyTxt.setY(attr.getY()-inst.getY());
+                            proxyTxt.setX(attr.getX() - inst.getX());
+                            proxyTxt.setY(attr.getY() - inst.getY());
                             //rot = inst.getRot() - attr.getRotation().getValue();
                             proxyTxt.setRot(attr.getRotation().getValue() - inst.getRot());
                             // attr  layer
                             proxyTxt.setLayer(attr.getLayerNum());
                             // attr  align
                             proxyTxt.setAlign(attr.getAlign());
-                            
+
                             break;
                         }
                     }
@@ -1929,7 +1921,7 @@ public class LibraryElementNode {
                 //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));
                 LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
             } else if (e instanceof Pin pin) {
-                g.getChildren().add(createPinNode(pin, c, rotation, inst==null));
+                g.getChildren().add(createPinNode(pin, c, rotation, inst == null));
             } else if (e instanceof ElementCircle ec) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(ec, c, leftIsRight));
             } else if (e instanceof ElementRectangle rect) {
