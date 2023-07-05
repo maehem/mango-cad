@@ -2355,7 +2355,29 @@ public class EagleCADIngest {
     }
 
     /**
-     *
+     * <pre>
+     * dimension EMPTY
+     *    ATTR
+     *      x1            %Coord;        #REQUIRED
+     *      y1            %Coord;        #REQUIRED
+     *      x2            %Coord;        #REQUIRED
+     *      y2            %Coord;        #REQUIRED
+     *      x3            %Coord;        #REQUIRED
+     *      y3            %Coord;        #REQUIRED
+     *      layer         %Layer;        #REQUIRED
+     *      dtype         %DimensionType; "parallel"
+     *      width         %Dimension;    "0.13"
+     *      extwidth      %Dimension;    "0"
+     *      extlength     %Dimension;    "0"
+     *      extoffset     %Dimension;    "0"
+     *      textsize      %Dimension;    #REQUIRED
+     *      textratio     %Int;          "8"
+     *      unit          %GridUnit;     "mm"
+     *      precision     %Int;          "2"
+     *      visible       %Bool;         "no"
+     *      grouprefs     IDREFS         #IMPLIED
+     * </pre>
+       * 
      * @param list
      * @param node
      */
@@ -2373,16 +2395,16 @@ public class EagleCADIngest {
                     dim.setY1(Double.parseDouble(value));
                     break;
                 case "x2":
-                    dim.setX1(Double.parseDouble(value));
+                    dim.setX2(Double.parseDouble(value));
                     break;
                 case "y2":
-                    dim.setY1(Double.parseDouble(value));
+                    dim.setY2(Double.parseDouble(value));
                     break;
                 case "x3":
-                    dim.setX1(Double.parseDouble(value));
+                    dim.setX3(Double.parseDouble(value));
                     break;
                 case "y3":
-                    dim.setY1(Double.parseDouble(value));
+                    dim.setY3(Double.parseDouble(value));
                     break;
                 case "layer":
                     dim.setLayer(Integer.parseInt(value));
