@@ -1984,6 +1984,85 @@ public class LibraryElementNode {
 
     public static Group createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
+        LayerElement le = layers[dim.getLayerNum()];
+        int colorIndex = le.getColorIndex();
+        Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+
+        double x1 = dim.getX1();
+        double y1 = dim.getY1();
+        double x2 = dim.getX2();
+        double y2 = dim.getY2();
+        double x3 = dim.getX3();
+        double y3 = dim.getY3();
+
+        double opp12 = y2 - y1;
+        double adj12 = x2 - x1;
+        double rat12 = opp12 / adj12;
+        double hyp12 = Math.hypot(adj12, opp12);
+        double ang12 = Math.toDegrees(Math.sin(rat12));
+
+        double xx2 = x1 + hyp12;
+        double yy2 = y1;
+        double opp13 = y3 - y1;
+        double adj13 = x3 - x1;
+        //double rat13 = opp13 / adj13;
+        double hyp13 = Math.hypot(adj13, opp13);
+        double xx3 = x1 + hyp12 / 2.0;
+        double yy3 = y1 + Math.sqrt(
+                Math.pow(hyp13, 2) - Math.pow(hyp12/2.0, 2)
+        );
+        double lExt = dim.getWidth() * 15; // Amount to extend lines by.
+
+        BigDecimal bdUp = new BigDecimal(hyp12).
+                setScale(dim.getPrecision(), RoundingMode.UP);
+        String dimValueString = String.valueOf(bdUp.doubleValue());
+
+        // New unrotated points are x1,y1, xx2, yy2, xx3, yy3
+        Line line1 = new Line(x1, -y1, x1, -yy3 - lExt);
+        line1.setStroke(c);
+        line1.setStrokeWidth(dim.getWidth());
+        Line line2 = new Line(xx2, -y1, xx2, -yy3 - lExt);
+        line2.setStroke(c);
+        line2.setStrokeWidth(dim.getWidth());
+        Line line3 = new Line(x1, -yy3, xx2, -yy3);
+        line3.setStroke(c);
+        line3.setStrokeWidth(dim.getWidth());
+        g.getChildren().addAll(line1, line2, line3);
+
+        double arrowSize = 2;
+        g.getChildren().add(
+                arrowhead(x1, -yy3,
+                        arrowSize, arrowSize * 0.4, 0,
+                        dim.getWidth(), c
+                ));
+        g.getChildren().add(
+                arrowhead(xx2, -yy3,
+                        arrowSize, arrowSize * 0.4, 180,
+                        dim.getWidth(), c
+                ));
+
+        Text dimText = new Text(dimValueString);
+        Font dimFont = Font.loadFont(
+                LibraryElementNode.class.getResourceAsStream(FONT_PATH),
+                dim.getTextsize()*1.4
+        );
+        dimText.setFont(dimFont);
+
+        double dimWidth = dimText.getBoundsInLocal().getWidth();
+        dimText.setLayoutX(xx3 - dimWidth / 2.0);
+        dimText.setLayoutY(-yy3 - dimText.getBoundsInLocal().getHeight() * 0.2);
+        dimText.setFill(c);
+        g.getChildren().add(dimText);
+
+        // Rotate visual element
+        Rotate rotate = new Rotate(-ang12, x1, -y1);
+        g.getTransforms().add(rotate);
+
+        return g;
+    }
+
+    public static Group createDimensionNodeOld(Dimension dim, LayerElement[] layers, ColorPalette palette) {
+        Group g = new Group();
         double strokeWidth = dim.getWidth();
         LayerElement le = layers[dim.getLayerNum()];
         int colorIndex = le.getColorIndex();
@@ -2037,7 +2116,7 @@ public class LibraryElementNode {
                 double end1y = -y1 - y32;
                 double end2x = x2 - x32;
                 double end2y = -y2 - y32;
-                
+
                 Line l3 = new Line(end1x, end1y, end2x, end2y);
                 l3.setStroke(c);
                 l3.setStrokeWidth(strokeWidth);
@@ -2045,16 +2124,16 @@ public class LibraryElementNode {
 
                 double arrowSize = 1;
                 g.getChildren().add(
-                        arrowhead(end1x, end1y, 
-                       arrowSize, arrowSize*0.4, -ang12, 
-                       dim.getWidth(), c
-                ));
+                        arrowhead(end1x, end1y,
+                                arrowSize, arrowSize * 0.4, -ang12,
+                                dim.getWidth(), c
+                        ));
                 g.getChildren().add(
-                        arrowhead(end2x, end2y, 
-                       arrowSize, arrowSize*0.4, -ang12-180, 
-                       dim.getWidth(), c
-                ));
-                
+                        arrowhead(end2x, end2y,
+                                arrowSize, arrowSize * 0.4, -ang12 - 180,
+                                dim.getWidth(), c
+                        ));
+
                 Text dimText = new Text(dimValueString);
                 Font dimFont = Font.loadFont(
                         LibraryElementNode.class.getResourceAsStream(FONT_PATH),
@@ -2100,16 +2179,16 @@ public class LibraryElementNode {
 
         Polygon p = new Polygon(
                 x, y,
-                x + len, y + width/2.0,
-                x + len, y - width/2.0
+                x + len, y + width / 2.0,
+                x + len, y - width / 2.0
         );
         p.setStroke(c);
-        p.setFill(Color.TRANSPARENT);
-        p.setStrokeWidth(thick);
+        p.setFill(c);
+        p.setStrokeWidth(thick*0.2);
         p.setStrokeLineJoin(StrokeLineJoin.ROUND);
         Rotate rotate = new Rotate(rot, x, y);
         p.getTransforms().add(rotate);
-        
+
         return p;
     }
 }
