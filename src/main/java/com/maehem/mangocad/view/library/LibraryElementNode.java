@@ -47,6 +47,8 @@ import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -73,6 +75,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -1359,14 +1362,14 @@ public class LibraryElementNode {
             case BOTH -> {
             }
             case PAD -> {
-                pinNameColor = showDetails?PIN_COLOR_GHOST:Color.TRANSPARENT;
+                pinNameColor = showDetails ? PIN_COLOR_GHOST : Color.TRANSPARENT;
             }
             case PIN -> {
-                padColor = showDetails?PAD_COLOR_GHOST:Color.TRANSPARENT;
+                padColor = showDetails ? PAD_COLOR_GHOST : Color.TRANSPARENT;
             }
             case OFF -> {
-                pinNameColor = showDetails?PIN_COLOR_GHOST:Color.TRANSPARENT;
-                padColor = showDetails?PAD_COLOR_GHOST:Color.TRANSPARENT;
+                pinNameColor = showDetails ? PIN_COLOR_GHOST : Color.TRANSPARENT;
+                padColor = showDetails ? PAD_COLOR_GHOST : Color.TRANSPARENT;
             }
         }
 
@@ -1918,8 +1921,8 @@ public class LibraryElementNode {
                 }
                 g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof Dimension dim) {
-                //g.getChildren().add(LibraryElementNode.createDimensionNode(dim, c));
-                LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
+                g.getChildren().add(createDimensionNode(dim, layers, palette));
+                //LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
             } else if (e instanceof Pin pin) {
                 g.getChildren().add(createPinNode(pin, c, rotation, inst == null));
             } else if (e instanceof ElementCircle ec) {
@@ -1977,5 +1980,136 @@ public class LibraryElementNode {
         ));
 
         return g;
+    }
+
+    public static Group createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {
+        Group g = new Group();
+        double strokeWidth = dim.getWidth();
+        LayerElement le = layers[dim.getLayerNum()];
+        int colorIndex = le.getColorIndex();
+        Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+
+        double x1 = dim.getX1();
+        double y1 = dim.getY1();
+        double x2 = dim.getX2();
+        double y2 = dim.getY2();
+        double x3 = dim.getX3();
+        double y3 = dim.getY3();
+
+        double opp12 = y2 - y1;
+        double adj12 = x2 - x1;
+        double rat12 = opp12 / adj12;
+        double hyp12 = Math.hypot(adj12, opp12);
+        double ang12 = Math.toDegrees(Math.tan(rat12)); // Convert to degrees?        
+
+        double opp13 = y3 - y1;
+        double adj13 = x3 - x1;
+        double rat13 = opp13 / adj13;
+        double hyp13 = Math.hypot(adj13, opp13);
+        double ang13 = Math.toDegrees(Math.tan(rat13)); // Convert to degrees?
+
+        double ang32 = ang13 - ang12;
+        //double rat32 = Math.tan(2.0 * Math.PI * ang32 / 360.0); // hyp/opp
+        double opp32 = Math.sqrt(hyp13 * hyp13 - ((hyp12 / 2.0) * (hyp12 / 2.0)));
+
+        // x32, y32
+        double x32 = rat12 * opp32;
+        double y32 = Math.hypot(x32, opp32);
+        double lineL = opp32 + 15 * dim.getWidth();
+        double xx32 = rat12 * lineL;
+        double yy32 = Math.hypot(x32, lineL);
+
+        BigDecimal bdUp = new BigDecimal(Math.hypot(x2 - x1, y2 - y1)).
+                setScale(dim.getPrecision(), RoundingMode.UP);
+        String dimValueString = String.valueOf(bdUp.doubleValue());
+
+        switch (dim.getDtype()) {
+            case PARALLEL -> {
+                // Two lines
+                Line l1 = new Line(x1, -y1, x1 - xx32, -y1 - yy32);
+                l1.setStroke(c);
+                l1.setStrokeWidth(strokeWidth);
+                Line l2 = new Line(x2, -y2, x2 - xx32, -y2 - yy32);
+                l2.setStroke(c);
+                l2.setStrokeWidth(strokeWidth);
+
+                double end1x = x1 - x32;
+                double end1y = -y1 - y32;
+                double end2x = x2 - x32;
+                double end2y = -y2 - y32;
+                
+                Line l3 = new Line(end1x, end1y, end2x, end2y);
+                l3.setStroke(c);
+                l3.setStrokeWidth(strokeWidth);
+                g.getChildren().add(l3);
+
+                double arrowSize = 1;
+                g.getChildren().add(
+                        arrowhead(end1x, end1y, 
+                       arrowSize, arrowSize*0.4, -ang12, 
+                       dim.getWidth(), c
+                ));
+                g.getChildren().add(
+                        arrowhead(end2x, end2y, 
+                       arrowSize, arrowSize*0.4, -ang12-180, 
+                       dim.getWidth(), c
+                ));
+                
+                Text dimText = new Text(dimValueString);
+                Font dimFont = Font.loadFont(
+                        LibraryElementNode.class.getResourceAsStream(FONT_PATH),
+                        dim.getTextsize()
+                );
+                dimText.setFont(dimFont);
+
+                double dimWidth = dimText.getBoundsInLocal().getWidth();
+                dimText.setLayoutX(x3 - dimWidth / 2.0);
+                dimText.setLayoutY(-y3 - dimText.getBoundsInLocal().getHeight() * 0.2);
+                Rotate r = new Rotate(-ang12, dimWidth, 0);
+                dimText.getTransforms().add(r);
+                dimText.setFill(c);
+                g.getChildren().addAll(l1, l2, dimText);
+
+            }
+            case HORIZONTAL -> {
+
+            }
+            case VERTICAL -> {
+
+            }
+            case ANGLE -> {
+
+            }
+            case DIAMETER -> {
+
+            }
+            case LEADER -> {
+
+            }
+            case RADIUS -> {
+
+            }
+        }
+
+        return g;
+    }
+
+    private static Node arrowhead(
+            double x, double y, double len, double width,
+            double rot, double thick, Color c) {
+
+        Polygon p = new Polygon(
+                x, y,
+                x + len, y + width/2.0,
+                x + len, y - width/2.0
+        );
+        p.setStroke(c);
+        p.setFill(Color.TRANSPARENT);
+        p.setStrokeWidth(thick);
+        p.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        Rotate rotate = new Rotate(rot, x, y);
+        p.getTransforms().add(rotate);
+        
+        return p;
     }
 }
