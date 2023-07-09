@@ -1982,11 +1982,35 @@ public class LibraryElementNode {
         return g;
     }
 
-    public static Group createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {
-        Group g = new Group();
+    public static Node createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {
         LayerElement le = layers[dim.getLayerNum()];
         int colorIndex = le.getColorIndex();
         Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+
+        switch (dim.getDtype()) {
+            case ANGLE -> {
+                LOGGER.log(Level.SEVERE, "Make Angle Dimension");
+            }
+            case DIAMETER -> {
+                LOGGER.log(Level.SEVERE, "Make Diameter Dimension");
+            }
+            case LEADER -> {
+                LOGGER.log(Level.SEVERE, "Make Leader Dimension");
+            }
+            case RADIUS -> {
+                LOGGER.log(Level.SEVERE, "Make Radius Dimension");
+            }
+            default -> { // PARALLEL,HORIZONTAL,VERTICAL
+                LOGGER.log(Level.SEVERE, "Make Parallel Dimension");
+                return parallelDimension(dim, c);
+            }
+        }
+
+        return new Group();
+    }
+
+    private static Node parallelDimension(Dimension dim, Color c) {
+        Group g = new Group();
 
         double x1 = dim.getX1();
         double y1 = dim.getY1();
@@ -1995,33 +2019,66 @@ public class LibraryElementNode {
         double x3 = dim.getX3();
         double y3 = dim.getY3();
 
-        double opp12 = y2 - y1;
-        double adj12 = x2 - x1;
-        double rat12 = opp12 / adj12;
-        double hyp12 = Math.hypot(adj12, opp12);
-        double ang12 = Math.toDegrees(Math.sin(rat12));
+        double ang;
+        if (x1 == x2) {
+            ang = 90;
+        } else {
+            ang = Math.toDegrees(Math.sin((y2 - y1) / (x2 - x1)));
+        }
+        //LOGGER.log(Level.SEVERE, "Apparent Angle: " + ang);
+        //double absAng = Math.abs(ang);
 
-        double xx2 = x1 + hyp12;
-        double yy2 = y1;
-        double opp13 = y3 - y1;
-        double adj13 = x3 - x1;
-        //double rat13 = opp13 / adj13;
-        double hyp13 = Math.hypot(adj13, opp13);
-        double xx3 = x1 + hyp12 / 2.0;
-        double yy3 = y1 + Math.sqrt(
-                Math.pow(hyp13, 2) - Math.pow(hyp12/2.0, 2)
+        double opp12;
+        double adj12;
+        double rat12;
+        double hyp12;
+        double ang12;
+        double xx2;
+        //double yy2;
+        double opp13;
+        double adj13;
+        double hyp13;
+        double xx3;
+        double yy3;
+        double toggle = 1.0;
+
+        if (x1 > x2) { //x1 is larger than x2. Swap point 1 <--> 2.
+            //LOGGER.log(Level.SEVERE, "x1 is larger than x2");
+            double tx2 = x2;
+            x2 = x1;
+            x1 = tx2;
+            double ty2 = y2;
+            y2 = y1;
+            y1 = ty2;
+            toggle = -1.0;
+        }
+        opp12 = y2 - y1;
+        adj12 = x2 - x1;
+        rat12 = opp12 / adj12;
+        //rat12 = adj12 / opp12;
+        hyp12 = Math.hypot(adj12, opp12);
+        ang12 = Math.toDegrees(Math.atan(rat12));
+
+        xx2 = x1 + hyp12;
+        //yy2 = y1;
+        opp13 = y3 - y1;
+        adj13 = x3 - x1;
+        hyp13 = Math.hypot(adj13, opp13);
+        xx3 = x1 + hyp12 / 2.0;
+        yy3 = y1 + toggle * Math.sqrt(
+                Math.pow(hyp13, 2) - Math.pow(hyp12 / 2.0, 2)
         );
-        double lExt = dim.getWidth() * 15; // Amount to extend lines by.
 
+        double lExt = dim.getWidth() * 15; // Amount to extend lines by.        // New unrotated points are x1,y1, xx2, yy2, xx3, yy3
         BigDecimal bdUp = new BigDecimal(hyp12).
-                setScale(dim.getPrecision(), RoundingMode.UP);
+                setScale(dim.getPrecision(), RoundingMode.UP
+        );
         String dimValueString = String.valueOf(bdUp.doubleValue());
 
-        // New unrotated points are x1,y1, xx2, yy2, xx3, yy3
-        Line line1 = new Line(x1, -y1, x1, -yy3 - lExt);
+        Line line1 = new Line(x1, -y1, x1, -yy3 - toggle * lExt);
         line1.setStroke(c);
         line1.setStrokeWidth(dim.getWidth());
-        Line line2 = new Line(xx2, -y1, xx2, -yy3 - lExt);
+        Line line2 = new Line(xx2, -y1, xx2, -yy3 - toggle * lExt);
         line2.setStroke(c);
         line2.setStrokeWidth(dim.getWidth());
         Line line3 = new Line(x1, -yy3, xx2, -yy3);
@@ -2044,7 +2101,7 @@ public class LibraryElementNode {
         Text dimText = new Text(dimValueString);
         Font dimFont = Font.loadFont(
                 LibraryElementNode.class.getResourceAsStream(FONT_PATH),
-                dim.getTextsize()*1.4
+                dim.getTextsize() * 1.4
         );
         dimText.setFont(dimFont);
 
@@ -2052,123 +2109,17 @@ public class LibraryElementNode {
         dimText.setLayoutX(xx3 - dimWidth / 2.0);
         dimText.setLayoutY(-yy3 - dimText.getBoundsInLocal().getHeight() * 0.2);
         dimText.setFill(c);
+        if (ang12 == 90) { // only for 90 flip text.
+            Rotate r = new Rotate(180,
+                    dimText.getBoundsInLocal().getWidth() / 2.0,
+                    -dimText.getBoundsInLocal().getHeight() * 0.3);
+            dimText.getTransforms().add(r);
+        }
         g.getChildren().add(dimText);
 
         // Rotate visual element
         Rotate rotate = new Rotate(-ang12, x1, -y1);
         g.getTransforms().add(rotate);
-
-        return g;
-    }
-
-    public static Group createDimensionNodeOld(Dimension dim, LayerElement[] layers, ColorPalette palette) {
-        Group g = new Group();
-        double strokeWidth = dim.getWidth();
-        LayerElement le = layers[dim.getLayerNum()];
-        int colorIndex = le.getColorIndex();
-        Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-
-        double x1 = dim.getX1();
-        double y1 = dim.getY1();
-        double x2 = dim.getX2();
-        double y2 = dim.getY2();
-        double x3 = dim.getX3();
-        double y3 = dim.getY3();
-
-        double opp12 = y2 - y1;
-        double adj12 = x2 - x1;
-        double rat12 = opp12 / adj12;
-        double hyp12 = Math.hypot(adj12, opp12);
-        double ang12 = Math.toDegrees(Math.tan(rat12)); // Convert to degrees?        
-
-        double opp13 = y3 - y1;
-        double adj13 = x3 - x1;
-        double rat13 = opp13 / adj13;
-        double hyp13 = Math.hypot(adj13, opp13);
-        double ang13 = Math.toDegrees(Math.tan(rat13)); // Convert to degrees?
-
-        double ang32 = ang13 - ang12;
-        //double rat32 = Math.tan(2.0 * Math.PI * ang32 / 360.0); // hyp/opp
-        double opp32 = Math.sqrt(hyp13 * hyp13 - ((hyp12 / 2.0) * (hyp12 / 2.0)));
-
-        // x32, y32
-        double x32 = rat12 * opp32;
-        double y32 = Math.hypot(x32, opp32);
-        double lineL = opp32 + 15 * dim.getWidth();
-        double xx32 = rat12 * lineL;
-        double yy32 = Math.hypot(x32, lineL);
-
-        BigDecimal bdUp = new BigDecimal(Math.hypot(x2 - x1, y2 - y1)).
-                setScale(dim.getPrecision(), RoundingMode.UP);
-        String dimValueString = String.valueOf(bdUp.doubleValue());
-
-        switch (dim.getDtype()) {
-            case PARALLEL -> {
-                // Two lines
-                Line l1 = new Line(x1, -y1, x1 - xx32, -y1 - yy32);
-                l1.setStroke(c);
-                l1.setStrokeWidth(strokeWidth);
-                Line l2 = new Line(x2, -y2, x2 - xx32, -y2 - yy32);
-                l2.setStroke(c);
-                l2.setStrokeWidth(strokeWidth);
-
-                double end1x = x1 - x32;
-                double end1y = -y1 - y32;
-                double end2x = x2 - x32;
-                double end2y = -y2 - y32;
-
-                Line l3 = new Line(end1x, end1y, end2x, end2y);
-                l3.setStroke(c);
-                l3.setStrokeWidth(strokeWidth);
-                g.getChildren().add(l3);
-
-                double arrowSize = 1;
-                g.getChildren().add(
-                        arrowhead(end1x, end1y,
-                                arrowSize, arrowSize * 0.4, -ang12,
-                                dim.getWidth(), c
-                        ));
-                g.getChildren().add(
-                        arrowhead(end2x, end2y,
-                                arrowSize, arrowSize * 0.4, -ang12 - 180,
-                                dim.getWidth(), c
-                        ));
-
-                Text dimText = new Text(dimValueString);
-                Font dimFont = Font.loadFont(
-                        LibraryElementNode.class.getResourceAsStream(FONT_PATH),
-                        dim.getTextsize()
-                );
-                dimText.setFont(dimFont);
-
-                double dimWidth = dimText.getBoundsInLocal().getWidth();
-                dimText.setLayoutX(x3 - dimWidth / 2.0);
-                dimText.setLayoutY(-y3 - dimText.getBoundsInLocal().getHeight() * 0.2);
-                Rotate r = new Rotate(-ang12, dimWidth, 0);
-                dimText.getTransforms().add(r);
-                dimText.setFill(c);
-                g.getChildren().addAll(l1, l2, dimText);
-
-            }
-            case HORIZONTAL -> {
-
-            }
-            case VERTICAL -> {
-
-            }
-            case ANGLE -> {
-
-            }
-            case DIAMETER -> {
-
-            }
-            case LEADER -> {
-
-            }
-            case RADIUS -> {
-
-            }
-        }
 
         return g;
     }
@@ -2184,7 +2135,7 @@ public class LibraryElementNode {
         );
         p.setStroke(c);
         p.setFill(c);
-        p.setStrokeWidth(thick*0.2);
+        p.setStrokeWidth(thick * 0.2);
         p.setStrokeLineJoin(StrokeLineJoin.ROUND);
         Rotate rotate = new Rotate(rot, x, y);
         p.getTransforms().add(rotate);
