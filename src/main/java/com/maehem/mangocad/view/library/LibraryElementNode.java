@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -67,7 +68,9 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.MoveTo;
@@ -1989,7 +1992,7 @@ public class LibraryElementNode {
 
         switch (dim.getDtype()) {
             case ANGLE -> {
-                LOGGER.log(Level.SEVERE, "Make Angle Dimension");
+                return angleDimensionNode(dim, c);
             }
             case DIAMETER -> {
                 LOGGER.log(Level.SEVERE, "Make Diameter Dimension");
@@ -2006,6 +2009,99 @@ public class LibraryElementNode {
         }
 
         return new Group();
+    }
+
+    private static Node angleDimensionNode(Dimension dim, Color c) {
+        Group g = new Group();
+
+        double hyp12 = Math.hypot(dim.getX1() - dim.getX2(), dim.getY1() - dim.getY2());
+        //double hyp13 = Math.hypot(dim.getX1() - dim.getX3(), dim.getY1() - dim.getY3());
+        double ang12 = Math.toDegrees(Math.atan2(dim.getY2() - dim.getY1(), dim.getX2() - dim.getX1()));
+        double ang13 = Math.toDegrees(Math.atan2(dim.getY3() - dim.getY1(), dim.getX3() - dim.getX1()));
+        double angD = ang13 - ang12;
+        if ( angD < 0.0 ) {
+            angD = 360.0 + angD;
+        }
+        //double opp13 = Math.cos(Math.toRadians(angD)) * hyp13;
+        double textHyp = hyp12 + dim.getTextsize() * 0.8;
+        double oppTopp = Math.sin(Math.toRadians(angD / 2.0)) * textHyp;
+        double oppTadj = Math.cos(Math.toRadians(angD / 2.0)) * textHyp;
+        double ext = dim.getWidth() * 15.0;
+        
+        // Line
+        Group lineGroup = new Group();
+        Line line1 = new Line(dim.getX1(), -dim.getY1(), dim.getX1() + hyp12 + ext, -dim.getY1());
+        line1.setStrokeWidth(dim.getWidth());
+        line1.setStrokeLineCap(StrokeLineCap.ROUND);
+        line1.setStroke(c);
+        lineGroup.getChildren().add(line1);
+
+        // Draw second line and rotate it into place.
+        Line line2 = new Line(dim.getX1(), -dim.getY1(), dim.getX1() + hyp12 + ext, -dim.getY1());
+        line2.setStrokeWidth(dim.getWidth());
+        line2.setStrokeLineCap(StrokeLineCap.ROUND);
+        line2.setStroke(c);
+        Rotate rl2 = new Rotate(-angD, dim.getX1(), -dim.getY1());
+        line2.getTransforms().add(rl2);
+        lineGroup.getChildren().add(line2);
+
+        g.getChildren().addAll(line1, line2);
+
+        Arc arc = new Arc(dim.getX1(), -dim.getY1(),
+                hyp12, hyp12, ang12, angD
+        );
+        arc.setType(ArcType.OPEN);
+        arc.setStroke(c);
+        arc.setFill(Color.TRANSPARENT);
+        arc.setStrokeWidth(dim.getWidth());
+
+        double arrowDeg = 15;
+        double arrowLen = 2.54;
+        Arc arrow1 = new Arc(dim.getX1() + hyp12, -dim.getY1(),
+                arrowLen, arrowLen, ang12 + 90 - arrowDeg / 9.0, arrowDeg
+        );
+        arrow1.setType(ArcType.ROUND);
+        arrow1.setStroke(c);
+        arrow1.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        arrow1.setFill(c);
+        arrow1.setStrokeWidth(dim.getWidth() * 0.3);
+
+        Arc arrow2 = new Arc(dim.getX1() + hyp12, -dim.getY1(),
+                arrowLen, arrowLen, ang12 - 90 + arrowDeg / 9.0, -arrowDeg
+        );
+        arrow2.setType(ArcType.ROUND);
+        arrow2.setStroke(c);
+        arrow2.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        arrow2.setFill(c);
+        arrow2.setStrokeWidth(dim.getWidth() * 0.3);
+        Rotate arr2 = new Rotate(-angD, dim.getX1(), -dim.getY1());
+        arrow2.getTransforms().add(arr2);
+
+        g.getChildren().addAll(arc, arrow1, arrow2);
+
+        // Text
+        BigDecimal bdUp = new BigDecimal(angD).setScale(
+                1, RoundingMode.HALF_UP
+        );
+        String dimValueString = String.valueOf(bdUp.doubleValue());
+        Text dimText = new Text(dimValueString);
+        Font dimFont = Font.loadFont(
+                LibraryElementNode.class.getResourceAsStream(FONT_PATH),
+                dim.getTextsize() * 1.4
+        );
+        dimText.setFont(dimFont);
+        dimText.setFill(c);
+        dimText.setLayoutX(dim.getX1() + oppTadj - dimText.getBoundsInLocal().getWidth()/2.0);
+        dimText.setLayoutY(-dim.getY1() - oppTopp);
+        Rotate tRot = new Rotate(90-angD/2.0, dimText.getBoundsInLocal().getWidth()/2.0, 0);
+        dimText.getTransforms().add(tRot);
+        
+        
+        g.getChildren().add(dimText);
+
+        Rotate gr = new Rotate(ang12, dim.getX1(), -dim.getY1());
+        g.getTransforms().add(gr);
+        return g;
     }
 
     private static Node radiusDimensionNode(Dimension dim, Color c) {
