@@ -76,6 +76,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -1998,7 +1999,7 @@ public class LibraryElementNode {
                 LOGGER.log(Level.SEVERE, "Make Diameter Dimension");
             }
             case LEADER -> {
-                LOGGER.log(Level.SEVERE, "Make Leader Dimension");
+                return leaderDimensionNode(dim, c);
             }
             case RADIUS -> {
                 return radiusDimensionNode(dim, c);
@@ -2011,6 +2012,38 @@ public class LibraryElementNode {
         return new Group();
     }
 
+    private static Node leaderDimensionNode(Dimension dim, Color c) {
+        Group g = new Group();
+        double ang12 = Math.toDegrees(Math.atan2(dim.getY2() - dim.getY1(), dim.getX2() - dim.getX1()));
+
+        Polyline pl = new Polyline(
+                dim.getX1(), -dim.getY1(),
+                dim.getX2(), -dim.getY2(),
+                dim.getX3(), -dim.getY3()
+        );
+        pl.setStrokeWidth(dim.getWidth());
+        pl.setStrokeLineCap(StrokeLineCap.ROUND);
+        pl.setStroke(c);
+        pl.setFill(null);
+        
+        g.getChildren().add(pl);
+        
+        double arrowDeg = 18;
+        double arrowLen = 2.54;
+        Arc arrow = new Arc(dim.getX1(), -dim.getY1(),
+                arrowLen, arrowLen, ang12 - arrowDeg / 2.0, arrowDeg
+        );
+        arrow.setType(ArcType.ROUND);
+        arrow.setStroke(c);
+        arrow.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        arrow.setFill(c);
+        arrow.setStrokeWidth(dim.getWidth() * 0.3);
+
+        g.getChildren().add(arrow);
+
+        return g;
+    }
+    
     private static Node angleDimensionNode(Dimension dim, Color c) {
         Group g = new Group();
 
@@ -2055,7 +2088,7 @@ public class LibraryElementNode {
         arc.setFill(Color.TRANSPARENT);
         arc.setStrokeWidth(dim.getWidth());
 
-        double arrowDeg = 15;
+        double arrowDeg = 18;
         double arrowLen = 2.54;
         Arc arrow1 = new Arc(dim.getX1() + hyp12, -dim.getY1(),
                 arrowLen, arrowLen, ang12 + 90 - arrowDeg / 9.0, arrowDeg
