@@ -35,6 +35,7 @@ import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Probe;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.model.element.enums.DimensionType;
 import static com.maehem.mangocad.model.element.enums.PadShape.*;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import static com.maehem.mangocad.model.element.enums.PinLength.*;
@@ -55,6 +56,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -1995,21 +1997,17 @@ public class LibraryElementNode {
             case ANGLE -> {
                 return angleDimensionNode(dim, c);
             }
-            case DIAMETER -> {
-                LOGGER.log(Level.SEVERE, "Make Diameter Dimension");
-            }
             case LEADER -> {
                 return leaderDimensionNode(dim, c);
             }
             case RADIUS -> {
                 return radiusDimensionNode(dim, c);
             }
-            default -> { // PARALLEL,HORIZONTAL,VERTICAL
+            default -> { // PARALLEL,HORIZONTAL,VERTICAL, DIAMETER
                 return parallelDimension(dim, c);
             }
         }
 
-        return new Group();
     }
 
     private static Node leaderDimensionNode(Dimension dim, Color c) {
@@ -2204,6 +2202,7 @@ public class LibraryElementNode {
     }
 
     private static Node parallelDimension(Dimension dim, Color c) {
+        Group shapeGroup = new Group();
         Group g = new Group();
 
         double x1 = dim.getX1();
@@ -2213,12 +2212,12 @@ public class LibraryElementNode {
         double x3 = dim.getX3();
         double y3 = dim.getY3();
 
-        double ang;
-        if (x1 == x2) {
-            ang = 90;
-        } else {
-            ang = Math.toDegrees(Math.sin((y2 - y1) / (x2 - x1)));
-        }
+//        double ang;
+//        if (x1 == x2) {
+//            ang = 90;
+//        } else {
+//            ang = Math.toDegrees(Math.sin((y2 - y1) / (x2 - x1)));
+//        }
         //LOGGER.log(Level.SEVERE, "Apparent Angle: " + ang);
         //double absAng = Math.abs(ang);
 
@@ -2278,15 +2277,15 @@ public class LibraryElementNode {
         Line line3 = new Line(x1, -yy3, xx2, -yy3);
         line3.setStroke(c);
         line3.setStrokeWidth(dim.getWidth());
-        g.getChildren().addAll(line1, line2, line3);
+        shapeGroup.getChildren().addAll(line1, line2, line3);
 
         double arrowSize = 2;
-        g.getChildren().add(
+        shapeGroup.getChildren().add(
                 arrowhead(x1, -yy3,
                         arrowSize, arrowSize * 0.4, 0,
                         dim.getWidth(), c
                 ));
-        g.getChildren().add(
+        shapeGroup.getChildren().add(
                 arrowhead(xx2, -yy3,
                         arrowSize, arrowSize * 0.4, 180,
                         dim.getWidth(), c
@@ -2309,15 +2308,25 @@ public class LibraryElementNode {
                     -dimText.getBoundsInLocal().getHeight() * 0.3);
             dimText.getTransforms().add(r);
         }
-        g.getChildren().add(dimText);
+        shapeGroup.getChildren().add(dimText);
 
         // Rotate visual element
         Rotate rotate = new Rotate(-ang12, x1, -y1);
-        g.getTransforms().add(rotate);
+        shapeGroup.getTransforms().add(rotate);
 
+        g.getChildren().add(shapeGroup);
+
+        if ( dim.getDtype() == DimensionType.DIAMETER) {
+            // Add Crosshairs
+            Point2D p1 = new Point2D(dim.getX1(), dim.getY1());
+            Point2D mid = p1.midpoint(dim.getX2(), dim.getY2());
+            g.getChildren().add(
+                    crosshairs(mid.getX(), -mid.getY(), 0.5, dim.getWidth(), c)
+            );
+        }
         return g;
     }
-
+    
     private static Node arrowhead(
             double x, double y, double len, double width,
             double rot, double thick, Color c) {
