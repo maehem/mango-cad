@@ -1998,15 +1998,80 @@ public class LibraryElementNode {
                 LOGGER.log(Level.SEVERE, "Make Leader Dimension");
             }
             case RADIUS -> {
-                LOGGER.log(Level.SEVERE, "Make Radius Dimension");
+                return radiusDimensionNode(dim, c);
             }
             default -> { // PARALLEL,HORIZONTAL,VERTICAL
-                LOGGER.log(Level.SEVERE, "Make Parallel Dimension");
                 return parallelDimension(dim, c);
             }
         }
 
         return new Group();
+    }
+
+    private static Node radiusDimensionNode(Dimension dim, Color c) {
+        Group g = new Group();
+        // Cross Hair
+        double hyp12 = Math.hypot(dim.getX1() - dim.getX2(), dim.getY1() - dim.getY2());
+        double hyp13 = Math.hypot(dim.getX1() - dim.getX3(), dim.getY1() - dim.getY3());
+        double ang1 = Math.toDegrees(Math.atan2(dim.getY2() - dim.getY1(), dim.getX2() - dim.getX1()));
+        double ang13 = Math.toDegrees(Math.atan2(dim.getY3() - dim.getY1(), dim.getX3() - dim.getX1()));
+        double ang3 = ang1 - ang13;
+        double adj13 = Math.cos(Math.toRadians(ang3)) * hyp13;
+        double opp13 = Math.sqrt(hyp13 * hyp13 - adj13 * adj13);
+
+        double chSize = 0.35;
+        Line chH = new Line(dim.getX1(), -dim.getY1() + chSize, dim.getX1(), -dim.getY1() - chSize);
+        chH.setStrokeWidth(chSize / 2.0);
+        chH.setStrokeLineCap(StrokeLineCap.ROUND);
+        chH.setStroke(c);
+
+        Line chV = new Line(dim.getX1() - chSize, -dim.getY1(), dim.getX1() + chSize, -dim.getY1());
+        chV.setStrokeWidth(chSize / 2.0);
+        chV.setStrokeLineCap(StrokeLineCap.ROUND);
+        chV.setStroke(c);
+        g.getChildren().addAll(chH, chV);
+
+        // Line
+        Group lineGroup = new Group();
+        Line line = new Line(dim.getX1() + hyp12, -dim.getY1(), dim.getX1() + adj13, -dim.getY1());
+        line.setStrokeWidth(dim.getWidth());
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setStroke(c);
+        lineGroup.getChildren().add(line);
+
+        // Arrow
+        Node arrowhead = arrowhead(dim.getX1() + hyp12, -dim.getY1(), dim.getWidth() * 20, dim.getWidth() * 6,
+                0, dim.getWidth(), c);
+        lineGroup.getChildren().add(arrowhead);
+
+        g.getChildren().add(lineGroup);
+        Rotate r = new Rotate(-ang1, dim.getX1(), -dim.getY1());
+        lineGroup.getTransforms().add(r);
+
+        // Text
+        BigDecimal bdUp = new BigDecimal(hyp12).setScale(
+                dim.getPrecision(), RoundingMode.HALF_UP
+        );
+        String dimValueString = String.valueOf(bdUp.doubleValue());
+        Text dimText = new Text(dimValueString);
+        Font dimFont = Font.loadFont(
+                LibraryElementNode.class.getResourceAsStream(FONT_PATH),
+                dim.getTextsize() * 1.4
+        );
+        dimText.setFont(dimFont);
+
+        double dimWidth = dimText.getBoundsInLocal().getWidth();
+        dimText.setLayoutX(dim.getX1() + adj13 - dimWidth);
+        dimText.setLayoutY(-dim.getY1() - opp13);
+        dimText.setFill(c);
+        if (ang1 <= -90 && ang1 > -270) {
+            Rotate rt = new Rotate(180, dimWidth / 2.0, 0);
+            dimText.getTransforms().add(rt);
+        }
+
+        lineGroup.getChildren().add(dimText);
+
+        return g;
     }
 
     private static Node parallelDimension(Dimension dim, Color c) {
@@ -2072,7 +2137,7 @@ public class LibraryElementNode {
         double lExt = dim.getWidth() * 15; // Amount to extend lines by.        // New unrotated points are x1,y1, xx2, yy2, xx3, yy3
         BigDecimal bdUp = new BigDecimal(hyp12).
                 setScale(dim.getPrecision(), RoundingMode.UP
-        );
+                );
         String dimValueString = String.valueOf(bdUp.doubleValue());
 
         Line line1 = new Line(x1, -y1, x1, -yy3 - toggle * lExt);
