@@ -33,6 +33,7 @@ import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Probe;
+import com.maehem.mangocad.model.element.basic.Spline;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.DimensionType;
@@ -188,12 +189,14 @@ public class LibraryElementNode {
     }
 
     public static Node createRectangle(ElementRectangle r, Color color, boolean mirror) {
-        double x1 = mirror ? -r.getX1() : r.getX1();
-        double x2 = mirror ? -r.getX2() : r.getX2();
+//        double x1 = mirror ? -r.getX1() : r.getX1();
+//        double x2 = mirror ? -r.getX2() : r.getX2();
+        double x1 = r.getX1();
+        double x2 = r.getX2();
 
-        Rectangle rr = new Rectangle(
+        Rectangle rr = new Rectangle( 
                 x1, -r.getY2(),
-                x2 - x1, r.getY2() - r.getY1()
+                Math.abs(x2 - x1), Math.abs(r.getY2() - r.getY1())
         );
         rr.setStrokeWidth(0);
         //rr.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -1913,6 +1916,7 @@ public class LibraryElementNode {
                             proxyTxt.setY(attr.getY() - inst.getY());
                             //rot = inst.getRot() - attr.getRotation().getValue();
                             proxyTxt.setRot(attr.getRotation().getValue() - inst.getRot());
+                            proxyTxt.getRotation().setMirror(inst.getRotation().isMirror());
                             // attr  layer
                             proxyTxt.setLayer(attr.getLayerNum());
                             // attr  align
@@ -2326,6 +2330,17 @@ public class LibraryElementNode {
         }
         return g;
     }
+    
+
+    public static Node createSplineNode(Spline sp, Color c) {
+        Group g = new Group();
+        
+        
+        
+        
+        return g;
+    }
+    
     
     private static Node arrowhead(
             double x, double y, double len, double width,
