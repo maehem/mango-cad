@@ -2297,16 +2297,24 @@ public class EagleCADIngest {
         //spline (vertex)*>
         //  Four simple (non-curve) vertices define the control points of a degree-3 spline curve
         //  ATTLIST 
-        //     width          %Dimension;    #REQUIRED   
+        //     width          %Dimension;    #REQUIRED 
+        //     layer           %Int%       IMPLIED    (new to 9.7)
+        //     locked          %Bool%      IMPLIED    (new to 9.7)
         Spline spline = new Spline();
-
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
+            if ( item.getNodeType() != Node.ATTRIBUTE_NODE ) continue;
             String value = item.getNodeValue();
+
             switch (item.getNodeName()) {
                 case "width" ->
                     spline.setWidth(Double.parseDouble(value));
+                case "layer" ->
+                    spline.setLayer(Integer.parseInt(value));
+                case "locked" ->
+                    spline.setLocked(value.equalsIgnoreCase("yes"));
+                    
                 default ->
                     throw new EagleCADLibraryFileException("Spline has unknown XML attribute: [" + item.getNodeName() + "]");
             }
@@ -2315,12 +2323,13 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
+            if ( item.getNodeType() != Node.ELEMENT_NODE ) continue;
             switch (item.getNodeName()) {
                 case "vertex" -> {
                     ingestVertex(spline.getVertices(), item);
                 }
                 default -> {
-                    throw new EagleCADLibraryFileException("Instance Attribute list has unknown child: [" + item.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("Spline Vertex list has unknown child: [" + item.getNodeName() + "]");
                 }
 
             }

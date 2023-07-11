@@ -33,7 +33,12 @@ public class Spline extends _AQuantum {
     //  Four simple (non-curve) vertices define the control points of a degree-3 spline curve 
     //  ATTLIST spline
     //          width          %Dimension;    #REQUIRED
+    
+    //   ADDED BY AUTODESK RECENTLY
+    //     layer           %Int%       IMPLIED    (new to 9.7)
+    //     locked          %Bool%      IMPLIED    (new to 9.7)
     private double width;
+    private boolean locked = false;
 
     @Override
     public String getElementName() {
@@ -59,6 +64,20 @@ public class Spline extends _AQuantum {
      */
     public ArrayList<Vertex> getVertices() {
         return vertices;
+    }
+
+    /**
+     * @return the locked
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+
+    /**
+     * @param locked the locked to set
+     */
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
     
 }
