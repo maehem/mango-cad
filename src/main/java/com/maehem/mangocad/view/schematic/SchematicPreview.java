@@ -92,7 +92,7 @@ public class SchematicPreview extends Group {
                 getChildren().add(LibraryElementNode.createCircleNode(e, c, false));
             } else if (element instanceof Spline e) {
                 //getChildren().add(LibraryElementNode.createSplineNode(e, c));
-                LOGGER.log(Level.SEVERE, "TODO: Implement Spline Node");
+                LOGGER.log(Level.SEVERE, "Spline not supported in Schematics!");
             } else if (element instanceof ElementRectangle e) {
                 getChildren().add(LibraryElementNode.createRectangle(e, c, false));
             } else if (element instanceof FrameElement e) {
