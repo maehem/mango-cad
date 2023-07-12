@@ -58,9 +58,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.effect.Reflection;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
@@ -194,7 +196,7 @@ public class LibraryElementNode {
         double x1 = r.getX1();
         double x2 = r.getX2();
 
-        Rectangle rr = new Rectangle( 
+        Rectangle rr = new Rectangle(
                 x1, -r.getY2(),
                 Math.abs(x2 - x1), Math.abs(r.getY2() - r.getY1())
         );
@@ -1830,6 +1832,106 @@ public class LibraryElementNode {
     }
 
     public static Group createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
+        Group elementGroup = new Group();
+        Group textGroup = new Group();
+        Group g = new Group(elementGroup, textGroup);
+
+        final Rotation rotation = inst == null ? null : inst.getRotation();
+        final int rot = (int) (inst == null ? 0.0 : rotation.getValue());
+        final boolean mirror = inst == null ? false : inst.getRotation().isMirror();
+
+        symbol.getElements().forEach((e) -> {
+            LayerElement le = layers[e.getLayerNum()];
+            if (le == null) {
+                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
+            }
+            int colorIndex = le.getColorIndex();
+            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+
+            // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
+            if (e instanceof ElementPolygon ep) {
+                elementGroup.getChildren().add(LibraryElementNode.createPolygon(ep, c, false));
+            } else if (e instanceof Wire w) {
+                elementGroup.getChildren().add(LibraryElementNode.createWireNode(w, c, false));
+            } else if (e instanceof ElementText et) {
+
+                final ElementText proxyText;
+                if (inst == null) {
+                    proxyText = et;
+                } else {
+                    proxyText = et.copy();
+                }
+
+                if (inst != null) {
+                    for (Attribute attr : inst.getAttributes()) {
+                        String name = ">" + attr.getName();
+                        if ( !et.getValue().equals(name )) {
+                            continue;
+                        }
+
+                        // Perform substitute.
+                        // Schematic instance of Part.
+                        if (et.getValue().equals(">VALUE")) {
+                            //altText = vars.get("VALUE");
+                            proxyText.setValue(vars.get("VALUE"));
+                        } else if (et.getValue().equals(">NAME")) {
+                            proxyText.setValue(inst.getPart() + inst.getGate());
+                            //altText = inst.getPart();
+                        } else {
+                            Optional<Attribute> namedAttribute = part.getNamedAttribute(attr.getName());
+                            if (!namedAttribute.isEmpty()) {
+                                proxyText.setValue(namedAttribute.get().getValue());
+                            } else if (vars.containsKey(et.getValue().substring(1))) {
+                                proxyText.setValue(vars.get(et.getValue().substring(1)));
+                            } else {
+                                proxyText.setValue(attr.getValue());
+                            }
+                        }
+                        
+                        proxyText.setX(attr.getX() - inst.getX() );
+                        proxyText.setY(attr.getY() - inst.getY() );
+
+                        proxyText.getRotation().setValue((attr.getRotation().getValue())%360.0);
+                    }
+                }
+
+                Node elementTextNode = createText(proxyText, c, rotation);
+                textGroup.getChildren().add(elementTextNode);
+
+                textGroup.getChildren().add(LibraryElementNode.crosshairs(
+                        proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
+                ));
+
+            } else if (e instanceof Dimension dim) {
+                elementGroup.getChildren().add(createDimensionNode(dim, layers, palette));
+            } else if (e instanceof Pin pin) {
+                elementGroup.getChildren().add(createPinNode(pin, c, rotation, inst == null));
+            } else if (e instanceof ElementCircle ec) {
+                elementGroup.getChildren().add(LibraryElementNode.createCircleNode(ec, c, false));
+            } else if (e instanceof ElementRectangle rect) {
+                elementGroup.getChildren().add(LibraryElementNode.createRectangle(rect, c, false));
+            } else if (e instanceof FrameElement frm) {
+                elementGroup.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
+            }
+
+        });
+
+        int cIdx = layers[symbol.getLayerNum()].getColorIndex();
+        Color c = ColorUtils.getColor(palette.getHex(cIdx));
+        elementGroup.getChildren().add(LibraryElementNode.crosshairs(
+                0, 0, 0.5, 0.035, c
+        ));
+
+        Rotate r = new Rotate(-rotation.getValue(), 0, 0);
+        elementGroup.getTransforms().add(r);
+        if (mirror) {
+            elementGroup.setScaleX(-1.0);
+        }
+
+        return g;
+    }
+
+    public static Group createSymbolNodeOld(Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
 
         boolean lr = false;
@@ -1912,11 +2014,20 @@ public class LibraryElementNode {
 
                             // Set position of element.  attr x/y minus inst x/y
                             // TODO install this at ingest and store difference?
+                            LOGGER.log(Level.SEVERE,
+                                    "{0} ==> InstX: {1}  AttrX: {2}",
+                                    new Object[]{altText, inst.getX(), attr.getX()}
+                            );
                             proxyTxt.setX(attr.getX() - inst.getX());
-                            proxyTxt.setY(attr.getY() - inst.getY());
+//                            proxyTxt.setY(attr.getY() - inst.getY());
+                            proxyTxt.setX((inst.getRot() == 0 || inst.getRot() == 270) ? (attr.getX() - inst.getX()) : (inst.getX() - attr.getX()));
+                            proxyTxt.setY(inst.getY() - attr.getY());
                             //rot = inst.getRot() - attr.getRotation().getValue();
-                            proxyTxt.setRot(attr.getRotation().getValue() - inst.getRot());
-                            proxyTxt.getRotation().setMirror(inst.getRotation().isMirror());
+//                            proxyTxt.setRot((attr.getRotation().getValue() + inst.getRot())/360.0);
+//                            proxyTxt.getRotation().setMirror(
+//                                    inst.getRotation().isMirror() ^
+//                                            attr.getRotation().isMirror()
+//                            );
                             // attr  layer
                             proxyTxt.setLayer(attr.getLayerNum());
                             // attr  align
@@ -1927,6 +2038,7 @@ public class LibraryElementNode {
                     }
 
                     Node elementText = createText(proxyTxt, altText, c, rotation);
+                    g.getChildren().add(LibraryElementNode.crosshairs(proxyTxt.getX(), -proxyTxt.getY(), 0.5, 0.04, Color.MAGENTA));
                     g.getChildren().add(elementText);
                 }
                 g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
@@ -2027,9 +2139,9 @@ public class LibraryElementNode {
         pl.setStrokeLineCap(StrokeLineCap.ROUND);
         pl.setStroke(c);
         pl.setFill(null);
-        
+
         g.getChildren().add(pl);
-        
+
         double arrowDeg = 18;
         double arrowLen = 2.54;
         Arc arrow = new Arc(dim.getX1(), -dim.getY1(),
@@ -2045,7 +2157,7 @@ public class LibraryElementNode {
 
         return g;
     }
-    
+
     private static Node angleDimensionNode(Dimension dim, Color c) {
         Group g = new Group();
 
@@ -2054,7 +2166,7 @@ public class LibraryElementNode {
         double ang12 = Math.toDegrees(Math.atan2(dim.getY2() - dim.getY1(), dim.getX2() - dim.getX1()));
         double ang13 = Math.toDegrees(Math.atan2(dim.getY3() - dim.getY1(), dim.getX3() - dim.getX1()));
         double angD = ang13 - ang12;
-        if ( angD < 0.0 ) {
+        if (angD < 0.0) {
             angD = 360.0 + angD;
         }
         //double opp13 = Math.cos(Math.toRadians(angD)) * hyp13;
@@ -2062,7 +2174,7 @@ public class LibraryElementNode {
         double oppTopp = Math.sin(Math.toRadians(angD / 2.0)) * textHyp;
         double oppTadj = Math.cos(Math.toRadians(angD / 2.0)) * textHyp;
         double ext = dim.getWidth() * 15.0;
-        
+
         // Line
         Group lineGroup = new Group();
         Line line1 = new Line(dim.getX1(), -dim.getY1(), dim.getX1() + hyp12 + ext, -dim.getY1());
@@ -2126,12 +2238,11 @@ public class LibraryElementNode {
         );
         dimText.setFont(dimFont);
         dimText.setFill(c);
-        dimText.setLayoutX(dim.getX1() + oppTadj - dimText.getBoundsInLocal().getWidth()/2.0);
+        dimText.setLayoutX(dim.getX1() + oppTadj - dimText.getBoundsInLocal().getWidth() / 2.0);
         dimText.setLayoutY(-dim.getY1() - oppTopp);
-        Rotate tRot = new Rotate(90-angD/2.0, dimText.getBoundsInLocal().getWidth()/2.0, 0);
+        Rotate tRot = new Rotate(90 - angD / 2.0, dimText.getBoundsInLocal().getWidth() / 2.0, 0);
         dimText.getTransforms().add(tRot);
-        
-        
+
         g.getChildren().add(dimText);
 
         Rotate gr = new Rotate(ang12, dim.getX1(), -dim.getY1());
@@ -2224,7 +2335,6 @@ public class LibraryElementNode {
 //        }
         //LOGGER.log(Level.SEVERE, "Apparent Angle: " + ang);
         //double absAng = Math.abs(ang);
-
         double opp12;
         double adj12;
         double rat12;
@@ -2320,7 +2430,7 @@ public class LibraryElementNode {
 
         g.getChildren().add(shapeGroup);
 
-        if ( dim.getDtype() == DimensionType.DIAMETER) {
+        if (dim.getDtype() == DimensionType.DIAMETER) {
             // Add Crosshairs
             Point2D p1 = new Point2D(dim.getX1(), dim.getY1());
             Point2D mid = p1.midpoint(dim.getX2(), dim.getY2());
@@ -2330,18 +2440,13 @@ public class LibraryElementNode {
         }
         return g;
     }
-    
 
     public static Node createSplineNode(Spline sp, Color c) {
         Group g = new Group();
-        
-        
-        
-        
+
         return g;
     }
-    
-    
+
     private static Node arrowhead(
             double x, double y, double len, double width,
             double rot, double thick, Color c) {
