@@ -26,9 +26,9 @@ import com.maehem.mangocad.model.util.Rotation;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Attribute extends _AQuantum {
-    
+
     public static final String ELEMENT_NAME = "attribute";
-    
+
     private String name;
     private double x;
     private double y;
@@ -41,13 +41,11 @@ public class Attribute extends _AQuantum {
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private TextFont font = TextFont.VECTOR;
 
-    
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
 
-    
     /**
      * @return the name
      */
@@ -89,7 +87,7 @@ public class Attribute extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-    
+
     /**
      * @return the value
      */
@@ -173,7 +171,7 @@ public class Attribute extends _AQuantum {
     public void setConstant(boolean constant) {
         this.constant = constant;
     }
-    
+
     /**
      * @return the name
      */
@@ -200,6 +198,11 @@ public class Attribute extends _AQuantum {
      */
     public void setFont(TextFont font) {
         this.font = font;
+    }
+
+    @Override
+    public String toString() {
+        return "Attribute: " + getName() + ":" + getValue() + " :: " + getX() + "," + getY() + " . " + getAlign().code();
     }
 
 }
