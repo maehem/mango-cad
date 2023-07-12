@@ -69,7 +69,7 @@ public class EagleCADIngest {
         Drawing drawing = new Drawing();
         // drawing (settings?, grid?, filters?, layers, (library | schematic | board))
         //LOGGER.log(Level.SEVERE, "Ingest <drawing>");
-        
+
         NodeList nodes = node.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node subNode = nodes.item(i);
@@ -1411,15 +1411,21 @@ public class EagleCADIngest {
             Node item = attributes.item(i);
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "name" ->
+                case "name" -> {
+                    list.forEach((att) -> {
+                        if (att.getName().equals(value)) {
+                            LOGGER.log(Level.SEVERE, "Duplicate name in attributes.");
+                        }
+                    });
                     attribute.setName(value);
+                }
                 case "value" ->
                     attribute.setValue(value);
                 case "x" ->
                     attribute.setX(Double.parseDouble(value));
                 case "y" ->
                     attribute.setY(Double.parseDouble(value));
-                case "rot" -> 
+                case "rot" ->
                     attribute.getRotation().setValue(value);
                 case "ratio" ->
                     attribute.setWidth(Integer.parseInt(value));
@@ -1792,7 +1798,7 @@ public class EagleCADIngest {
 
             }
         }
-        
+
         parts.add(part);
     }
 
@@ -2247,11 +2253,11 @@ public class EagleCADIngest {
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
+            if (item.getNodeType() != 2) {
+                continue;
+            }
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
-                case "#text" -> {
-                    LOGGER.log(Level.SEVERE, "ingestInstance: handle #text for node type: " + item.getNodeType());
-                }
                 case "part" ->
                     instance.setPart(value);
                 case "gate" ->
@@ -2304,7 +2310,9 @@ public class EagleCADIngest {
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
-            if ( item.getNodeType() != Node.ATTRIBUTE_NODE ) continue;
+            if (item.getNodeType() != Node.ATTRIBUTE_NODE) {
+                continue;
+            }
             String value = item.getNodeValue();
 
             switch (item.getNodeName()) {
@@ -2314,7 +2322,7 @@ public class EagleCADIngest {
                     spline.setLayer(Integer.parseInt(value));
                 case "locked" ->
                     spline.setLocked(value.equalsIgnoreCase("yes"));
-                    
+
                 default ->
                     throw new EagleCADLibraryFileException("Spline has unknown XML attribute: [" + item.getNodeName() + "]");
             }
@@ -2323,7 +2331,9 @@ public class EagleCADIngest {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
-            if ( item.getNodeType() != Node.ELEMENT_NODE ) continue;
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
             switch (item.getNodeName()) {
                 case "vertex" -> {
                     ingestVertex(spline.getVertices(), item);
@@ -2386,7 +2396,7 @@ public class EagleCADIngest {
      *      visible       %Bool;         "no"
      *      grouprefs     IDREFS         #IMPLIED
      * </pre>
-       * 
+     *
      * @param list
      * @param node
      */
