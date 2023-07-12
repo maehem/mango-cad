@@ -38,7 +38,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -69,10 +68,10 @@ public class SchematicPreview extends Group {
         ColorPalette palette = schem.getParentDrawing().getPalette();
         //LOGGER.log(Level.SEVERE, "Populate Page: " + (index+1));
         Sheet sheet = schem.getSheets().get(index);
-        Map<String,String> vars = new HashMap();
+        Map<String, String> vars = new HashMap();
         vars.putAll(schem.getParentDrawing().getVars());
-        vars.put("SHEET", (index+1) + "/" + schem.getSheets().size() );
-        
+        vars.put("SHEET", (index + 1) + "/" + schem.getSheets().size());
+
 //        if (sheet.getPlain().isEmpty()) {
 //            LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
 //        }
@@ -81,7 +80,7 @@ public class SchematicPreview extends Group {
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
-                getChildren().add(LibraryElementNode.createPolygon(e, c,false));
+                getChildren().add(LibraryElementNode.createPolygon(e, c, false));
             } else if (element instanceof Wire e) {
                 getChildren().add(LibraryElementNode.createWireNode(e, c, false));
             } else if (element instanceof ElementText e) {
@@ -118,12 +117,11 @@ public class SchematicPreview extends Group {
                             Symbol symbol = lib.getSymbol(gate.getSymbol());
                             // Pass attribute key/value list to symbol preview.
                             String val;
-                            if ( part.getValue() == null ) {
+                            if (part.getValue() == null) {
                                 String supplyPin = symbol.supplyPin();
-                                if ( supplyPin != null ) {
+                                if (supplyPin != null) {
                                     val = supplyPin;
-                                }
-                               // Check if it's a global value
+                                } // Check if it's a global value
                                 // >LAST_DATE_TIME  -  File mod date
                                 // >SHEET (n of 99)  -  sheet num / num sheets
                                 // >DRAWING_NAME   - file.getName()
@@ -131,8 +129,6 @@ public class SchematicPreview extends Group {
                                 // >DOCUMENT_NUMBER - schem.attribute
                                 // >FOO    schem.attribute
                                 // >BAR    schem.attribute
-                                
-                                
                                 else {
                                     val = gate.getName(); // Maybe it's the gate name?
                                 }
