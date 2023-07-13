@@ -24,25 +24,41 @@ import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.util.Rotation;
 
 /**
+ * <pre>
+ * pin EMPTY
+ *    ATTR
+ *      name          %String;       #REQUIRED
+ *      x             %Coord;        #REQUIRED
+ *      y             %Coord;        #REQUIRED
+ *      visible       %PinVisible;   "both"
+ *      length        %PinLength;    "long"
+ *      direction     %PinDirection; "io"
+ *      function      %PinFunction;  "none"
+ *      swaplevel     %Int;          "0"
+ *      rot           %Rotation;     "R0"
+ * </pre>
+ *
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Pin extends _AQuantum {
+
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.
-    
+
     private String name;
     private double x;
     private double y;
-    private String padValue = null;
     private PinVisible visible = PinVisible.BOTH;
     private PinLength length = PinLength.LONG;
     private PinDirection direction = PinDirection.IO;
     private PinFunction function = PinFunction.NONE;
     private int swapLevel = 0;
     private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
-
     
+    // Lookup
+    private String padValue = null;
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -89,38 +105,33 @@ public class Pin extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-    
-   /**
-     * Pad Value, usually pin number assigned in DeviceSet
-     * Might be null when viewed as symbol.
-     * 
-     * @return 
+
+    /**
+     * Pad Value, usually pin number assigned in DeviceSet Might be null when
+     * viewed as symbol.
+     *
+     * @return
      */
     public String getPadValue() {
         return padValue;
     }
-    
-    public void setPadValue( String value ) {
+
+    public void setPadValue(String value) {
         this.padValue = value;
     }
-    
-//    /**
-//     * @return the visible
-//     */
-//    public String getVisible() {
-//        return visible.code();
-//    }
+
+    /**
+     *
+     * @return code for visible
+     */
     public PinVisible getVisible() {
         return visible;
     }
 
-//    /**
-//     * @param visible the visible to set
-//     */
-//    public void setVisible(String visible) {
-//        this.visible = PinVisible.fromCode(visible);
-//    }
-    
+    /**
+     * Set pin/pad visibility
+     * @param visible
+     */
     public void setVisible(PinVisible visible) {
         this.visible = visible;
     }
@@ -184,7 +195,7 @@ public class Pin extends _AQuantum {
     public Rotation getRotation() {
         return rotation;
     }
-    
+
     /**
      * @return the rotation
      */

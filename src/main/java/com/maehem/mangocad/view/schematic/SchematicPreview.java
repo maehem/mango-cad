@@ -21,6 +21,7 @@ import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.drawing.Schematic;
+import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Net;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
@@ -112,7 +113,9 @@ public class SchematicPreview extends Group {
                 if (lookupLibrary.isPresent()) {
                     Library lib = lookupLibrary.get();
                     DeviceSet deviceSet = lib.getDeviceSet(part.getDeviceSet());
+                    Device device = deviceSet.lookupDevice(part.getDevice());
                     deviceSet.getGates().forEach((gate) -> {
+                        
                         if (inst.getGate().equals(gate.getName())) {
                             Symbol symbol = lib.getSymbol(gate.getSymbol());
                             // Pass attribute key/value list to symbol preview.
@@ -137,7 +140,7 @@ public class SchematicPreview extends Group {
                             }
                             vars.put("VALUE", val);
                             Node symbolPreview = LibraryElementNode.createSymbolNode(
-                                    symbol, inst, part, vars, layers, palette
+                                    device, symbol, inst, part, vars, layers, palette
                             );
                             symbolPreview.setLayoutX(inst.getX());
                             symbolPreview.setLayoutY(-inst.getY());

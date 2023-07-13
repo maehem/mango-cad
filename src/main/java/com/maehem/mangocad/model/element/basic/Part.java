@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.highlevel.Device;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -55,6 +56,8 @@ public class Part extends _AQuantum {
     
     private final ArrayList<Attribute> attributes = new ArrayList<>();
     private final ArrayList<Variant> variants = new ArrayList<>();
+    
+    private Device deviceObj;
     
     // TODO:  Spices.
 

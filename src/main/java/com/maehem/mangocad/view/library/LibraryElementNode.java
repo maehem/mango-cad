@@ -42,6 +42,7 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import static com.maehem.mangocad.model.element.enums.PinLength.*;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
+import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Segment;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
@@ -1831,7 +1832,7 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Group createSymbolNode(Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
+    public static Group createSymbolNode(Device device, Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
         Group elementGroup = new Group();
         Group textGroup = new Group();
         Group g = new Group(elementGroup, textGroup);
@@ -1865,7 +1866,7 @@ public class LibraryElementNode {
                 if (inst != null) {
                     for (Attribute attr : inst.getAttributes()) {
                         String name = ">" + attr.getName();
-                        if ( !et.getValue().equals(name )) {
+                        if (!et.getValue().equals(name)) {
                             continue;
                         }
 
@@ -1887,11 +1888,11 @@ public class LibraryElementNode {
                                 proxyText.setValue(attr.getValue());
                             }
                         }
-                        
-                        proxyText.setX(attr.getX() - inst.getX() );
-                        proxyText.setY(attr.getY() - inst.getY() );
 
-                        proxyText.getRotation().setValue((attr.getRotation().getValue())%360.0);
+                        proxyText.setX(attr.getX() - inst.getX());
+                        proxyText.setY(attr.getY() - inst.getY());
+
+                        proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
                     }
                 }
 
@@ -1905,6 +1906,15 @@ public class LibraryElementNode {
             } else if (e instanceof Dimension dim) {
                 elementGroup.getChildren().add(createDimensionNode(dim, layers, palette));
             } else if (e instanceof Pin pin) {
+                if (device != null) {
+                    device.getConnections().forEach((con) -> {
+                        if (    inst.getGate().equals(con.getGate()) && 
+                                con.getPin().equals(pin.getName())) {
+                            pin.setPadValue(con.getPad());
+                        }
+                    });
+                }
+
                 elementGroup.getChildren().add(createPinNode(pin, c, rotation, inst == null));
             } else if (e instanceof ElementCircle ec) {
                 elementGroup.getChildren().add(LibraryElementNode.createCircleNode(ec, c, false));

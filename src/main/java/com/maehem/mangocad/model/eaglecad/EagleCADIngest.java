@@ -226,7 +226,7 @@ public class EagleCADIngest {
                 case "parts" ->
                     ingestSchematicParts(sch.getParts(), child);
                 case "sheets" ->
-                    ingestSchematicSheets(sch.getSheets(), child);
+                    ingestSchematicSheets(sch, child);
                 case "errors" ->
                     ingestApprovedErrors(sch.getErrors(), child);
                 default ->
@@ -1807,7 +1807,7 @@ public class EagleCADIngest {
      * @param sheets
      * @param child
      */
-    static void ingestSchematicSheets(ArrayList<Sheet> sheets, Node node) throws EagleCADLibraryFileException {
+    static void ingestSchematicSheets(Schematic sch, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -1816,7 +1816,10 @@ public class EagleCADIngest {
                 continue;
             }
 
-            ingestSchematicSheet(sheets, item);
+            Sheet sheet = ingestSchematicSheet( item);
+            sheet.setParent(sch);
+            sch.getSheets().add(sheet);
+            //sheet.postIngest();
         }
     }
 
@@ -1826,7 +1829,7 @@ public class EagleCADIngest {
      * @param sheets
      * @param node
      */
-    private static void ingestSchematicSheet(ArrayList<Sheet> sheets, Node node) throws EagleCADLibraryFileException {
+    private static Sheet ingestSchematicSheet(Node node) throws EagleCADLibraryFileException {
         Sheet sheet = new Sheet();
 
         // Handle sub nodes.
@@ -1854,7 +1857,7 @@ public class EagleCADIngest {
                 }
             }
         }
-        sheets.add(sheet);
+        return sheet;
     }
 
     static void ingestApprovedErrors(ArrayList<Approved> errors, Node node) throws EagleCADLibraryFileException {
@@ -2253,7 +2256,7 @@ public class EagleCADIngest {
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
-            if (item.getNodeType() != 2) {
+            if (item.getNodeType() != Node.ATTRIBUTE_NODE) {
                 continue;
             }
             String value = item.getNodeValue();

@@ -203,5 +203,11 @@ public class DeviceSet extends _AQuantum {
         }
         return null;
     }
+
+    public Device lookupDevice(String devName) {
+        return devices.stream().
+                filter(device -> devName.equals(device.getName())).
+                findAny().orElse(null);        
+    }
     
 }

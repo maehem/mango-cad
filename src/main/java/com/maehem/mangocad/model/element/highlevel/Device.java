@@ -30,7 +30,7 @@ public class Device {
     // 'layer' is not used.
     
     private String name = "";
-    private String footprint;  // Underbar. 'package' is a reserved Java word.
+    private String footprint;  // 'package' is a reserved Java word.
     private List<Connection> connections = new ArrayList<>();
     private List<Technology> technologies = new ArrayList<>();
     private final List<Package3dInstance> package3dinstances = new ArrayList<>();

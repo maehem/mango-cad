@@ -20,8 +20,11 @@ import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.basic.ModuleInst;
 import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.basic.Part;
+import com.maehem.mangocad.model.element.drawing.Schematic;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * sheet (description?, plain?, moduleinsts?, instances?, busses?, nets?)
@@ -40,6 +43,8 @@ public class Sheet extends _AQuantum {
     private final ArrayList<Instance> instances = new ArrayList<>();
     private final ArrayList<Net> busses = new ArrayList<>();
     private final ArrayList<Net> nets = new ArrayList<>();
+    
+    private Schematic parent = null;
     
     @Override
     public String getElementName() {
@@ -68,6 +73,18 @@ public class Sheet extends _AQuantum {
     
     public List<Net> getNetInsts() {
         return nets;
+    }
+
+    public void postIngest() {
+        
+    }
+
+    public Schematic getParent() {
+        return parent;
+    }
+    
+    public void setParent(Schematic sch) {
+        this.parent = sch;
     }
     
     
