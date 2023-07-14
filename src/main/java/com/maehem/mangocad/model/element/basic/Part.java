@@ -52,7 +52,7 @@ public class Part extends _AQuantum {
     private String overridePackageUrn;
     private boolean overrideLocallyModified;
     private String technology;
-    private String value;
+    private String value = "";
     
     private final ArrayList<Attribute> attributes = new ArrayList<>();
     private final ArrayList<Variant> variants = new ArrayList<>();
