@@ -17,31 +17,29 @@
 package com.maehem.mangocad.model.element.enums;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * WireStyle       continuous | longdash | shortdash | dashdot
- * 
+ * WireStyle continuous | longdash | shortdash | dashdot
+ *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public enum WireStyle {
     CONTINUOUS("continuous"), LONGDASH("longdash"), SHORTDASH("shortdash"), DASHDOT("dashdot");
     private final String code;
- 
+
     public static List<Double> LONG_DASH_PATTERN = new ArrayList<>(List.of(5.0, 1.4));
     public static List<Double> SHORT_DASH_PATTERN = new ArrayList<>(List.of(1.2, 0.9));
     public static List<Double> DASH_DOT_PATTERN = new ArrayList<>(List.of(3.1, 0.8, 0.2, 0.8));
 
-
     private WireStyle(String code) {
         this.code = code;
     }
- 
+
     public String code() {
         return code;
     }
- 
+
     public static WireStyle fromCode(String code) {
         if (code != null) {
             for (WireStyle g : WireStyle.values()) {
@@ -52,16 +50,20 @@ public enum WireStyle {
         }
         return null;
     }
-    
+
     public List<Double> getPattern() {
         List rtn;
-        switch(this) {
-            case DASHDOT -> rtn = DASH_DOT_PATTERN;
-            case LONGDASH -> rtn = LONG_DASH_PATTERN;
-            case SHORTDASH -> rtn = SHORT_DASH_PATTERN;                
-            default -> rtn = null;
+        switch (this) {
+            case DASHDOT ->
+                rtn = DASH_DOT_PATTERN;
+            case LONGDASH ->
+                rtn = LONG_DASH_PATTERN;
+            case SHORTDASH ->
+                rtn = SHORT_DASH_PATTERN;
+            default ->
+                rtn = null;
         }
-        
+
         return rtn;
     }
 }
