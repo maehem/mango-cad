@@ -142,7 +142,7 @@ public class LibraryElementNode {
         double x2 = mirror ? -w.getX2() : w.getX2();
         double y1 = w.getY1();
         double y2 = w.getY2();
-        
+
         if (strokeWidth < 0.03) {
             // Wires can't be 0 width.
             strokeWidth = 0.03; // 6mil
@@ -177,24 +177,22 @@ public class LibraryElementNode {
         } else {
             s = new Line(x1, -y1, x2, -y2);
         }
-        
+
         s.setStrokeLineCap(StrokeLineCap.ROUND);
         s.setStrokeWidth(strokeWidth);
         List<Double> pattern = w.getStyle().getPattern();
-        
+
         // TODO: Massage pettern nums to fit pattern into line's length.
-        if ( pattern != null ) {
+        if (pattern != null) {
             s.getStrokeDashArray().addAll(pattern);
         }
         s.setStroke(color);
         s.setSmooth(true);
-        
+
         return s;
     }
 
     public static Node createRectangle(ElementRectangle r, Color color, boolean mirror) {
-//        double x1 = mirror ? -r.getX1() : r.getX1();
-//        double x2 = mirror ? -r.getX2() : r.getX2();
         double x1 = r.getX1();
         double x2 = r.getX2();
 
@@ -203,7 +201,6 @@ public class LibraryElementNode {
                 Math.abs(x2 - x1), Math.abs(r.getY2() - r.getY1())
         );
         rr.setStrokeWidth(0);
-        //rr.setStrokeLineCap(StrokeLineCap.ROUND);
         rr.setFill(color);
         rr.setRotate(r.getRot());
         return rr;
@@ -587,9 +584,9 @@ public class LibraryElementNode {
         Rotation rotation = et.getRotation();
         double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
-        
-        double parentRot = parentRotation!=null?parentRotation.getValue():0.0;
-        boolean parentMir = parentRotation!=null?parentRotation.isMirror():false;
+
+        double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
+        boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
 
         //double fontSizeMult = 0.666; // INCH to Point ratio
         double fontSizeMult = 0.7272; // INCH to Point ratio
@@ -697,11 +694,11 @@ public class LibraryElementNode {
             }
         }
 
-        if ( parentMir ) {
+        if (parentMir) {
             double trFact = 0.0;
-            if ( et.getAlign().name().endsWith("_RIGHT") ) {
+            if (et.getAlign().name().endsWith("_RIGHT")) {
                 trFact = 1.0;
-            } else if ( et.getAlign().name().endsWith("_LEFT") ){
+            } else if (et.getAlign().name().endsWith("_LEFT")) {
                 trFact = -1.0;
             }
             Translate tr = new Translate(trFact * tt.getBoundsInLocal().getWidth(), 0);
@@ -1560,7 +1557,7 @@ public class LibraryElementNode {
                             proxyText.setValue(vars.get("VALUE"));
                         } else if (et.getValue().equals(">NAME")) {
                             String gateStr = inst.getGate();
-                            if ( gateStr.startsWith("G$") ) {
+                            if (gateStr.startsWith("G$")) {
                                 gateStr = "";
                             }
                             proxyText.setValue(inst.getPart() + gateStr);
