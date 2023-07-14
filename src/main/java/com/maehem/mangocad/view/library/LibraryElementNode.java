@@ -81,6 +81,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
@@ -141,11 +142,12 @@ public class LibraryElementNode {
         double x2 = mirror ? -w.getX2() : w.getX2();
         double y1 = w.getY1();
         double y2 = w.getY2();
-
+        
         if (strokeWidth < 0.03) {
             // Wires can't be 0 width.
             strokeWidth = 0.03; // 6mil
         }
+        Shape s;
         if (w.getCurve() != 0.0) {
             Path path = new Path();
 
@@ -171,20 +173,23 @@ public class LibraryElementNode {
             path.getElements().add(moveTo);
             path.getElements().add(arc);
 
-            path.setStrokeLineCap(StrokeLineCap.ROUND);
-            path.setStrokeWidth(strokeWidth);
-            path.setStroke(color);
-
-            return path;
+            s = path;
         } else {
-            Line line = new Line(x1, -y1, x2, -y2);
-            line.setStrokeLineCap(StrokeLineCap.ROUND);
-            line.setStrokeWidth(strokeWidth);
-            line.setStroke(color);
-            line.setSmooth(true);
-
-            return line;
+            s = new Line(x1, -y1, x2, -y2);
         }
+        
+        s.setStrokeLineCap(StrokeLineCap.ROUND);
+        s.setStrokeWidth(strokeWidth);
+        List<Double> pattern = w.getStyle().getPattern();
+        
+        // TODO: Massage pettern nums to fit pattern into line's length.
+        if ( pattern != null ) {
+            s.getStrokeDashArray().addAll(pattern);
+        }
+        s.setStroke(color);
+        s.setSmooth(true);
+        
+        return s;
     }
 
     public static Node createRectangle(ElementRectangle r, Color color, boolean mirror) {
