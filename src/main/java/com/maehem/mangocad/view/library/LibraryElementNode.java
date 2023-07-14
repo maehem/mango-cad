@@ -39,11 +39,7 @@ import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import static com.maehem.mangocad.model.element.enums.PadShape.*;
 import com.maehem.mangocad.model.element.enums.PinFunction;
-import static com.maehem.mangocad.model.element.enums.PinLength.*;
-import static com.maehem.mangocad.model.element.enums.PinVisible.BOTH;
-import static com.maehem.mangocad.model.element.enums.PinVisible.OFF;
-import static com.maehem.mangocad.model.element.enums.PinVisible.PAD;
-import static com.maehem.mangocad.model.element.enums.PinVisible.PIN;
+import static com.maehem.mangocad.model.element.enums.PinVisible.*;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.highlevel.Device;
@@ -61,13 +57,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.effect.Reflection;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
@@ -106,9 +99,6 @@ public class LibraryElementNode {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
-    //public static final String FONT_PATH = "/fonts/OCR-A/OCRA.ttf";
-    //public static final String FONT_PATH = "/fonts/Source_Code_Pro/static/SourceCodePro-Medium.ttf";
-    //private static final double FONT_ASC_PCT = 0.526; // 53%   (0.0 - 1.0)
     public static final String FONT_PATH = "/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
     public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
     private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
@@ -1548,11 +1538,13 @@ public class LibraryElementNode {
                         // Perform substitute.
                         // Schematic instance of Part.
                         if (et.getValue().equals(">VALUE")) {
-                            //altText = vars.get("VALUE");
                             proxyText.setValue(vars.get("VALUE"));
                         } else if (et.getValue().equals(">NAME")) {
-                            proxyText.setValue(inst.getPart() + inst.getGate());
-                            //altText = inst.getPart();
+                            String gateStr = inst.getGate();
+                            if ( gateStr.startsWith("G$") ) {
+                                gateStr = "";
+                            }
+                            proxyText.setValue(inst.getPart() + gateStr);
                         } else {
                             Optional<Attribute> namedAttribute = part.getNamedAttribute(attr.getName());
                             if (!namedAttribute.isEmpty()) {
@@ -1621,139 +1613,6 @@ public class LibraryElementNode {
         return g;
     }
 
-//    public static Group createSymbolNodeOld(Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
-//        Group g = new Group();
-//
-//        boolean lr = false;
-//        boolean ud = false;
-//
-//        final Rotation rotation = inst == null ? null : inst.getRotation();
-//
-//        if (inst != null) {
-//            boolean instMir = rotation.isMirror();
-//            double rot = inst.getRot();
-//            if (rot == 270.0) {
-//                Rotate r = new Rotate(instMir ? 270 : 90);
-//                g.getTransforms().add(r);
-//                lr = instMir;
-//                ud = !instMir;
-//            } else if (rot == 180) {
-//                Rotate r = new Rotate(180);
-//                g.getTransforms().add(r);
-//                lr = instMir;
-//                ud = true;
-//            } else if (rot == 90) {
-//                Rotate r = new Rotate(instMir ? 90 : 270);
-//                g.getTransforms().add(r);
-//                lr = instMir;
-//                ud = instMir;
-//            } else {
-//                lr = instMir;
-//                //ud = false;
-//            }
-//        }
-//
-//        final boolean leftIsRight = lr;
-//        final boolean upIsDown = ud;
-//
-//        symbol.getElements().forEach((e) -> {
-//            LayerElement le = layers[e.getLayerNum()];
-//            if (le == null) {
-//                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
-//            }
-//            int colorIndex = le.getColorIndex();
-//            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-//
-//            // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
-//            if (e instanceof ElementPolygon ep) {
-//                g.getChildren().add(LibraryElementNode.createPolygon(ep, c, leftIsRight));
-//            } else if (e instanceof Wire w) {
-//                g.getChildren().add(LibraryElementNode.createWireNode(w, c, leftIsRight));
-//            } else if (e instanceof ElementText et) {
-//                // Replace Text for things that start with '>'
-//
-//                if (inst == null || !et.getValue().startsWith(">")) {
-//                    // Library preview of Part 
-//                    //  or @value was over-ridden (like <text> in a part).
-//                    g.getChildren().add(LibraryElementNode.createText(et, c));
-//                } else {
-//                    // There is an instance or >VALUE/>NAME was set.
-//                    String altText = et.getValue();
-//                    ElementText proxyTxt = et.copy();
-//                    for (Attribute attr : inst.getAttributes()) {
-//                        // Attr like >NAME or >VALUE matches the textValue.
-//                        String name = ">" + attr.getName();
-//                        if (name.equals(et.getValue())) {
-//
-//                            // Perform substitute.
-//                            // Schematic instance of Part.
-//                            if (et.getValue().equals(">VALUE")) {
-//                                altText = vars.get("VALUE");
-//                            } else if (et.getValue().equals(">NAME")) {
-//                                altText = inst.getPart();
-//                            } else {
-//                                Optional<Attribute> namedAttribute = part.getNamedAttribute(attr.getName());
-//                                if (!namedAttribute.isEmpty()) {
-//                                    altText = namedAttribute.get().getValue();
-//                                } else if (vars.containsKey(et.getValue().substring(1))) {
-//                                    altText = vars.get(et.getValue().substring(1));
-//                                } else {
-//                                    altText = attr.getValue();
-//                                }
-//                            }
-//
-//                            // Set position of element.  attr x/y minus inst x/y
-//                            // TODO install this at ingest and store difference?
-//                            LOGGER.log(Level.SEVERE,
-//                                    "{0} ==> InstX: {1}  AttrX: {2}",
-//                                    new Object[]{altText, inst.getX(), attr.getX()}
-//                            );
-//                            proxyTxt.setX(attr.getX() - inst.getX());
-////                            proxyTxt.setY(attr.getY() - inst.getY());
-//                            proxyTxt.setX((inst.getRot() == 0 || inst.getRot() == 270) ? (attr.getX() - inst.getX()) : (inst.getX() - attr.getX()));
-//                            proxyTxt.setY(inst.getY() - attr.getY());
-//                            //rot = inst.getRot() - attr.getRotation().getValue();
-////                            proxyTxt.setRot((attr.getRotation().getValue() + inst.getRot())/360.0);
-////                            proxyTxt.getRotation().setMirror(
-////                                    inst.getRotation().isMirror() ^
-////                                            attr.getRotation().isMirror()
-////                            );
-//                            // attr  layer
-//                            proxyTxt.setLayer(attr.getLayerNum());
-//                            // attr  align
-//                            proxyTxt.setAlign(attr.getAlign());
-//
-//                            break;
-//                        }
-//                    }
-//
-//                    Node elementText = createText(proxyTxt, altText, c, rotation);
-//                    g.getChildren().add(LibraryElementNode.crosshairs(proxyTxt.getX(), -proxyTxt.getY(), 0.5, 0.04, Color.MAGENTA));
-//                    g.getChildren().add(elementText);
-//                }
-//                g.getChildren().add(LibraryElementNode.crosshairs(et.getX(), -et.getY(), 0.5, 0.04, Color.DARKGREY));
-//            } else if (e instanceof Dimension dim) {
-//                g.getChildren().add(createDimensionNode(dim, layers, palette));
-//                //LOGGER.log(Level.SEVERE, "TODO: Create Dimension Node.");
-//            } else if (e instanceof Pin pin) {
-//                g.getChildren().add(createPinNode(pin, c, rotation, inst == null));
-//            } else if (e instanceof ElementCircle ec) {
-//                g.getChildren().add(LibraryElementNode.createCircleNode(ec, c, leftIsRight));
-//            } else if (e instanceof ElementRectangle rect) {
-//                g.getChildren().add(LibraryElementNode.createRectangle(rect, c, leftIsRight));
-//            } else if (e instanceof FrameElement frm) {
-//                g.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
-//            }
-//        });
-//
-//        int cIdx = layers[symbol.getLayerNum()].getColorIndex();
-//        Color c = ColorUtils.getColor(palette.getHex(cIdx));
-//        g.getChildren().add(LibraryElementNode.crosshairs(
-//                0, 0, 0.5, 0.035, c
-//        ));
-//
-//        return g;
-//    }
     public static Node createPackageNode(Footprint pkg, LayerElement[] layers, ColorPalette palette) {
         Group g = new Group();
 
