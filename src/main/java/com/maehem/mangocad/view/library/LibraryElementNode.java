@@ -90,6 +90,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 /**
  *
@@ -581,6 +582,9 @@ public class LibraryElementNode {
         Rotation rotation = et.getRotation();
         double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
+        
+        double parentRot = parentRotation!=null?parentRotation.getValue():0.0;
+        boolean parentMir = parentRotation!=null?parentRotation.isMirror():false;
 
         //double fontSizeMult = 0.666; // INCH to Point ratio
         double fontSizeMult = 0.7272; // INCH to Point ratio
@@ -688,6 +692,16 @@ public class LibraryElementNode {
             }
         }
 
+        if ( parentMir ) {
+            double trFact = 0.0;
+            if ( et.getAlign().name().endsWith("_RIGHT") ) {
+                trFact = 1.0;
+            } else if ( et.getAlign().name().endsWith("_LEFT") ){
+                trFact = -1.0;
+            }
+            Translate tr = new Translate(trFact * tt.getBoundsInLocal().getWidth(), 0);
+            tt.getTransforms().add(tr);
+        }
         if (showBorder) {
             ttG.setBorder(new Border(new BorderStroke(
                     Color.BLUE, BorderStrokeStyle.SOLID,
