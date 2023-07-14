@@ -32,6 +32,10 @@ public enum PinLength {
     public String code() {
         return code;
     }
+    
+    public double lenMM() {
+        return this.ordinal()*2.54;
+    }
  
     public static PinLength fromCode(String code) {
         if (code != null) {
