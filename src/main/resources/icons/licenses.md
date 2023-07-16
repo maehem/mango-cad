@@ -15,3 +15,6 @@ Brick Wall 2       icon by Arthur Shlain from Usefulicons  https://usefulicons.c
 Brickwork          icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/brickwork
 Circuit Board      icon by Arthur Shlain from Usefulicons  https://usefulicons.com/useful/circuit-board
 Electronics Component Kit icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/electronics-component-kit
+
+
+Circuit Heart      icon by Unknown from Noun Project   https://thenounproject.com/icon/heart-3123019/
