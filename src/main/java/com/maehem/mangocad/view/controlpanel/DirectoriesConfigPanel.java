@@ -40,8 +40,13 @@ public class DirectoriesConfigPanel extends VBox {
 
     public static final String LIB_UTILS_PATHS_KEY = "Directories.CorePaths";
     public static final String PROJECT_PATHS_KEY = "Directories.Projects";
+    
+    // Repos use a key thus:   KEY.nmenonic.url and KEY.nmemonic.description
+    public static final String REPOSITORY_PATHS_KEY = "Directories.Repositories";
+    
     SimpleStringProperty libUtilsPathProperty;
     SimpleStringProperty projectsPathProperty;
+    SimpleStringProperty repositoriesPathProperty;
     
     public DirectoriesConfigPanel() {
         // TODO: Change this to "Places" where these are paths to root dirs with
@@ -54,6 +59,8 @@ public class DirectoriesConfigPanel extends VBox {
         Node box1 = pathWidget("Libraries and Utils", libUtilsPathProperty);
         projectsPathProperty = new SimpleStringProperty(appProps.getProperty(PROJECT_PATHS_KEY, ""));
         Node box2 = pathWidget("Projects", projectsPathProperty);
+        repositoriesPathProperty = new SimpleStringProperty(appProps.getProperty(REPOSITORY_PATHS_KEY, ""));
+        //Node box3 = pathWidget("Repositories", repositoriesPathProperty);
         
         getChildren().addAll(box1, box2 );        
     }
@@ -93,5 +100,6 @@ public class DirectoriesConfigPanel extends VBox {
 
         appProps.setProperty(PROJECT_PATHS_KEY, projectsPathProperty.get());
         appProps.setProperty(LIB_UTILS_PATHS_KEY, libUtilsPathProperty.get());
+        appProps.setProperty(REPOSITORY_PATHS_KEY, repositoriesPathProperty.get());
     }
 }

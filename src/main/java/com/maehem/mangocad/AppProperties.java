@@ -83,6 +83,10 @@ public class AppProperties extends Properties {
         }
     }
 
+    public File getPropFile() {
+        return propFile;
+    }
+    
     private static File initPropFile() {
         final String os = System.getProperty("os.name");
         if (os != null && os.startsWith("Mac")) {

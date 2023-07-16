@@ -42,6 +42,10 @@ import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.listitem.BoardFileItem;
+import com.maehem.mangocad.view.controlpanel.listitem.GitHubFolderItem;
+import com.maehem.mangocad.view.controlpanel.listitem.RepositoryFolderItem;
+import com.maehem.mangocad.view.controlpanel.listitem.RepositoryModuleItem;
+import com.maehem.mangocad.view.controlpanel.listitem.RepositorySubFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.SchematicFileItem;
 import java.io.BufferedReader;
 import java.io.File;
@@ -79,6 +83,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     private final TreeItem modules;
     private final TreeItem librariesItem;
     private final TreeItem projectsItem;
+    private final TreeItem repositoriesItem;
     
     private final TabArea tabArea;
 
@@ -95,13 +100,16 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         modules = new TreeItem(new ModuleItem("Modules", "..."));
         librariesItem = new TreeItem(new LibraryModuleItem("Libraries", "..."));
         projectsItem = new TreeItem(new ProjectModuleItem("Projects", "..."));
+        repositoriesItem = new TreeItem(new RepositoryModuleItem("Repositories", "..."));
 
         modules.getChildren().add(librariesItem);
         modules.getChildren().add(projectsItem);
+        modules.getChildren().add(repositoriesItem);
 
         // Add the Items
         populateLibraries();
         populateProjects();
+        populateRepositories();
 
         setShowRoot(false);
         setRoot(modules);
@@ -375,6 +383,38 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         }
 
         projectsItem.setExpanded(true);
+    }
+
+    private void populateRepositories() {
+        repositoriesItem.getChildren().clear();
+
+        TreeItem githubSubFolderItem;
+        githubSubFolderItem = new TreeItem(new RepositorySubFolderItem("Git Hub", "Repos at GitHub.com"));
+        final String GITHUB_PREFIX = "https://github.com/";
+
+        TreeItem otherSubFolderItem;
+        otherSubFolderItem = new TreeItem(new RepositorySubFolderItem("Other URLs", "Misc. Repo URLs"));
+
+        repositoriesItem.getChildren().addAll(githubSubFolderItem, otherSubFolderItem);
+
+
+        AppProperties appProperties = AppProperties.getInstance();
+        String reposPath = appProperties.getProperty(DirectoriesConfigPanel.REPOSITORY_PATHS_KEY);
+        RepoPathManager repoManager = RepoPathManager.getInstance();
+        repoManager.forEach((rPath) -> {
+                // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
+                if ( rPath.getUrl().startsWith(GITHUB_PREFIX) ) {
+                    TreeItem item = new TreeItem(new GitHubFolderItem(rPath));
+                    githubSubFolderItem.getChildren().add(item);
+                } else {
+                    TreeItem item = new TreeItem(new RepositoryFolderItem(rPath));
+                    otherSubFolderItem.getChildren().add(item);
+                }
+            
+        });
+        
+
+        repositoriesItem.setExpanded(true);
     }
 
     public void pushProperties(Properties p) {

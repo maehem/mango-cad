@@ -4,6 +4,7 @@ module com.maehem.mangocad {
     requires javafx.graphics;
     requires java.base;
     requires jdk.xml.dom;
+    requires java.net.http;
 
     exports com.maehem.mangocad;
     exports com.maehem.mangocad.view;

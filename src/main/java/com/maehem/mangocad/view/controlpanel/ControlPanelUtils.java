@@ -34,13 +34,19 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 /**
  *
@@ -143,6 +149,7 @@ public class ControlPanelUtils {
         VBox node = new VBox();
         node.setSpacing(0);
         node.setPadding(new Insets(10));
+        node.setBackground(new Background(new BackgroundFill(new Color(0.1, 0.1, 0.1, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
         if (content == null) {
             return node;
         }
@@ -170,66 +177,93 @@ public class ControlPanelUtils {
 //            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
 //        }
         Font f = Font.getDefault();
-        String fontFamily = f.getFamily();
+        //String fontFamily = f.getFamily();
+        // On OSX Need to specify Arial to get bold. Unfixed Jfx bug.
+        //t.setStyle("-fx-font-family: \"Arial\"; -fx-font-style: bold");
+        String fontFamily = "Arial";
         // TODO: Move these over to CSS file.
-        Font h1 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale);
-        Font h2 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.90);
-        Font h3 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.85);
-        Font h4 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.82);
-        Font h5 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.80);
-        Font h6 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 0.78);
+//        Font h1 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.60);
+//        Font h2 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.50);
+//        Font h3 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.35);
+//        Font h4 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.25);
+//        Font h5 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.15);
+//        Font h6 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.05);
 
+        Font[] h = new Font[]{
+            f, // Body
+            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.60), // H1
+            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.50), // H2
+            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.35), // H3
+            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.25), // H4
+            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.15), // H5
+            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.05), // H6
+        };
+
+        final String H6 = "######";
+        final String H5 = "#####";
+        final String H4 = "####";
+        final String H3 = "###";
+        final String H2 = "##";
+        final String H1 = "#";
+        
         Font body = f;
 
         //Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
         for (String line : lines) {
             line = line.strip();
             if (line.startsWith("***") | line.startsWith("---") | line.startsWith("___")) { // <HR>
-//                StringBuilder sb = new StringBuilder();
-//                for ( int i=0; i<60; i++ ) {
-//                    sb.append("\u2501");
-//                }
-//                Text t = new Text(sb.toString());
-//                t.setFont(h3);
-//                t.setFill(Color.GREY);
-//                node.getChildren().add(t);
                 node.getChildren().add(new Separator());
-            } else if (line.startsWith("######")) {
-                Text t = new Text(line.substring(6));
-                t.setFont(h6);
-                t.setFill(Color.LAVENDER);
-                node.getChildren().add(t);
-            } else if (line.startsWith("#####")) {
-                Text t = new Text(line.substring(5));
-                t.setFont(h5);
-                t.setFill(Color.CORAL);
-                node.getChildren().add(t);
-            } else if (line.startsWith("####")) {
-                Text t = new Text(line.substring(4));
-                t.setFont(h4);
-                t.setFill(Color.LIGHTBLUE);
-                node.getChildren().add(t);
-            } else if (line.startsWith("###")) {
-                Text t = new Text(line.substring(3));
-                t.setFont(h3);
-                t.setFill(Color.GRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith("##")) {
-                Text t = new Text(line.substring(2));
-                t.setFont(h2);
-                t.setFill(Color.DARKGRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith("#")) {
-                // Heading
-                Text t = new Text(line.substring(1));
-                t.setFont(h1);
-                // On OSX Need to specify Arial to get bold. Unfixed Jfx bug.
-                //t.setStyle("-fx-font-family: \"Arial\"; -fx-font-style: bold");
+            } else if (line.startsWith(H6)) {
+                Text t = new Text(line.substring(H6.length()));
+                t.setFont(h[H6.length()]);
                 t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
+            } else if (line.startsWith(H5)) {
+                Text t = new Text(line.substring(H5.length()));
+                t.setFont(h[H5.length()]);
+                t.setFill(Color.LIGHTGRAY);
+                node.getChildren().add(t);
+            } else if (line.startsWith(H4)) {
+                Text t = new Text(line.substring(H4.length()));
+                t.setFont(h[H4.length()]);
+                t.setFill(Color.LIGHTGRAY);
+                node.getChildren().add(t);
+            } else if (line.startsWith(H3)) {
+                Text t = new Text(line.substring(H3.length()));
+                t.setFont(h[H3.length()]);
+                t.setFill(Color.LIGHTGRAY);
+                node.getChildren().add(t);
+            } else if (line.startsWith(H2)) {
+                Text t = new Text(line.substring(H2.length()));
+                t.setFont(h[H2.length()]);
+                t.setFill(Color.LIGHTGRAY);
+                node.getChildren().add(t);
+            } else if (line.startsWith(H1)) {
+                // Heading
+                Text t = new Text(line.substring(H1.length()));
+                t.setFont(h[H1.length()]);
+                t.setFill(Color.LIGHTGRAY);
+                node.getChildren().add(t);
+            } else if (line.trim().startsWith("- ")
+                    || line.trim().startsWith("+ ")
+                    || line.trim().startsWith("* ")) {
+                // Heading
+                Text bul = new Text("    \u2022 ");
+                bul.setFont(body);
+                bul.setFill(Color.LIGHTGRAY);
+                Text t = new Text(line.substring(2));
+                t.setFont(body);
+                t.setWrappingWidth(400);
+                t.setTextAlignment(TextAlignment.JUSTIFY);
+                t.setFill(Color.LIGHTGRAY);
+                HBox bulletArea = new HBox(bul, t);
+                bulletArea.setAlignment(Pos.TOP_LEFT);
+                node.getChildren().add(bulletArea);
             } else {
                 Text t = new Text(line);
                 t.setFont(body);
+                t.setWrappingWidth(600);
+                t.setTextAlignment(TextAlignment.JUSTIFY);
                 t.setFill(Color.LIGHTGRAY);
                 node.getChildren().add(t);
             }
