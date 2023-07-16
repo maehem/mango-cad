@@ -277,8 +277,6 @@ public class LibraryElementNode {
                 fe.getX2(), -fe.getY2(),
                 fe.getX1(), -fe.getY2()
         );
-        //border.setLayoutY(-fe.getY2());
-        LOGGER.log(Level.SEVERE, "Make a frame: {0},{1} .. {2},{3}", new Object[]{fe.getX1(), fe.getY1(), fe.getX2(), fe.getY2()});
         border.setStroke(color);
         border.setFill(Color.TRANSPARENT);
         border.setStrokeType(StrokeType.CENTERED);
