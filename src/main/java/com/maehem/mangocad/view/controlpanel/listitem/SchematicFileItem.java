@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
@@ -77,17 +78,15 @@ public class SchematicFileItem extends ControlPanelListItem {
     public ContextMenu getContextMenu() {
         LOGGER.log(Level.FINER, "getContextMenu(): Schematic Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open");
-        MenuItem menuItem2 = new MenuItem("Show in Finder");
-        MenuItem menuItem3 = new MenuItem("Rename");
-        MenuItem menuItem4 = new MenuItem("Delete");
-        MenuItem menuItem5 = new MenuItem("Print...");
+        MenuItem menuItem1 = new MenuItem("Edit");
+        MenuItem menuItem2 = new MenuItem("Rename");
+        MenuItem menuItem3 = new MenuItem("Delete");
+        MenuItem menuItem4 = new MenuItem("Open in Default App (Eagle)");
+        MenuItem menuItem5 = new MenuItem("Show in Finder");
+        MenuItem menuItem6 = new MenuItem("Print...");
 
         menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
             if (stage == null) {
                 stage = new Stage();
@@ -104,19 +103,40 @@ public class SchematicFileItem extends ControlPanelListItem {
             }
             stage.toFront();
             stage.show();
+        });
+
+        menuItem4.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
+
+            //   AppProperties.getInstance().getHostServices().showDocument() 
+            //   from the Application class. So, the URI of home directory on 
+            //   Windows is typically: file:///C:/Users/$USER/. The link to 
+            //   documentation. 
+            //   If you have a Path object, you can do .toUri().toString() for example.
+            AppProperties.getInstance().getHostServices().showDocument(getFile().toURI().toString());
 
         });
+
         menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+
+            //   AppProperties.getInstance().getHostServices().showDocument() 
+            //   from the Application class. So, the URI of home directory on 
+            //   Windows is typically: file:///C:/Users/$USER/. The link to 
+            //   documentation. 
+            //   If you have a Path object, you can do .toUri().toString() for example.
+            AppProperties.getInstance().getHostServices().showDocument(getFile().getParentFile().toURI().toString());
+
         });
 
         contextMenu.getItems().addAll(
                 menuItem1,
                 menuItem2,
                 menuItem3,
-                menuItem4,
                 new SeparatorMenuItem(),
-                menuItem5
+                menuItem4,
+                menuItem5,
+                menuItem6
         );
 
         return contextMenu;
@@ -148,48 +168,48 @@ public class SchematicFileItem extends ControlPanelListItem {
         if (sch == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
         }
-        
+
         TabPane tabPane = new TabPane();
         VBox.setVgrow(tabPane, Priority.ALWAYS);
 
-        for ( int i=0; i < sch.getSheets().size(); i++) {
+        for (int i = 0; i < sch.getSheets().size(); i++) {
             Sheet sheet = sch.getSheets().get(i);
             GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
             VBox.setVgrow(schematicPreviewNode, Priority.SOMETIMES);
 
             Node pageDesc = ControlPanelUtils.markdownNode(
-                        1.0,
-                        sheet.getDescription().getValue()
-                );
+                    1.0,
+                    sheet.getDescription().getValue()
+            );
             VBox.setVgrow(pageDesc, Priority.SOMETIMES);
 
             MessageFormat mf = new MessageFormat("Size: {0}W x {1}H ({2}x{3}cm)");
             Double MM2INCH = 0.0393701;
-            Text pageSizeText = new Text( mf.format(new Object[]{ 
-                schematicPreviewNode.getNativeWidth()*MM2INCH,
-                schematicPreviewNode.getNativeHeight()*MM2INCH,
-                schematicPreviewNode.getNativeWidth()/10.0,
-                schematicPreviewNode.getNativeHeight()/10.0
+            Text pageSizeText = new Text(mf.format(new Object[]{
+                schematicPreviewNode.getNativeWidth() * MM2INCH,
+                schematicPreviewNode.getNativeHeight() * MM2INCH,
+                schematicPreviewNode.getNativeWidth() / 10.0,
+                schematicPreviewNode.getNativeHeight() / 10.0
             }));
             pageSizeText.setId("preview-document-dimensions-text");
-            
+
             HBox pageInfo = new HBox(pageSizeText);
             pageInfo.setAlignment(Pos.CENTER);
-            
+
             VBox pageDetails = new VBox(pageInfo, pageDesc);
-            
-            SplitPane spPane = new SplitPane(schematicPreviewNode, pageDetails );
+
+            SplitPane spPane = new SplitPane(schematicPreviewNode, pageDetails);
             spPane.setOrientation(Orientation.VERTICAL);
             spPane.setDividerPosition(0, 0.8);
-            
-            Tab tab = new Tab("Sheet " + (i+1), spPane);
+
+            Tab tab = new Tab("Sheet " + (i + 1), spPane);
 
             tab.setClosable(false);
             tab.setTooltip(new Tooltip(sheet.getDescription().getValue()));
             tabPane.getTabs().add(tab);
-            
+
         }
-        
+
         VBox contentArea = new VBox(
                 heading,
                 ControlPanelUtils.markdownNode(
@@ -199,7 +219,6 @@ public class SchematicFileItem extends ControlPanelListItem {
                 tabPane
         );
         contentArea.setFillWidth(true);
-        
 
         BorderPane pane = new BorderPane(contentArea);
         return pane;
@@ -216,12 +235,11 @@ public class SchematicFileItem extends ControlPanelListItem {
 //        
 //        return spPane;
 //    }
-        
     private GroupContainer schematicPreviewNode(Schematic sch, int index) {
 
         SchematicPreview schematicPreview = new SchematicPreview(sch, index);
         StackPane sp = new StackPane(schematicPreview);
-        sp.setBackground(new Background(new BackgroundFill(new Color(0.1,0.1,0.1,1.0), CornerRadii.EMPTY, Insets.EMPTY)));
+        sp.setBackground(new Background(new BackgroundFill(new Color(0.1, 0.1, 0.1, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
         Group schemPreviewGroup = new Group(sp);
         GroupContainer container = new GroupContainer(schemPreviewGroup);
         //container.setBorder(new Border(new BorderStroke(Color.AQUAMARINE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
@@ -270,7 +288,6 @@ public class SchematicFileItem extends ControlPanelListItem {
 //            
 //        return tableView;
 //    }
-
     @Override
     public Image getImage() {
         return iconImage;

@@ -39,6 +39,7 @@ import javafx.stage.Stage;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ControlPanel extends Application {
+
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String SPLITTER_X_PROP_KEY = "Splitter.X";
@@ -56,12 +57,14 @@ public class ControlPanel extends Application {
     private AppProperties appProperties;// = AppProperties.getInstance();
 
     private ModuleList moduleList;
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         configureLogging();
         LOGGER.log(Level.SEVERE, "MangoCAD Start...");
         appProperties = AppProperties.getInstance();
+        // Host Services allows opening of browser links inside app.
+        appProperties.setHostServices(getHostServices());
 
         // Set the title of the Stage
         stage.setTitle("MangoCAD");
@@ -98,7 +101,7 @@ public class ControlPanel extends Application {
         root.setPrefSize(Double.parseDouble(sizeW), Double.parseDouble(sizeH));
 
         moduleList.pullProperties(appProperties);
-        
+
         // TODO: Move this to style.css with setId()
         // Set the Style-properties of the BorderPane
         root.setStyle("-fx-padding: 10;"
@@ -125,7 +128,7 @@ public class ControlPanel extends Application {
             appProperties.setProperty(prefix + WINDOW_SIZE_H_PROP_KEY, String.valueOf(root.getHeight()));
             moduleList.pushProperties(appProperties);
             appProperties.save();
-            
+
             Platform.exit();
         });
     }
@@ -142,7 +145,7 @@ public class ControlPanel extends Application {
     private void configureLogging() {
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new LoggingFormatter());
-        
+
         // Get the top most logger and add our handler.
         LOGGER.setUseParentHandlers(false);  // Prevent INFO and HIGHER from going to stderr.
         LOGGER.addHandler(handler);
@@ -154,11 +157,7 @@ public class ControlPanel extends Application {
         // Add console handler as handler of logs
         //Logger.getLogger("com.maehem.abyss").addHandler(handler);
         //Logger.getLogger("com.maehem.abyss").setUseParentHandlers(false);
-        
-
-
-}
-    
+    }
 
     public static void main(String[] args) {
         launch(args);

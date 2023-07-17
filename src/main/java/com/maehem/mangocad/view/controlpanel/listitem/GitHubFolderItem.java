@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.controlpanel.RepoPath;
@@ -27,12 +28,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -53,8 +52,7 @@ public class GitHubFolderItem extends ControlPanelListItem {
     private Stage stage = null;
     private RepoPath repoPath;
     //private final String prefixShorten;
-    private String previewTabContent = "";
-
+    private String previewTabContent = "Something went wrong!";
 
     public GitHubFolderItem(RepoPath repoPath) {
         super(repoPath.getUrl().substring(GITHUB_PREFIX.length()), repoPath.getDescription());
@@ -65,53 +63,14 @@ public class GitHubFolderItem extends ControlPanelListItem {
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): Repository Folder Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open");
-        MenuItem menuItem2 = new MenuItem("Rename");
-        MenuItem menuItem3 = new MenuItem("Copy");
-        MenuItem menuItem4 = new MenuItem("[x] In Use");
-        MenuItem menuItem5 = new MenuItem("Show in Finder");
+        MenuItem menuItem1 = new MenuItem("Open in Browser...");
 
         menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-
-//            if (stage == null) {
-//                stage = new Stage();
-//                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
-//                stage.setTitle("Project Editor: " + getName());
-//                stage.setScene(new Scene(root, 1280, 960));
-//                stage.centerOnScreen();
-//                stage.setOnCloseRequest((t) -> {
-//                    // TODO: Popup if file edited and not saved.
-//
-//                    stage.close();
-//                    stage = null;
-//                });
-//            }
-//            stage.toFront();
-//            stage.show();
-        });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
-        menuItem3.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
-        });
-        menuItem4.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
-        });
-        menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+            AppProperties.getInstance().getHostServices().showDocument(repoPath.getUrl());
         });
 
-        contextMenu.getItems().addAll(
-                menuItem1,
-                menuItem2,
-                menuItem3,
-                menuItem4,
-                new SeparatorMenuItem(),
-                menuItem5);
+        contextMenu.getItems().add(menuItem1);
 
         return contextMenu;
     }
@@ -122,19 +81,19 @@ public class GitHubFolderItem extends ControlPanelListItem {
     }
 
     private void fetchURLPreview() {
+        // Example link:
         //  https://raw.githubusercontent.com/maehem/Thump/master/README.md
-        
+
         // Turn the browser-freindly URL into a raw-content URL.
-        String sss = repoPath.getUrl().substring(GITHUB_PREFIX.length());
-        LOGGER.log(Level.SEVERE, "SSS:" + sss);
-        String[] split = sss.split("\\/");
+        String githubDeets = repoPath.getUrl().substring(GITHUB_PREFIX.length());
+        String[] split = githubDeets.split("\\/");
         String userName = split[0];
         String repoName = split[1];
-        String branch1 = "master";
+        String branch1 = "master"; // Seems to work for 'main' as well.
         String branch2 = "main";
-        
+
         String url = GITHUB_RAW_PREFIX + userName + "/" + repoName + "/" + branch1 + "/README.md";
-        
+
         HttpClient client = HttpClient.newBuilder()
                 .version(Version.HTTP_1_1)
                 .followRedirects(Redirect.NORMAL)

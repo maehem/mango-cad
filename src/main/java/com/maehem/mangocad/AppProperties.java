@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.HostServices;
 
 /**
  * Manage properties for the application
@@ -38,15 +39,14 @@ public class AppProperties extends Properties {
     private static AppProperties instance = null;
     private final File propFile = initPropFile();
     private static final String APP_VERSION = "0";
+    private HostServices hostServices;
+
     //private final ArrayList<Library> libraryCache = new ArrayList<>();
-    
-    
     private AppProperties() {
         initPropFile();
-        if ( propFile.exists() ) {
+        if (propFile.exists()) {
             load();
-        } 
-        else {
+        } else {
             propFile.getParentFile().mkdirs();
             save();
         }
@@ -69,7 +69,7 @@ public class AppProperties extends Properties {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     public final void save() {
@@ -86,11 +86,11 @@ public class AppProperties extends Properties {
     public File getPropFile() {
         return propFile;
     }
-    
+
     private static File initPropFile() {
         final String os = System.getProperty("os.name");
         if (os != null && os.startsWith("Mac")) {
-            return new File(System.getProperty("user.home") 
+            return new File(System.getProperty("user.home")
                     + File.separator + "Library"
                     + File.separator + "Application Support"
                     + File.separator + "MangoCAD"
@@ -103,5 +103,13 @@ public class AppProperties extends Properties {
                     + File.separator + "mangoCAD-settings.properies"
             );
         }
+    }
+
+    public HostServices getHostServices() {
+        return hostServices;
+    }
+
+    public void setHostServices(HostServices hostServices) {
+        this.hostServices = hostServices;
     }
 }
