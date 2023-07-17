@@ -69,7 +69,7 @@ public class RepoPath {
     private static String randomUID() {
         String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder sb = new StringBuilder();
-        Random rnd = new Random((long) (Double.MAX_VALUE*Math.random()));
+        Random rnd = new Random((long) (Double.MAX_VALUE * Math.random()));
         while (sb.length() < 18) { // length of the random string.
             int index = (int) (rnd.nextFloat() * CHARS.length());
             sb.append(CHARS.charAt(index));
@@ -88,6 +88,5 @@ public class RepoPath {
     public String toString() {
         return "RepoPath: " + "[" + uid + "] " + url + " :: " + description;
     }
-    
-    
+
 }
