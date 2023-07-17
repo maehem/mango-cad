@@ -34,7 +34,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -44,7 +43,7 @@ import javafx.stage.Stage;
 public class GitHubFolderItem extends ControlPanelListItem {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
-    private static final String GITHUB_PREFIX = "https://github.com/";
+    public static final String GITHUB_PREFIX = "https://github.com/";
     private static final String GITHUB_RAW_PREFIX = "https://raw.githubusercontent.com/";
 
     private static final Image iconImage = new Image(
