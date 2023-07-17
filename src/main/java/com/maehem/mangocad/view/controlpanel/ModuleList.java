@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.RepoPathManager;
 import com.maehem.mangocad.view.controlpanel.listitem.ModuleItem;
 import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
 import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceFootprintItem;
@@ -30,6 +31,7 @@ import com.maehem.mangocad.view.controlpanel.listitem.ProjectFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.ProjectSubFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.ProjectModuleItem;
 import com.maehem.mangocad.AppProperties;
+import com.maehem.mangocad.RepoPathListListener;
 import com.maehem.mangocad.model.BoardCache;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.LibraryCache;
@@ -67,7 +69,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class ModuleList extends TreeTableView<ControlPanelListItem> {
+public class ModuleList extends TreeTableView<ControlPanelListItem> implements RepoPathListListener {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
@@ -92,7 +94,11 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     private final TreeTableColumn<ControlPanelListItem, String> modifiedColumn = new TreeTableColumn<>("Last Modified");
     private final TreeTableColumn<ControlPanelListItem, String> useColumn = new TreeTableColumn<>("Use");
 
-    public ModuleList(TabArea tabArea) {
+    private final TreeItem githubSubFolderItem = new TreeItem(new RepositorySubFolderItem("Git Hub", "Repos at GitHub.com"));
+    private final TreeItem otherSubFolderItem = new TreeItem(new RepositorySubFolderItem("Other URLs", "Misc. Repo URLs"));
+
+        
+        public ModuleList(TabArea tabArea) {
         this.tabArea = tabArea;
         
         initColumns();
@@ -105,6 +111,8 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         modules.getChildren().add(librariesItem);
         modules.getChildren().add(projectsItem);
         modules.getChildren().add(repositoriesItem);
+        
+        repositoriesItem.getChildren().addAll(githubSubFolderItem, otherSubFolderItem);
 
         // Add the Items
         populateLibraries();
@@ -120,6 +128,8 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
             LOGGER.log(Level.SEVERE, "Selected: {0}", getSelectionModel().getSelectedItem().getValue().getName());
             tabArea.setPreviewItem(getSelectionModel().getSelectedItem().getValue());
         });
+        RepoPathManager.getInstance().addListener(this);
+
     }
 
     private void initColumns() {
@@ -386,37 +396,35 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
     }
 
     private void populateRepositories() {
-        repositoriesItem.getChildren().clear();
-
-        TreeItem githubSubFolderItem;
-        githubSubFolderItem = new TreeItem(new RepositorySubFolderItem("Git Hub", "Repos at GitHub.com"));
-        final String GITHUB_PREFIX = "https://github.com/";
-
-        TreeItem otherSubFolderItem;
-        otherSubFolderItem = new TreeItem(new RepositorySubFolderItem("Other URLs", "Misc. Repo URLs"));
-
-        repositoriesItem.getChildren().addAll(githubSubFolderItem, otherSubFolderItem);
+        //repositoriesItem.getChildren().clear();
+        githubSubFolderItem.getChildren().clear();
+        otherSubFolderItem.getChildren().clear();
 
 
-        AppProperties appProperties = AppProperties.getInstance();
-        String reposPath = appProperties.getProperty(DirectoriesConfigPanel.REPOSITORY_PATHS_KEY);
+
+        //AppProperties appProperties = AppProperties.getInstance();
+        //String reposPath = appProperties.getProperty(DirectoriesConfigPanel.REPOSITORY_PATHS_KEY);
         RepoPathManager repoManager = RepoPathManager.getInstance();
         repoManager.forEach((rPath) -> {
-                // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
-                if ( rPath.getUrl().startsWith(GITHUB_PREFIX) ) {
-                    TreeItem item = new TreeItem(new GitHubFolderItem(rPath));
-                    githubSubFolderItem.getChildren().add(item);
-                } else {
-                    TreeItem item = new TreeItem(new RepositoryFolderItem(rPath));
-                    otherSubFolderItem.getChildren().add(item);
-                }
-            
+            populateRepoItem(rPath);
         });
         
 
         repositoriesItem.setExpanded(true);
     }
 
+    private void populateRepoItem(RepoPath rPath) {
+                // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
+                if ( rPath.getUrl().startsWith(GitHubFolderItem.GITHUB_PREFIX) ) {
+                    TreeItem item = new TreeItem(new GitHubFolderItem(rPath));
+                    githubSubFolderItem.getChildren().add(item);
+                } else {
+                    TreeItem item = new TreeItem(new RepositoryFolderItem(rPath));
+                    otherSubFolderItem.getChildren().add(item);
+                }
+    }
+    
+    
     public void pushProperties(Properties p) {
         p.setProperty(NAME_COL_WIDTH_PROP_KEY, String.valueOf((int) nameColumn.getWidth()));
         p.setProperty(DESC_COL_WIDTH_PROP_KEY, String.valueOf((int) descColumn.getWidth()));
@@ -427,6 +435,16 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> {
         nameColumn.setPrefWidth(Double.parseDouble(p.getProperty(NAME_COL_WIDTH_PROP_KEY, String.valueOf(NAME_COL_WIDTH))));
         descColumn.setPrefWidth(Double.parseDouble(p.getProperty(DESC_COL_WIDTH_PROP_KEY, String.valueOf(DESC_COL_WIDTH))));
         modifiedColumn.setPrefWidth(Double.parseDouble(p.getProperty(MODIFIED_COL_WIDTH_PROP_KEY, String.valueOf(MODIFIED_COL_WIDTH))));
+    }
+
+    @Override
+    public void itemAdded(RepoPath item) {
+        populateRepositories();
+    }
+
+    @Override
+    public void itemRemoved(RepoPath item) {
+        populateRepositories();
     }
 
 }

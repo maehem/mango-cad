@@ -17,6 +17,8 @@
 package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
+import com.maehem.mangocad.view.controlpanel.RepoAddDialog;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
@@ -43,12 +45,13 @@ public class RepositoryModuleItem extends ControlPanelListItem {
         LOGGER.log(Level.SEVERE, "getContextMenu(): RepositoryModuleItem");
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("Edit Paths...");
+        menuItem1.setOnAction((t) -> new DirectoriesConfigDialog());
 
-        menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-        });
+        MenuItem menuItem2 = new MenuItem("Add Repository...");
+        menuItem2.setOnAction((t) -> new RepoAddDialog());
 
-        contextMenu.getItems().addAll(menuItem1);
+
+        contextMenu.getItems().addAll(menuItem1, menuItem2);
 
         return contextMenu;
     }

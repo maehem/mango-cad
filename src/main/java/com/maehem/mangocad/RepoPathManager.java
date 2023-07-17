@@ -14,10 +14,12 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.controlpanel;
+package com.maehem.mangocad;
 
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.controlpanel.ModuleList;
+import com.maehem.mangocad.view.controlpanel.RepoPath;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +43,8 @@ public class RepoPathManager extends ArrayList<RepoPath> {
     private static final String PROPERTIES_FILE_NAME = "repositories.properties";
     private static final String KEY_PREFIX = "Repo.";
 
+    private final ArrayList<RepoPathListListener> listeners = new ArrayList<>();
+    
     private static RepoPathManager instance = null;
     private File propFile;
 
@@ -122,6 +127,10 @@ public class RepoPathManager extends ArrayList<RepoPath> {
             Properties props = new Properties();
 
             // Turn repo paths into props
+            this.forEach((rPath) -> {
+                props.put("Repo."+rPath.getUid()+".url", rPath.getUrl());
+                props.put("Repo."+rPath.getUid()+".desc", rPath.getDescription());
+            });
             props.store(new FileOutputStream(propFile), "Saved mangoCAD repo paths");
             LOGGER.log(Level.SEVERE, "Saved MangoCAD repo paths file: {0}", propFile.getAbsolutePath());
         } catch (FileNotFoundException ex) {
@@ -160,6 +169,23 @@ public class RepoPathManager extends ArrayList<RepoPath> {
             sb.append(rp.toString() + "\n");
         });
         return sb.toString();
+    }
+
+    public RepoPath getByUrl(String value) {
+        return stream().filter((item) -> item.getUrl().equals(value)).findAny().orElse(null);
+    }
+
+    public void addListener(ModuleList listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public boolean add(RepoPath e) {
+        boolean isAdded = super.add(e);
+        listeners.forEach((t) -> {
+            t.itemAdded(e);
+        });
+        return isAdded;
     }
     
     
