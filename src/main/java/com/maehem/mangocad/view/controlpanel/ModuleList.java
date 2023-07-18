@@ -86,7 +86,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
     private final TreeItem librariesItem;
     private final TreeItem projectsItem;
     private final TreeItem repositoriesItem;
-    
+
     private final TabArea tabArea;
 
     private final TreeTableColumn<ControlPanelListItem, String> nameColumn = new TreeTableColumn<>("Name");
@@ -97,10 +97,9 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
     private final TreeItem githubSubFolderItem = new TreeItem(new RepositorySubFolderItem("Git Hub", "Repos at GitHub.com"));
     private final TreeItem otherSubFolderItem = new TreeItem(new RepositorySubFolderItem("Other URLs", "Misc. Repo URLs"));
 
-        
-        public ModuleList(TabArea tabArea) {
+    public ModuleList(TabArea tabArea) {
         this.tabArea = tabArea;
-        
+
         initColumns();
 
         modules = new TreeItem(new ModuleItem("Modules", "..."));
@@ -111,7 +110,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         modules.getChildren().add(librariesItem);
         modules.getChildren().add(projectsItem);
         modules.getChildren().add(repositoriesItem);
-        
+
         repositoriesItem.getChildren().addAll(githubSubFolderItem, otherSubFolderItem);
 
         // Add the Items
@@ -154,6 +153,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                             imageView = new ImageView();
                             imageView.setFitHeight(16);
                             imageView.setPreserveRatio(true);
+                            imageView.setSmooth(true);
                         }
 
                         ControlPanelListItem item = getTableRow().getItem();
@@ -165,7 +165,6 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                         setText(null);
                         setGraphic(null);
                     }
-
                 }
 
             };
@@ -231,8 +230,8 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                 TreeItem item;
                 if (!library.getDescriptions().isEmpty()) {
                     item = new TreeItem(new LibraryItem(
-                            lbrFile.getName(), 
-                            Library.getDescriptionShort(library.getDescription()), 
+                            lbrFile.getName(),
+                            Library.getDescriptionShort(library.getDescription()),
                             lbrFile
                     ));
                     parentItem.getChildren().add(item);
@@ -249,11 +248,11 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
     }
 
     /**
-     * Looks for subdirectories and project files (*.sch, *.brd)
-     * Also add icons for popular files: PDF, TXT, MD, ODF
-     * 
+     * Looks for subdirectories and project files (*.sch, *.brd) Also add icons
+     * for popular files: PDF, TXT, MD, ODF
+     *
      * @param dir
-     * @param parentItem 
+     * @param parentItem
      */
     private void populateProjectFolder(File dir, TreeItem parentItem) {
         // List any sub directories.
@@ -275,7 +274,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
             //       for a possible solution.
             // Library importLBR = EagleCADUtils.importLBR(lbr);
             //Library library = LibraryCache.getInstance().getLibrary(schFile);
-            Schematic schem = SchematicCache.getInstance().getSchematic( schFile );
+            Schematic schem = SchematicCache.getInstance().getSchematic(schFile);
             if (schem != null) {
                 TreeItem item;
                 item = new TreeItem(new SchematicFileItem(schFile.getName(), schem.getDescription().getValue(), schFile));
@@ -286,7 +285,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                 parentItem.getChildren().add(item);
             }
         }
-        
+
         // TODO: Combine Library, Schematic and Board into one "Design" Cache.
         File[] brds = dir.listFiles((file) -> {    // lambda expression
             return (file.isFile() && file.getName().endsWith("." + Board.FILE_EXTENSION));
@@ -297,7 +296,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
             //       for a possible solution.
             // Library importLBR = EagleCADUtils.importLBR(lbr);
             //Library library = LibraryCache.getInstance().getLibrary(schFile);
-            Board board = BoardCache.getInstance().getBoard( brdFile );
+            Board board = BoardCache.getInstance().getBoard(brdFile);
             if (board != null) {
                 TreeItem item;
                 item = new TreeItem(new BoardFileItem(brdFile.getName(), board.getDescription().getValue(), brdFile));
@@ -400,31 +399,27 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         githubSubFolderItem.getChildren().clear();
         otherSubFolderItem.getChildren().clear();
 
-
-
         //AppProperties appProperties = AppProperties.getInstance();
         //String reposPath = appProperties.getProperty(DirectoriesConfigPanel.REPOSITORY_PATHS_KEY);
         RepoPathManager repoManager = RepoPathManager.getInstance();
         repoManager.forEach((rPath) -> {
             populateRepoItem(rPath);
         });
-        
 
         repositoriesItem.setExpanded(true);
     }
 
     private void populateRepoItem(RepoPath rPath) {
-                // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
-                if ( rPath.getUrl().startsWith(GitHubFolderItem.GITHUB_PREFIX) ) {
-                    TreeItem item = new TreeItem(new GitHubFolderItem(rPath));
-                    githubSubFolderItem.getChildren().add(item);
-                } else {
-                    TreeItem item = new TreeItem(new RepositoryFolderItem(rPath));
-                    otherSubFolderItem.getChildren().add(item);
-                }
+        // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
+        if (rPath.getUrl().startsWith(GitHubFolderItem.GITHUB_PREFIX)) {
+            TreeItem item = new TreeItem(new GitHubFolderItem(rPath));
+            githubSubFolderItem.getChildren().add(item);
+        } else {
+            TreeItem item = new TreeItem(new RepositoryFolderItem(rPath));
+            otherSubFolderItem.getChildren().add(item);
+        }
     }
-    
-    
+
     public void pushProperties(Properties p) {
         p.setProperty(NAME_COL_WIDTH_PROP_KEY, String.valueOf((int) nameColumn.getWidth()));
         p.setProperty(DESC_COL_WIDTH_PROP_KEY, String.valueOf((int) descColumn.getWidth()));
