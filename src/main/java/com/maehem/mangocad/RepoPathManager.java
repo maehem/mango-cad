@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad;
 
-import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ModuleList;
 import com.maehem.mangocad.view.controlpanel.RepoPath;
@@ -27,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,7 +79,6 @@ public class RepoPathManager extends ArrayList<RepoPath> {
                 String key = (String) k;
                 String val = (String) v;
 
-                LOGGER.log(Level.SEVERE, "Prop: key:{0}  val:{1}", new Object[]{k.toString(), v.toString()});
                 if (key.startsWith(KEY_PREFIX)) {
                     String[] split = key.split("\\.");
                     String uid = split[1];
