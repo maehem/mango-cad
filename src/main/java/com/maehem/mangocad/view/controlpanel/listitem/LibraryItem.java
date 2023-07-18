@@ -33,7 +33,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -136,7 +135,7 @@ public class LibraryItem extends ControlPanelListItem {
                 
         BorderPane pane = new BorderPane(
                 ControlPanelUtils.markdownNode(
-                        1.5, 
+                        1.0, 
                         ControlPanelUtils.getItemDescriptionFull(this)
                 )
         );

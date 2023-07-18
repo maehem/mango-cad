@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.view.controlpanel.RepoAddDialog;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,54 +46,14 @@ public class RepositorySubFolderItem extends ControlPanelListItem {
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): Project Sub Folder Item");
+        LOGGER.log(Level.SEVERE, "getContextMenu(): Repository Sub-Folder Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open");
-        MenuItem menuItem2 = new MenuItem("Rename");
-        MenuItem menuItem3 = new MenuItem("Copy");
-        MenuItem menuItem4 = new MenuItem("[x] In Use");
-        MenuItem menuItem5 = new MenuItem("Show in Finder");
-
-        menuItem1.setOnAction((event) -> {
-//            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-//
-//            if (stage == null) {
-//                stage = new Stage();
-//                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
-//                stage.setTitle("Project Editor: " + getName());
-//                stage.setScene(new Scene(root, 1280, 960));
-//                stage.centerOnScreen();
-//                stage.setOnCloseRequest((t) -> {
-//                    // TODO: Popup if file edited and not saved.
-//
-//                    stage.close();
-//                    stage = null;
-//                });
-//            }
-//            stage.toFront();
-//            stage.show();
-
-        });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
-        menuItem3.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
-        });
-        menuItem4.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
-        });
-        menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
-        });
+        MenuItem menuItem1 = new MenuItem("Add Repository...");
+        menuItem1.setOnAction((t) -> new RepoAddDialog());
 
         contextMenu.getItems().addAll(
-                menuItem1,
-                menuItem2,
-                menuItem3,
-                menuItem4,
-                new SeparatorMenuItem(),
-                menuItem5);
+                menuItem1
+);
 
         return contextMenu;
     }

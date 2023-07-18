@@ -17,7 +17,6 @@
 package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.view.ControlPanel;
-import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import com.maehem.mangocad.view.controlpanel.RepoAddDialog;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +29,7 @@ import javafx.scene.image.Image;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class RepositoryModuleItem extends ControlPanelListItem {
+
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
     private static final Image iconImage = new Image(
@@ -44,18 +44,15 @@ public class RepositoryModuleItem extends ControlPanelListItem {
     public ContextMenu getContextMenu() {
         LOGGER.log(Level.SEVERE, "getContextMenu(): RepositoryModuleItem");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Edit Paths...");
-        menuItem1.setOnAction((t) -> new DirectoriesConfigDialog());
 
-        MenuItem menuItem2 = new MenuItem("Add Repository...");
-        menuItem2.setOnAction((t) -> new RepoAddDialog());
+        MenuItem menuItem1 = new MenuItem("Add Repository...");
+        menuItem1.setOnAction((t) -> new RepoAddDialog());
 
-
-        contextMenu.getItems().addAll(menuItem1, menuItem2);
+        contextMenu.getItems().addAll(menuItem1);
 
         return contextMenu;
     }
-    
+
     @Override
     public Image getImage() {
         return iconImage;

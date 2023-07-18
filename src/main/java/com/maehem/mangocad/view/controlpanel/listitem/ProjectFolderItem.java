@@ -16,14 +16,12 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
-import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.AppProperties;
+import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import java.io.File;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -43,64 +41,34 @@ public class ProjectFolderItem extends ControlPanelListItem {
 
     public ProjectFolderItem(String name, String description, File file) {
         super(name, description, file);
-
-//        if (file != null) {
-//            // TODO: Maybe get date format from AppSettings? Let user define format in settings panel.
-//            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-//            lastModifiedProperty().set(sdf.format(file.lastModified()));
-//        }
     }
 
     @Override
     public ContextMenu getContextMenu() {
-        LOGGER.log(Level.SEVERE, "getContextMenu(): Project Folder Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open");
-        MenuItem menuItem2 = new MenuItem("Rename");
-        MenuItem menuItem3 = new MenuItem("Copy");
-        MenuItem menuItem4 = new MenuItem("[x] In Use");
-        MenuItem menuItem5 = new MenuItem("Show in Finder");
+        MenuItem menuItem1 = new MenuItem("Edit Paths...");
+        MenuItem menuItem2 = new MenuItem("Edit Description...");
+        MenuItem menuItem3 = new MenuItem("Show in Finder");
 
-        menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
-            if (stage == null) {
-                stage = new Stage();
-                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
-                stage.setTitle("Project Editor: " + getName());
-                stage.setScene(new Scene(root, 1280, 960));
-                stage.centerOnScreen();
-                stage.setOnCloseRequest((t) -> {
-                    // TODO: Popup if file edited and not saved.
+        menuItem1.setOnAction((t) -> new DirectoriesConfigDialog());
 
-                    stage.close();
-                    stage = null;
-                });
-            }
-            stage.toFront();
-            stage.show();
-
-        });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
         menuItem3.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
-        });
-        menuItem4.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
-        });
-        menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+
+            //   AppProperties.getInstance().getHostServices().showDocument() 
+            //   from the Application class. So, the URI of home directory on 
+            //   Windows is typically: file:///C:/Users/$USER/. The link to 
+            //   documentation. 
+            //   If you have a Path object, you can do .toUri().toString() for example.
+            AppProperties.getInstance().getHostServices().showDocument(getFile().toURI().toString());
+
         });
 
         contextMenu.getItems().addAll(
                 menuItem1,
                 menuItem2,
-                menuItem3,
-                menuItem4,
-                new SeparatorMenuItem(),
-                menuItem5);
+                menuItem3
+        );
 
         return contextMenu;
     }

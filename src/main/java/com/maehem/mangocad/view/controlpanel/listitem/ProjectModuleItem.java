@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
@@ -43,11 +44,9 @@ public class ProjectModuleItem extends ControlPanelListItem {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("Edit Paths...");
 
-        menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-        });
+        menuItem1.setOnAction((t) -> new DirectoriesConfigDialog());
 
-        contextMenu.getItems().addAll(menuItem1);
+        contextMenu.getItems().add(menuItem1);
 
         return contextMenu;
     }

@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.BoardCache;
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Board;
@@ -25,7 +26,6 @@ import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
 import com.maehem.mangocad.view.board.BoardPreview;
-import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -41,9 +42,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -80,22 +79,23 @@ public class BoardFileItem extends ControlPanelListItem {
     public ContextMenu getContextMenu() {
         LOGGER.log(Level.FINER, "getContextMenu(): Board Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open");
-        MenuItem menuItem2 = new MenuItem("Show in Finder");
-        MenuItem menuItem3 = new MenuItem("Rename");
-        MenuItem menuItem4 = new MenuItem("Delete");
-        MenuItem menuItem5 = new MenuItem("Print...");
+        MenuItem menuItem1 = new MenuItem("Edit");
+        MenuItem menuItem2 = new MenuItem("Rename");
+        MenuItem menuItem3 = new MenuItem("Delete");
+        MenuItem menuItem4 = new MenuItem("Open in Default App (Eagle)");
+        MenuItem menuItem5 = new MenuItem("Show in Finder");
+        MenuItem menuItem6 = new MenuItem("Print...");
 
+        menuItem2.setDisable(true);
+        menuItem3.setDisable(true);
+        
         menuItem1.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
             if (stage == null) {
                 stage = new Stage();
                 LibraryEditor root = new LibraryEditor(getFile());
-                stage.setTitle("Layout Editor: " + getName());
+                stage.setTitle("Board Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();
                 stage.setOnCloseRequest((t) -> {
@@ -107,19 +107,36 @@ public class BoardFileItem extends ControlPanelListItem {
             }
             stage.toFront();
             stage.show();
+        });
+
+        menuItem4.setOnAction((event) -> {
+            AppProperties.getInstance().getHostServices().showDocument(getFile().toURI().toString());
 
         });
+
         menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
+            AppProperties.getInstance().getHostServices().showDocument(getFile().getParentFile().toURI().toString());
+
+        });
+
+        menuItem6.setOnAction((event) -> {
+            Board brd = BoardCache.getInstance().getBoard(getFile());
+            if (brd == null) {
+                LOGGER.log(Level.SEVERE, "OOPS! Board File didn't load!");
+            }
+
+            print(boardPreviewNode(brd));
+
         });
 
         contextMenu.getItems().addAll(
                 menuItem1,
                 menuItem2,
                 menuItem3,
-                menuItem4,
                 new SeparatorMenuItem(),
-                menuItem5
+                menuItem4,
+                menuItem5,
+                menuItem6
         );
 
         return contextMenu;
@@ -212,6 +229,27 @@ public class BoardFileItem extends ControlPanelListItem {
     @Override
     public Image getImage() {
         return iconImage;
+    }
+
+    private void print(Node node) {
+        LOGGER.log(Level.SEVERE, "Creating a printer job...");
+
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            //LOGGER.log(Level.SEVERE, job.getJobStatus().toString() );
+
+            boolean printed = job.printPage(node);
+            if (printed) {
+                job.endJob();
+                LOGGER.log(Level.SEVERE, "Print sent.");                
+            } else {
+                LOGGER.log(Level.SEVERE, "Printing failed.");
+                // TODO: Dialog.
+            }
+        } else {
+            LOGGER.log(Level.SEVERE, "Could not create a printer job.");
+            //TODO: Dialog.
+        }
     }
 
 }

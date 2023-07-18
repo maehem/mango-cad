@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.AppProperties;
+import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,52 +55,27 @@ public class ProjectSubFolderItem extends ControlPanelListItem {
     public ContextMenu getContextMenu() {
         LOGGER.log(Level.SEVERE, "getContextMenu(): Project Sub Folder Item");
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("Open");
-        MenuItem menuItem2 = new MenuItem("Rename");
-        MenuItem menuItem3 = new MenuItem("Copy");
-        MenuItem menuItem4 = new MenuItem("[x] In Use");
-        MenuItem menuItem5 = new MenuItem("Show in Finder");
+        MenuItem menuItem1 = new MenuItem("Edit Paths...");
+        MenuItem menuItem2 = new MenuItem("Edit Description...");
+        MenuItem menuItem3 = new MenuItem("Show in Finder");
 
-        menuItem1.setOnAction((event) -> {
-//            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
-//
-//            if (stage == null) {
-//                stage = new Stage();
-//                LibraryEditor root = new LibraryEditor( getFile() ); // TODO Project Editor
-//                stage.setTitle("Project Editor: " + getName());
-//                stage.setScene(new Scene(root, 1280, 960));
-//                stage.centerOnScreen();
-//                stage.setOnCloseRequest((t) -> {
-//                    // TODO: Popup if file edited and not saved.
-//
-//                    stage.close();
-//                    stage = null;
-//                });
-//            }
-//            stage.toFront();
-//            stage.show();
+        menuItem1.setOnAction((t) -> new DirectoriesConfigDialog());
 
-        });
-        menuItem2.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
-        });
         menuItem3.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem3.getText()});
-        });
-        menuItem4.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
-        });
-        menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+
+            //   AppProperties.getInstance().getHostServices().showDocument() 
+            //   from the Application class. So, the URI of home directory on 
+            //   Windows is typically: file:///C:/Users/$USER/. The link to 
+            //   documentation. 
+            //   If you have a Path object, you can do .toUri().toString() for example.
+            AppProperties.getInstance().getHostServices().showDocument(getFile().toURI().toString());
+
         });
 
         contextMenu.getItems().addAll(
                 menuItem1,
                 menuItem2,
-                menuItem3,
-                menuItem4,
-                new SeparatorMenuItem(),
-                menuItem5);
+                menuItem3);
 
         return contextMenu;
     }

@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -85,6 +86,10 @@ public class SchematicFileItem extends ControlPanelListItem {
         MenuItem menuItem5 = new MenuItem("Show in Finder");
         MenuItem menuItem6 = new MenuItem("Print...");
 
+        menuItem2.setDisable(true);
+        menuItem3.setDisable(true);
+
+
         menuItem1.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
@@ -118,7 +123,7 @@ public class SchematicFileItem extends ControlPanelListItem {
         });
 
         menuItem5.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
+            //LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
 
             //   AppProperties.getInstance().getHostServices().showDocument() 
             //   from the Application class. So, the URI of home directory on 
@@ -126,6 +131,22 @@ public class SchematicFileItem extends ControlPanelListItem {
             //   documentation. 
             //   If you have a Path object, you can do .toUri().toString() for example.
             AppProperties.getInstance().getHostServices().showDocument(getFile().getParentFile().toURI().toString());
+
+        });
+
+        menuItem6.setOnAction((event) -> {
+            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem6.getText()});
+
+            Schematic sch = SchematicCache.getInstance().getSchematic(getFile());
+            if (sch == null) {
+                LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
+            }
+
+            for (int i = 0; i < sch.getSheets().size(); i++) {
+                Sheet sheet = sch.getSheets().get(i);
+                //GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
+                print(schematicPreviewNode(sch, i));
+            }
 
         });
 
@@ -293,4 +314,21 @@ public class SchematicFileItem extends ControlPanelListItem {
         return iconImage;
     }
 
+    private void print(Node node) {
+        LOGGER.log(Level.SEVERE, "Creating a printer job...");
+
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            System.out.println(job.jobStatusProperty().asString());
+
+            boolean printed = job.printPage(node);
+            if (printed) {
+                job.endJob();
+            } else {
+                LOGGER.log(Level.SEVERE, "Printing failed.");
+            }
+        } else {
+            LOGGER.log(Level.SEVERE, "Could not create a printer job.");
+        }
+    }
 }
