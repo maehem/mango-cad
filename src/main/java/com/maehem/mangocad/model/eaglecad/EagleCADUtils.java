@@ -102,11 +102,11 @@ public class EagleCADUtils {
         Document eagleXML = readXML(file);
         LOGGER.log(Level.SEVERE, "Board Import: {0}", file.getAbsolutePath());
 
-        Board sch = (Board) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
+        Board brd = (Board) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
         //Schematic sch = convertEagleXMLtoSCH(eagleXML);
-        sch.setFilePath(file.getAbsolutePath());
+        brd.setFilePath(file.getAbsolutePath());
 
-        return sch;
+        return brd;
     }
 
     public static final Document readXML(File xml) {
@@ -167,126 +167,4 @@ public class EagleCADUtils {
         return eagle;
     }
 
-//    private static Schematic convertEagleXMLtoSCH(Document eagleXML) throws IOException, EagleCADLibraryFileException {
-//        // This Node should be 'eagle'
-//        Element element = eagleXML.getDocumentElement();
-//        short nodeType = element.getNodeType();
-//        String nodeName = element.getNodeName();
-//        if (nodeType != 1 && !nodeName.equals("eagle")) {
-//            throw new IOException("XML File is not an EagleCAD file!");
-//        }
-//
-//        LOGGER.log(Level.SEVERE, "Found a Eagle file...");
-//
-//        Schematic sch = new Schematic();
-//        String eagleVersion = element.getAttributes().getNamedItem("version").getNodeValue();
-//        //sch.addNote("Imported from EagleCAD SCH file version: " + eagleVersion);
-//        LOGGER.log(Level.SEVERE, "Importing Eagle Schematic with format version: {0}", eagleVersion);
-//
-//        NodeList nn = element.getChildNodes();
-//        for (int j = 0; j < nn.getLength(); j++) {
-//            Node nnn = nn.item(j);
-//            if (nnn.getNodeType() != 1) {
-//                continue;
-//            }
-//            LOGGER.log(Level.SEVERE, "Ingest Node: {0}", nnn.getNodeName());
-//            switch (nnn.getNodeName()) {
-//                case "drawing" -> {
-//                    NodeList nodes = nnn.getChildNodes();
-//                    // drawing (settings?, grid?, filters?, layers, (library | schematic | board))
-//                    for (int i = 0; i < nodes.getLength(); i++) {
-//                        Node node = nodes.item(i);
-//                        if (node.getNodeType() != 1) {
-//                            continue;
-//                        }
-//                        switch (node.getNodeName()) {
-//                            case "settings" -> {
-//                                EagleCADIngest.ingestSettings(sch.getSettings(), node);
-//                            }
-//                            case "grid" -> {
-//                                EagleCADIngest.ingestGrid(sch.getGrid(), node);
-//                            }
-//                            case "filters" -> {
-//                                EagleCADIngest.ingestFilters(sch.getFilters(), node);
-//                            }
-//                            case "layers" -> {
-//                                //LOGGER.log(Level.SEVERE, "Ingest <layers>");
-//                                EagleCADIngest.ingestEagleLayers(sch.getLayers(), node);
-//                            }
-//                            case "schematic" -> {
-//                                //LOGGER.log(Level.SEVERE, "Ingest <schematic>");
-//                                EagleCADIngest.ingestEagleSchematicElement(sch, node);
-//                            }
-//                            default ->
-//                                LOGGER.log(Level.SEVERE, "Eagle Import: Unknown top node <{0}>", node.getNodeName());
-//                        }
-//                    }
-//                }
-//                default -> {
-//                    LOGGER.log(Level.SEVERE, "Unknown Node found in <eagle>: {0}", nnn.getNodeName());
-//                }
-//            }
-//        }
-//        return sch;
-//    }
-//    private static String getTextValue(String def, Element doc, String tag) {
-//        String value = def;
-//        NodeList nl;
-//        nl = doc.getElementsByTagName(tag);
-//        if (nl.getLength() > 0 && nl.item(0).hasChildNodes()) {
-//            value = nl.item(0).getFirstChild().getNodeValue();
-//        }
-//        return value;
-//    }
-//    private static void printNode(Node node, String indent) {
-//        NodeList nodes = node.getChildNodes();
-//        for (int i = 0; i < nodes.getLength(); i++) {
-//            String nameText = "";
-//            String valueText = "";
-//            StringBuilder attributes = new StringBuilder();
-//            Node item = nodes.item(i);
-//
-//            if (!item.getNodeName().equals("#text")) {
-//                nameText = nodes.item(i).getNodeName();
-//            }
-//            if (item.getNodeValue() != null) {
-//                valueText = nodes.item(i).getNodeValue();
-//            }
-//
-//            if (item.hasAttributes()) {
-//                NamedNodeMap att = item.getAttributes();
-//                for (int j = 0; j < att.getLength(); j++) {
-//                    attributes.append("  ").append(att.item(j).getNodeName()).append(":").append(att.item(j).getNodeValue());
-//                }
-//            }
-//            System.out.println(indent + "Node: " + i + "  " + nameText + "  " + valueText + "   " + attributes);
-//            printNode(item, indent + "    ");
-//        }
-//    }
-//    private static void printNode2(Node node, String indent) {
-//        String nameText = "";
-//        String valueText = "";
-//        StringBuilder attributes = new StringBuilder();
-//
-//        if (!node.getNodeName().equals("#text")) {
-//            nameText = node.getNodeName();
-//        }
-//        if (node.getNodeValue() != null && !node.getNodeValue().equals("\n")) {
-//            valueText = "     vText:[" + node.getNodeValue() + "]";
-//        }
-//        if (node.hasAttributes()) {
-//            NamedNodeMap att = node.getAttributes();
-//            for (int j = 0; j < att.getLength(); j++) {
-//                attributes.append("  ").append(att.item(j).getNodeName()).append(":").append(att.item(j).getNodeValue());
-//            }
-//        }
-//        if (!(nameText.isEmpty() && valueText.isEmpty())) {
-//            System.out.println(indent + "Node: [" + nameText + "] type:[" + node.getNodeType() + "]   " + valueText + attributes);
-//        }
-//        NodeList nodes = node.getChildNodes();
-//        for (int i = 0; i < nodes.getLength(); i++) {
-//            printNode2(nodes.item(i), indent + "    ");
-//        }
-//
-//    }
 }
