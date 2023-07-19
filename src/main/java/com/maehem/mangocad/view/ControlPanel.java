@@ -31,6 +31,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -62,12 +63,18 @@ public class ControlPanel extends Application {
     public void start(Stage stage) throws Exception {
         configureLogging();
         LOGGER.log(Level.SEVERE, "MangoCAD Start...");
+        
+        // Set the title of the Stage
+        stage.setTitle("MangoCAD");
+
+        // Add icon for the app
+        Image appIcon = new Image(getClass().getResourceAsStream("/icons/app-icon.png"));
+        stage.getIcons().add(appIcon);
+        
+        
         appProperties = AppProperties.getInstance();
         // Host Services allows opening of browser links inside app.
         appProperties.setHostServices(getHostServices());
-
-        // Set the title of the Stage
-        stage.setTitle("MangoCAD");
 
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(
