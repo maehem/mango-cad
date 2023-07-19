@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class ColorPalette {
 
     public enum Style {
-        DARK, LIGHT, COLORED
+        DARK, LIGHT, COLORED, PRINT_BW, PRINT_GREY, PRINT_COLOR
     };
 
     private Style style;
@@ -48,7 +48,6 @@ public class ColorPalette {
         "0xB4FF00FF",
         "0xB4FFFF00",
         "0xB4FFFFFF",
-        
         // Group-2 Normal Color
         "0xC8CC6600",
         "0xC8CC9900",
@@ -58,7 +57,6 @@ public class ColorPalette {
         "0xC8336666",
         "0xC8009966",
         "0xC8006699",
-        
         //# Group-2 Hi-Light
         "0xC8FF9900",
         "0xC8FFCC33",
@@ -68,7 +66,6 @@ public class ColorPalette {
         "0xC8669999",
         "0xC833CC99",
         "0xC80099CC",
-        
         // Group-2 Normal Color
         "0xC8996699",
         "0xC8CC9999",
@@ -78,7 +75,6 @@ public class ColorPalette {
         "0xC8996666",
         "0xC8336699",
         "0xC8339999",
-        
         // Group-2 Hi-Light
         "0xC8CC99CC",
         "0xC8FFCCCC",
@@ -88,7 +84,6 @@ public class ColorPalette {
         "0xC8CC9999",
         "0xC86699CC",
         "0xC866CCCC",
-        
         // Group-3 Normal Color
         "0xC8FBAF5D",
         "0xC8000000",
@@ -98,7 +93,6 @@ public class ColorPalette {
         "0xC8000000",
         "0xC8000000",
         "0xC8000000",
-        
         // Group-3 Hi-Light
         "0xC8FDC689",
         "0xC8FFFFFF",
@@ -111,27 +105,120 @@ public class ColorPalette {
 
     };
 
+    private String[] lightHex = new String[]{
+        "0xB4000080",
+        "0xB4008000",
+        "0xB4008080",
+        "0xB4800000",
+        "0xB4800080",
+        "0xB4808000",
+        "0xB4808080",
+        "0xB4C0C0C0",
+        "0xB40000FF",
+        "0xB400FF00",
+        "0xB400FFFF",
+        "0xB4FF0000",
+        "0xB4FF00FF",
+        "0xB4FFFF00",
+        "0xB4000000",
+        // Group-2 Normal Color
+
+        "0xC8CC6600",
+        "0xC8CC9900",
+        "0xC8336600",
+        "0xC8666633",
+        "0xC8669966",
+        "0xC8336666",
+        "0xC8009966",
+        "0xC8006699",
+        // Group-2 Hi-Light
+
+        "0xC8FF9900",
+        "0xC8FFCC33",
+        "0xC8669900",
+        "0xC8999966",
+        "0xC899CC99",
+        "0xC8669999",
+        "0xC833CC99",
+        "0xC80099CC",
+        // Group-2 Normal Color
+
+        "0xC8996699",
+        "0xC8CC9999",
+        "0xC8CC6666",
+        "0xC8660033",
+        "0xC8663366",
+        "0xC8996666",
+        "0xC8336699",
+        "0xC8339999",
+        // Group-2 Hi-Light
+
+        "0xC8CC99CC",
+        "0xC8FFCCCC",
+        "0xC8FF9999",
+        "0xC8990033",
+        "0xC8996699",
+        "0xC8CC9999",
+        "0xC86699CC",
+        "0xC866CCCC",
+        // Group-3 Normal Color
+
+        "0xC8FBAF5D",
+        "0xC8000000",
+        "0xC8000000",
+        "0xC8000000",
+        "0xC8000000",
+        "0xC8000000",
+        "0xC8000000",
+        "0xC8000000",
+        // Group-3 Hi-Light
+
+        "0xC8FDC689",
+        "0xC8FFFFFF",
+        "0xC8FFFFFF",
+        "0xC8FFFFFF",
+        "0xC8FFFFFF",
+        "0xC8fFFFFF",
+        "0xC8FFFFFF",
+        "0xC8FFFFFF"
+    };
+
     private ArrayList<String> dark = new ArrayList<>(Arrays.asList(darkHex));
+    private ArrayList<String> light = new ArrayList<>(Arrays.asList(lightHex));
 
     public ColorPalette(Style style) {
+        this.style = style;
+    }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public void setStyle(Style style) {
         this.style = style;
     }
 
     public String getHex(int index) {
         return getPalette(style).get(index);
     }
-    
 
     public ArrayList<String> getPalette(Style s) {
         switch (s) {
             case DARK -> {
                 return dark;
             }
+            case PRINT_BW -> {
+                return light;
+            }
+            case PRINT_COLOR -> {
+                return light;
+            }
             default -> {
                 return dark;
             }
         }
     }
+
 }
 
 /*
@@ -396,4 +483,4 @@ SET PALETTE 61 0xC8fFFFFF;
 SET PALETTE 62 0xC8FFFFFF;
 SET PALETTE 63 0xC8FFFFFF;
 
-*/
+ */
