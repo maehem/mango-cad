@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.AppProperties;
+import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
@@ -31,6 +32,9 @@ import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -89,7 +93,6 @@ public class SchematicFileItem extends ControlPanelListItem {
         menuItem2.setDisable(true);
         menuItem3.setDisable(true);
 
-
         menuItem1.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
@@ -144,8 +147,23 @@ public class SchematicFileItem extends ControlPanelListItem {
 
             for (int i = 0; i < sch.getSheets().size(); i++) {
                 Sheet sheet = sch.getSheets().get(i);
-                //GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
-                print(schematicPreviewNode(sch, i));
+
+                // Save the current display palette and put it back after print.
+                ColorPalette palette = sch.getParentDrawing().getPalette();
+                ColorPalette.Style origStyle = palette.getStyle();
+                palette.setStyle(ColorPalette.Style.PRINT_COLOR);
+
+                Node schematicPreviewNode = new SchematicPreview(sch, i);
+                palette.setStyle(origStyle);
+                // Scale   2.85  for A5 document?
+                //double scale = 2.85;
+                double scale = 1.0;
+                
+                schematicPreviewNode.setScaleX(scale);
+                schematicPreviewNode.setScaleY(scale);
+                schematicPreviewNode.setRotate(90);
+                StackPane sp = new StackPane(new Group(schematicPreviewNode));
+                print(sp);
             }
 
         });
@@ -317,10 +335,13 @@ public class SchematicFileItem extends ControlPanelListItem {
     private void print(Node node) {
         LOGGER.log(Level.SEVERE, "Creating a printer job...");
 
+        Printer selectedPrinter = Printer.getDefaultPrinter();
+        selectedPrinter.createPageLayout(Paper.NA_LETTER, PageOrientation.LANDSCAPE, Printer.MarginType.EQUAL);
+        
         PrinterJob job = PrinterJob.createPrinterJob();
+        job.setPrinter(selectedPrinter);
         if (job != null) {
             System.out.println(job.jobStatusProperty().asString());
-
             boolean printed = job.printPage(node);
             if (printed) {
                 job.endJob();
