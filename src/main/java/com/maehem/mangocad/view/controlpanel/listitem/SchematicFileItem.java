@@ -34,6 +34,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.print.PageOrientation;
 import javafx.print.Paper;
+import javafx.print.PrintResolution;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Group;
@@ -126,28 +127,20 @@ public class SchematicFileItem extends ControlPanelListItem {
         });
 
         menuItem5.setOnAction((event) -> {
-            //LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem5.getText()});
-
-            //   AppProperties.getInstance().getHostServices().showDocument() 
-            //   from the Application class. So, the URI of home directory on 
-            //   Windows is typically: file:///C:/Users/$USER/. The link to 
-            //   documentation. 
-            //   If you have a Path object, you can do .toUri().toString() for example.
             AppProperties.getInstance().getHostServices().showDocument(getFile().getParentFile().toURI().toString());
 
         });
 
         menuItem6.setOnAction((event) -> {
-            LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem6.getText()});
-
             Schematic sch = SchematicCache.getInstance().getSchematic(getFile());
             if (sch == null) {
                 LOGGER.log(Level.SEVERE, "OOPS! Schematic File didn't load!");
             }
 
+            // TODO: Work out multi page print job request.
             for (int i = 0; i < sch.getSheets().size(); i++) {
-                Sheet sheet = sch.getSheets().get(i);
 
+                // TODO:  Make this a Drawing static util.
                 // Save the current display palette and put it back after print.
                 ColorPalette palette = sch.getParentDrawing().getPalette();
                 ColorPalette.Style origStyle = palette.getStyle();
@@ -155,15 +148,8 @@ public class SchematicFileItem extends ControlPanelListItem {
 
                 Node schematicPreviewNode = new SchematicPreview(sch, i);
                 palette.setStyle(origStyle);
-                // Scale   2.85  for A5 document?
-                //double scale = 2.85;
-                double scale = 1.0;
-                
-                schematicPreviewNode.setScaleX(scale);
-                schematicPreviewNode.setScaleY(scale);
-                schematicPreviewNode.setRotate(90);
-                StackPane sp = new StackPane(new Group(schematicPreviewNode));
-                print(sp);
+
+                print(schematicPreviewNode);
             }
 
         });
@@ -333,16 +319,36 @@ public class SchematicFileItem extends ControlPanelListItem {
     }
 
     private void print(Node node) {
+        // The Node is in milimeters(mm). Scale it to dots at 72 dpi.
+        // The printer wants dots.
+        final double scale = 72.0 / 25.4;
+        node.setScaleX(scale);
+        node.setScaleY(scale);
+
         LOGGER.log(Level.SEVERE, "Creating a printer job...");
 
         Printer selectedPrinter = Printer.getDefaultPrinter();
         selectedPrinter.createPageLayout(Paper.NA_LETTER, PageOrientation.LANDSCAPE, Printer.MarginType.EQUAL);
-        
+        PrintResolution defRes = selectedPrinter.getPrinterAttributes().getDefaultPrintResolution();
+        LOGGER.log(Level.SEVERE, "Printer Resolution: feed:{0}  crossFeed:{1}", new Object[]{defRes.getFeedResolution(), defRes.getCrossFeedResolution()});
+        LOGGER.log(Level.SEVERE, "Printable Area: w:{0}  h:{1}",
+                new Object[]{
+                    selectedPrinter.getDefaultPageLayout().getPrintableWidth(),
+                    selectedPrinter.getDefaultPageLayout().getPrintableHeight()
+                });
+
+        node.setRotate(-90);  // Landscape
+
+        // Without StackPane and Group, node might print off page because of 
+        // raw values and any rotation scaling that was added to Node.
+        StackPane printNode = new StackPane(new Group(node));
+
         PrinterJob job = PrinterJob.createPrinterJob();
         job.setPrinter(selectedPrinter);
         if (job != null) {
-            System.out.println(job.jobStatusProperty().asString());
-            boolean printed = job.printPage(node);
+            //System.out.println(job.jobStatusProperty().asString());
+
+            boolean printed = job.printPage(printNode);
             if (printed) {
                 job.endJob();
             } else {
