@@ -23,6 +23,7 @@ import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.MarkdownUtils;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -135,7 +136,7 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
         VBox.setVgrow(footprintPreviewNode, Priority.ALWAYS);
         VBox contentArea = new VBox(
                 heading,
-                ControlPanelUtils.markdownNode(
+                MarkdownUtils.markdownNode(
                         1.5,
                         ControlPanelUtils.getItemDescriptionFull(this)
                 ),

@@ -21,9 +21,9 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
-import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
 import java.text.MessageFormat;
@@ -202,7 +202,7 @@ public class SchematicFileItem extends ControlPanelListItem {
             GroupContainer schematicPreviewNode = schematicPreviewNode(sch, i);
             VBox.setVgrow(schematicPreviewNode, Priority.SOMETIMES);
 
-            Node pageDesc = ControlPanelUtils.markdownNode(
+            Node pageDesc = MarkdownUtils.markdownNode(
                     1.0,
                     sheet.getDescription().getValue()
             );
@@ -237,8 +237,8 @@ public class SchematicFileItem extends ControlPanelListItem {
 
         VBox contentArea = new VBox(
                 heading,
-                ControlPanelUtils.markdownNode(
-                        1.5,
+                MarkdownUtils.markdownNode(
+                        1.0,
                         sch.getDescription().getValue()
                 ),
                 tabPane
@@ -249,17 +249,6 @@ public class SchematicFileItem extends ControlPanelListItem {
         return pane;
     }
 
-//    private SplitPane getSplitPane(Schematic sch, Node sheetList) {
-//        GroupContainer schematicPreviewNode = schematicPreviewNode(sch, 0);
-//        VBox.setVgrow(schematicPreviewNode, Priority.ALWAYS);
-//
-//        SplitPane spPane = new SplitPane(schematicPreviewNode, sheetList );
-//        spPane.setOrientation(Orientation.VERTICAL);
-//        spPane.setDividerPosition(0, 0.8);
-//        VBox.setVgrow(spPane, Priority.ALWAYS);
-//        
-//        return spPane;
-//    }
     private GroupContainer schematicPreviewNode(Schematic sch, int index) {
 
         SchematicPreview schematicPreview = new SchematicPreview(sch, index);

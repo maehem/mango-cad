@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.tab;
 
-import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
+import com.maehem.mangocad.view.MarkdownUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -43,16 +43,15 @@ public class HomeContent extends BorderPane {
 //        node.getChildren().add(new Text("(Anxious Alicanto)"));
 
         InputStream mdContent = HomeContent.class.getResourceAsStream("/home/AnxiousAlicanto.md");
-        StringBuilder sb = new StringBuilder();
-        
+
         String str = "# Ooops";
         try {
             str = new String(mdContent.readAllBytes());
         } catch (IOException ex) {
             Logger.getLogger(HomeContent.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Node markdownNode = ControlPanelUtils.markdownNode(1.0, str);
-        
+        Node markdownNode = MarkdownUtils.markdownNode(1.0, str);
+
         node.getChildren().add(markdownNode);
 
         return node;

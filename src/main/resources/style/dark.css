@@ -1,9 +1,14 @@
 .root { 
     -fx-accent: #1e74c6;
     -fx-focus-color: -fx-accent;
-    -fx-base: #373e43;
+    /* -fx-base: #373e43;  */
+    -fx-base: #121418;
     -fx-control-inner-background: derive(-fx-base, 35%);
     -fx-control-inner-background-alt: -fx-control-inner-background ;
+}
+
+.text{
+    -fx-fill: #CCCCE6
 }
 
 .label{
@@ -86,4 +91,48 @@
 
 #preview-document-dimensions-text{
     -fx-font-size:120%;
+}
+
+.md-body{
+    -fx-font-family: Arial;
+    -fx-fill: #EEEEF2
+}
+
+.md-heading{
+    -fx-font-family: Arial;
+    -fx-font-weight: bold; 
+    -fx-fill: #DDDDE599 
+}
+
+.md-h1{
+    -fx-font-size:160%;
+}
+
+.md-h2{
+    -fx-font-size:150%;
+    
+}
+.md-h3{
+    -fx-font-size:140%;
+    
+}
+.md-h4{
+    -fx-font-size:130%;
+   
+}
+.md-h5{
+     -fx-font-size:120%;
+    
+}
+.md-h6{
+    -fx-font-size:110%;
+    
+}
+
+.md-italic{
+    -fx-font-style: italic;    
+}
+
+.md-bold{
+     -fx-font-weight: bold;     
 }

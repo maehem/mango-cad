@@ -18,13 +18,11 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.BoardCache;
-import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Board;
-import com.maehem.mangocad.model.element.drawing.Schematic;
-import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.board.BoardPreview;
 import java.io.File;
 import java.text.MessageFormat;
@@ -88,7 +86,7 @@ public class BoardFileItem extends ControlPanelListItem {
 
         menuItem2.setDisable(true);
         menuItem3.setDisable(true);
-        
+
         menuItem1.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
@@ -175,7 +173,7 @@ public class BoardFileItem extends ControlPanelListItem {
         GroupContainer boardPreviewNode = boardPreviewNode(brd);
         VBox.setVgrow(boardPreviewNode, Priority.SOMETIMES);
 
-        Node pageDesc = ControlPanelUtils.markdownNode(
+        Node pageDesc = MarkdownUtils.markdownNode(
                 1.0,
                 brd.getDescription().getValue()
         );
@@ -202,7 +200,7 @@ public class BoardFileItem extends ControlPanelListItem {
         VBox.setVgrow(spPane, Priority.ALWAYS);
         VBox contentArea = new VBox(
                 heading,
-                ControlPanelUtils.markdownNode(
+                MarkdownUtils.markdownNode(
                         1.5,
                         brd.getDescription().getValue()
                 ),
@@ -241,7 +239,7 @@ public class BoardFileItem extends ControlPanelListItem {
             boolean printed = job.printPage(node);
             if (printed) {
                 job.endJob();
-                LOGGER.log(Level.SEVERE, "Print sent.");                
+                LOGGER.log(Level.SEVERE, "Print sent.");
             } else {
                 LOGGER.log(Level.SEVERE, "Printing failed.");
                 // TODO: Dialog.

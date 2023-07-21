@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.view.ControlPanel;
-import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
+import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.controlpanel.RepoPath;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -116,7 +116,7 @@ public class GitHubFolderItem extends ControlPanelListItem {
 
     @Override
     public Node getPreviewTabNode() {
-        return ControlPanelUtils.markdownNode(1, previewTabContent);
+        return MarkdownUtils.markdownNode(1, previewTabContent);
     }
 
 }

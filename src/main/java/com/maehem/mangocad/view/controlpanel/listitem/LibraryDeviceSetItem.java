@@ -28,6 +28,7 @@ import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
 import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.MarkdownUtils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -175,21 +176,21 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         spPane.setOrientation(Orientation.VERTICAL);
         spPane.setDividerPosition(0, 0.72);
         VBox.setVgrow(spPane, Priority.ALWAYS);
-        
+
         scrollPane.setContent(devicePreviewNode(
                 (Map<String, Object>) deviceSetList.getSelectionModel().getSelectedItem()
         ));
-        
+
         deviceSetList.setOnMouseClicked((t) -> {
             LOGGER.log(Level.FINEST, "User Clicked: {0}", deviceSetList.getSelectionModel().getSelectedIndex());
             TableView.TableViewSelectionModel model = deviceSetList.getSelectionModel();
             Map<String, Object> item = (Map<String, Object>) model.getSelectedItem();
             scrollPane.setContent(devicePreviewNode(item));
         });
-        
+
         VBox contentArea = new VBox(
                 heading,
-                ControlPanelUtils.markdownNode(
+                MarkdownUtils.markdownNode(
                         1.5,
                         ControlPanelUtils.getItemDescriptionFull(this)
                 ),
@@ -199,7 +200,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         return new BorderPane(contentArea);
     }
 
-    private Node devicePreviewNode( Map<String, Object> item ) {
+    private Node devicePreviewNode(Map<String, Object> item) {
         Library lib = LibraryCache.getInstance().getLibrary(getFile());
         if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
@@ -211,10 +212,10 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
         GroupContainer gatePreviewPane = new GroupContainer(gateSetPreview, 0.1);
         gatePreviewPane.setBorder(new Border(new BorderStroke(
-                new Color(0.1,0.1,0.1,0.5), 
-                BorderStrokeStyle.SOLID, 
-                new CornerRadii(10), 
-                new BorderWidths(2,4,4,2),
+                new Color(0.1, 0.1, 0.1, 0.5),
+                BorderStrokeStyle.SOLID,
+                new CornerRadii(10),
+                new BorderWidths(2, 4, 4, 2),
                 new Insets(6)
         )));
 
@@ -222,18 +223,17 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         LOGGER.log(Level.FINEST, "Selected Footprint:{0}", pkgName);
 
         Group footprintPreview = DetailNodes.footprintPreview((Footprint) item.get("f"), lib, true);
-        GroupContainer footprintContainer = new GroupContainer(footprintPreview,0.1);
-        
+        GroupContainer footprintContainer = new GroupContainer(footprintPreview, 0.1);
+
         // Add a border
         footprintContainer.setBorder(new Border(new BorderStroke(
-                new Color(0.1,0.1,0.1,0.5), 
-                BorderStrokeStyle.SOLID, 
-                new CornerRadii(10), 
-                new BorderWidths(2,4,4,2),
+                new Color(0.1, 0.1, 0.1, 0.5),
+                BorderStrokeStyle.SOLID,
+                new CornerRadii(10),
+                new BorderWidths(2, 4, 4, 2),
                 new Insets(6)
         )));
 
-        
         Node deviceTechnologyAttrList = deviceTechnologyAttrList((Technology) item.get("t"));
 
         VBox.setMargin(deviceTechnologyAttrList, new Insets(8));
@@ -248,28 +248,28 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         HBox.setHgrow(footAttrVertArea, Priority.SOMETIMES);
 
         ImageView package3DPreview = DetailNodes.package3DPreview(
-                ((Device)item.get("d")).getPackage3dInstances().get(0),
+                ((Device) item.get("d")).getPackage3dInstances().get(0),
                 lib
         );
         package3DPreview.setFitHeight(200);
         VBox contentArea = new VBox(gateFootAttrArea, new StackPane(package3DPreview));
         contentArea.setFillWidth(true);
-        
+
         return contentArea;
     }
 
     private TableView deviceSetList(int index) {
         TableView tableView = new TableView();
-        tableView.setPlaceholder( new Label("No rows to display"));
+        tableView.setPlaceholder(new Label("No rows to display"));
         TableColumn<Map, String> deviceName = new TableColumn<>("Device");
         deviceName.setCellValueFactory(new MapValueFactory<>("device"));
 
         TableColumn<Map, String> footprint = new TableColumn<>("Footprint");
         footprint.setCellValueFactory(new MapValueFactory<>("footprint"));
-        
+
         TableColumn<Map, String> has3DCol = new TableColumn<>("3D");
         has3DCol.setCellValueFactory(new MapValueFactory<>("has3D"));
-        
+
         TableColumn<Map, String> desc = new TableColumn<>("Description");
         desc.setCellValueFactory(new MapValueFactory<>("description"));
 
@@ -277,30 +277,30 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
         tableView.getColumns().add(footprint);
         tableView.getColumns().add(has3DCol);
         tableView.getColumns().add(desc);
-        
+
         Library lib = LibraryCache.getInstance().getLibrary(getFile());
         if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
-            tableView.setPlaceholder( new Label("OOPS! Library File didn't load!"));
+            tableView.setPlaceholder(new Label("OOPS! Library File didn't load!"));
             return tableView;
         }
-        
+
         DeviceSet deviceSet = lib.getDeviceSet(getName());
 
         ObservableList<Map<String, Object>> items
                 = FXCollections.<Map<String, Object>>observableArrayList();
 
-        for ( Device d: deviceSet.getDevices() ) {
+        for (Device d : deviceSet.getDevices()) {
             Footprint pkg = lib.getPackage(d.getFootprint());
             String haz3d = "";
             // There is always a default(blank) 3D package ending in "/1" initially created by CAD software.
-            if ( !d.getPackage3dInstances().isEmpty() &&
-                    !d.getPackage3dInstances().get(0).getPackage3dUrn().endsWith("/1") ) {
+            if (!d.getPackage3dInstances().isEmpty()
+                    && !d.getPackage3dInstances().get(0).getPackage3dUrn().endsWith("/1")) {
                 haz3d = "Y";
             }
-            
+
             List<Technology> technologies = d.getTechnologies();
-            if ( technologies.isEmpty() ) { // tecnologies should nver be empty, but...
+            if (technologies.isEmpty()) { // tecnologies should nver be empty, but...
                 Map<String, Object> item = new HashMap<>();
 
                 item.put("device", d.getName());
@@ -312,14 +312,14 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 item.put("description", pkg.getDescription().getValue());
                 items.add(item);
             } else {
-                for ( Technology t: technologies ) {
+                for (Technology t : technologies) {
                     Map<String, Object> item = new HashMap<>();
 
                     // Replace '*' in deviceset.name with technology.name
                     // Replace '?' in deviceset.name with d.name
                     String name = deviceSet.getName();
                     name = name.replace("*", t.getName());
-                    if ( name.contains("?")) {
+                    if (name.contains("?")) {
                         name = name.replace("?", d.getName());
                     } else {
                         name += d.getName();
@@ -334,30 +334,30 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                     items.add(item);
                 }
             }
-            
+
         }
 
         tableView.getItems().addAll(items);
 
-        if ( tableView.getItems().size() > index ) {
+        if (tableView.getItems().size() > index) {
             tableView.getSelectionModel().select(index);
         }
-        
+
         return tableView;
     }
 
     private Node deviceTechnologyAttrList(Technology tech) {
-                
+
         TableView tableView = new TableView();
         tableView.setId("technology-attributes-table"); // Makes the font smaller
-        tableView.setPlaceholder( new Label("No attrributes to display"));
-        
+        tableView.setPlaceholder(new Label("No attrributes to display"));
+
         TableColumn<Map, String> attributeColumn = new TableColumn<>("Attribute");
         attributeColumn.setCellValueFactory(new MapValueFactory<>("attribute"));
 
         TableColumn<Map, String> valueColumn = new TableColumn<>("Value");
         valueColumn.setCellValueFactory(new MapValueFactory<>("value"));
-        
+
         tableView.getColumns().add(attributeColumn);
         tableView.getColumns().add(valueColumn);
 

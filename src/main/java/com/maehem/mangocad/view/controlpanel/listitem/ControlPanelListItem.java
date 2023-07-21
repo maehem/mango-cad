@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
 
+import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import java.io.File;
 import javafx.beans.property.BooleanProperty;
@@ -45,7 +46,7 @@ public abstract class ControlPanelListItem {
 //    public ControlPanelListItem() {
 //    }
     public ControlPanelListItem(String name, String description) {
-        this(name, description, null );
+        this(name, description, null);
     }
 
     public ControlPanelListItem(String name, String description, File file) {
@@ -103,22 +104,22 @@ public abstract class ControlPanelListItem {
     public final void setLastModified(String value) {
         lastModified.set(value);
     }
-    
+
     public final File getFile() {
         return file;
     }
 
     public abstract ContextMenu getContextMenu();
-    
+
     public abstract Image getImage();
-    
+
     public Tooltip getTooltip() {
         String descString = ControlPanelUtils.getItemDescriptionFull(this);
-        if ( descString != null && !descString.isEmpty() ) {
-                Tooltip tt = new Tooltip();
-                tt.setGraphic(ControlPanelUtils.markdownNode(0.75, descString));
-                return tt;
-            
+        if (descString != null && !descString.isEmpty()) {
+            Tooltip tt = new Tooltip();
+            tt.setGraphic(MarkdownUtils.markdownNode(0.75, descString));
+            return tt;
+
         } else {
             return null;
         }
@@ -133,9 +134,9 @@ public abstract class ControlPanelListItem {
 //        tt.setGraphic(ControlPanelUtils.markdownNode(getDescription()));
 //        return tt;
     }
-    
+
     public Node getPreviewTabNode() {
-        return ControlPanelUtils.markdownNode(1.5, ControlPanelUtils.getItemDescriptionFull(this));
+        return MarkdownUtils.markdownNode(1.5, ControlPanelUtils.getItemDescriptionFull(this));
     }
 
 }
