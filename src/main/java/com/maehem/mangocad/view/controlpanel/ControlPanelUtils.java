@@ -33,20 +33,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 /**
  *
@@ -72,6 +58,7 @@ public class ControlPanelUtils {
             try {
                 BufferedReader br = new BufferedReader(new FileReader(descFile));
                 description = br.readLine(); // We just need the first line here.
+                br.close();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(ModuleList.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -142,180 +129,6 @@ public class ControlPanelUtils {
         }
 
         return "";
-    }
-
-    public static Node markdownNode(double scale, String text) {
-        String content = text;
-        VBox node = new VBox();
-        node.setSpacing(0);
-        node.setPadding(new Insets(10));
-        node.setBackground(new Background(new BackgroundFill(new Color(0.1, 0.1, 0.1, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
-        if (content == null) {
-            return node;
-        }
-
-        LOGGER.log(Level.FINER, "Process: " + text);
-        if (content.contains("<p>") || content.contains("<br>")
-                || content.contains("<b>")
-                || content.contains("<h1>")
-                || content.contains("<h2>")
-                || content.contains("<h3>")
-                || content.contains("<h4>")
-                || content.contains("<h5>")
-                || content.contains("<h6>")) {
-            LOGGER.log(Level.FINER, "text contains HTML");
-            content = html2markdown(text);
-        }
-        // parse thngs.
-
-        content = content.translateEscapes(); // Was fun figuring out this one.
-        if (!content.startsWith("#")) {
-            content = "#" + content;
-        }
-        String[] lines = content.split("\n");
-//        for (String s : lines) {
-//            LOGGER.log(Level.SEVERE, "Lines are :{0}", s);
-//        }
-        Font f = Font.getDefault();
-        //String fontFamily = f.getFamily();
-        // On OSX Need to specify Arial to get bold. Unfixed Jfx bug.
-        //t.setStyle("-fx-font-family: \"Arial\"; -fx-font-style: bold");
-        String fontFamily = "Arial";
-        // TODO: Move these over to CSS file.
-//        Font h1 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.60);
-//        Font h2 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.50);
-//        Font h3 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.35);
-//        Font h4 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.25);
-//        Font h5 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.15);
-//        Font h6 = Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.05);
-
-        Font[] h = new Font[]{
-            f, // Body
-            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.60), // H1
-            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.50), // H2
-            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.35), // H3
-            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.25), // H4
-            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.15), // H5
-            Font.font(fontFamily, FontWeight.BOLD, f.getSize() * scale * 1.05), // H6
-        };
-
-        final String H6 = "######";
-        final String H5 = "#####";
-        final String H4 = "####";
-        final String H3 = "###";
-        final String H2 = "##";
-        final String H1 = "#";
-        
-        Font body = f;
-
-        //Logger.getLogger("ControlPanelUtils").log(Level.SEVERE, "Line Count: " + lines.length);
-        for (String line : lines) {
-            line = line.strip();
-            if (line.startsWith("***") | line.startsWith("---") | line.startsWith("___")) { // <HR>
-                node.getChildren().add(new Separator());
-            } else if (line.startsWith(H6)) {
-                Text t = new Text(line.substring(H6.length()));
-                t.setFont(h[H6.length()]);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith(H5)) {
-                Text t = new Text(line.substring(H5.length()));
-                t.setFont(h[H5.length()]);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith(H4)) {
-                Text t = new Text(line.substring(H4.length()));
-                t.setFont(h[H4.length()]);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith(H3)) {
-                Text t = new Text(line.substring(H3.length()));
-                t.setFont(h[H3.length()]);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith(H2)) {
-                Text t = new Text(line.substring(H2.length()));
-                t.setFont(h[H2.length()]);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            } else if (line.startsWith(H1)) {
-                // Heading
-                Text t = new Text(line.substring(H1.length()));
-                t.setFont(h[H1.length()]);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            } else if (line.trim().startsWith("- ")
-                    || line.trim().startsWith("+ ")
-                    || line.trim().startsWith("* ")) {
-                // Heading
-                Text bul = new Text("    \u2022 ");
-                bul.setFont(body);
-                bul.setFill(Color.LIGHTGRAY);
-                Text t = new Text(line.substring(2));
-                t.setFont(body);
-                t.setWrappingWidth(400);
-                t.setTextAlignment(TextAlignment.JUSTIFY);
-                t.setFill(Color.LIGHTGRAY);
-                HBox bulletArea = new HBox(bul, t);
-                bulletArea.setAlignment(Pos.TOP_LEFT);
-                node.getChildren().add(bulletArea);
-            } else {
-                Text t = new Text(line);
-                t.setFont(body);
-                t.setWrappingWidth(600);
-                t.setTextAlignment(TextAlignment.JUSTIFY);
-                t.setFill(Color.LIGHTGRAY);
-                node.getChildren().add(t);
-            }
-
-        }
-
-        return node;
-    }
-
-    /**
-     * Convert HTML snippets to Marddown Using this guide:
-     * https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#lines
-     *
-     *
-     * TODO: Case insensitive
-     *
-     * <B> bold tag _word_ or *word* LI/UL lists - Unordered lists: + - or * -
-     * Ordered List: Number ( 1. ) - SubList: ..1. or ..-
-     *
-     * LINKS: Ability to open browser.
-     *
-     * CODE STYLING: three backticks with optional type? ``` java foo(); ```
-     * HORIZ RULE (three or more ) --- ___ ***
-     *
-     * @param content
-     * @return
-     */
-    public static String html2markdown(String content) {
-        //StringBuilder sb = new StringBuilder();
-        return content
-                .replaceAll("<b>", "__")
-                .replaceAll("</b>", "__")
-                .replaceAll("<i>", "_")
-                .replaceAll("</i>", "_")
-                .replaceAll("<code>", "```")
-                .replaceAll("</code>", "```")
-                .replaceAll("<p>", "\n")
-                .replaceAll("</p>", "\n")
-                .replaceAll("<br>", "\n")
-                .replaceAll("<h1>", "\n# ")
-                .replaceAll("</h1>", "")
-                .replaceAll("<h2>", "\n## ")
-                .replaceAll("</h2>", "")
-                .replaceAll("<h3>", "\n### ")
-                .replaceAll("</h3>", "")
-                .replaceAll("<h4>", "\n#### ")
-                .replaceAll("</h4>", "")
-                .replaceAll("<h5>", "\n##### ")
-                .replaceAll("</h5>", "")
-                .replaceAll("<h6>", "\n###### ")
-                .replaceAll("</h6>", "");
-
     }
 
 }
