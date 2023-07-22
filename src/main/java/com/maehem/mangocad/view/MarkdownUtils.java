@@ -120,8 +120,6 @@ public class MarkdownUtils {
                 t.setTextAlignment(TextAlignment.JUSTIFY);
                 node.getChildren().add(styleLine(t));
             }
-
-            LOGGER.log(Level.SEVERE, "=============End Line===================");
         }
 
         return node;
@@ -132,10 +130,12 @@ public class MarkdownUtils {
         String str = text.getText();
         boolean bold = false;
         boolean italic = false;
+        boolean strike = false;
 
         for (String word : str.split(" ")) {
             Text wordText = new Text();
             wordText.getStyleClass().addAll(text.getStyleClass());
+            wordText.setStrikethrough(strike);
 
             boolean addDot = false;
             boolean addComma = false;
@@ -183,7 +183,6 @@ public class MarkdownUtils {
                 }
             }
             if (word.startsWith("*") || word.startsWith("_")) {
-                italic = true;
                 word = word.substring(1);
                 if (word.endsWith("*") || word.endsWith("_")) {
                     wordText.getStyleClass().add("md-italic");
@@ -191,6 +190,15 @@ public class MarkdownUtils {
                     italic = false;
                 } else {
                     italic = true;
+                }
+            }
+            if (word.startsWith("~~")) {
+                word = word.substring(2);
+                if (word.endsWith("~~")) {
+                    wordText.setStrikethrough(true);
+                    strike = false;
+                } else {
+                    strike = true;
                 }
             }
 
@@ -209,6 +217,11 @@ public class MarkdownUtils {
                 wordText.getStyleClass().add("md-italic");
                 italic = false;
                 word = word.substring(0, word.length() - 1);
+            }
+            if (word.endsWith("~~")) {
+                wordText.setStrikethrough(true);
+                strike = false;
+                word = word.substring(0, word.length() - 2);
             }
 
             if (!addComma && !addDot && !addQuest && !addSemiCol) {
