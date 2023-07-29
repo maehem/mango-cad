@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -42,20 +43,20 @@ import javafx.stage.Stage;
 public class GitHubFolderItem extends ControlPanelListItem {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
-    public static final String GITHUB_PREFIX = "https://github.com/";
-    private static final String GITHUB_RAW_PREFIX = "https://raw.githubusercontent.com/";
+    //public static final String GITHUB_PREFIX = "https://github.com/";
+    //private static final String GITHUB_RAW_PREFIX = "https://raw.githubusercontent.com/";
 
     private static final Image iconImage = new Image(
             ControlPanelListItem.class.getResourceAsStream("/icons/folder.png")
     );
 
     private Stage stage = null;
-    private RepoPath repoPath;
+    private final RepoPath repoPath;
     //private final String prefixShorten;
     private String previewTabContent = "Something went wrong!";
 
     public GitHubFolderItem(RepoPath repoPath) {
-        super(repoPath.getUrl().substring(GITHUB_PREFIX.length()), repoPath.getDescription());
+        super(repoPath.getUrl().substring(RepoPath.GITHUB_PREFIX.length()), repoPath.getDescription());
         this.repoPath = repoPath;
         //this.prefixShorten = prefixShorten;
         fetchURLPreview();
@@ -81,19 +82,19 @@ public class GitHubFolderItem extends ControlPanelListItem {
     }
 
     private void fetchURLPreview() {
-        // Example link:
-        //  https://raw.githubusercontent.com/maehem/Thump/master/README.md
-
-        // Turn the browser-freindly URL into a raw-content URL.
-        String githubDeets = repoPath.getUrl().substring(GITHUB_PREFIX.length());
-        String[] split = githubDeets.split("\\/");
-        String userName = split[0];
-        String repoName = split[1];
-        String branch1 = "master"; // Seems to work for 'main' as well.
-        String branch2 = "main";
-
-        String url = GITHUB_RAW_PREFIX + userName + "/" + repoName + "/" + branch1 + "/README.md";
-
+//        // Example link:
+//        //  https://raw.githubusercontent.com/maehem/Thump/master/README.md
+//
+//        // Turn the browser-freindly URL into a raw-content URL.
+//        String githubDeets = repoPath.getUrl().substring(GITHUB_PREFIX.length());
+//        String[] split = githubDeets.split("\\/");
+//        String userName = split[0];
+//        String repoName = split[1];
+//        String branch1 = "master"; // Seems to work for 'main' as well.
+//        String branch2 = "main";
+//
+//        String url = GITHUB_RAW_PREFIX + userName + "/" + repoName + "/" + branch1 + "/README.md";
+//
         HttpClient client = HttpClient.newBuilder()
                 .version(Version.HTTP_1_1)
                 .followRedirects(Redirect.NORMAL)
@@ -102,7 +103,7 @@ public class GitHubFolderItem extends ControlPanelListItem {
                 //.authenticator(Authenticator.getDefault())
                 .build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(URI.create(repoPath.getRawUrl()+ "/README.md"))
                 .timeout(Duration.ofSeconds(8))
                 .GET()
                 .build();
@@ -116,7 +117,11 @@ public class GitHubFolderItem extends ControlPanelListItem {
 
     @Override
     public Node getPreviewTabNode() {
-        return MarkdownUtils.markdownNode(1, previewTabContent);
+        ScrollPane sp = new ScrollPane(MarkdownUtils.markdownNode(
+                1, previewTabContent, repoPath.getRawUrl()
+        ));
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        return sp;
     }
 
 }

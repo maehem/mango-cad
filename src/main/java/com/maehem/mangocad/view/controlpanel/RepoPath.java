@@ -16,7 +16,10 @@
  */
 package com.maehem.mangocad.view.controlpanel;
 
+import com.maehem.mangocad.view.ControlPanel;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,8 +27,14 @@ import java.util.Random;
  */
 public class RepoPath {
 
+    private static final Logger LOGGER = ControlPanel.LOGGER;
+
+    public static final String GITHUB_PREFIX = "https://github.com/";
+    private static final String GITHUB_RAW_PREFIX = "https://raw.githubusercontent.com/";
+
     private final String uid;
     private String url;
+    private String rawUrl;
     private String description;
 
     public RepoPath(String url, String description) {
@@ -36,6 +45,8 @@ public class RepoPath {
         this.url = url;
         this.description = description;
         this.uid = uid;
+        
+        initRawUrl();
     }
 
     /**
@@ -50,6 +61,7 @@ public class RepoPath {
      */
     public void setUrl(String url) {
         this.url = url;
+        initRawUrl();
     }
 
     /**
@@ -89,4 +101,33 @@ public class RepoPath {
         return "RepoPath: " + "[" + uid + "] " + url + " :: " + description;
     }
 
+    private void initRawUrl() {
+            LOGGER.log(Level.SEVERE, "Input URL: " + url);
+        if (url.startsWith(GITHUB_PREFIX)) {
+            
+            // Example raw link:
+            //  https://raw.githubusercontent.com/maehem/Thump/master/README.md
+
+            // Turn the browser-freindly URL into a raw-content URL.
+            String githubDeets = getUrl().substring(GITHUB_PREFIX.length());
+            String[] split = githubDeets.split("\\/");
+            String userName = split[0];
+            String repoName = split[1];
+            String branch1 = "master"; // Seems to work for 'main' as well.
+            String branch2 = "main";
+            String urlPrefix = GITHUB_RAW_PREFIX + userName + "/" + repoName + "/" + branch1;
+            StringBuilder sb = new StringBuilder(urlPrefix);
+            for ( int i=2; i<split.length;i++) {
+                sb.append("/" + split[i]);
+            }
+            LOGGER.log(Level.SEVERE, "Raw URL: " + sb.toString());
+            rawUrl = sb.toString();
+        } else {
+            rawUrl = url;
+        }
+    }
+    
+    public String getRawUrl() {
+        return rawUrl;
+    }
 }

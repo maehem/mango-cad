@@ -130,7 +130,8 @@ public class LibraryDeviceSymbolItem extends ControlPanelListItem {
                 heading,
                 MarkdownUtils.markdownNode(
                         1.0,
-                        ControlPanelUtils.getItemDescriptionFull(this)
+                        ControlPanelUtils.getItemDescriptionFull(this),
+                        null
                 ),
                 symbolPreviewNode
         );

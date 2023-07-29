@@ -138,7 +138,8 @@ public class LibraryDeviceFootprintItem extends ControlPanelListItem {
                 heading,
                 MarkdownUtils.markdownNode(
                         1.5,
-                        ControlPanelUtils.getItemDescriptionFull(this)
+                        ControlPanelUtils.getItemDescriptionFull(this),
+                        null
                 ),
                 footprintPreviewNode
         );

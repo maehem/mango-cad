@@ -192,7 +192,8 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 heading,
                 MarkdownUtils.markdownNode(
                         1.5,
-                        ControlPanelUtils.getItemDescriptionFull(this)
+                        ControlPanelUtils.getItemDescriptionFull(this),
+                        null
                 ),
                 spPane
         );

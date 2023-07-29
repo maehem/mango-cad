@@ -204,7 +204,8 @@ public class SchematicFileItem extends ControlPanelListItem {
 
             Node pageDesc = MarkdownUtils.markdownNode(
                     1.0,
-                    sheet.getDescription().getValue()
+                    sheet.getDescription().getValue(),
+                    getFile().getParentFile().getAbsolutePath()
             );
             VBox.setVgrow(pageDesc, Priority.SOMETIMES);
 
@@ -239,7 +240,8 @@ public class SchematicFileItem extends ControlPanelListItem {
                 heading,
                 MarkdownUtils.markdownNode(
                         1.0,
-                        sch.getDescription().getValue()
+                        sch.getDescription().getValue(),
+                        getFile().getParentFile().getAbsolutePath()
                 ),
                 tabPane
         );

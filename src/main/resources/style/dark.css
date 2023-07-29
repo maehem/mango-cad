@@ -98,6 +98,11 @@
     -fx-fill: #EEEEF2
 }
 
+.md-link{
+    -fx-font-weight: bold; 
+    -fx-fill: #7777F2
+}
+
 .md-heading{
     -fx-font-family: Arial;
     -fx-font-weight: bold; 

@@ -175,7 +175,8 @@ public class BoardFileItem extends ControlPanelListItem {
 
         Node pageDesc = MarkdownUtils.markdownNode(
                 1.0,
-                brd.getDescription().getValue()
+                brd.getDescription().getValue(),
+                null
         );
         VBox.setVgrow(pageDesc, Priority.SOMETIMES);
 
@@ -202,7 +203,8 @@ public class BoardFileItem extends ControlPanelListItem {
                 heading,
                 MarkdownUtils.markdownNode(
                         1.5,
-                        brd.getDescription().getValue()
+                        brd.getDescription().getValue(),
+                        null
                 ),
                 spPane
         );

@@ -137,7 +137,8 @@ public class LibraryItem extends ControlPanelListItem {
         BorderPane pane = new BorderPane(
                 MarkdownUtils.markdownNode(
                         1.0,
-                        ControlPanelUtils.getItemDescriptionFull(this)
+                        ControlPanelUtils.getItemDescriptionFull(this),
+                        null
                 )
         );
         pane.setTop(top);

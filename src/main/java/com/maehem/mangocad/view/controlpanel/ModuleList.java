@@ -411,7 +411,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
 
     private void populateRepoItem(RepoPath rPath) {
         // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
-        if (rPath.getUrl().startsWith(GitHubFolderItem.GITHUB_PREFIX)) {
+        if (rPath.getUrl().startsWith(RepoPath.GITHUB_PREFIX)) {
             TreeItem item = new TreeItem(new GitHubFolderItem(rPath));
             githubSubFolderItem.getChildren().add(item);
         } else {

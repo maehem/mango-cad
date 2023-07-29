@@ -1,6 +1,6 @@
 ## Anxious Alicanto  (08/2023)
 
-![Artist's conception of the Chilean Alicanto.](/home/Alicanto.jpeg)
+![Artist's conception of the Chilean Alicanto.](Alicanto.jpeg)
 
 The first release of **MangoCAD**, a viewer application for ***EagleCAD*** formatted design
 files.

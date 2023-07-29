@@ -50,7 +50,7 @@ public class HomeContent extends BorderPane {
         } catch (IOException ex) {
             Logger.getLogger(HomeContent.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Node markdownNode = MarkdownUtils.markdownNode(1.0, str);
+        Node markdownNode = MarkdownUtils.markdownNode(1.0, str, "/home");
 
         node.getChildren().add(markdownNode);
 
