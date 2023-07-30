@@ -25,6 +25,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 
@@ -140,8 +141,13 @@ public abstract class ControlPanelListItem {
     public Node getPreviewTabNode() {
         //String path = "file://" + getFile().getAbsolutePath().replaceAll(" ", "\\\\ ");
         String path = getFile().toPath().toUri().toString();
-        return MarkdownUtils.markdownNode(1.5, 
-                ControlPanelUtils.getItemDescriptionFull(this),path);
+        ScrollPane sp = new ScrollPane(MarkdownUtils.markdownNode(1, 
+                ControlPanelUtils.getItemDescriptionFull(this),path
+        ));
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+
+        return sp;
     }
 
 }

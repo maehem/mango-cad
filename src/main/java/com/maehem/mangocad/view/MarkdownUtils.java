@@ -32,6 +32,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -41,7 +44,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
@@ -69,13 +71,15 @@ public class MarkdownUtils {
 
         LOGGER.log(Level.FINER, "Process: " + text);
         if (content.contains("<p>") || content.contains("<br>")
+                || content.contains("<a href=")
                 || content.contains("<b>")
                 || content.contains("<h1>")
                 || content.contains("<h2>")
                 || content.contains("<h3>")
                 || content.contains("<h4>")
                 || content.contains("<h5>")
-                || content.contains("<h6>")) {
+                || content.contains("<h6>")
+                || content.contains("&nbsp;")) {
             LOGGER.log(Level.FINER, "text contains HTML");
             content = html2markdown(text);
         }
@@ -94,8 +98,28 @@ public class MarkdownUtils {
         final String H2 = "##";
         final String H1 = "#";
 
+        // This kinda works but if there's an image link ![text](link) the
+        // regext breaks.  I don't know how to fix that yet. Maybe scrub those first?
         for (String line : lines) {
             line = line.strip();
+            Pattern p;
+            try {
+                p = Pattern.compile("\\[(?<text>[^\\]]*)\\]\\((?<link>[^\\)]*)\\)");
+                Matcher m = p.matcher(line);
+
+                
+                while (m.find()) {
+                    String s = m.group(1);
+                    String ss = m.group(2);
+                    // s now contains "BAR"
+                    LOGGER.log(Level.SEVERE, "Pattern: " + s + " ==> " + ss);
+                }
+                
+            } catch (PatternSyntaxException ex) {
+                System.out.println(ex);
+                throw (ex);
+            }
+
             if (line.startsWith("***") | line.startsWith("---") | line.startsWith("___")) { // <HR>
                 node.getChildren().add(new Separator());
             } else if (line.startsWith(H6)) {
@@ -132,7 +156,8 @@ public class MarkdownUtils {
                 t.getStyleClass().add("md-body");
                 t.setWrappingWidth(WRAP * 0.7);
                 t.setTextAlignment(TextAlignment.JUSTIFY);
-                HBox bulletArea = new HBox(bul, t);
+                TextFlow styledLine = styleLine(t, urlBase);
+                HBox bulletArea = new HBox(bul, styledLine);
                 bulletArea.setAlignment(Pos.TOP_LEFT);
                 node.getChildren().add(bulletArea);
             } else {
@@ -230,7 +255,7 @@ public class MarkdownUtils {
                     LOGGER.log(Level.SEVERE, "\nFull Image URL: {0}\n", fullUrl);
                     URL url = new URL(fullUrl);
                     if (fullUrl.contains(".svg") || fullUrl.contains("?svg=true")) {
-                        
+
                         // SVG from a file is not supported in JavaFX.
                         // Going to need a library or write one.
 //                        LOGGER.log(Level.SEVERE, "Handle SVG file.");
@@ -239,7 +264,6 @@ public class MarkdownUtils {
 //                        LOGGER.log(Level.SEVERE, "Fetched SVG content: " + svgContent);
 //                        svg.setContent(svgContent);
 //                        flow.getChildren().add(svg);
-                        
                         // Place holder SVG Badge.
                         Image im = new Image(MarkdownUtils.class.getResourceAsStream("/icons/svg-badge.png"));
                         ImageView iv = new ImageView(im);
@@ -303,11 +327,15 @@ public class MarkdownUtils {
             }
 
         } else {
+            Text urlText = textUrl(linkPhrase, linkURL, urlbase, styleClass);
+
             Text linkText = new Text(linkPhrase);
             linkText.getStyleClass().addAll(styleClass);
             linkText.getStyleClass().add("md-link");
-            TextFlow styledLine = styleLine(linkText, urlbase);
-            flow.getChildren().add(styledLine);
+            TextFlow styledLine = styleLine(urlText, urlbase);
+            //flow.getChildren().add(urlText);
+
+            // Add a tooltip
             Tooltip t = new Tooltip(linkURL);
             Tooltip.install(styledLine, t);
             styledLine.setOnMouseClicked((event) -> {
@@ -319,7 +347,8 @@ public class MarkdownUtils {
                     LOGGER.log(Level.SEVERE, "Could not open URL: " + linkURL, ex);
                 }
             });
-            //flow.getChildren().add(styledLine);
+
+            flow.getChildren().add(styledLine);
 
 //            Tooltip t = new Tooltip(linkURL);
 //            Tooltip.install(linkText, t);
@@ -345,7 +374,31 @@ public class MarkdownUtils {
         flow.getChildren().addAll(processWords(postString, styleClass));
     }
 
+    private static Text textUrl(String linkPhrase, String linkURL, String urlbase, List<String> styleClass) {
+        Text linkText = new Text(linkPhrase);
+        linkText.getStyleClass().addAll(styleClass);
+        linkText.getStyleClass().add("md-link");
+        //TextFlow styledLine = styleLine(linkText, urlbase);
+        //flow.getChildren().add(styledLine);
+
+        // Add a tooltip
+        Tooltip t = new Tooltip(linkURL);
+        Tooltip.install(linkText, t);
+        linkText.setOnMouseClicked((event) -> {
+            URI uri;
+            try {
+                uri = new URI(linkURL);
+                AppProperties.getInstance().getHostServices().showDocument(uri.toString());
+            } catch (URISyntaxException ex) {
+                LOGGER.log(Level.SEVERE, "Could not open URL: " + linkURL, ex);
+            }
+        });
+
+        return linkText;
+    }
+
     private static TextFlow styleLine(Text text, String urlbase) {
+        LOGGER.log(Level.SEVERE, "Line: " + text.getText());
         TextFlow flow = new TextFlow();
         String str = text.getText();
         //LOGGER.log(Level.SEVERE, "String to style: \"" + str + "\"");
@@ -379,16 +432,13 @@ public class MarkdownUtils {
             if (word.endsWith(".")) {
                 word = word.substring(0, word.length() - 1);
                 addDot = true;
-            }
-            if (word.endsWith(",")) {
+            } else if (word.endsWith(",")) {
                 word = word.substring(0, word.length() - 1);
                 addComma = true;
-            }
-            if (word.endsWith("?")) {
+            } else if (word.endsWith("?")) {
                 word = word.substring(0, word.length() - 1);
                 addQuest = true;
-            }
-            if (word.endsWith(";")) {
+            } else if (word.endsWith(";")) {
                 word = word.substring(0, word.length() - 1);
                 addSemiCol = true;
             }
@@ -470,7 +520,13 @@ public class MarkdownUtils {
                 wordText.getStyleClass().add("md-bold");
             }
 
-            flow.getChildren().add(wordText);
+            if (word.startsWith("http://") || word.startsWith("https://")) {
+                Text t = textUrl(word, word, null, styleClass);
+
+                flow.getChildren().add(t);
+            } else {
+                flow.getChildren().add(wordText);
+            }
 
             if (addComma) {
                 Text commaText = new Text(", ");
@@ -498,7 +554,7 @@ public class MarkdownUtils {
     }
 
     /**
-     * Convert HTML snippets to Marddown Using this guide:
+     * Convert HTML snippets to Markdown Using this guide:
      * https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#lines
      *
      *
@@ -517,6 +573,22 @@ public class MarkdownUtils {
      */
     public static String html2markdown(String content) {
         //StringBuilder sb = new StringBuilder();
+
+        // Handle image links.
+        //  <a href="http://www.adafruit.com/products/5323"><img src="assets/5323.jpg?raw=true" width="500px"><br/>
+        //  Click here to purchase one from the Adafruit shop</a>
+        //
+        //  linkUrl = http://www.adafruit.com/products/5323
+        //        href  ==>  ( href )
+        //        <a> content </a> ==>  [ content ]
+        //
+        //  linkText = ![Click here to purchase one from the Adafruit shop]( assets/5323.jpg?raw=true | width=500) "\nClick here to purchase one from the Adafruit shop
+        // 
+        //        content ==> <img src="assets/5323.jpg?raw=true" width="500px"><br/>Click here to purchase one from the Adafruit shop
+        //
+        //        content ==> ![ *** non-img portion of content, remove any trailing <br> ***   ]( assets/5323.jpg?raw=true | width=500 )
+        //
+        //  [ ![Click here to purchase one from the Adafruit shop]( assets/5323.jpg?raw=true | width=500) "\nClick here to purchase one from the Adafruit shop ](http://www.adafruit.com/products/5323)
         return content
                 .replaceAll("<b>", "__")
                 .replaceAll("</b>", "__")
@@ -538,7 +610,8 @@ public class MarkdownUtils {
                 .replaceAll("<h5>", "\n##### ")
                 .replaceAll("</h5>", "")
                 .replaceAll("<h6>", "\n###### ")
-                .replaceAll("</h6>", "");
+                .replaceAll("</h6>", "")
+                .replaceAll("&" + "nbsp;", " ");
 
     }
 
@@ -568,7 +641,7 @@ public class MarkdownUtils {
         } catch (URISyntaxException ex) {
             LOGGER.log(Level.SEVERE, "URI Syntax Exception: " + url.toString() + "\n" + ex.toString(), ex);
         }
-        
+
         // TODO:   StringBuilder is not holding the fetched data. Race contidion?
         return sb.toString();
     }
