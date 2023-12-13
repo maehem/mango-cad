@@ -118,7 +118,6 @@ public abstract class ControlPanelListItem {
         String descString = ControlPanelUtils.getItemDescriptionFull(this);
         if (descString != null && !descString.isEmpty()) {
             Tooltip tt = new Tooltip();
-            //tt.setGraphic(MarkdownUtils.markdownNode(0.75, descString,null));
             String path = getFile().toPath().toUri().toString();
             tt.setGraphic(MarkdownUtils.markdownNode(0.75, descString,path));
             return tt;
@@ -139,13 +138,11 @@ public abstract class ControlPanelListItem {
     }
 
     public Node getPreviewTabNode() {
-        //String path = "file://" + getFile().getAbsolutePath().replaceAll(" ", "\\\\ ");
         String path = getFile().toPath().toUri().toString();
         ScrollPane sp = new ScrollPane(MarkdownUtils.markdownNode(1, 
                 ControlPanelUtils.getItemDescriptionFull(this),path
         ));
         sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
 
         return sp;
     }
