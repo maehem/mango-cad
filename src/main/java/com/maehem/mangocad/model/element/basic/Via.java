@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.basic;
@@ -39,6 +39,7 @@ import java.util.ArrayList;
 public class Via extends _AQuantum {
 
     public static final String ELEMENT_NAME = "via";
+    //public static final double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );
 
     private double x;
     private double y;
@@ -47,7 +48,7 @@ public class Via extends _AQuantum {
     private double diameter = 0.0;
     private ViaShape shape = ViaShape.ROUND;
     private boolean alwaysstop = false;
-    
+
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     @Override
@@ -125,6 +126,27 @@ public class Via extends _AQuantum {
         this.diameter = diameter;
     }
 
+    public double getDerivedDiameter() {
+        // Default DRC
+        //  - drill*0.25
+        //  - or min 10mil
+        //  - or max 20mil
+        //  - or overridden.
+        // TODO:  These numbers need to come from any installed DRC rule set.
+        if (getDiameter() == 0.0) { // Use default
+            double flash = getDrill() * 0.25;
+            if (flash < 0.254) {
+                flash = 0.254;
+            }
+            if (flash > 0.508) {
+                flash = 0.508;
+            }
+            return getDrill() + flash * 2.0;
+        }
+
+        return getDiameter();
+    }
+
     /**
      * @return the shape
      */
@@ -152,7 +174,7 @@ public class Via extends _AQuantum {
     public void setAlwaysstop(boolean alwaysstop) {
         this.alwaysstop = alwaysstop;
     }
-    
+
     /**
      * @return the grouprefs
      */
