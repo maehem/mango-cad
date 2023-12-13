@@ -1,27 +1,27 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
-import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.view.ElementType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -52,6 +52,7 @@ public class LibraryElementListView extends VBox {
     private final ElementType type;
     private ListView listView;
 
+    @SuppressWarnings("unchecked")
     public LibraryElementListView(TableOfContentsPane listener, Library lib, ElementType type) { // Type?
 
         this.lib = lib;
@@ -85,7 +86,7 @@ public class LibraryElementListView extends VBox {
                     throw new AssertionError();
             }
         }
-        
+
         listView = new ListView(list);
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -97,7 +98,7 @@ public class LibraryElementListView extends VBox {
                 listener.selectionChanged(type, newValue);
             }
         });
-        
+
         // TODO: List in ScrollPane?
         ScrollPane sp = new ScrollPane(listView);
         sp.setMaxHeight(Double.MAX_VALUE);
@@ -109,11 +110,12 @@ public class LibraryElementListView extends VBox {
 
     }
 
+    @SuppressWarnings("unchecked")
     public void select( String item ) {
         LOGGER.log(Level.FINER, "{0} select: {1}", new Object[]{type, item});
-        listView.getSelectionModel().select(item);     
+        listView.getSelectionModel().select(item);
     }
-    
+
     private Node getHeader() {
         Label label = new Label(type.text());  // Type
         label.setPadding(new Insets(3, 0, 0, 6));

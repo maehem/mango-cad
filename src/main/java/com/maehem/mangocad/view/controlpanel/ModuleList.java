@@ -1,50 +1,50 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.controlpanel;
 
-import com.maehem.mangocad.RepoPathManager;
-import com.maehem.mangocad.view.controlpanel.listitem.ModuleItem;
-import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceFootprintItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryDevicePackage3dItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceSetItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceSymbolItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryFolderItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibraryModuleItem;
-import com.maehem.mangocad.view.controlpanel.listitem.LibrarySubItem;
-import com.maehem.mangocad.view.controlpanel.listitem.ProjectFolderItem;
-import com.maehem.mangocad.view.controlpanel.listitem.ProjectSubFolderItem;
-import com.maehem.mangocad.view.controlpanel.listitem.ProjectModuleItem;
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.RepoPathListListener;
+import com.maehem.mangocad.RepoPathManager;
 import com.maehem.mangocad.model.BoardCache;
-import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.LibraryCache;
+import com.maehem.mangocad.model.SchematicCache;
+import com.maehem.mangocad.model.element.drawing.Board;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
-import com.maehem.mangocad.model.element.drawing.Schematic;
-import com.maehem.mangocad.model.SchematicCache;
-import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.listitem.BoardFileItem;
+import com.maehem.mangocad.view.controlpanel.listitem.ControlPanelListItem;
 import com.maehem.mangocad.view.controlpanel.listitem.GitHubFolderItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceFootprintItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryDevicePackage3dItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceSetItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryDeviceSymbolItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryFolderItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibraryModuleItem;
+import com.maehem.mangocad.view.controlpanel.listitem.LibrarySubItem;
+import com.maehem.mangocad.view.controlpanel.listitem.ModuleItem;
+import com.maehem.mangocad.view.controlpanel.listitem.ProjectFolderItem;
+import com.maehem.mangocad.view.controlpanel.listitem.ProjectModuleItem;
+import com.maehem.mangocad.view.controlpanel.listitem.ProjectSubFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.RepositoryFolderItem;
 import com.maehem.mangocad.view.controlpanel.listitem.RepositoryModuleItem;
 import com.maehem.mangocad.view.controlpanel.listitem.RepositorySubFolderItem;
@@ -94,9 +94,12 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
     private final TreeTableColumn<ControlPanelListItem, String> modifiedColumn = new TreeTableColumn<>("Last Modified");
     private final TreeTableColumn<ControlPanelListItem, String> useColumn = new TreeTableColumn<>("Use");
 
+    @SuppressWarnings("unchecked")
     private final TreeItem githubSubFolderItem = new TreeItem(new RepositorySubFolderItem("Git Hub", "Repos at GitHub.com"));
+    @SuppressWarnings("unchecked")
     private final TreeItem otherSubFolderItem = new TreeItem(new RepositorySubFolderItem("Other URLs", "Misc. Repo URLs"));
 
+    @SuppressWarnings("unchecked")
     public ModuleList(TabArea tabArea) {
         this.tabArea = tabArea;
 
@@ -186,6 +189,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         getColumns().add(useColumn);
     }
 
+    @SuppressWarnings("unchecked")
     private void populateLibraries() {
         librariesItem.getChildren().clear();
         librariesItem.setExpanded(true);
@@ -207,6 +211,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                 }
 
                 // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
+                @SuppressWarnings("unchecked")
                 TreeItem item = new TreeItem(new LibraryFolderItem(
                         dirFile.getParentFile().getName(), ControlPanelUtils.getFolderDescriptionShort(dirFile), dirFile)
                 );
@@ -216,6 +221,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void populateLibrary(File dir, TreeItem parentItem) {
         File[] libs = dir.listFiles((file) -> {    // lambda expression
             return (file.isFile() && file.getName().endsWith(".lbr"));
@@ -254,6 +260,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
      * @param dir
      * @param parentItem
      */
+    @SuppressWarnings("unchecked")
     private void populateProjectFolder(File dir, TreeItem parentItem) {
         // List any sub directories.
         File[] sdirs = dir.listFiles((sdir) -> {
@@ -308,6 +315,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void populateLibraryDetailItems(Library library, File file, TreeItem parentItem) {
         // List each deviceset as item (leaf)
         for (DeviceSet ds : library.getDeviceSets()) {
@@ -346,6 +354,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void populateProjects() {
         projectsItem.getChildren().clear();
 
@@ -409,6 +418,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         repositoriesItem.setExpanded(true);
     }
 
+    @SuppressWarnings("unchecked")
     private void populateRepoItem(RepoPath rPath) {
         // TODO: Maybe use TreeCell to enhance what is displayed (tooltips) as well as maybe adding ways to edit in place?
         if (rPath.getUrl().startsWith(RepoPath.GITHUB_PREFIX)) {
