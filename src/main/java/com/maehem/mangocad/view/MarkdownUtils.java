@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view;
@@ -107,14 +107,13 @@ public class MarkdownUtils {
                 p = Pattern.compile("\\[(?<text>[^\\]]*)\\]\\((?<link>[^\\)]*)\\)");
                 Matcher m = p.matcher(line);
 
-                
                 while (m.find()) {
                     String s = m.group(1);
                     String ss = m.group(2);
                     // s now contains "BAR"
                     LOGGER.log(Level.SEVERE, "Pattern: " + s + " ==> " + ss);
                 }
-                
+
             } catch (PatternSyntaxException ex) {
                 System.out.println(ex);
                 throw (ex);
@@ -253,7 +252,8 @@ public class MarkdownUtils {
                         fullUrl = linkURL;  // Not a relative link.
                     }
                     LOGGER.log(Level.SEVERE, "\nFull Image URL: {0}\n", fullUrl);
-                    URL url = new URL(fullUrl);
+                    //URL url = new URL(fullUrl);
+                    URL url = URI.create(fullUrl).toURL();
                     if (fullUrl.contains(".svg") || fullUrl.contains("?svg=true")) {
 
                         // SVG from a file is not supported in JavaFX.
@@ -398,7 +398,7 @@ public class MarkdownUtils {
     }
 
     private static TextFlow styleLine(Text text, String urlbase) {
-        LOGGER.log(Level.SEVERE, "Line: " + text.getText());
+        LOGGER.log(Level.FINE, "styleLine(): {0}", text.getText());
         TextFlow flow = new TextFlow();
         String str = text.getText();
         //LOGGER.log(Level.SEVERE, "String to style: \"" + str + "\"");
@@ -583,7 +583,7 @@ public class MarkdownUtils {
         //        <a> content </a> ==>  [ content ]
         //
         //  linkText = ![Click here to purchase one from the Adafruit shop]( assets/5323.jpg?raw=true | width=500) "\nClick here to purchase one from the Adafruit shop
-        // 
+        //
         //        content ==> <img src="assets/5323.jpg?raw=true" width="500px"><br/>Click here to purchase one from the Adafruit shop
         //
         //        content ==> ![ *** non-img portion of content, remove any trailing <br> ***   ]( assets/5323.jpg?raw=true | width=500 )
