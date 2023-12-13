@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.library;
@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
+import com.maehem.mangocad.model.element.basic.Hole;
 import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.basic.Junction;
 import com.maehem.mangocad.model.element.basic.LabelElement;
@@ -35,6 +36,7 @@ import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Probe;
 import com.maehem.mangocad.model.element.basic.Spline;
 import com.maehem.mangocad.model.element.basic.Vertex;
+import com.maehem.mangocad.model.element.basic.Via;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import static com.maehem.mangocad.model.element.enums.PadShape.*;
@@ -49,7 +51,6 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
-import com.maehem.mangocad.view.ControlPanel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -99,7 +100,7 @@ import javafx.scene.transform.Translate;
  */
 public class LibraryElementNode {
 
-    private static final Logger LOGGER = ControlPanel.LOGGER;
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String FONT_PATH = "/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
     public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
@@ -349,6 +350,7 @@ public class LibraryElementNode {
         Polygon p = new Polygon(verts);
         p.setStrokeWidth(poly.getWidth());
         p.setStrokeLineCap(StrokeLineCap.ROUND);
+        p.setStroke(color);
         p.setFill(color);
 
         return p;
@@ -610,8 +612,8 @@ public class LibraryElementNode {
         double textHeight = tt.getBoundsInLocal().getHeight();
         double borderW = 0.05;
 
-//        LOGGER.log(Level.SEVERE, 
-//                "Font Size: {0}   Text Hight: {1}  Line Height: {2}", 
+//        LOGGER.log(Level.SEVERE,
+//                "Font Size: {0}   Text Hight: {1}  Line Height: {2}",
 //                new Object[]{fontSize, textHeight, lineHeight}
 //        );
         tt.setLayoutY(fontAsc + borderW);
@@ -624,7 +626,7 @@ public class LibraryElementNode {
             tt.getTransforms().add(tR);
         }
 
-        // Text lives inside a Pane area that might be 
+        // Text lives inside a Pane area that might be
         // colored/backgrounded based on DRC error.
         Pane ttG = new Pane(tt);
 
@@ -775,7 +777,7 @@ public class LibraryElementNode {
         // jfxRot is the JavaFX rotation and is visually mirroed from EagleCAD rotation.
         double jfxRot = 360.0 - rot;
 
-        // Text lives inside a Pane area that might be 
+        // Text lives inside a Pane area that might be
         // colored/backgrounded based on DRC error.
         Pane ttG = new Pane(tt);
         ttG.setPrefHeight(fontAsc + borderW * 2.0);
@@ -985,7 +987,7 @@ public class LibraryElementNode {
 
         double cX = smd.getX() - w / 2.0;
         double cY = -smd.getY() - h / 2.0;
-        //Setting the properties of the rectangle 
+        //Setting the properties of the rectangle
         pad.setX(cX);
         pad.setY(cY);
         pad.setWidth(w);
@@ -1252,6 +1254,135 @@ public class LibraryElementNode {
         return g;
     }
 
+    /**
+     * Via Node
+     *
+     * TODO: Solder Mask, pin name, drill legend.
+     *
+     * @param via element
+     * @param padColor
+     * @param maskColor
+     * @return JavaFX Node
+     */
+    public static Node createVia(Via via, Color padColor, Color maskColor) {
+        Group g = new Group();
+        double padDia = via.getDerivedDiameter();
+        ImagePattern maskPattern = makeHatch(10, maskColor);
+
+        Color drillColor = Color.BLACK;
+
+        switch (via.getShape()) {
+            case SQUARE -> {
+                Rectangle pad = new Rectangle(
+                        padDia, padDia,
+                        padColor
+                );
+                pad.setStroke(null);
+                pad.setLayoutX(via.getX() - padDia / 2.0);
+                pad.setLayoutY(-via.getY() - padDia / 2.0);
+
+                g.getChildren().add(pad);
+
+                // SolderMask
+                double maskWidth2 = MASK_W_DEFAULT * 2;
+                Rectangle mask = new Rectangle(
+                        padDia + maskWidth2, padDia + maskWidth2,
+                        maskColor
+                );
+                mask.setStrokeWidth(0.01);
+                mask.setStroke(maskColor);
+                mask.setFill(maskPattern);
+                mask.setLayoutX(via.getX() - padDia / 2.0 - MASK_W_DEFAULT);
+                mask.setLayoutY(-via.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+
+                g.getChildren().add(mask);
+
+            }
+            case OCTOGON -> {
+                double r = padDia / 2.0;
+                double n = r * 0.383;
+                Polygon octo = new Polygon(
+                        -n, -r,
+                        n, -r,
+                        r, -n,
+                        r, n,
+                        n, r,
+                        -n, r,
+                        -r, n,
+                        -r, -n
+                );
+                octo.setFill(padColor);
+                octo.setStroke(null);
+                octo.setLayoutX(via.getX());
+                octo.setLayoutY(-via.getY());
+
+                g.getChildren().add(octo);
+
+                // Mask
+                double rr = padDia / 2.0 + MASK_W_DEFAULT;
+                double nn = rr * 0.383;
+                Polygon octoMask = new Polygon(
+                        -nn, -rr,
+                        nn, -rr,
+                        rr, -nn,
+                        rr, nn,
+                        nn, rr,
+                        -nn, rr,
+                        -rr, nn,
+                        -rr, -nn
+                );
+                octoMask.setStrokeWidth(0.02);
+                octoMask.setStroke(maskColor);
+                octoMask.setFill(maskPattern);
+                octoMask.setLayoutX(via.getX());
+                octoMask.setLayoutY(-via.getY());
+
+                g.getChildren().add(octoMask);
+            }
+            default -> {  // ROUND
+                Circle pad = new Circle(padDia / 2.0, padColor);
+                pad.setLayoutX(via.getX());
+                pad.setLayoutY(-via.getY());
+                pad.setStroke(null);
+                g.getChildren().add(pad);
+
+                // SolderMask
+                Circle mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, maskColor);
+
+                mask.setStrokeWidth(0.02);
+                mask.setStroke(maskColor);
+                mask.setFill(maskPattern);
+                mask.setLayoutX(via.getX());
+                mask.setLayoutY(-via.getY());
+
+                g.getChildren().add(mask);
+            }
+
+        }
+
+        // Drill
+        Circle drill = new Circle(via.getDrill() / 2.0, drillColor);
+        drill.setLayoutX(via.getX());
+        drill.setLayoutY(-via.getY());
+        drill.setStroke(null);
+
+        g.getChildren().add(drill);
+
+        // Text is the "extent" the via layers passes through
+        //      Normally: 1-16  Blind: ex. 2-4
+        //
+        // Name Text
+        ElementText et = new ElementText();
+        et.setValue(via.getExtent());
+        et.setAlign(TextAlign.CENTER);
+        et.setSize(0.5);
+        et.setX(via.getX());
+        et.setY(via.getY());
+        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGREY));
+
+        return g;
+    }
+
     public static Node createPinNode(Pin p, Color c, Rotation parentRotation, boolean showDetails) {
         Group g = new Group();
 
@@ -1454,6 +1585,26 @@ public class LibraryElementNode {
     }
 
     /**
+     * xml ==> x="16.51" y="8.89" drill="0.508"
+     *
+     * @param eh ElementHole object
+     * @param color to make the circle
+     * @return
+     */
+    public static Node createHoleNode(Hole eh, Color color) {
+        Circle c = new Circle(eh.getX(), -eh.getY(), eh.getDrill() / 2.0);
+
+        // TODO:  There is a drill symbol and there is a hole.
+        // Symbol is from a hard coded table.
+        // Hole is rendered as PCB outline settings.
+        c.setStroke(color);
+        c.setStrokeWidth(0.04); // TODO: Get Stroke width and color from board outline.
+        c.setFill(null);
+
+        return c;
+    }
+
+    /**
      *
      * @param junc Junction object
      * @param color to make the circle
@@ -1583,7 +1734,6 @@ public class LibraryElementNode {
                 textGroup.getChildren().add(LibraryElementNode.crosshairs(
                         proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
                 ));
-
             } else if (e instanceof Dimension dim) {
                 elementGroup.getChildren().add(createDimensionNode(dim, layers, palette));
             } else if (e instanceof Pin pin) {
@@ -1628,7 +1778,8 @@ public class LibraryElementNode {
     }
 
     public static Node createPackageNode(Footprint pkg, LayerElement[] layers, ColorPalette palette) {
-        Group g = new Group();
+        //Group p = new Group();
+        Pane p = new Pane();
 
         pkg.getElements().forEach((e) -> {
             LayerElement le = layers[e.getLayerNum()];
@@ -1638,32 +1789,64 @@ public class LibraryElementNode {
             if (e instanceof PadSMD padSMD) {
                 Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
                 Node n = LibraryElementNode.createSmd(padSMD, c, maskColor);
-                g.getChildren().add(n);
+                p.getChildren().add(n);
                 n.toBack();
             } else if (e instanceof PadTHD padTHD) {
                 Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
                 Node n = LibraryElementNode.createThd(padTHD, c, maskColor);
-                g.getChildren().add(n);
+                p.getChildren().add(n);
                 n.toBack();
             } else if (e instanceof Wire wire) {
-                g.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
+                p.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
             } else if (e instanceof ElementText elementText) {
-                g.getChildren().add(LibraryElementNode.createText(elementText, c));
-                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
+                Node textNode = LibraryElementNode.createText(elementText, c);
+                p.getChildren().add(textNode);
+                // TODO: Get proper tOrigin/bOrigin layer info for crosshair color.
+                p.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementRectangle elementRectangle) {
-                g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
+                p.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
             } else if (e instanceof ElementPolygon elementPolygon) {
-                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
+                p.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
             } else if (e instanceof ElementCircle elementCircle) {
-                g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
+                p.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
+            } else {
+                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
             }
         });
 
-        g.getChildren().add(LibraryElementNode.crosshairs(
-                0, 0, 0.5, 0.05, Color.RED
+        // tOrigins 23   , bOrigins 24
+        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
+        int cIdx = layers[23].getColorIndex();
+        Color c = ColorUtils.getColor(palette.getHex(cIdx));
+        p.getChildren().add(LibraryElementNode.crosshairs(
+                0, 0, 0.5, 0.035, c
         ));
 
-        return g;
+//        // This feels like a hack but it gets the job done.
+//        ArrayList<Node> list = new ArrayList<>();
+//        for (Node n : p.getChildren()) {
+//            list.add(n);
+//            // LIST X,Y and extents in four directions.
+//            Bounds bl = n.getBoundsInLocal();
+//            LOGGER.log(Level.SEVERE, "node: x:{0},{1}  y:{2},{3}",
+//                    new Object[]{
+//                        bl.getMinX(), bl.getMaxX(),
+//                        bl.getMinY(), bl.getMaxY()
+//                    });
+//        }
+//        double w = p.getBoundsInLocal().getWidth() * 1.1;
+//        double h = p.getBoundsInLocal().getHeight() * 1.1;
+
+//        p.getChildren().clear();
+//
+//        // Establish an area where the center is always our desired center.
+//        Rectangle base = new Rectangle(-w / 2, -h / 2, w, h);
+//        base.setFill(new Color(0.1, 0.1, 0.1, 0.0));
+//        p.getChildren().add(base);
+//
+//        p.getChildren().addAll(list);
+
+        return p;
     }
 
     public static Node createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {
