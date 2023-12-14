@@ -44,6 +44,7 @@ public enum DrcDefs {
     MS_DRILL("msDrill", "0.35mm"),
     MS_MICRO_VIA("msMicroVia", "9.99mm"),
     MS_BLIND_VIA_RATIO("msBlindViaRatio", "0.5"),
+    // Annular Ring Tab Settings
     RV_PAD_TOP("rvPadTop", "0.25"),
     RV_PAD_INNER("rvPadInner", "0.25"),
     RV_PAD_BOTTOM("rvPadBottom", "0.25"),
@@ -65,6 +66,8 @@ public enum DrcDefs {
     RL_MAX_MICRO_VIA_OUTER("rlMaxMicroViaOuter", "20mil"),
     RL_MIN_MICRO_VIA_INNER("rlMinMicroViaInner", "4mil"),
     RL_MAX_MICRO_VIA_INNER("rlMaxMicroViaInner", "20mil"), ////
+    USE_DIAMETER("useDiameter", "13"), // 13: None  15:Pad  29:Via  31:Pad+Via
+
     PS_TOP("psTop", "-1"),
     PS_BOTTOM("psBottom", "-1"),
     PS_FIRST("psFirst", "-1"),
@@ -92,7 +95,6 @@ public enum DrcDefs {
     CHECK_NAMES("checkNames", "1"),
     CHECK_WIRE_STUBS("checkWireStubs", "1"),
     CHECK_POLYGON_WIDTH("checkPolygonWidth", "0"),
-    USE_DIAMETER("useDiameter", "13"),
     MAX_ERRORS("maxErrors", "50");
 
     public final String label;
