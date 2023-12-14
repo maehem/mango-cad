@@ -1,23 +1,26 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.misc;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.util.DrcDefs;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <pre>
@@ -29,6 +32,8 @@ import java.util.ArrayList;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class DesignRules extends _AQuantum {
+
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "designrules";
 
@@ -68,6 +73,16 @@ public class DesignRules extends _AQuantum {
      */
     public ArrayList<Param> getParams() {
         return params;
+    }
+
+    public String getRule(DrcDefs rule) {
+        for (Param p : getParams()) {
+            if (p.getName().equals(rule.label)) {
+                return p.getValue();
+            }
+        }
+        LOGGER.log(Level.SEVERE, "DesignRules.getRule() could not find a rule called: {0}", rule.label);
+        return "";
     }
 
 }
