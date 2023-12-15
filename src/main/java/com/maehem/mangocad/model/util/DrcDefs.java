@@ -23,6 +23,7 @@ package com.maehem.mangocad.model.util;
  */
 public enum DrcDefs {
 
+    // Settings in order that they are written to the save file as Eagle would write them.
     LAYER_SETUP("layerSetup", "(1*16)"),
     MT_COPPER("mtCopper", "0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035"),
     MT_ISOLATE("mtIsolate", "1.5mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"),
@@ -65,9 +66,7 @@ public enum DrcDefs {
     RL_MIN_MICRO_VIA_OUTER("rlMinMicroViaOuter", "4mil"),
     RL_MAX_MICRO_VIA_OUTER("rlMaxMicroViaOuter", "20mil"),
     RL_MIN_MICRO_VIA_INNER("rlMinMicroViaInner", "4mil"),
-    RL_MAX_MICRO_VIA_INNER("rlMaxMicroViaInner", "20mil"), ////
-    USE_DIAMETER("useDiameter", "13"), // 13: None  15:Pad  29:Via  31:Pad+Via
-
+    RL_MAX_MICRO_VIA_INNER("rlMaxMicroViaInner", "20mil"),
     PS_TOP("psTop", "-1"),
     PS_BOTTOM("psBottom", "-1"),
     PS_FIRST("psFirst", "-1"),
@@ -95,6 +94,7 @@ public enum DrcDefs {
     CHECK_NAMES("checkNames", "1"),
     CHECK_WIRE_STUBS("checkWireStubs", "1"),
     CHECK_POLYGON_WIDTH("checkPolygonWidth", "0"),
+    USE_DIAMETER("useDiameter", "13"), // Annular Ring Setting: 13: None  15:Pad  29:Via  31:Pad+Via
     MAX_ERRORS("maxErrors", "50");
 
     public final String label;
