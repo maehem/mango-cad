@@ -1,23 +1,31 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.eaglecad;
 
-import java.util.ArrayList;
+import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.basic.*;
+import com.maehem.mangocad.model.element.drawing.*;
+import com.maehem.mangocad.model.element.enums.*;
+import com.maehem.mangocad.model.element.highlevel.*;
+import com.maehem.mangocad.model.element.misc.*;
+import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -27,23 +35,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.maehem.mangocad.model.LibraryElement;
-import com.maehem.mangocad.model._AQuantum;
-import com.maehem.mangocad.model.element.misc.*;
-import com.maehem.mangocad.model.element.drawing.*;
-import com.maehem.mangocad.model.element.basic.*;
-import com.maehem.mangocad.model.element.highlevel.*;
-import com.maehem.mangocad.model.element.enums.*;
-import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.misc.Setting;
-import com.maehem.mangocad.view.ControlPanel;
 
 /**
  *
@@ -205,8 +203,8 @@ public class EagleCADIngest {
             if (child.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
-            // schematic->drawing children:  
-            //      description, libraries, attributes, variantdefs, 
+            // schematic->drawing children:
+            //      description, libraries, attributes, variantdefs,
             //      classes, modules, groups, parts, sheets, errors
             switch (child.getNodeName()) {
                 case "description" ->
@@ -1105,7 +1103,7 @@ public class EagleCADIngest {
         //        rot           %Rotation;     "R0"
         //        xref          %Bool;         "no"
         //        grouprefs     IDREFS         #IMPLIED
-        //        
+        //
         //      Added recently:
         //        probetype    %Int             "0"
         //
@@ -2305,8 +2303,8 @@ public class EagleCADIngest {
     private static void ingestSpline(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
         //spline (vertex)*>
         //  Four simple (non-curve) vertices define the control points of a degree-3 spline curve
-        //  ATTLIST 
-        //     width          %Dimension;    #REQUIRED 
+        //  ATTLIST
+        //     width          %Dimension;    #REQUIRED
         //     layer           %Int%       IMPLIED    (new to 9.7)
         //     locked          %Bool%      IMPLIED    (new to 9.7)
         Spline spline = new Spline();
@@ -2930,11 +2928,11 @@ public class EagleCADIngest {
             switch (item.getNodeName()) {
                 case "description" -> {
                     Description desc = new Description();
-                    ingestDescription(desc, node);
+                    ingestDescription(desc, item);
                     dr.getDescriptions().add(desc);
                 }
                 case "param" -> {
-                    ingestParam(dr.getParams(), node);
+                    ingestParam(dr.getParams(), item);
                 }
                 default -> {
                     throw new EagleCADLibraryFileException("<designrules> has unknown child: <" + item.getNodeName() + ">");
