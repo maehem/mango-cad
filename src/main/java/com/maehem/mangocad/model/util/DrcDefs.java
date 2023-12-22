@@ -72,13 +72,13 @@ public enum DrcDefs {
     PS_FIRST("psFirst", "-1"),
     PS_ELONGATION_LONG("psElongationLong", "100"),
     PS_ELONGATION_OFFSET("psElongationOffset", "100"),
-    MV_STOP_FRAME("mvStopFrame", "1"),
+    MV_STOP_FRAME("mvStopFrame", "1"), // Stop Mask PCT
     MV_CREAM_FRAME("mvCreamFrame", "0"),
-    ML_MIN_STOP_FRAME("mlMinStopFrame", "4mil"),
-    ML_MAX_STOP_FRAME("mlMaxStopFrame", "4mil"),
+    ML_MIN_STOP_FRAME("mlMinStopFrame", "4mil"), // Stop Mask Min
+    ML_MAX_STOP_FRAME("mlMaxStopFrame", "4mil"), // Stop Mask Max
     ML_MIN_CREAM_FRAME("mlMinCreamFrame", "0mil"),
     ML_MAX_CREAM_FRAME("mlMaxCreamFrame", "0mil"),
-    ML_VIA_STOP_LIMIT("mlViaStopLimit", "0mil"),
+    ML_VIA_STOP_LIMIT("mlViaStopLimit", "0mil"), // Gen mask for vias over this drill size.
     SR_ROUNDNESS("srRoundness", "0"),
     SR_MIN_ROUNDNESS("srMinRoundness", "0mil"),
     SR_MAX_ROUNDNESS("srMaxRoundness", "0mil"),

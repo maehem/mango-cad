@@ -1,35 +1,35 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.element.misc.LayerElement;
-import com.maehem.mangocad.model.element.drawing.Library;
-import com.maehem.mangocad.model.element.highlevel.DeviceSet;
-import com.maehem.mangocad.model.element.highlevel.Footprint;
-import com.maehem.mangocad.model.element.highlevel.Symbol;
-import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Gate;
+import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import java.util.List;
@@ -105,7 +105,7 @@ public class DetailNodes {
         ColorPalette palette = lib.getParentDrawing().getPalette();
 
         Node g = LibraryElementNode.createSymbolNode(null, symbol, null, null, null, layers, palette);
-        
+
         StackPane stackPane = new StackPane(g); // Centers the symbol
         Group nodeGroup = new Group(stackPane);
 
@@ -147,9 +147,9 @@ public class DetailNodes {
         symbol.getElements().forEach((e) -> {
             //LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
             int layerNum = e.getLayerNum();
-            LayerElement le = layers[e.getLayerNum()];
+            LayerElement le = layers[layerNum];
             if (le == null) {
-                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
+                LOGGER.log(Level.SEVERE, "No Layer for: {0}", layerNum);
             }
             int colorIndex = le.getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
@@ -164,7 +164,7 @@ public class DetailNodes {
                     gateName = gate.getName();
                 }
                 //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
-                g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c, null));
+                g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c, null, true));
                 g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));

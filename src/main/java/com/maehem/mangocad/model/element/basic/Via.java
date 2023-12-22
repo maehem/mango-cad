@@ -18,7 +18,11 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.enums.ViaShape;
+import com.maehem.mangocad.model.element.misc.DesignRules;
+import com.maehem.mangocad.model.util.DrcDefs;
+import com.maehem.mangocad.model.util.Units;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * <pre>
@@ -38,8 +42,13 @@ import java.util.ArrayList;
  */
 public class Via extends _AQuantum {
 
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
+
     public static final String ELEMENT_NAME = "via";
     //public static final double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );
+    public enum Layer {
+        TOP, INNER, BOTTOM
+    };
 
     private double x;
     private double y;
@@ -113,38 +122,82 @@ public class Via extends _AQuantum {
     }
 
     /**
-     * @return the diameter
+     * @return the diameter, usually 0(auto/DRC) unless overwritten by user.
      */
     public double getDiameter() {
         return diameter;
     }
 
     /**
+     * Override the DRC calculated diameter by setting value greater than zero.
+     *
      * @param diameter the diameter to set
      */
     public void setDiameter(double diameter) {
         this.diameter = diameter;
     }
 
-    public double getDerivedDiameter() {
-        // Default DRC
+    public double getDerivedDiameter(DesignRules dr, Layer l) {
+        // Example Default DRC
         //  - drill*0.25
         //  - or min 10mil
         //  - or max 20mil
-        //  - or overridden.
-        // TODO:  These numbers need to come from any installed DRC rule set.
-        if (getDiameter() == 0.0) { // Use default
-            double flash = getDrill() * 0.25;
-            if (flash < 0.254) {
-                flash = 0.254;
+        //  - or overridden by user in element.
+        if (getDiameter() > 0.0) {
+            return getDiameter(); // Use over-ridden value
+        } else { // Apply Design Rule
+            String drViaOuter = dr.getRule(DrcDefs.RV_VIA_OUTER); // rvViaOuter - % - percentage
+            //LOGGER.log(Level.SEVERE, "drViaOuter string value: " + drViaOuter);
+            Double viaOuterVal = Double.valueOf(drViaOuter);
+            double flash = getDrill() * viaOuterVal;
+
+            String drMinViaOuter = dr.getRule(DrcDefs.RL_MIN_VIA_OUTER); // rlMinViaOuter - unit mil/mm
+            Double viaMinOuterVal = Units.toMM(drMinViaOuter);
+
+            String drMaxViaOuter = dr.getRule(DrcDefs.RL_MAX_VIA_OUTER);
+            Double viaMaxOuterVal = Units.toMM(drMaxViaOuter); // rlMaxViaOuter - unit mil/mm
+
+            if (flash < viaMinOuterVal) {
+                flash = viaMinOuterVal;
             }
-            if (flash > 0.508) {
-                flash = 0.508;
+            if (flash > viaMaxOuterVal) {
+                flash = viaMaxOuterVal;
             }
             return getDrill() + flash * 2.0;
         }
+    }
 
-        return getDiameter();
+    public double getMaskDiameter(DesignRules dr, Layer l) {
+        double padDia = getDerivedDiameter(dr, l);
+
+        //Mask is MV_STOP_BASE % of the drill with min and max considered.
+        // NOTE: For Via, ML_MAX_STOP_FRAME is the only param used.
+        //       The ML_MIN_STOP_FRAME and MV_STOP_FRAME seem to be ignored.
+        // TODO: If limit less than drill, return 0;
+        // Add the DRC mask amount.
+        String rMin = dr.getRule(DrcDefs.ML_MIN_STOP_FRAME); // in mm or mil. i.e. "0.4mm", "10mil"
+        Double viaMinStopVal = Units.toMM(rMin);
+        String rMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME);
+        Double viaMaxStopVal = Units.toMM(rMax);
+        String rVal = dr.getRule(DrcDefs.MV_STOP_FRAME);
+        Double viaStopVal = Double.valueOf(rVal); // in percent 0.0-1.0
+
+        double maskBase = padDia * viaStopVal;
+
+        //LOGGER.log(Level.SEVERE, "    Drll Size: " + getDrill());
+        //LOGGER.log(Level.SEVERE, "      Pad Dia: " + padDia);
+        //LOGGER.log(Level.SEVERE, "maskBase Size: " + maskBase);
+        if (maskBase < viaMinStopVal) {
+            maskBase = viaMinStopVal;
+            //LOGGER.log(Level.SEVERE, "     * to min: " + maskBase);
+        }
+        if (maskBase > viaMaxStopVal) {
+            maskBase = viaMaxStopVal;
+            //LOGGER.log(Level.SEVERE, "     * to max: " + maskBase);
+        }
+
+        //LOGGER.log(Level.SEVERE, "Final Diameter: " + (padDia + 2 * maskBase));
+        return padDia + 2 * maskBase;
     }
 
     /**

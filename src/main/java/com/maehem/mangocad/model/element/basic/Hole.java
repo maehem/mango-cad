@@ -1,35 +1,40 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.misc.DesignRules;
+import com.maehem.mangocad.model.util.DrcDefs;
+import com.maehem.mangocad.model.util.Units;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Hole extends _AQuantum {
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "hole";
-    
+
     private double x;
     private double y;
     private double drill;
 
-    
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -62,7 +67,7 @@ public class Hole extends _AQuantum {
     public void setY(double y) {
         this.y = y;
     }
-    
+
     /**
      * @return the drill
      */
@@ -76,4 +81,36 @@ public class Hole extends _AQuantum {
     public void setDrill(double drill) {
         this.drill = drill;
     }
+
+    public double getMaskDiameter(DesignRules dr) {
+
+        //Mask is MV_STOP_BASE % of the drill with min and max considered.
+        // NOTE: For Via, ML_MAX_STOP_FRAME is the only param used.
+        //       The ML_MIN_STOP_FRAME and MV_STOP_FRAME seem to be ignored.
+        // TODO: If limit less than drill, return 0;
+        // Add the DRC mask amount.
+        String rMin = dr.getRule(DrcDefs.ML_MIN_STOP_FRAME); // in mm or mil. i.e. "0.4mm", "10mil"
+        Double viaMinStopVal = Units.toMM(rMin);
+        String rMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME);
+        Double viaMaxStopVal = Units.toMM(rMax);
+        String rVal = dr.getRule(DrcDefs.MV_STOP_FRAME);
+        Double viaStopVal = Double.valueOf(rVal); // in percent 0.0-1.0
+
+        double maskBase = getDrill() * viaStopVal;
+
+        //LOGGER.log(Level.SEVERE, "    Hole Size: " + getDrill());
+        //LOGGER.log(Level.SEVERE, "maskBase Size: " + maskBase);
+        if (maskBase < viaMinStopVal) {
+            maskBase = viaMinStopVal;
+            //LOGGER.log(Level.SEVERE, "     * to min: " + maskBase);
+        }
+        if (maskBase > viaMaxStopVal) {
+            maskBase = viaMaxStopVal;
+            //LOGGER.log(Level.SEVERE, "     * to max: " + maskBase);
+        }
+
+        //LOGGER.log(Level.SEVERE, "Final Diameter: " + (getDrill() + 2 * maskBase));
+        return getDrill() + 2 * maskBase;
+    }
+
 }

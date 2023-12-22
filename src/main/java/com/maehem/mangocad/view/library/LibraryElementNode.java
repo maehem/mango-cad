@@ -48,6 +48,7 @@ import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Segment;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
@@ -379,7 +380,7 @@ public class LibraryElementNode {
             default ->
                 probeText = "V???(" + le.getValue() + ")";
         }
-        Node textNode = createText(le, probeText, color, null);
+        Node textNode = createText(le, probeText, color, null, true);
 
         double x = le.getX();
         double y = -le.getY();
@@ -570,14 +571,14 @@ public class LibraryElementNode {
     }
 
     public static Node createText(ElementText et, Color color) {
-        return createText(et, null, color, null);
+        return createText(et, null, color, null, true);
     }
 
     public static Node createText(ElementText et, Color color, Rotation parentRotation) {
-        return createText(et, null, color, parentRotation);
+        return createText(et, null, color, parentRotation, true);
     }
 
-    public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation) {
+    public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
         boolean showBorder = false;
 
         Group g = new Group();
@@ -712,28 +713,32 @@ public class LibraryElementNode {
         }
         ttG.setLayoutX(x - pivotX);
         ttG.setLayoutY(-y + pivotY);
+        g.getChildren().addAll(ttG);
 
-        double chSize = 0.8; // Crosshairs size
-        double chStroke = 0.05;
+        if (showCross) {
+            double chSize = 0.8; // Crosshairs size
+            double chStroke = 0.05;
 
-        // Crosshairs (original axis)
+            // Crosshairs (original axis)
 // For Debug
-//        Line chP = new Line(-chSize, 0, chSize, 0);
-//        chP.setStroke(Color.MAGENTA);
-//        chP.setStrokeWidth(chStroke);
-//        Line cvP = new Line(0, -chSize, 0, +chSize);
-//        cvP.setStroke(Color.MAGENTA);
-//        cvP.setStrokeWidth(chStroke);
-//        ttG.getChildren().addAll(chP,cvP);
-        // Crosshairs ( visible )
-        Line ch = new Line(x - chSize, -y, x + chSize, -y);
-        ch.setStroke(Color.WHITE);
-        ch.setStrokeWidth(chStroke);
-        Line cv = new Line(x, -y - chSize, x, -y + chSize);
-        cv.setStroke(Color.WHITE);
-        cv.setStrokeWidth(chStroke);
+//            Line chP = new Line(-chSize, 0, chSize, 0);
+//            chP.setStroke(Color.MAGENTA);
+//            chP.setStrokeWidth(chStroke);
+//            Line cvP = new Line(0, -chSize, 0, +chSize);
+//            cvP.setStroke(Color.MAGENTA);
+//            cvP.setStrokeWidth(chStroke);
+//            ttG.getChildren().addAll(chP,cvP);
 
-        g.getChildren().addAll(ttG, ch, cv);
+            // Crosshairs ( visible )
+            Line ch = new Line(x - chSize, -y, x + chSize, -y);
+            ch.setStroke(Color.WHITE);
+            ch.setStrokeWidth(chStroke);
+            Line cv = new Line(x, -y - chSize, x, -y + chSize);
+            cv.setStroke(Color.WHITE);
+            cv.setStrokeWidth(chStroke);
+
+            g.getChildren().addAll(ch, cv);
+        }
         double rotG = mir ? et.getRot() : -et.getRot();
         Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
         ttG.getTransforms().add(rTTG);
@@ -976,7 +981,7 @@ public class LibraryElementNode {
     public static Node createSmd(PadSMD smd, Color color, Color maskColor) {
         Group g = new Group();
 
-        ImagePattern maskPattern = makeHatch(10, maskColor);
+        ImagePattern maskPattern = makeHatch(10, true, maskColor);
         double roundPct = smd.getRoundness() * 0.01;
 
         Rectangle pad = new Rectangle();
@@ -1065,7 +1070,7 @@ public class LibraryElementNode {
     public static Node createThd(PadTHD thd, Color padColor, Color maskColor) {
         Group g = new Group();
         double padDia = thd.getDerivedDiameter();
-        ImagePattern maskPattern = makeHatch(10, maskColor);
+        ImagePattern maskPattern = makeHatch(10, true, maskColor);
 
         //padColor = Color.GREEN;
         Color drillColor = Color.BLACK;
@@ -1257,17 +1262,23 @@ public class LibraryElementNode {
     /**
      * Via Node
      *
-     * TODO: Solder Mask, pin name, drill legend.
+     * TODO: pin name, drill legend. TODO: layer diameter (different for top,
+     * inner and bottom).
      *
      * @param via element
      * @param padColor
-     * @param maskColor
+     * @param maskTopColor
+     * @param maskBottomColor
+     * @param dr
      * @return JavaFX Node
      */
-    public static Node createVia(Via via, Color padColor, Color maskColor) {
+    public static Node createVia(Via via, Color padColor, Color maskTopColor, Color maskBottomColor, DesignRules dr) {
         Group g = new Group();
-        double padDia = via.getDerivedDiameter();
-        ImagePattern maskPattern = makeHatch(10, maskColor);
+        double padDia = via.getDerivedDiameter(dr, Via.Layer.TOP);
+        double maskDia = via.getMaskDiameter(dr, Via.Layer.TOP);
+
+        ImagePattern maskTopPattern = makeHatch(5, true, maskTopColor);
+        ImagePattern maskBotPattern = makeHatch(5, false, maskBottomColor);
 
         Color drillColor = Color.BLACK;
 
@@ -1283,15 +1294,23 @@ public class LibraryElementNode {
 
                 g.getChildren().add(pad);
 
-                // SolderMask
+                // Drill
+                Circle drill = new Circle(via.getDrill() / 2.0, drillColor);
+                drill.setLayoutX(via.getX());
+                drill.setLayoutY(-via.getY());
+                drill.setStroke(null);
+
+                g.getChildren().add(drill);
+
+                // SolderMask Top
                 double maskWidth2 = MASK_W_DEFAULT * 2;
                 Rectangle mask = new Rectangle(
                         padDia + maskWidth2, padDia + maskWidth2,
-                        maskColor
+                        maskTopColor
                 );
-                mask.setStrokeWidth(0.01);
-                mask.setStroke(maskColor);
-                mask.setFill(maskPattern);
+                mask.setStrokeWidth(0.03);
+                mask.setStroke(maskTopColor);
+                mask.setFill(maskTopPattern);
                 mask.setLayoutX(via.getX() - padDia / 2.0 - MASK_W_DEFAULT);
                 mask.setLayoutY(-via.getY() - padDia / 2.0 - MASK_W_DEFAULT);
 
@@ -1318,6 +1337,14 @@ public class LibraryElementNode {
 
                 g.getChildren().add(octo);
 
+                // Drill
+                Circle drill = new Circle(via.getDrill() / 2.0, drillColor);
+                drill.setLayoutX(via.getX());
+                drill.setLayoutY(-via.getY());
+                drill.setStroke(null);
+
+                g.getChildren().add(drill);
+
                 // Mask
                 double rr = padDia / 2.0 + MASK_W_DEFAULT;
                 double nn = rr * 0.383;
@@ -1332,8 +1359,8 @@ public class LibraryElementNode {
                         -rr, -nn
                 );
                 octoMask.setStrokeWidth(0.02);
-                octoMask.setStroke(maskColor);
-                octoMask.setFill(maskPattern);
+                octoMask.setStroke(maskTopColor);
+                octoMask.setFill(maskTopPattern);
                 octoMask.setLayoutX(via.getX());
                 octoMask.setLayoutY(-via.getY());
 
@@ -1346,27 +1373,32 @@ public class LibraryElementNode {
                 pad.setStroke(null);
                 g.getChildren().add(pad);
 
-                // SolderMask
-                Circle mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, maskColor);
+                // Drill
+                Circle drill = new Circle(via.getDrill() / 2.0, drillColor);
+                drill.setLayoutX(via.getX());
+                drill.setLayoutY(-via.getY());
+                drill.setStroke(null);
 
-                mask.setStrokeWidth(0.02);
-                mask.setStroke(maskColor);
-                mask.setFill(maskPattern);
-                mask.setLayoutX(via.getX());
-                mask.setLayoutY(-via.getY());
+                g.getChildren().add(drill);
 
-                g.getChildren().add(mask);
+                // Top solder mask
+                Circle topMask = new Circle(maskDia / 2.0, maskTopColor);
+                topMask.setStrokeWidth(0.03);
+                topMask.setStroke(maskTopColor);
+                topMask.setFill(maskTopPattern);
+                topMask.setLayoutX(via.getX());
+                topMask.setLayoutY(-via.getY());
+                // Bottom solder mask
+                Circle bottomMask = new Circle(maskDia / 2.0, maskBottomColor);
+                bottomMask.setStrokeWidth(0.03);
+                bottomMask.setStroke(maskBottomColor);
+                bottomMask.setFill(maskBotPattern);
+                bottomMask.setLayoutX(via.getX());
+                bottomMask.setLayoutY(-via.getY());
+
+                g.getChildren().addAll(bottomMask, topMask);
             }
-
         }
-
-        // Drill
-        Circle drill = new Circle(via.getDrill() / 2.0, drillColor);
-        drill.setLayoutX(via.getX());
-        drill.setLayoutY(-via.getY());
-        drill.setStroke(null);
-
-        g.getChildren().add(drill);
 
         // Text is the "extent" the via layers passes through
         //      Normally: 1-16  Blind: ex. 2-4
@@ -1375,10 +1407,14 @@ public class LibraryElementNode {
         ElementText et = new ElementText();
         et.setValue(via.getExtent());
         et.setAlign(TextAlign.CENTER);
-        et.setSize(0.5);
+        et.setSize(via.getDrill() * 0.25);
         et.setX(via.getX());
         et.setY(via.getY());
-        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGREY));
+        g.getChildren().add(LibraryElementNode.createText(
+                et, null,
+                new Color(1.0, 1.0, 1.0, 0.25),
+                null, false
+        ));
 
         return g;
     }
@@ -1521,7 +1557,7 @@ public class LibraryElementNode {
         padName.setFont(padFont);
         padName.setFill(padColor);
         double padWidth = padName.getBoundsInLocal().getWidth();
-        double padHeight = padName.getBoundsInLocal().getHeight();
+        //double padHeight = padName.getBoundsInLocal().getHeight();
         padName.setLayoutX(pX - (pinMirror ? padWidth : 0.0));
         padName.setLayoutY(pY - PAD_TEXT_ASCEND);
         if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
@@ -1544,7 +1580,7 @@ public class LibraryElementNode {
             dirSwap.setFont(dirSwapFont);
             dirSwap.setFill(PIN_DIR_SWAP_COLOR);
             double dsWidth = dirSwap.getBoundsInLocal().getWidth();
-            double dsHeight = dirSwap.getBoundsInLocal().getHeight();
+            //double dsHeight = dirSwap.getBoundsInLocal().getHeight();
             double xyOffset = ORIGIN_CIRCLE_RADIUS * 0.71;
             dirSwap.setLayoutX(pX - (pinMirror ? 0.0 : dsWidth) + (pinMirror ? xyOffset : -xyOffset));
             dirSwap.setLayoutY(pY - xyOffset);
@@ -1572,6 +1608,7 @@ public class LibraryElementNode {
      *
      * @param ec ElementCircle object
      * @param color to make the circle
+     * @param mirror mirror circle about x-axis
      * @return
      */
     public static Node createCircleNode(ElementCircle ec, Color color, boolean mirror) {
@@ -1588,20 +1625,54 @@ public class LibraryElementNode {
      * xml ==> x="16.51" y="8.89" drill="0.508"
      *
      * @param eh ElementHole object
-     * @param color to make the circle
+     * @param outlineWidth
+     * @param outlineColor
+     * @param maskTopColor to make the circle
+     * @param maskBottomColor
+     * @param dr
      * @return
      */
-    public static Node createHoleNode(Hole eh, Color color) {
-        Circle c = new Circle(eh.getX(), -eh.getY(), eh.getDrill() / 2.0);
+    public static Node createHoleNode(Hole eh, double outlineWidth, Color outlineColor, Color maskTopColor, Color maskBottomColor, DesignRules dr) {
+        Group g = new Group();
 
-        // TODO:  There is a drill symbol and there is a hole.
+        Color drillColor = Color.BLACK;
+        ImagePattern maskPatternTop = makeHatch(5, true, maskTopColor);
+        ImagePattern maskPatternBot = makeHatch(5, false, maskTopColor);
+
+        // TODO:  There is a drill symbol.
         // Symbol is from a hard coded table.
-        // Hole is rendered as PCB outline settings.
-        c.setStroke(color);
-        c.setStrokeWidth(0.04); // TODO: Get Stroke width and color from board outline.
+        Circle c = new Circle(eh.getX(), -eh.getY(), eh.getDrill() / 2.0);
+        c.setStroke(outlineColor);
+        c.setStrokeWidth(outlineWidth); // TODO: Get Stroke width and color from board outline.
         c.setFill(null);
+        g.getChildren().add(c);
 
-        return c;
+        // Drill
+        Circle drill = new Circle(eh.getDrill() / 2.0, drillColor);
+        drill.setLayoutX(eh.getX());
+        drill.setLayoutY(-eh.getY());
+        drill.setStroke(null);
+        g.getChildren().add(drill);
+
+        // SolderMask
+        Circle maskTop = new Circle(eh.getMaskDiameter(dr) / 2.0, maskTopColor);
+        maskTop.setStrokeWidth(0.03); // TODO: Get from some global source.
+        maskTop.setStroke(maskTopColor);
+        maskTop.setFill(maskPatternTop);
+        maskTop.setLayoutX(eh.getX());
+        maskTop.setLayoutY(-eh.getY());
+        g.getChildren().add(maskTop);
+
+        // Bottom Mask
+        Circle maskBot = new Circle(eh.getMaskDiameter(dr) / 2.0, maskBottomColor);
+        maskBot.setStrokeWidth(0.03); // TODO: Get from some global source.
+        maskBot.setStroke(maskTopColor);
+        maskBot.setFill(maskPatternBot);
+        maskBot.setLayoutX(eh.getX());
+        maskBot.setLayoutY(-eh.getY());
+        g.getChildren().add(maskBot);
+
+        return g;
     }
 
     /**
@@ -1640,17 +1711,19 @@ public class LibraryElementNode {
         return Math.hypot(ac, cb);
     }
 
-    private static ImagePattern makeHatch(int nLines, Color c) {
+    private static ImagePattern makeHatch(int nLines, boolean dir, Color c) {
         int size = 64;
         WritableImage wi = new WritableImage(size, size);
 
         Pane p = new Pane(); // Group?
         p.setBackground(Background.EMPTY);
-        p.setClip(new Rectangle(64, 64));
+        p.setClip(new Rectangle(size, size));
 
         double inc = (double) size / nLines;
         for (int i = 0; i < nLines * 2; i++) {
-            Line l = new Line(i * inc, 0, i * inc - size, size);
+            Line l = new Line(
+                    i * inc - (dir ? 0 : size), 0,
+                    i * inc - (dir ? size : 0), size);
             l.setStrokeWidth(0.5);
             l.setStroke(c);
             p.getChildren().add(l);
@@ -1836,7 +1909,6 @@ public class LibraryElementNode {
 //        }
 //        double w = p.getBoundsInLocal().getWidth() * 1.1;
 //        double h = p.getBoundsInLocal().getHeight() * 1.1;
-
 //        p.getChildren().clear();
 //
 //        // Establish an area where the center is always our desired center.
@@ -1845,7 +1917,6 @@ public class LibraryElementNode {
 //        p.getChildren().add(base);
 //
 //        p.getChildren().addAll(list);
-
         return p;
     }
 
