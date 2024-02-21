@@ -21,6 +21,7 @@ import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementElement;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
@@ -78,6 +79,7 @@ import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
@@ -138,7 +140,7 @@ public class LibraryElementNode {
      * @param mirror
      * @return
      */
-    public static Node createWireNode(Wire w, Color color, boolean mirror) {
+    public static Shape createWireNode(Wire w, Color color, boolean mirror) {
         double strokeWidth = w.getWidth();
         double x1 = mirror ? -w.getX1() : w.getX1();
         double x2 = mirror ? -w.getX2() : w.getX2();
@@ -194,7 +196,7 @@ public class LibraryElementNode {
         return s;
     }
 
-    public static Node createRectangle(ElementRectangle r, Color color, boolean mirror) {
+    public static Shape createRectangle(ElementRectangle r, Color color, boolean mirror) {
         double x1 = r.getX1();
         double x2 = r.getX2();
 
@@ -340,6 +342,15 @@ public class LibraryElementNode {
         }
     }
 
+    /**
+     * @deprecated Use createPolygonCurved()
+     *
+     * @param poly
+     * @param color
+     * @param mirror
+     * @return @Shape of polygon
+     */
+    @Deprecated
     public static Node createPolygon(ElementPolygon poly, Color color, boolean mirror) {
         List<Vertex> vertices = poly.getVertices();
         double verts[] = new double[vertices.size() * 2];
@@ -355,6 +366,189 @@ public class LibraryElementNode {
         p.setFill(color);
 
         return p;
+    }
+
+    public static Shape createPolygonCurved(ElementPolygon poly, Color color, boolean mirror) {
+        Shape shape;
+        List<Vertex> vertices = poly.getVertices();
+        if (vertices.isEmpty()) {
+            return new Circle(2, Color.RED);
+        }
+        double verts[] = new double[vertices.size() * 2];
+
+        boolean hasCurvedLines = false;
+        for (Vertex vv : vertices) {
+            hasCurvedLines = (vv.getCurve() != 0.0);
+            if (hasCurvedLines) {
+                break;
+            }
+        }
+
+        double strokeWidth = poly.getWidth();
+
+        if (hasCurvedLines) {
+            Path path = new Path();
+            double lastX = 0.0;
+            double lastY = 0.0;
+            double arc = 0.0;
+            boolean isFirst = true;
+            for (Vertex v : vertices) {
+                if (isFirst) {
+                    lastX = v.getX();
+                    lastY = v.getY();
+                    arc = v.getCurve();
+                    isFirst = false;
+                    MoveTo mt = new MoveTo(lastX, -lastY);
+                    path.getElements().add(mt);
+                    continue;
+                }
+                double x1 = mirror ? -v.getX() : v.getX();
+                double y1 = v.getY();
+
+                addPathEdge(path, arc, lastX, lastY, x1, y1);
+                arc = v.getCurve();
+                lastX = x1;
+                lastY = y1;
+            }
+
+            // Close the path using the last curve.
+            addPathEdge(path, arc, lastX, lastY, vertices.get(0).getX(), vertices.get(0).getY());
+
+            shape = path;
+
+//            if (strokeWidth < 0.03) {
+//                // Wires can't be 0 width.
+//                strokeWidth = 0.03; // 6mil
+//            }
+//            shape.setFill(color);
+//            shape.setStrokeWidth(strokeWidth);
+//            shape.setStroke(Color.FIREBRICK);
+//            shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
+            // Style does not apply to polygon. Always "Contnuous" but
+            // may have a system defined style when not filled in editor mode.
+            // TODO: Handle this type of display.
+            //List<Double> pattern = poly.getStyle().getPattern();
+            // TODO: Massage pettern nums to fit pattern into line's length.
+//            if (pattern != null) {
+//                s.getStrokeDashArray().addAll(pattern);
+//            }
+//            shape.setStrokeType(StrokeType.INSIDE);
+//            shape.setStrokeLineCap(StrokeLineCap.ROUND);
+//
+//            shape.setSmooth(true);
+            //return path;
+        } else {
+            for (int j = 0; j < verts.length; j += 2) {
+                verts[j] = vertices.get(j / 2).getX();
+                verts[j + 1] = -vertices.get(j / 2).getY();
+            }
+            Polygon p = new Polygon(verts);
+
+            shape = p;
+//            if (strokeWidth < 0.03) {
+//                // Wires can't be 0 width.
+//                strokeWidth = 0.03; // 6mil
+//            }
+            //shape = p;
+        }
+
+        if (strokeWidth < 0.03) {
+            // Wires can't be 0 width.
+            strokeWidth = 0.03; // 6mil
+        }
+        shape.setFill(color);
+        shape.setStrokeWidth(strokeWidth);
+        shape.setStroke(color);
+        shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        shape.setStrokeType(StrokeType.INSIDE);
+        shape.setStrokeLineCap(StrokeLineCap.ROUND);
+
+        shape.setSmooth(true);
+
+        return shape;
+    }
+
+    public static Path createPath(List<Wire> wires, Color color, boolean mirror) {
+        Path path = new Path();
+
+        double lastX = 0.0;
+        double lastY = 0.0;
+//            double arc = 0.0;
+        boolean isFirst = true;
+        for (Wire w : wires) {
+            // Check if first point or broken path.
+            if (isFirst || w.getX1() != lastX | w.getY1() != lastY) {
+                MoveTo mt = new MoveTo(w.getX1(), -w.getY1());
+                path.getElements().add(mt);
+                isFirst = false;
+            }
+
+            if (w.getCurve() != 0.0) {
+                ArcTo arcTo = new ArcTo();
+                arcTo.setX(w.getX2());
+                arcTo.setY(-w.getY2());
+
+                // SWEEP on negative curve value.
+                arcTo.setSweepFlag(w.getCurve() < 0.0);
+
+                double sin90 = Math.sin(Math.toRadians(90.0));
+                double dist = distance(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
+                double radius = (sin90 * dist / 2.0)
+                        / Math.sin(Math.toRadians(w.getCurve() / 2.0));
+                arcTo.setRadiusX(radius);
+                arcTo.setRadiusY(radius);
+                path.getElements().add(arcTo);
+            } else {
+                // LineTo
+                LineTo lineTo = new LineTo();
+                lineTo.setX(w.getX2());
+                lineTo.setY(-w.getY2());
+                path.getElements().add(lineTo);
+            }
+            lastX = w.getX2();
+            lastY = w.getY2();
+        }
+
+        path.setFill(color);
+
+        path.setStrokeLineCap(StrokeLineCap.ROUND);
+        double strokeWidth = wires.getFirst().getWidth();
+        if (strokeWidth < 0.03) {
+            // Wires can't be 0 width.
+            strokeWidth = 0.03; // 6mil
+        }
+        path.setStrokeWidth(strokeWidth);
+        if (color != null) {
+            path.setStroke(color.darker());
+        }
+
+        return path;
+    }
+
+    private static void addPathEdge(Path path, double arc, double lastX, double lastY, double x, double y) {
+        if (arc == 0.0) { // First point or previous vert was non-curved.
+            LineTo lineTo = new LineTo();
+            lineTo.setX(x);
+            lineTo.setY(-y);
+            path.getElements().add(lineTo);
+        } else {
+            ArcTo arcTo = new ArcTo();
+            // Curve to ARC
+            arcTo.setX(x);
+            arcTo.setY(-y);
+
+            // SWEEP on negative curve value.
+            arcTo.setSweepFlag(arc < 0.0);
+
+            double sin90 = Math.sin(Math.toRadians(90.0));
+            double dist = distance(lastX, -lastY, x, -y);
+            double radius = (sin90 * dist / 2.0)
+                    / Math.sin(Math.toRadians(arc / 2.0));
+            arcTo.setRadiusX(radius);
+            arcTo.setRadiusY(radius);
+            path.getElements().add(arcTo);
+        }
+
     }
 
     public static Node createProbeNode(Probe le, Color color, Segment seg) {
@@ -728,7 +922,6 @@ public class LibraryElementNode {
 //            cvP.setStroke(Color.MAGENTA);
 //            cvP.setStrokeWidth(chStroke);
 //            ttG.getChildren().addAll(chP,cvP);
-
             // Crosshairs ( visible )
             Line ch = new Line(x - chSize, -y, x + chSize, -y);
             ch.setStroke(Color.WHITE);
@@ -981,9 +1174,68 @@ public class LibraryElementNode {
     public static Node createSmd(PadSMD smd, Color color, Color maskColor) {
         Group g = new Group();
 
-        ImagePattern maskPattern = makeHatch(10, true, maskColor);
         double roundPct = smd.getRoundness() * 0.01;
 
+        g.getChildren().add(createSmdPad(smd, color));
+
+        g.getChildren().add(createSmdMask(smd, maskColor, true));
+
+        // Name Text
+        ElementText et = new ElementText();
+        et.setValue(smd.getName());
+        et.getRotation().setValue(smd.getRot());
+        et.setAlign(TextAlign.CENTER);
+        et.setSize(0.5);
+        et.setX(smd.getX());
+        et.setY(smd.getY());
+        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGRAY));
+
+        return g;
+    }
+
+    private static Shape createSmdMask(PadSMD smd, Color color, boolean asHatch) {
+        double roundPct = smd.getRoundness() * 0.01;
+        // Mask
+        double maskWidth2 = MASK_W_DEFAULT * 2;
+        double maskW = smd.getWidth() + maskWidth2;
+        double maskH = smd.getHeight() + maskWidth2;
+
+        double maskCX = smd.getX() - maskW / 2.0;
+        double maskCY = -smd.getY() - maskH / 2.0;
+
+        Rectangle mask = new Rectangle(
+                maskCX, maskCY,
+                maskW, maskH
+        );
+
+        if (asHatch) {
+            mask.setStrokeWidth(0.02);
+            mask.setStroke(color);
+            ImagePattern maskPattern = makeHatch(10, true, color);
+            mask.setFill(maskPattern);
+        } else {
+            mask.setStroke(null);
+            mask.setFill(color);
+        }
+        mask.setRotate(smd.getRot());
+
+        // arcW/H is half of the shortest side.
+        // TODO: Won't render right if I use h/2 or w/2. Not sure why.
+        if (smd.getRoundness() > 0) {
+            double maskArcR;
+            if (maskW < maskH) {
+                maskArcR = maskW * roundPct;
+            } else {
+                maskArcR = maskH * roundPct;
+            }
+            mask.setArcWidth(maskArcR);
+            mask.setArcHeight(maskArcR);
+        }
+        return mask;
+    }
+
+    private static Shape createSmdPad(PadSMD smd, Color color) {
+        double roundPct = smd.getRoundness() * 0.01;
         Rectangle pad = new Rectangle();
         pad.setFill(color);
 
@@ -1011,50 +1263,8 @@ public class LibraryElementNode {
             pad.setArcWidth(arcR);
             pad.setArcHeight(arcR);
         }
-        g.getChildren().add(pad);
 
-        // Mask
-        double maskWidth2 = MASK_W_DEFAULT * 2;
-        double maskW = smd.getWidth() + maskWidth2;
-        double maskH = smd.getHeight() + maskWidth2;
-
-        double maskCX = smd.getX() - maskW / 2.0;
-        double maskCY = -smd.getY() - maskH / 2.0;
-
-        Rectangle mask = new Rectangle(
-                maskCX, maskCY,
-                maskW, maskH
-        );
-        mask.setStrokeWidth(0.02);
-        mask.setStroke(maskColor);
-        mask.setFill(maskPattern);
-        mask.setRotate(smd.getRot());
-
-        // arcW/H is half of the shortest side.
-        // TODO: Won't render right if I use h/2 or w/2. Not sure why.
-        if (smd.getRoundness() > 0) {
-            double maskArcR;
-            if (maskW < maskH) {
-                maskArcR = maskW * roundPct;
-            } else {
-                maskArcR = maskH * roundPct;
-            }
-            mask.setArcWidth(maskArcR);
-            mask.setArcHeight(maskArcR);
-        }
-        g.getChildren().add(mask);
-
-        // Name Text
-        ElementText et = new ElementText();
-        et.setValue(smd.getName());
-        et.getRotation().setValue(smd.getRot());
-        et.setAlign(TextAlign.CENTER);
-        et.setSize(0.5);
-        et.setX(smd.getX());
-        et.setY(smd.getY());
-        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGRAY));
-
-        return g;
+        return pad;
     }
 
     /**
@@ -1069,45 +1279,225 @@ public class LibraryElementNode {
      */
     public static Node createThd(PadTHD thd, Color padColor, Color maskColor) {
         Group g = new Group();
-        double padDia = thd.getDerivedDiameter();
-        ImagePattern maskPattern = makeHatch(10, true, maskColor);
-
+//        double padDia = thd.getDerivedDiameter();
+//        ImagePattern maskPattern = makeHatch(10, true, maskColor);
         //padColor = Color.GREEN;
-        Color drillColor = Color.BLACK;
+        Color drillColor = Color.BLACK; // TODO: Input background color.
         //int rot = (int) thd.getRot();
+
+//        switch (thd.getShape()) {
+//            case SQUARE -> {
+//                Rectangle pad = new Rectangle(
+//                        padDia, padDia,
+//                        padColor
+//                );
+//                pad.setStroke(null);
+//                pad.setLayoutX(thd.getX() - padDia / 2.0);
+//                pad.setLayoutY(-thd.getY() - padDia / 2.0);
+//
+//                g.getChildren().add(pad);
+//
+//                // SolderMask
+//                double maskWidth2 = MASK_W_DEFAULT * 2;
+//                Rectangle mask = new Rectangle(
+//                        padDia + maskWidth2, padDia + maskWidth2,
+//                        maskColor
+//                );
+//                mask.setStrokeWidth(0.01);
+//                mask.setStroke(maskColor);
+//                mask.setFill(maskPattern);
+//                mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
+//                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+//
+//                g.getChildren().add(mask);
+//
+//            }
+//            case LONG -> {
+//                double padLongMult = 2.0;
+//                Rectangle pad = new Rectangle(
+//                        padDia * padLongMult, padDia,
+//                        padColor
+//                );
+//                pad.setArcHeight(padDia);
+//                pad.setArcWidth(padDia);
+//                pad.setStroke(null);
+//
+//                Rotate rotate = new Rotate(360 - thd.getRot());
+//                rotate.setPivotX(padDia);
+//                rotate.setPivotY(padDia / 2);
+//                pad.setLayoutX(thd.getX() - pad.getWidth() / 2.0);
+//                pad.setLayoutY(-thd.getY() - padDia / 2.0);
+//                pad.getTransforms().add(rotate);
+//
+//                g.getChildren().add(pad);
+//
+//                // Mask
+//                double maskWidth2 = MASK_W_DEFAULT * 2;
+//                Rectangle mask = new Rectangle(
+//                        padDia * padLongMult + maskWidth2, padDia + maskWidth2,
+//                        maskColor
+//                );
+//                mask.setArcHeight(padDia + MASK_W_DEFAULT);
+//                mask.setArcWidth(padDia + MASK_W_DEFAULT);
+//                mask.setStrokeWidth(0.02);
+//                mask.setStroke(maskColor);
+//                mask.setFill(maskPattern);
+//                Rotate rotateM = new Rotate(360 - thd.getRot());
+//                rotateM.setPivotX(padDia + MASK_W_DEFAULT);
+//                rotateM.setPivotY(padDia / 2 + MASK_W_DEFAULT);
+//                mask.setLayoutX(thd.getX() - pad.getWidth() / 2.0 - MASK_W_DEFAULT);
+//                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+//                mask.getTransforms().add(rotateM);
+//
+//                g.getChildren().add(mask);
+//            }
+//            case OCTOGON -> {
+//                double r = padDia / 2.0;
+//                double n = r * 0.383;
+//                Polygon octo = new Polygon(
+//                        -n, -r,
+//                        n, -r,
+//                        r, -n,
+//                        r, n,
+//                        n, r,
+//                        -n, r,
+//                        -r, n,
+//                        -r, -n
+//                );
+//                octo.setFill(padColor);
+//                octo.setStroke(null);
+//                octo.setLayoutX(thd.getX());
+//                octo.setLayoutY(-thd.getY());
+//
+//                g.getChildren().add(octo);
+//
+//                // Mask
+//                double rr = padDia / 2.0 + MASK_W_DEFAULT;
+//                double nn = rr * 0.383;
+//                Polygon octoMask = new Polygon(
+//                        -nn, -rr,
+//                        nn, -rr,
+//                        rr, -nn,
+//                        rr, nn,
+//                        nn, rr,
+//                        -nn, rr,
+//                        -rr, nn,
+//                        -rr, -nn
+//                );
+//                octoMask.setStrokeWidth(0.02);
+//                octoMask.setStroke(maskColor);
+//                octoMask.setFill(maskPattern);
+//                octoMask.setLayoutX(thd.getX());
+//                octoMask.setLayoutY(-thd.getY());
+//
+//                g.getChildren().add(octoMask);
+//            }
+//            case OFFSET -> {
+//                double padLongMult = 2.0;
+//                Rectangle pad = new Rectangle(
+//                        padDia * padLongMult, padDia,
+//                        padColor
+//                );
+//                pad.setArcHeight(padDia);
+//                pad.setArcWidth(padDia);
+//                pad.setStroke(null);
+//                pad.setLayoutX(thd.getX() - pad.getWidth() / 4.0);
+//                pad.setLayoutY(-thd.getY() - padDia / 2);
+//                Rotate rotate = new Rotate(360 - thd.getRot());
+//                rotate.setPivotX(padDia / 2);
+//                rotate.setPivotY(padDia / 2);
+//                pad.getTransforms().add(rotate);
+//                g.getChildren().add(pad);
+//
+//                double maskWidth2 = MASK_W_DEFAULT * 2;
+//                Rectangle mask = new Rectangle(
+//                        padDia * padLongMult + maskWidth2, padDia + maskWidth2,
+//                        maskColor
+//                );
+//                mask.setArcHeight(padDia + MASK_W_DEFAULT);
+//                mask.setArcWidth(padDia + MASK_W_DEFAULT);
+//                mask.setStroke(maskColor);
+//                mask.setStrokeWidth(0.02);
+//                mask.setFill(maskPattern);
+//                mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
+//                mask.setLayoutY(-thd.getY() - mask.getHeight() / 2.0);
+//                Rotate rotateMask = new Rotate(360 - thd.getRot());
+//                rotateMask.setPivotX(padDia / 2 + MASK_W_DEFAULT);
+//                rotateMask.setPivotY(padDia / 2 + MASK_W_DEFAULT);
+//                mask.getTransforms().add(rotateMask);
+//                g.getChildren().add(mask);
+//            }
+//            default -> {  // ROUND
+//                Circle pad = new Circle(padDia / 2.0, padColor);
+//                pad.setLayoutX(thd.getX());
+//                pad.setLayoutY(-thd.getY());
+//                pad.setStroke(null);
+//                g.getChildren().add(pad);
+//
+//                // SolderMask
+//                Circle mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, maskColor);
+//
+//                mask.setStrokeWidth(0.02);
+//                mask.setStroke(maskColor);
+//                mask.setFill(maskPattern);
+//                mask.setLayoutX(thd.getX());
+//                mask.setLayoutY(-thd.getY());
+//
+//                g.getChildren().add(mask);
+//            }
+//        }
+        g.getChildren().add(createThdPad(thd, padColor));
+        g.getChildren().add(createThdMask(thd, padColor, true));
+
+        // Drill
+//        Circle drill = new Circle(thd.getDrill() / 2.0, drillColor);
+//        drill.setLayoutX(thd.getX());
+//        drill.setLayoutY(-thd.getY());
+//        drill.setStroke(null);
+        g.getChildren().add(createThdDrill(thd, drillColor));
+
+        // Name Text
+        ElementText et = new ElementText();
+        et.setValue(thd.getName());
+        et.getRotation().setValue(thd.getRot());
+        et.setAlign(TextAlign.CENTER);
+        et.setSize(0.5);
+        et.setX(thd.getX());
+        et.setY(-thd.getY());
+        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGREY));
+
+        return g;
+    }
+
+    private static Shape createThdDrill(PadTHD thd, Color color) {
+        Circle drill = new Circle(thd.getDrill() / 2.0, color);
+        drill.setLayoutX(thd.getX());
+        drill.setLayoutY(-thd.getY());
+        drill.setStroke(null);
+
+        return drill;
+    }
+
+    private static Shape createThdPad(PadTHD thd, Color color) {
+        double padDia = thd.getDerivedDiameter();
 
         switch (thd.getShape()) {
             case SQUARE -> {
                 Rectangle pad = new Rectangle(
                         padDia, padDia,
-                        padColor
+                        color
                 );
                 pad.setStroke(null);
                 pad.setLayoutX(thd.getX() - padDia / 2.0);
                 pad.setLayoutY(-thd.getY() - padDia / 2.0);
 
-                g.getChildren().add(pad);
-
-                // SolderMask
-                double maskWidth2 = MASK_W_DEFAULT * 2;
-                Rectangle mask = new Rectangle(
-                        padDia + maskWidth2, padDia + maskWidth2,
-                        maskColor
-                );
-                mask.setStrokeWidth(0.01);
-                mask.setStroke(maskColor);
-                mask.setFill(maskPattern);
-                mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
-                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
-
-                g.getChildren().add(mask);
-
+                return pad;
             }
             case LONG -> {
                 double padLongMult = 2.0;
                 Rectangle pad = new Rectangle(
                         padDia * padLongMult, padDia,
-                        padColor
+                        color
                 );
                 pad.setArcHeight(padDia);
                 pad.setArcWidth(padDia);
@@ -1120,27 +1510,8 @@ public class LibraryElementNode {
                 pad.setLayoutY(-thd.getY() - padDia / 2.0);
                 pad.getTransforms().add(rotate);
 
-                g.getChildren().add(pad);
+                return pad;
 
-                // Mask
-                double maskWidth2 = MASK_W_DEFAULT * 2;
-                Rectangle mask = new Rectangle(
-                        padDia * padLongMult + maskWidth2, padDia + maskWidth2,
-                        maskColor
-                );
-                mask.setArcHeight(padDia + MASK_W_DEFAULT);
-                mask.setArcWidth(padDia + MASK_W_DEFAULT);
-                mask.setStrokeWidth(0.02);
-                mask.setStroke(maskColor);
-                mask.setFill(maskPattern);
-                Rotate rotateM = new Rotate(360 - thd.getRot());
-                rotateM.setPivotX(padDia + MASK_W_DEFAULT);
-                rotateM.setPivotY(padDia / 2 + MASK_W_DEFAULT);
-                mask.setLayoutX(thd.getX() - pad.getWidth() / 2.0 - MASK_W_DEFAULT);
-                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
-                mask.getTransforms().add(rotateM);
-
-                g.getChildren().add(mask);
             }
             case OCTOGON -> {
                 double r = padDia / 2.0;
@@ -1155,39 +1526,18 @@ public class LibraryElementNode {
                         -r, n,
                         -r, -n
                 );
-                octo.setFill(padColor);
+                octo.setFill(color);
                 octo.setStroke(null);
                 octo.setLayoutX(thd.getX());
                 octo.setLayoutY(-thd.getY());
 
-                g.getChildren().add(octo);
-
-                // Mask
-                double rr = padDia / 2.0 + MASK_W_DEFAULT;
-                double nn = rr * 0.383;
-                Polygon octoMask = new Polygon(
-                        -nn, -rr,
-                        nn, -rr,
-                        rr, -nn,
-                        rr, nn,
-                        nn, rr,
-                        -nn, rr,
-                        -rr, nn,
-                        -rr, -nn
-                );
-                octoMask.setStrokeWidth(0.02);
-                octoMask.setStroke(maskColor);
-                octoMask.setFill(maskPattern);
-                octoMask.setLayoutX(thd.getX());
-                octoMask.setLayoutY(-thd.getY());
-
-                g.getChildren().add(octoMask);
+                return octo;
             }
             case OFFSET -> {
                 double padLongMult = 2.0;
                 Rectangle pad = new Rectangle(
                         padDia * padLongMult, padDia,
-                        padColor
+                        color
                 );
                 pad.setArcHeight(padDia);
                 pad.setArcWidth(padDia);
@@ -1198,65 +1548,108 @@ public class LibraryElementNode {
                 rotate.setPivotX(padDia / 2);
                 rotate.setPivotY(padDia / 2);
                 pad.getTransforms().add(rotate);
-                g.getChildren().add(pad);
+
+                return pad;
+            }
+            default -> {  // ROUND
+                Circle pad = new Circle(padDia / 2.0, color);
+                pad.setLayoutX(thd.getX());
+                pad.setLayoutY(-thd.getY());
+                pad.setStroke(null);
+
+                return pad;
+            }
+        }
+    }
+
+    private static Shape createThdMask(PadTHD thd, Color color, boolean asHatch) {
+        Shape mask;
+        ImagePattern maskPattern = makeHatch(10, true, color);
+        double padDia = thd.getDerivedDiameter();
+
+        switch (thd.getShape()) {
+            case SQUARE -> {
+                // SolderMask
+                double maskWidth2 = MASK_W_DEFAULT * 2;
+                mask = new Rectangle(
+                        padDia + maskWidth2, padDia + maskWidth2,
+                        color
+                );
+                mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
+                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+
+            }
+            case LONG -> {
+                double padLongMult = 2.0;
+
+                // Mask
+                double maskWidth2 = MASK_W_DEFAULT * 2;
+                Rectangle r = new Rectangle(
+                        padDia * padLongMult + maskWidth2, padDia + maskWidth2,
+                        color
+                );
+                r.setArcHeight(padDia + MASK_W_DEFAULT);
+                r.setArcWidth(padDia + MASK_W_DEFAULT);
+
+                mask = r;
+                Rotate rotateM = new Rotate(360 - thd.getRot());
+                rotateM.setPivotX(padDia + MASK_W_DEFAULT);
+                rotateM.setPivotY(padDia / 2 + MASK_W_DEFAULT);
+                mask.setLayoutX(thd.getX() - r.getWidth() / 2.0 - MASK_W_DEFAULT);
+                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+                mask.getTransforms().add(rotateM);
+            }
+            case OCTOGON -> {
+                // Mask
+                double rr = padDia / 2.0 + MASK_W_DEFAULT;
+                double nn = rr * 0.383;
+                mask = new Polygon(
+                        -nn, -rr,
+                        nn, -rr,
+                        rr, -nn,
+                        rr, nn,
+                        nn, rr,
+                        -nn, rr,
+                        -rr, nn,
+                        -rr, -nn
+                );
+                mask.setLayoutX(thd.getX());
+                mask.setLayoutY(-thd.getY());
+            }
+            case OFFSET -> {
+                double padLongMult = 2.0;
 
                 double maskWidth2 = MASK_W_DEFAULT * 2;
-                Rectangle mask = new Rectangle(
+                Rectangle r = new Rectangle(
                         padDia * padLongMult + maskWidth2, padDia + maskWidth2,
-                        maskColor
+                        color
                 );
-                mask.setArcHeight(padDia + MASK_W_DEFAULT);
-                mask.setArcWidth(padDia + MASK_W_DEFAULT);
-                mask.setStroke(maskColor);
-                mask.setStrokeWidth(0.02);
-                mask.setFill(maskPattern);
+                r.setArcHeight(padDia + MASK_W_DEFAULT);
+                r.setArcWidth(padDia + MASK_W_DEFAULT);
+
+                mask = r;
                 mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
-                mask.setLayoutY(-thd.getY() - mask.getHeight() / 2.0);
+                mask.setLayoutY(-thd.getY() - r.getHeight() / 2.0);
                 Rotate rotateMask = new Rotate(360 - thd.getRot());
                 rotateMask.setPivotX(padDia / 2 + MASK_W_DEFAULT);
                 rotateMask.setPivotY(padDia / 2 + MASK_W_DEFAULT);
                 mask.getTransforms().add(rotateMask);
-                g.getChildren().add(mask);
             }
             default -> {  // ROUND
-                Circle pad = new Circle(padDia / 2.0, padColor);
-                pad.setLayoutX(thd.getX());
-                pad.setLayoutY(-thd.getY());
-                pad.setStroke(null);
-                g.getChildren().add(pad);
-
                 // SolderMask
-                Circle mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, maskColor);
+                mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, color);
 
-                mask.setStrokeWidth(0.02);
-                mask.setStroke(maskColor);
-                mask.setFill(maskPattern);
                 mask.setLayoutX(thd.getX());
                 mask.setLayoutY(-thd.getY());
 
-                g.getChildren().add(mask);
             }
         }
 
-        // Drill
-        Circle drill = new Circle(thd.getDrill() / 2.0, drillColor);
-        drill.setLayoutX(thd.getX());
-        drill.setLayoutY(-thd.getY());
-        drill.setStroke(null);
+        mask.setStrokeWidth(0.02);
+        mask.setStroke(asHatch ? color : null);
+        mask.setFill(asHatch ? maskPattern : color);
 
-        g.getChildren().add(drill);
-
-        // Name Text
-        ElementText et = new ElementText();
-        et.setValue(thd.getName());
-        et.getRotation().setValue(thd.getRot());
-        et.setAlign(TextAlign.CENTER);
-        et.setSize(0.5);
-        et.setX(thd.getX());
-        et.setY(thd.getY());
-        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGREY));
-
-        return g;
+        return mask;
     }
 
     /**
@@ -1611,7 +2004,7 @@ public class LibraryElementNode {
      * @param mirror mirror circle about x-axis
      * @return
      */
-    public static Node createCircleNode(ElementCircle ec, Color color, boolean mirror) {
+    public static Shape createCircleNode(ElementCircle ec, Color color, boolean mirror) {
         Circle c = new Circle(mirror ? -ec.getX() : ec.getX(), -ec.getY(), ec.getRadius());
 
         c.setStroke(color);
@@ -1917,6 +2310,170 @@ public class LibraryElementNode {
 //        p.getChildren().add(base);
 //
 //        p.getChildren().addAll(list);
+        return p;
+    }
+
+    //  TODO: Instead of returning the requested layer, return a manifest of all MFG layers.
+    //  THen we won't repeatedly call this.  But maybe it doesn't matter?
+    public static Node createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
+        Pane p = new Pane();
+
+        // element has a name --> i.e. "U1"
+        // element has attributes that overide some pkg.elements.  i.e. >VALUE
+        String partName = el.getName();
+
+        pkg.getElements().forEach((e) -> {
+            if (e instanceof PadSMD padSMD) {
+                //Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                if (padSMD.getLayerNum() == layer) {
+                    Shape n = LibraryElementNode.createSmdPad(padSMD, c);
+                    if (isolation > 0.0) { // Add stroke around pad.
+                        n.setStrokeWidth(isolation);
+                        n.setStrokeType(StrokeType.OUTSIDE);
+                        n.setStroke(c);
+                    }
+                    p.getChildren().add(n);
+                }
+                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
+                    p.getChildren().add(createSmdMask(padSMD, c, false));
+                }
+
+            } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
+                switch (layer) {
+                    case 1 -> {
+                        Shape ss = LibraryElementNode.createThdPad(padTHD, c);
+                        if (isolation > 0.0) {
+                            // Add stroke around pad.
+                            ss.setStrokeWidth(isolation);
+                            ss.setStrokeType(StrokeType.OUTSIDE);
+                            ss.setStroke(c);
+                        }
+                        p.getChildren().add(ss);
+                    }
+                    case 45 -> {
+                        // Drills/Holes
+                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
+                        p.getChildren().add(drillShape);
+                    }
+                    case 29 -> {
+                        if (!padTHD.isStopmask()) {
+                            break;
+                        }
+                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+                        p.getChildren().add(ss);
+                    }
+                }
+            } else if (e instanceof Wire wire) {
+                if (wire.getLayerNum() == layer) {
+                    Shape wireNode = LibraryElementNode.createWireNode(wire, c, false);
+                    if (isolation > 0.0) { // Add stroke around pad.
+                        wireNode.setStrokeWidth(isolation);
+                        wireNode.setStrokeType(StrokeType.OUTSIDE);
+                        wireNode.setStroke(c);
+                    }
+                    p.getChildren().add(wireNode);
+                }
+            } else if (e instanceof ElementText et) {
+                // Package Text Element
+                // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
+
+//                if (et.getLayerNum() == layer) {
+                    //Node textNode = LibraryElementNode.createText(et, null, c, null, false);
+                    //p.getChildren().add(textNode);
+                    final ElementText proxyText;
+                    proxyText = et.copy();
+
+                    String attrName = null;
+
+                    // et.value contains the mnemonic of attribute (name, value, etc.)
+                    if (et.getValue().equals(">NAME")) {
+                        proxyText.setValue(el.getName());
+                        attrName = "NAME";
+                    } else                     if (et.getValue().equals(">VALUE")) {
+                        proxyText.setValue(el.getValue());
+                        attrName = "VALUE";
+                    }
+
+                    if (attrName != null) {
+                        // Attribute Element
+                        //example:  <attribute name="NAME" x="10" y="18.858" size="1.27" layer="25" ratio="15" align="center" />
+
+                        for (Attribute attr : el.getAttributes()) {
+                            if (attr.getLayerNum() == 29) {
+                                int aa = 1; // Dubugger stop point.
+                            }
+
+                            if (!attr.getName().equals(attrName) || attr.getLayerNum() != layer) {
+                                // Skip if these aren't our attributes.
+                                continue;
+                            }
+
+                            proxyText.setX(attr.getX() - el.getX());
+                            proxyText.setY(attr.getY() - el.getY());
+                            proxyText.setSize(attr.getSize());
+                            proxyText.setAlign(attr.getAlign());
+                            proxyText.setRatio(attr.getRatio());
+
+                            //LOGGER.log(Level.SEVERE, "Rot:  el: {0}  et: {1}  attr: {2}", new Object[]{el.getRot(), et.getRot(), attr.getRotation().getValue()});
+                            proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
+                            Node txtNode = createText(proxyText, null, c, null, false);
+
+                            // Not sure why, but this needs to be rotated.
+                            // but I think the parent applies the same rotation
+                            // and other nodes don't seem to need this. Curious...
+                            txtNode.getTransforms().add(new Rotate(el.getRot()));
+                            p.getChildren().add(txtNode);
+                        }
+                    }
+
+//                    Node elementTextNode = createText(proxyText, c, rotation);
+//                    textGroup.getChildren().add(elementTextNode);
+//
+//                    textGroup.getChildren().add(LibraryElementNode.crosshairs(
+//                            proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
+//                    ));
+
+//                }
+            } else if (e instanceof ElementRectangle elementRectangle) {
+                if (elementRectangle.getLayerNum() == layer) {
+                    Shape s = LibraryElementNode.createRectangle(elementRectangle, c, false);
+                    if (isolation > 0.0) {
+                        // Add stroke around pad.
+                        s.setStrokeWidth(isolation);
+                        s.setStrokeType(StrokeType.OUTSIDE);
+                        s.setStroke(c);
+                    }
+                    p.getChildren().add(s);
+                }
+            } else if (e instanceof ElementPolygon elementPolygon) {
+                if (elementPolygon.getLayerNum() == layer) {
+                    Shape s = LibraryElementNode.createPolygonCurved(elementPolygon, c, false);
+                    if (isolation > 0.0) {
+                        // Add stroke around pad.
+                        s.setStrokeWidth(isolation);
+                        s.setStrokeType(StrokeType.OUTSIDE);
+                        s.setStroke(c);
+                    }
+                    p.getChildren().add(s);
+                }
+            } else if (e instanceof ElementCircle elementCircle) {
+                if (elementCircle.getLayerNum() == layer) {
+                    Shape s = LibraryElementNode.createCircleNode(elementCircle, c, false);
+                    if (isolation > 0.0) {
+                        // Add stroke around pad.
+                        s.setStrokeWidth(isolation);
+                        s.setStrokeType(StrokeType.OUTSIDE);
+                        s.setStroke(c);
+                    }
+                    p.getChildren().add(s);
+                }
+            } else {
+                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
+            }
+        });
+
+//        // tOrigins 23   , bOrigins 24
+//        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
         return p;
     }
 

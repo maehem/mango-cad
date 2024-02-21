@@ -1,20 +1,20 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
-/*
+ /*
  * TODO: Move advanced params to SignalPolygon (isolate,orphans,thermals,rank)
  */
 package com.maehem.mangocad.model.element.basic;
@@ -28,18 +28,18 @@ import java.util.List;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementPolygon extends _AQuantum {
+
     public static final String ELEMENT_NAME = "polygon";
-    
+
     private double width;
     private double spacing;
     private String pour = "solid";
     private double isolate;
     private boolean orphans = false;
     private boolean thermals = true;
-    private int rank = 0;
+    private int rank = 1;
     private List<Vertex> vertices = new ArrayList<>();
 
-    
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -140,7 +140,14 @@ public class ElementPolygon extends _AQuantum {
      * @param rank the rank to set
      */
     public void setRank(int rank) {
-        this.rank = rank;
+        // Ingest may try to set rank of zero. Lowest is "1".
+        if (rank <= 0) {
+            this.rank = 1;
+        } else if (rank > 6) {  // Highest rank is 6
+            this.rank = 6;
+        } else {
+            this.rank = rank;
+        }
     }
 
     /**
@@ -156,5 +163,5 @@ public class ElementPolygon extends _AQuantum {
     public void setVertices(List<Vertex> vertices) {
         this.vertices = vertices;
     }
-    
+
 }

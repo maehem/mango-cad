@@ -167,7 +167,7 @@ public class DetailNodes {
                 g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c, null, true));
                 g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementPolygon elementPolygon) {
-                g.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
+                g.getChildren().add(LibraryElementNode.createPolygonCurved(elementPolygon, c, false));
             } else if (e instanceof Pin pin) {
                 g.getChildren().add(LibraryElementNode.createPinNode(pin, c, null, false));
             } else if (e instanceof ElementCircle elementCircle) {

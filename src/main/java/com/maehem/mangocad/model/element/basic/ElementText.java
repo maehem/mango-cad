@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.basic;
@@ -21,6 +21,8 @@ import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <pre>
@@ -41,6 +43,8 @@ import java.util.ArrayList;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementText extends _AQuantum {
+
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "text";
 
@@ -164,7 +168,17 @@ public class ElementText extends _AQuantum {
      * @param align the align to set
      */
     public void setAlign(TextAlign align) {
-        this.align = align;
+        if (align != null) {
+            this.align = align;
+        }
+    }
+
+    public void setAlign(String val) {
+        TextAlign ta = TextAlign.fromCode(val);
+        setAlign(ta);
+        if (ta == null) {
+            LOGGER.log(Level.SEVERE, "TextAlign: tried to set an alignment called \"{0}\"", val);
+        }
     }
 
     /**
@@ -204,7 +218,7 @@ public class ElementText extends _AQuantum {
 
     public ElementText copy() {
         ElementText copy = new ElementText();
-        
+
         copy.setX(x);
         copy.setY(y);
         copy.setAlign(align);
@@ -215,7 +229,7 @@ public class ElementText extends _AQuantum {
         copy.setRot(getRot());
         copy.setSize(size);
         copy.setValue(value);
-        
+
         return copy;
     }
 }

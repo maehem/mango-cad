@@ -495,7 +495,6 @@ public class EagleCADIngest {
         }
 
         list.add(deviceSet);
-
     }
 
     private static void ingestPackageElements(NodeList nodes, Footprint pkg) throws EagleCADLibraryFileException {
@@ -1393,6 +1392,8 @@ public class EagleCADIngest {
      *      constant     %Bool;          "no"
      *      align       %Align;         "bottom-left"
      *      grouprefs   IDREFS          #IMPLIED
+     *      // Not in older Eagle DTD
+     *      locked      %Bool;          #IMPLIED
      *
      *     display: Only in <element> or <instance> context
      *     constant:Only in <device> context
@@ -1426,7 +1427,7 @@ public class EagleCADIngest {
                 case "rot" ->
                     attribute.getRotation().setValue(value);
                 case "ratio" ->
-                    attribute.setWidth(Integer.parseInt(value));
+                    attribute.setRatio(Integer.parseInt(value));
                 case "size" ->
                     attribute.setSize(Double.parseDouble(value));
                 case "layer" ->
@@ -1439,6 +1440,8 @@ public class EagleCADIngest {
                     attribute.setFont(TextFont.fromCode(value));
                 case "align" ->
                     attribute.setAlign(TextAlign.fromCode(value));
+                case "locked" ->
+                    attribute.setLocked(value.equals("yes"));
                 default ->
                     throw new EagleCADLibraryFileException("Attribute has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -1814,7 +1817,7 @@ public class EagleCADIngest {
                 continue;
             }
 
-            Sheet sheet = ingestSchematicSheet( item);
+            Sheet sheet = ingestSchematicSheet(item);
             sheet.setParent(sch);
             sch.getSheets().add(sheet);
             //sheet.postIngest();
@@ -2791,6 +2794,24 @@ public class EagleCADIngest {
             }
         }
 
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            switch (item.getNodeName()) {
+                case "attribute" -> {
+                    ingestAttribute(element.getAttributes(), item);
+                }
+                default -> {
+                    throw new EagleCADLibraryFileException("Element attributes list has unknown node: [" + item.getNodeName() + "]");
+                }
+
+            }
+        }
+
+
         elements.add(element);
     }
 
@@ -3102,7 +3123,7 @@ public class EagleCADIngest {
             }
             switch (item.getNodeName()) {
                 case "contactref", "polygon", "wire", "via" -> {
-                    ingestElement(signal.getElements(), item);
+                    ingestSignalElement(signal.getElements(), item);
                 }
                 default -> {
                     throw new EagleCADLibraryFileException("<signal> has unknown child: [" + item.getNodeName() + "]");
@@ -3119,7 +3140,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      */
-    private static void ingestElement(List<_AQuantum> list, Node item) throws EagleCADLibraryFileException {
+    private static void ingestSignalElement(List<_AQuantum> list, Node item) throws EagleCADLibraryFileException {
         switch (item.getNodeName()) {
             case "contactref" -> {
                 ingestContactRef(list, item);

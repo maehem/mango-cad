@@ -82,7 +82,7 @@ public class SchematicPreview extends Group {
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
-                getChildren().add(LibraryElementNode.createPolygon(e, c, false));
+                getChildren().add(LibraryElementNode.createPolygonCurved(e, c, false));
             } else if (element instanceof Wire e) {
                 getChildren().add(LibraryElementNode.createWireNode(e, c, false));
             } else if (element instanceof ElementText e) {
