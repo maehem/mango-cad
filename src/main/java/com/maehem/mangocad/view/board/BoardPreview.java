@@ -235,6 +235,35 @@ public class BoardPreview extends Group {
         Color copperColor = new Color(0.6, 0.5, 0.0, 1.0); // Copper
         Color substrateColor = new Color(0.2, 0.2, 0.0, 0.8); // Dark Brown-Yellow
 
+        // Board file overrides any mfg colors
+        //    <mfgpreviewcolors>
+        //    <mfgpreviewcolor name="soldermaskcolor" color="0xC8008000"/>
+        //    <mfgpreviewcolor name="silkscreencolor" color="0xFFFEFEFE"/>
+        //    <mfgpreviewcolor name="backgroundcolor" color="0xFF282828"/>
+        //    <mfgpreviewcolor name="coppercolor" color="0xFFFFBF00"/>
+        //    <mfgpreviewcolor name="substratecolor" color="0xFF786E46"/>
+        //    </mfgpreviewcolors>
+        //
+//        for (MfgPreviewColor mfgC : board.getMfgPreviewColors()) {
+//            Color color = ColorUtils.getColor(mfgC.getColor()); // Convert Eagle color to JavaFX Color
+//            switch (mfgC.getName()) {
+//                case "soldermaskcolor":
+//                    solderMaskColor = color;
+//                    break;
+//                case "silkscreencolor":
+//                    silkScreenColor = color;
+//                    break;
+//                case "backgroundcolor":
+//                    backgroundColor = color;
+//                    break;
+//                case "coppercolor":
+//                    copperColor = color;
+//                    break;
+//                case "substratecolor":
+//                    substrateColor = color;
+//                    break;
+//            }
+//        }
         LayerElement[] layers = board.getParentDrawing().getLayers();
         ColorPalette palette = board.getParentDrawing().getPalette();
 
@@ -243,14 +272,7 @@ public class BoardPreview extends Group {
         ArrayList<Node> silkNodes = new ArrayList<>();
         ArrayList<Node> maskNodes = new ArrayList<>();
 
-        ArrayList<ArrayList<Node>> restrictNodes = new ArrayList<>();
-        restrictNodes.add(new ArrayList<>());
-        restrictNodes.add(new ArrayList<>());
-        restrictNodes.add(new ArrayList<>());
-        restrictNodes.add(new ArrayList<>());
-        restrictNodes.add(new ArrayList<>());
-        restrictNodes.add(new ArrayList<>());
-        restrictNodes.add(new ArrayList<>());
+        ArrayList<Node> restrict = new ArrayList<>();
 
         // Copper is ranked.
         // Polygons have isolate (1..6) but all other wires/pads are isolate (0)
@@ -275,36 +297,6 @@ public class BoardPreview extends Group {
         ArrayList<Node> holeNodes = new ArrayList<>();
         ArrayList<Wire> substrateWires = new ArrayList<>(); // Wires that should make a closed shape.
 
-        // Board file overrides any mfg colors
-        //    <mfgpreviewcolors>
-        //    <mfgpreviewcolor name="soldermaskcolor" color="0xC8008000"/>
-        //    <mfgpreviewcolor name="silkscreencolor" color="0xFFFEFEFE"/>
-        //    <mfgpreviewcolor name="backgroundcolor" color="0xFF282828"/>
-        //    <mfgpreviewcolor name="coppercolor" color="0xFFFFBF00"/>
-        //    <mfgpreviewcolor name="substratecolor" color="0xFF786E46"/>
-        //    </mfgpreviewcolors>
-        //
-        //   Eagle is like Web color but alpha is first and we need to strip it.
-//        for (MfgPreviewColor mfgC : board.getMfgPreviewColors()) {
-//            Color color = ColorUtils.getColor(mfgC.getColor());
-//            switch (mfgC.getName()) {
-//                case "soldermaskcolor":
-//                    solderMaskColor = color;
-//                    break;
-//                case "silkscreencolor":
-//                    silkScreenColor = color;
-//                    break;
-//                case "backgroundcolor":
-//                    backgroundColor = color;
-//                    break;
-//                case "coppercolor":
-//                    copperColor = color;
-//                    break;
-//                case "substratecolor":
-//                    substrateColor = color;
-//                    break;
-//            }
-//        }
         // Decide Top or bottom
         // Draw background
         // Draw substrate
@@ -455,8 +447,10 @@ public class BoardPreview extends Group {
             }
         }
 
+        Shape substrate = null;
         Shape dimOutline = null;
         Shape dimMask = null;
+        Shape pcbClip = null;
         DesignRules dr = board.getDesignRules();
         String drWire2Wire = dr.getRule(DrcDefs.MD_WIRE2WIRE); // Wire to Wire
         Double wireIsolate = Units.toMM(drWire2Wire);
@@ -522,33 +516,10 @@ public class BoardPreview extends Group {
             }
         }
 
-        // Add our drawabales in the correct order over the default layer.
-        if (!substrateWires.isEmpty()) {
-            Shape dimShape = LibraryElementNode.createPath(substrateWires, substrateColor, false);
-            chld.add(dimShape);
-
-            dimOutline = LibraryElementNode.createPath(substrateWires, null, false);
-            dimOutline.setStrokeWidth(0.2);
-            dimOutline.setStrokeType(StrokeType.OUTSIDE);
-            dimOutline.setStroke(substrateColor.brighter());
-
-            dimMask = LibraryElementNode.createPath(substrateWires, null, false);
-            dimMask.setStrokeWidth(dimIsolate);
-            dimMask.setStrokeType(StrokeType.INSIDE);
-            dimMask.setStroke(Color.RED);
-            dimMask.setFill(solderMaskColor);
-
-//            Shape pp = LibraryElementNode.createPath(substrateWires, null, false);
-//            pp.setStrokeWidth(dimIsolate);
-//            pp.setStrokeType(StrokeType.INSIDE);
-//            pp.setStroke(substrateColor);
-//            isolate.get(0).add(pp);
-        }
-
         for (Signal sig : board.getSignals()) {
 
             for (_AQuantum el : sig.getElements()) {
-                if (el.getLayerNum() != 1 && !(el instanceof Via)) {
+                if (el.getLayerNum() != 1 && !(el instanceof Via)) { // TODO: Via uses 'extent'
                     continue; // Only layer 1 for now.
                 }
                 if (el instanceof Wire w) {
@@ -611,6 +582,30 @@ public class BoardPreview extends Group {
             });
         }
 
+        // Add our drawabales in the correct order over the default layer.
+        if (!substrateWires.isEmpty()) {
+            substrate = LibraryElementNode.createPath(substrateWires, substrateColor, false);
+
+            // A thin line around the PCB. Probably not needed.
+            dimOutline = LibraryElementNode.createPath(substrateWires, null, false);
+            dimOutline.setStrokeWidth(0.01);
+            dimOutline.setStrokeType(StrokeType.OUTSIDE);
+            dimOutline.setStroke(substrateColor.brighter());
+
+            dimMask = LibraryElementNode.createPath(substrateWires, null, false);
+            dimMask.setFill(solderMaskColor);
+
+            pcbClip = LibraryElementNode.createPath(substrateWires, null, false);
+            pcbClip.setFill(substrateColor);
+            pcbClip.setStrokeWidth(1); // Margin
+            pcbClip.setStrokeType(StrokeType.OUTSIDE);
+            pcbClip.setStroke(Color.GREEN);
+        }
+
+        if (substrate != null) {
+            chld.add(substrate);
+        }
+
         // If board outline is not closed, then assume a mask area.
         if (dimMask == null) {
             dimMask = new Rectangle(getBoundsInLocal().getWidth(), getBoundsInLocal().getHeight(), solderMaskColor);
@@ -656,23 +651,27 @@ public class BoardPreview extends Group {
             }
         }
 
-        dimMask.setFill(solderMaskColor);
+        dimMask.setFill(solderMaskColor); // Subtract obliterates old fill color.
         chld.add(dimMask);
 
         // Silk
-        for (Node n : silkNodes) {
-            chld.add(n);
-        }
-
-        // Holes
-        for (Node n : holeNodes) {
-            chld.add(n);
-        }
+//        for (Node n : silkNodes) {
+//            chld.add(n);
+//        }
+//
+//        // Holes
+//        for (Node n : holeNodes) {
+//            chld.add(n);
+//        }
 
         // TODO:  Clip outside dimension shape.
         // Finally add the dimension outline
         if (dimOutline != null) {
             chld.add(dimOutline);
+        }
+
+        if (pcbClip != null) {
+            setClip(pcbClip);
         }
     }
 }
