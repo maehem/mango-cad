@@ -409,8 +409,6 @@ public class BoardPreview extends Group {
             } else if (element instanceof ElementCircle e) {
                 switch (l) {
                     case 1 /*, 16 */ -> {
-                        // Text in etch.
-                        // TODO: Toggle top or bottom.
                         Node n = LibraryElementNode.createCircleNode(e, copperColor, false);
                         rank.get(0).add(n);
                     }
@@ -423,8 +421,6 @@ public class BoardPreview extends Group {
                         maskNodes.add(n);
                     }
                     default -> {
-                        //Node n = LibraryElementNode.createCircleNode(e, c, false);
-                        //                      chld.add(n);
                     }
                 }
             } else if (element instanceof Spline e) {
@@ -718,16 +714,6 @@ public class BoardPreview extends Group {
             signalShapes.add(sss);
         }
 
-//        for (ArrayList<Shape> cs : copperSignals) {
-//            Shape sss = new Rectangle(0, 0, Color.WHITE);
-//            sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
-//            for (Shape sh : cs) {
-//                sss = Shape.union(sss, sh);
-//            }
-//            sss.setFill(copperColor);
-//            signalShapes.add(sss);
-//        }
-        //LOGGER.log(Level.SEVERE, "Created {0} copper signals.", signalShapes.size());
         for (int i = 0; i < signalShapes.size(); i++) {
             Shape csp = signalShapes.get(i);
             //LOGGER.log(Level.SEVERE, "Process signal: " + i);
