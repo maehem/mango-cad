@@ -2051,8 +2051,13 @@ public class LibraryElementNode {
         Circle c = new Circle(mirror ? -ec.getX() : ec.getX(), -ec.getY(), ec.getRadius());
 
         c.setStroke(color);
-        c.setStrokeWidth(ec.getWidth());
-        c.setFill(null);
+        double width = ec.getWidth();
+        c.setStrokeWidth(width);
+        if (width == 0.0) {
+            c.setFill(color);
+        } else {
+            c.setFill(null);
+        }
 
         return c;
     }
