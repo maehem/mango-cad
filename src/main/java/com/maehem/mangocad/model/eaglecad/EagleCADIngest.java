@@ -307,6 +307,11 @@ public class EagleCADIngest {
             }
 
         }
+
+        // Resolve Elements (Library, Part)
+        EagleCADResolve.resolveElements(brd);
+        // Resolve Signal->ContactRefs
+        EagleCADResolve.resolveContactRefs(brd);
     }
 
     public static void ingestPackages(Node node, ArrayList<Footprint> packages) throws EagleCADLibraryFileException {
@@ -853,6 +858,52 @@ public class EagleCADIngest {
                     poly.setWidth(Double.parseDouble(value));
                 case "layer" ->
                     poly.setLayer(Integer.parseInt(value));
+                case "spacing" -> {
+                } // Non-signal polygon
+//                    poly.setSpacing(Double.parseDouble(value));
+                case "pour" -> {
+                }  // Non-signal polygon
+//                    poly.setPour(value);
+                case "isolate" -> {
+                } // Non-signal polygon
+//                    poly.setIsolate(Double.parseDouble(value));
+                case "orphans" -> {
+                }  // Non-signal polygon
+//                    poly.setOrphans(value.equals("yes"));
+                case "thermals" -> {
+                } // Non-signal polygon
+//                    poly.setThermals(value.equals("yes"));
+                case "rank" -> {
+                }  // Non-signal polygon
+//                    poly.setRank(Integer.parseInt(value));
+                default ->
+                    throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
+            }
+        }
+
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (!item.getNodeName().equals("vertex")) {
+                continue;
+            }
+            ingestVertex(poly.getVertices(), item);
+        }
+
+        elements.add(poly);
+    }
+
+    private static void ingestSignalPolygon(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+        SignalPolygon poly = new SignalPolygon();
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node item = attributes.item(i);
+            String value = item.getNodeValue();
+            switch (item.getNodeName()) {
+                case "width" ->
+                    poly.setWidth(Double.parseDouble(value));
+                case "layer" ->
+                    poly.setLayer(Integer.parseInt(value));
                 case "spacing" ->
                     poly.setSpacing(Double.parseDouble(value));
                 case "pour" ->
@@ -866,7 +917,7 @@ public class EagleCADIngest {
                 case "rank" ->
                     poly.setRank(Integer.parseInt(value));
                 default ->
-                    throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("SignalPolygon has unknown attribute: [" + item.getNodeName() + "]");
             }
         }
 
@@ -3146,7 +3197,7 @@ public class EagleCADIngest {
                 ingestContactRef(list, item);
             }
             case "polygon" -> {
-                ingestPolygon(list, item);
+                ingestSignalPolygon(list, item);
             }
             case "wire" -> {
                 ingestWire(list, item);

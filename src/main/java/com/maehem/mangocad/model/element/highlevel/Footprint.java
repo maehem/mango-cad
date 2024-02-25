@@ -1,22 +1,24 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.basic.PadSMD;
+import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.misc.Description;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +35,18 @@ import java.util.List;
           locally_modified %Bool;      "no"
           library_version  %Int;       ""
           library_locally_modified %Bool; "no"
-          
-          library_version and library_locally_modified: 
+
+          library_version and library_locally_modified:
               Only in managed libraries inside boards or schematics
 
  * </pre>
- * 
+ *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Footprint extends _AQuantum {
+public class Footprint extends _AQuantum { // class name "Package" is reserved by Java.
 
     public static final String ELEMENT_NAME = "package";
-    
+
      // There can only be one description.
     private final Description description = new Description();
     private final ArrayList<_AQuantum> elements = new ArrayList<>();
@@ -54,7 +56,7 @@ public class Footprint extends _AQuantum {
     private boolean locallyModified = false;
     private int libraryVersion = 0;
     private boolean libraryLocallyModified = false;
-    
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -77,11 +79,11 @@ public class Footprint extends _AQuantum {
     public void setUrn(String urn) {
         this.urn = urn;
     }
-    
+
     public String getUrn() {
         return urn;
     }
-    
+
     /**
      * @return the locallyModified
      */
@@ -127,9 +129,24 @@ public class Footprint extends _AQuantum {
     public Description getDescription() {
         return description;
     }
-    
+
     public List<_AQuantum> getElements() {
         return elements;
     }
-    
+
+    public _AQuantum getPad(String padName) {
+        for (_AQuantum el : getElements()) {
+            if (el instanceof PadTHD e) {
+                if (e.getName().equals(padName)) {
+                    return e;
+                }
+            } else if (el instanceof PadSMD e) {
+                if (e.getName().equals(padName)) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
+
 }

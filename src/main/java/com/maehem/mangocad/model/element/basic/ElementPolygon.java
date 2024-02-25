@@ -32,12 +32,12 @@ public class ElementPolygon extends _AQuantum {
     public static final String ELEMENT_NAME = "polygon";
 
     private double width;
-    private double spacing;
-    private String pour = "solid";
-    private double isolate;
-    private boolean orphans = false;
-    private boolean thermals = true;
-    private int rank = 1;
+//    private double spacing;
+//    private String pour = "solid"; // TODO: Enum
+    //private double isolate;
+    //private boolean orphans = false;
+    //private boolean thermals = true;
+    //private int rank = 1;
     private List<Vertex> vertices = new ArrayList<>();
 
     @Override
@@ -59,96 +59,96 @@ public class ElementPolygon extends _AQuantum {
         this.width = width;
     }
 
-    /**
-     * @return the spacing
-     */
-    public double getSpacing() {
-        return spacing;
-    }
-
-    /**
-     * @param spacing the spacing to set
-     */
-    public void setSpacing(double spacing) {
-        this.spacing = spacing;
-    }
-
-    /**
-     * @return the pour
-     */
-    public String getPour() {
-        return pour;
-    }
-
-    /**
-     * @param pour the pour to set
-     */
-    public void setPour(String pour) {
-        this.pour = pour;
-    }
-
-    /**
-     * @return the isolate
-     */
-    public double getIsolate() {
-        return isolate;
-    }
-
-    /**
-     * @param isolate the isolate to set
-     */
-    public void setIsolate(double isolate) {
-        this.isolate = isolate;
-    }
-
-    /**
-     * @return the orphans
-     */
-    public boolean isOrphans() {
-        return orphans;
-    }
-
-    /**
-     * @param orphans the orphans to set
-     */
-    public void setOrphans(boolean orphans) {
-        this.orphans = orphans;
-    }
-
-    /**
-     * @return the thermals
-     */
-    public boolean isThermals() {
-        return thermals;
-    }
-
-    /**
-     * @param thermals the thermals to set
-     */
-    public void setThermals(boolean thermals) {
-        this.thermals = thermals;
-    }
-
-    /**
-     * @return the rank
-     */
-    public int getRank() {
-        return rank;
-    }
-
-    /**
-     * @param rank the rank to set
-     */
-    public void setRank(int rank) {
-        // Ingest may try to set rank of zero. Lowest is "1".
-        if (rank <= 0) {
-            this.rank = 1;
-        } else if (rank > 6) {  // Highest rank is 6
-            this.rank = 6;
-        } else {
-            this.rank = rank;
-        }
-    }
+//    /**
+//     * @return the spacing
+//     */
+//    public double getSpacing() {
+//        return spacing;
+//    }
+//
+//    /**
+//     * @param spacing the spacing to set
+//     */
+//    public void setSpacing(double spacing) {
+//        this.spacing = spacing;
+//    }
+//
+//    /**
+//     * @return the pour
+//     */
+//    public String getPour() {
+//        return pour;
+//    }
+//
+//    /**
+//     * @param pour the pour to set
+//     */
+//    public void setPour(String pour) {
+//        this.pour = pour;
+//    }
+//
+//    /**
+//     * @return the isolate
+//     */
+//    public double getIsolate() {
+//        return isolate;
+//    }
+//
+//    /**
+//     * @param isolate the isolate to set
+//     */
+//    public void setIsolate(double isolate) {
+//        this.isolate = isolate;
+//    }
+//
+//    /**
+//     * @return the orphans
+//     */
+//    public boolean isOrphans() {
+//        return orphans;
+//    }
+//
+//    /**
+//     * @param orphans the orphans to set
+//     */
+//    public void setOrphans(boolean orphans) {
+//        this.orphans = orphans;
+//    }
+//
+//    /**
+//     * @return the thermals
+//     */
+//    public boolean isThermals() {
+//        return thermals;
+//    }
+//
+//    /**
+//     * @param thermals the thermals to set
+//     */
+//    public void setThermals(boolean thermals) {
+//        this.thermals = thermals;
+//    }
+//
+//    /**
+//     * @return the rank
+//     */
+//    public int getRank() {
+//        return rank;
+//    }
+//
+//    /**
+//     * @param rank the rank to set
+//     */
+//    public void setRank(int rank) {
+//        // Ingest may try to set rank of zero. Lowest is "1".
+//        if (rank <= 0) {
+//            this.rank = 1;
+//        } else if (rank > 6) {  // Highest rank is 6
+//            this.rank = 6;
+//        } else {
+//            this.rank = rank;
+//        }
+//    }
 
     /**
      * @return the vertices

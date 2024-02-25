@@ -1,37 +1,39 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model._AQuantum;
-import java.util.ArrayList;
-import com.maehem.mangocad.model.element.basic.SchematicGroup;
-import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.ElementElement;
+import com.maehem.mangocad.model.element.basic.SchematicGroup;
 import com.maehem.mangocad.model.element.basic.VariantDefinition;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.MfgPreviewColor;
 import com.maehem.mangocad.model.element.highlevel.Signal;
 import com.maehem.mangocad.model.element.misc.Approved;
+import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.FusionSync;
 import com.maehem.mangocad.model.element.misc.FusionTeam;
 import com.maehem.mangocad.model.element.misc.NetClass;
 import com.maehem.mangocad.model.element.misc.Pass;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <pre>
@@ -54,7 +56,7 @@ import java.util.List;
  *   )
  *   ATTLIST
  *       limitedwidth  %Dimension;    #IMPLIED
- *        
+ *
  * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub )
@@ -78,20 +80,20 @@ public class Board extends _AQuantum implements DesignObject {
     private final ArrayList<Signal> signals = new ArrayList<>();
     private final ArrayList<MfgPreviewColor> mfgPreviewColors = new ArrayList<>();
     private final ArrayList<Approved> errors = new ArrayList<>();
-    
+
     private DesignRules designRules = new DesignRules();
     private final FusionSync fusionSync = new FusionSync();
     private final FusionTeam fusionTeam = new FusionTeam();
-    
+
     private double limitedWidth;
-        
+
     private String filePath;
     private Drawing parentDrawing = null;
 
     public Board() {
 
     }
-    
+
     @Override
     public Drawing getParentDrawing() {
         return parentDrawing;
@@ -115,7 +117,7 @@ public class Board extends _AQuantum implements DesignObject {
     public Description getDescription() {
         return description;
     }
-    
+
      /**
      * @return the filePath
      */
@@ -181,7 +183,7 @@ public class Board extends _AQuantum implements DesignObject {
     public String getFileExtension() {
         return FILE_EXTENSION;
     }
-    
+
     public List<_AQuantum> getPlain() {
         return plain;
     }
@@ -255,5 +257,48 @@ public class Board extends _AQuantum implements DesignObject {
     public ArrayList<MfgPreviewColor> getMfgPreviewColors() {
         return mfgPreviewColors;
     }
-    
+
+    public Library getLibrary(String libName) {
+        Optional<Library> libSearch = getLibraries().stream().filter(
+                library -> library.getName().equals(libName)
+        ).findFirst();
+
+        if (!libSearch.isEmpty()) {
+            return libSearch.get();
+        }
+
+        return null;
+    }
+
+    public ElementElement getElement(String elementName) {  // i.e. "U1"
+        for (ElementElement e : getElements()) {
+            if (e.getName().equals(elementName)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public Footprint getPackage(String pkgname) {
+        for (ElementElement element : getElements()) { // Component Packages
+            Library library = getLibrary(element.getLibrary());
+            if (library != null) {
+                Footprint pkg = library.getPackage(element.getFootprint());
+                if (pkg.getName().equals(pkgname)) {
+                    return pkg;
+                }
+            }
+//            Optional<Library> libSearch = getLibraries().stream().filter(
+//                    library -> library.getName().equals(element.getLibrary())
+//            ).findFirst();
+//
+//            if (!libSearch.isEmpty()) {
+//                Footprint pkg = libSearch.get().getPackage(element.getFootprint());
+//                if (pkg.getName().equals(pkgname)) {
+//                    return pkg;
+//                }
+//            }
+        }
+        return null;
+    }
 }

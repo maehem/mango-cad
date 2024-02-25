@@ -65,12 +65,12 @@ public class BoardPreview extends Group {
         //populateNodeAsDesign(); // Get bounds as input for grid.
         populateNodeAsMfgPreview();
 
-//        Group g = populateGrid(
+//        Group copper = populateGrid(
 //                getBoundsInLocal().getWidth(),
 //                getBoundsInLocal().getHeight(),
 //                grid.getDistance() * (grid.getUnit() == GridUnit.INCH ? 0.0393701 : 1)
 //        );
-//        getChildren().add(g);
+//        getChildren().add(copper);
     }
 
     private Group populateGrid(double bW, double bH, double gridSize) {
@@ -274,6 +274,18 @@ public class BoardPreview extends Group {
 
         ArrayList<Node> restrict = new ArrayList<>();
 
+        ArrayList<ArrayList<Shape>> copperSignals = new ArrayList<>();
+        ArrayList<ArrayList<Shape>> isolationSignals = new ArrayList<>();
+
+        ArrayList<ArrayList<SignalPolygon>> signalPolys = new ArrayList<>();
+        signalPolys.add(new ArrayList<>());
+        signalPolys.add(new ArrayList<>());
+        signalPolys.add(new ArrayList<>());
+        signalPolys.add(new ArrayList<>());
+        signalPolys.add(new ArrayList<>());
+        signalPolys.add(new ArrayList<>());
+        signalPolys.add(new ArrayList<>());
+
         // Copper is ranked.
         // Polygons have isolate (1..6) but all other wires/pads are isolate (0)
         ArrayList<ArrayList<Node>> rank = new ArrayList<>();
@@ -324,7 +336,7 @@ public class BoardPreview extends Group {
                         Node n = LibraryElementNode.createPolygonCurved(e, silkScreenColor, false);
                         silkNodes.add(n);
                     }
-                    case 1 /*, 16 */ -> {
+                    case 1 /*, 16 */ -> { // TODO: Plain Polygons should not appear in Layer1-16.
                         // Text in etch.
                         // TODO: Toggle top or bottom.
                         Node n = LibraryElementNode.createPolygonCurved(e, copperColor, false);
@@ -342,7 +354,7 @@ public class BoardPreview extends Group {
                 }
             } else if (element instanceof Wire e) {
                 switch (l) {
-                    case 1 /* , 16 */ -> {
+                    case 1 /* , 16 */ -> { // TODO: Plain Wire should not appear in Layer1-16.
                         // Text in etch.
                         // TODO: Toggle top or bottom.
                         Node n = LibraryElementNode.createWireNode(e, copperColor, false);
@@ -457,28 +469,31 @@ public class BoardPreview extends Group {
         String drDim2Wire = dr.getRule(DrcDefs.MD_COPPER2DIMENSION);
         Double dimIsolate = Units.toMM(drDim2Wire);
 
-        for (ElementElement element : board.getElements()) {
+        LOGGER.log(Level.SEVERE, "Do Elements.");
+        for (ElementElement element : board.getElements()) { // Component Packages
+            Library lib = board.getLibrary(element.getLibrary());
+            //if (lib != null) {
+            Footprint pkg = lib.getPackage(element.getFootprint());
+//            Optional<Library> libSearch = board.getLibraries().stream().filter(
+//                    library -> library.getName().equals(element.getLibrary())
+//            ).findFirst();
 
-            Optional<Library> libSearch = board.getLibraries().stream().filter(
-                    library -> library.getName().equals(element.getLibrary())
-            ).findFirst();
+            //if (!libSearch.isEmpty()) {
+            if (pkg != null) {
+                //Footprint pkg = libSearch.get().getPackage(element.getFootprint());
 
-            if (!libSearch.isEmpty()) {
-                Footprint pkg = libSearch.get().getPackage(element.getFootprint());
-
-                Node pkgCopper = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, copperColor, 0);
-                pkgCopper.setLayoutX(element.getX());
-                pkgCopper.setLayoutY(-element.getY());
-                pkgCopper.getTransforms().add(new Rotate(-element.getRot()));
-                rank.get(0).add(pkgCopper);
-
+//                Node pkgCopper = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, copperColor, 0);
+//                pkgCopper.setLayoutX(element.getX());
+//                pkgCopper.setLayoutY(-element.getY());
+//                pkgCopper.getTransforms().add(new Rotate(-element.getRot()));
+//                rank.get(0).add(pkgCopper);
+                // Store by element name and tag.
                 // Isolate Items into iso[0]
-                Node pkgIso = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, substrateColor, wireIsolate);
-                pkgIso.setLayoutX(element.getX());
-                pkgIso.setLayoutY(-element.getY());
-                pkgIso.getTransforms().add(new Rotate(-element.getRot()));
-                isolate.get(0).add(pkgIso);
-
+//                Node pkgIso = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, substrateColor, wireIsolate);
+//                pkgIso.setLayoutX(element.getX());
+//                pkgIso.setLayoutY(-element.getY());
+//                pkgIso.getTransforms().add(new Rotate(-element.getRot()));
+//                isolate.get(0).add(pkgIso);
                 // Drills
                 Node pkgHole = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
                 pkgHole.setLayoutX(element.getX());
@@ -516,19 +531,72 @@ public class BoardPreview extends Group {
             }
         }
 
+        //Signal sig = board.getSignals().get(0);
+        //{
         for (Signal sig : board.getSignals()) {
 
+            ArrayList<Shape> copper = new ArrayList<>();
+            ArrayList<Shape> isolation = new ArrayList<>();
+
             for (_AQuantum el : sig.getElements()) {
-                if (el.getLayerNum() != 1 && !(el instanceof Via)) { // TODO: Via uses 'extent'
+                if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
                     continue; // Only layer 1 for now.
                 }
                 if (el instanceof Wire w) {
-                    rank.get(0).add(LibraryElementNode.createWireNode(w, copperColor, false));
+//                    /* delete */ rank.get(0).add(LibraryElementNode.createWireNode(w, copperColor, false));
+                    copper.add(LibraryElementNode.createWireNode(w, copperColor, false));
 
-                    Shape isoWire = LibraryElementNode.createWireNode(w, substrateColor, false);
-                    isoWire.setStrokeWidth(w.getWidth() + (wireIsolate * 2.0));
-                    isolate.get(0).add(isoWire);
-                } else if (el instanceof ContactRef cref) { // Not a drawable thing
+//                    Shape isoWire = LibraryElementNode.createWireNode(w, substrateColor, false);
+//                    isoWire.setStrokeWidth(w.getWidth() + (wireIsolate * 2.0));
+//                    isolate.get(0).add(isoWire);
+                    Shape isoWire2 = LibraryElementNode.createWireNode(w, substrateColor, false);
+                    isoWire2.setStrokeWidth(w.getWidth() + (wireIsolate * 2.0));
+                    isolation.add(isoWire2);
+                } else if (el instanceof ContactRef cref) { // Look up pads with this signal
+                    LOGGER.log(Level.SEVERE, "ContactRef: {0}.{1}", new Object[]{cref.getElement(), cref.getPad()});
+                    // Will generate thermals for signal polygons.
+                    ElementElement elm = board.getElement(cref.getElement());
+                    _AQuantum pad = elm.getFootprintPkg().getPad(cref.getPad());
+
+                    if (pad == null) {
+                        LOGGER.log(Level.SEVERE, "Pad not found! Signal: {0} cref: {1}.{2}", new Object[]{sig.getName(), cref.getElement(), cref.getPad()});
+                    } else if (pad instanceof PadTHD p) {
+                        Shape thdShape = LibraryElementNode.createThdPad(p, copperColor);
+                        thdShape.setLayoutX(cref.getElementO().getX());
+                        thdShape.setLayoutY(-cref.getElementO().getY());
+                        thdShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
+                        copper.add(thdShape);
+
+                        Shape thdIsoShape = LibraryElementNode.createThdPad(p, copperColor);
+                        thdIsoShape.setStrokeWidth(wireIsolate);
+                        thdIsoShape.setStrokeType(StrokeType.OUTSIDE);
+                        thdIsoShape.setStroke(solderMaskColor);
+                        thdIsoShape.setLayoutX(cref.getElementO().getX());
+                        thdIsoShape.setLayoutY(-cref.getElementO().getY());
+                        thdIsoShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
+                        isolation.add(thdIsoShape);
+                    } else if (pad instanceof PadSMD p) {
+                        if ((!elm.getRotation().isMirror() && p.getLayerNum() == 1) || (elm.getRotation().isMirror() && p.getLayerNum() == 16)) {
+                            LOGGER.log(Level.SEVERE, "Add Pad: sig: {0}  pad: {1}.{2}", new Object[]{sig.getName(), cref.getElement(), cref.getPad()});
+                            Shape smdShape = LibraryElementNode.createSmdPad(p, copperColor);
+                            smdShape.setLayoutX(cref.getElementO().getX());
+                            smdShape.setLayoutY(-cref.getElementO().getY());
+                            smdShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
+                            copper.add(smdShape);
+
+                            // Isolate Pad
+                            Shape smdIsoShape = LibraryElementNode.createSmdPad(p, solderMaskColor);
+                            smdIsoShape.setStrokeWidth(wireIsolate);
+                            smdIsoShape.setStrokeType(StrokeType.OUTSIDE);
+                            smdIsoShape.setStroke(solderMaskColor);
+                            smdIsoShape.setLayoutX(cref.getElementO().getX());
+                            smdIsoShape.setLayoutY(-cref.getElementO().getY());
+                            smdIsoShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
+                            isolation.add(smdIsoShape);
+                        }
+                    } else {
+                        LOGGER.log(Level.SEVERE, "pad is: {0} on layer: {1}", new Object[]{pad.getElementName(), pad.getLayerNum()});
+                    }
 //
 //                    LOGGER.log(Level.SEVERE, "    ContactRef not handled: {0} pad:{1} routeTag:{2}",
 //                            new Object[]{
@@ -538,49 +606,120 @@ public class BoardPreview extends Group {
 //                            }
 //                    );
                 } else if (el instanceof Via v) {
-                    Circle viaC = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0, copperColor);
-                    viaC.setLayoutX(v.getX());
-                    viaC.setLayoutY(-v.getY());
-                    rank.get(0).add(viaC);
+//                    /* delete */ Circle viaC = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0, copperColor);
+//                    viaC.setLayoutX(v.getX());
+//                    viaC.setLayoutY(-v.getY());
+//                    rank.get(0).add(viaC);
 
-                    Circle isoC = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0 + wireIsolate, substrateColor);
-                    isoC.setLayoutX(v.getX());
-                    isoC.setLayoutY(-v.getY());
-                    isolate.get(0).add(isoC);
+                    Circle viaC2 = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0, copperColor);
+                    viaC2.setLayoutX(v.getX());
+                    viaC2.setLayoutY(-v.getY());
+                    copper.add(viaC2);
 
-                    Circle drlC = new Circle(v.getDrill() / 2.0, backgroundColor);
+//                    /* delete */ Circle isoC = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0 + wireIsolate, substrateColor);
+//                    isoC.setLayoutX(v.getX());
+//                    isoC.setLayoutY(-v.getY());
+//                    isolate.get(0).add(isoC);
+                    Circle isoC2 = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0 + wireIsolate, substrateColor);
+                    isoC2.setLayoutX(v.getX());
+                    isoC2.setLayoutY(-v.getY());
+                    isolation.add(isoC2);
+
+                    /* delete */ Circle drlC = new Circle(v.getDrill() / 2.0, backgroundColor);
                     drlC.setLayoutX(v.getX());
                     drlC.setLayoutY(-v.getY());
                     holeNodes.add(drlC);
-                } else if (el instanceof ElementPolygon ep) {
-                    Shape poly = LibraryElementNode.createPolygonCurved(ep, copperColor, false);
-                    poly.toBack();
-                    rank.get(ep.getRank()).add(poly);
+                } else if (el instanceof SignalPolygon ep) {
+                    signalPolys.get(ep.getRank()).add(ep);
 
-                    Shape isoShape = LibraryElementNode.createPolygonCurved(ep, null, false);
-                    isoShape.setStrokeWidth(wireIsolate);
-                    isoShape.setStrokeType(StrokeType.OUTSIDE);
-                    isoShape.setStrokeLineJoin(StrokeLineJoin.ROUND);
-                    isoShape.setStroke(substrateColor);
-                    isolate.get(ep.getRank()).add(isoShape);
+//                    /* delete */ Shape poly = LibraryElementNode.createPolygonCurved(ep, copperColor, false);
+//                    poly.toBack();
+//                    rank.get(ep.getRank()).add(poly);
+                    Shape poly2 = LibraryElementNode.createPolygonCurved(ep, copperColor, false);
+                    copper.add(poly2);
+
+//                    /* delete */ Shape isoShape = LibraryElementNode.createPolygonCurved(ep, null, false);
+//                    isoShape.setStrokeWidth(wireIsolate);
+//                    isoShape.setStrokeType(StrokeType.OUTSIDE);
+//                    isoShape.setStrokeLineJoin(StrokeLineJoin.ROUND);
+//                    isoShape.setStroke(substrateColor);
+//                    isolate.get(ep.getRank()).add(isoShape);
+                    Shape isoShape2 = LibraryElementNode.createPolygonCurved(ep, null, false);
+                    isoShape2.setStrokeWidth(wireIsolate);
+                    isoShape2.setStrokeType(StrokeType.OUTSIDE);
+                    isoShape2.setStrokeLineJoin(StrokeLineJoin.ROUND);
+                    isoShape2.setStroke(substrateColor);
+                    isolation.add(isoShape2);
                 } else {
                     LOGGER.log(Level.SEVERE, "    Signal Element not handled: {0}", el.getElementName());
                 }
             }
+
+            copperSignals.add(copper);
+            isolationSignals.add(isolation);
         }
 
-        // Copper
-        // Ranks 7..1  Back to Front
-        for (int i = rank.size() - 1; i >= 0; i--) {
-            //if (i < isolate.length) {
-            isolate.get(i).forEach(node -> {
-                chld.add(node);
-            });
+        ArrayList<Shape> isolationShapes = new ArrayList<>();
 
-            rank.get(i).forEach(node -> {
-                chld.add(node);
-            });
+        // Shapes on each isolation group are combined.
+        for (ArrayList<Shape> cs : isolationSignals) {
+            Shape sss = new Rectangle(0, 0, Color.WHITE);
+            sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
+            for (Shape sh : cs) {
+                sss = Shape.union(sss, sh);
+            }
+            sss.setFill(substrateColor);
+            isolationShapes.add(sss);
         }
+        //LOGGER.log(Level.SEVERE, "Created {0} isolation signals.", isolationShapes.size());
+
+        ArrayList<Shape> signalShapes = new ArrayList<>();
+
+        // Shapes on each copper group are combined.
+        for (ArrayList<Shape> cs : copperSignals) {
+            Shape sss = new Rectangle(0, 0, Color.WHITE);
+            sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
+            for (Shape sh : cs) {
+                sss = Shape.union(sss, sh);
+            }
+            sss.setFill(copperColor);
+            signalShapes.add(sss);
+        }
+        //LOGGER.log(Level.SEVERE, "Created {0} copper signals.", signalShapes.size());
+
+        for (int i = 0; i < signalShapes.size(); i++) {
+            Shape csp = signalShapes.get(i);
+            //LOGGER.log(Level.SEVERE, "Process signal: " + i);
+            for (int j = 0; j < isolationShapes.size(); j++) {
+                if (i != j) {
+                    csp = Shape.subtract(csp, isolationShapes.get(j));
+                }
+            }
+            //signalShapes.set(i, csp);
+            csp.setFill(copperColor);
+            chld.add(csp);
+        }
+        // Polys with lower ranks get chomped by isolation polys with higher ranks
+
+//        // Copper
+//        // Ranks 7..1  Back to Front
+//        for (int i = rank.size() - 1; i >= 0; i--) {
+//            //if (i < isolate.length) {
+//            isolate.get(i).forEach(node -> {
+//                chld.add(node);
+//            });
+//
+//            rank.get(i).forEach(node -> {
+//                chld.add(node);
+//            });
+//        }
+        isolate.get(0).forEach(node -> {
+            chld.add(node);
+        });
+
+        rank.get(0).forEach(node -> {
+            chld.add(node);
+        });
 
         // Add our drawabales in the correct order over the default layer.
         if (!substrateWires.isEmpty()) {
@@ -603,7 +742,7 @@ public class BoardPreview extends Group {
         }
 
         if (substrate != null) {
-            chld.add(substrate);
+            //chld.add(substrate);
         }
 
         // If board outline is not closed, then assume a mask area.
@@ -655,15 +794,14 @@ public class BoardPreview extends Group {
         chld.add(dimMask);
 
         // Silk
-//        for (Node n : silkNodes) {
-//            chld.add(n);
-//        }
-//
-//        // Holes
-//        for (Node n : holeNodes) {
-//            chld.add(n);
-//        }
+        for (Node n : silkNodes) {
+            chld.add(n);
+        }
 
+        // Holes
+        for (Node n : holeNodes) {
+            chld.add(n);
+        }
         // TODO:  Clip outside dimension shape.
         // Finally add the dimension outline
         if (dimOutline != null) {
@@ -671,7 +809,7 @@ public class BoardPreview extends Group {
         }
 
         if (pcbClip != null) {
-            setClip(pcbClip);
+//            setClip(pcbClip);
         }
     }
 }

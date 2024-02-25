@@ -1234,7 +1234,7 @@ public class LibraryElementNode {
         return mask;
     }
 
-    private static Shape createSmdPad(PadSMD smd, Color color) {
+    public static Shape createSmdPad(PadSMD smd, Color color) {
         double roundPct = smd.getRoundness() * 0.01;
         Rectangle pad = new Rectangle();
         pad.setFill(color);
@@ -1478,7 +1478,7 @@ public class LibraryElementNode {
         return drill;
     }
 
-    private static Shape createThdPad(PadTHD thd, Color color) {
+    public static Shape createThdPad(PadTHD thd, Color color) {
         double padDia = thd.getDerivedDiameter();
 
         switch (thd.getShape()) {

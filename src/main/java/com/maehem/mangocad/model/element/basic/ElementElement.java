@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,10 @@ public class ElementElement extends _AQuantum {
 
     private String name;
     private String library;
+    private Library libraryObj;
     private String libraryUrn;
     private String footprint;
+    private Footprint footprintPkg;
     private String overridePackageUrn;
     private String package3dUrn;
     private String overridePackage3dUrn;
@@ -103,6 +107,20 @@ public class ElementElement extends _AQuantum {
      */
     public void setLibrary(String library) {
         this.library = library;
+    }
+
+    /**
+     * @return the library
+     */
+    public Library getLibraryObj() {
+        return libraryObj;
+    }
+
+    /**
+     * @param library the library to set
+     */
+    public void setLibraryObj(Library lib) {
+        this.libraryObj = lib;
     }
 
     /**
@@ -255,6 +273,20 @@ public class ElementElement extends _AQuantum {
     public void setFootprint(String footprint) {
         this.footprint = footprint;
     }
+
+    /**
+     * @return the footprint package object
+     */
+    public Footprint getFootprintPkg() {
+        return getLibraryObj().getPackage(getFootprint());
+    }
+
+//    /**
+//     * @param footprint the footprint to set
+//     */
+//    public void setFootprintPkg(Footprint pkg) {
+//        this.footprintPkg = pkg;
+//    }
 
     /**
      * @return the locked
