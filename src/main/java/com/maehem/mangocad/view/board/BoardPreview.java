@@ -481,6 +481,10 @@ public class BoardPreview extends Group {
         Double dimIsolate = Units.toMM(drDim2Wire);
         String drThIso = dr.getRule(DrcDefs.SL_THERMAL_ISOLATE); // Thermal Isolation
         Double thermalIsolate = Units.toMM(drThIso);
+        String mlStopMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME); // Thermal Isolation
+        Double viaStopMask = Units.toMM(mlStopMax);
+        String mlViaStopLimit = dr.getRule(DrcDefs.ML_VIA_STOP_LIMIT); // Thermal Isolation
+        Double viaStopLimit = Units.toMM(mlViaStopLimit);
 
         LOGGER.log(Level.SEVERE, "Do Elements.");
         for (ElementElement element : board.getElements()) { // Component Packages
@@ -724,6 +728,14 @@ public class BoardPreview extends Group {
                     isoC2.setLayoutY(-v.getY());
                     isolation.add(isoC2);
 
+                    // TODO: Check Design Rule for Via Mask Limit.
+                    if (v.getDrill() > viaStopLimit) {
+                        Circle maskC2 = new Circle(v.getMaskDiameter(dr, Via.Layer.TOP) / 2.0, substrateColor);
+                        maskC2.setLayoutX(v.getX());
+                        maskC2.setLayoutY(-v.getY());
+                        maskNodes.add(maskC2);
+                    }
+
                     /* delete */ Circle drlC = new Circle(v.getDrill() / 2.0, backgroundColor);
                     drlC.setLayoutX(v.getX());
                     drlC.setLayoutY(-v.getY());
@@ -782,9 +794,7 @@ public class BoardPreview extends Group {
 //        }
 //        resShape.setFill(substrateColor);
 //        isolationShapes.add(resShape);
-
         //LOGGER.log(Level.SEVERE, "Created {0} isolation signals.", isolationShapes.size());
-
         ArrayList<Shape> signalShapes = new ArrayList<>();
 
         // Shapes on each copper group are combined.
