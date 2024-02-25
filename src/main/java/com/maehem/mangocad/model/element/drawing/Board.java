@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.Attribute;
+import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.ElementElement;
 import com.maehem.mangocad.model.element.basic.SchematicGroup;
 import com.maehem.mangocad.model.element.basic.VariantDefinition;
@@ -84,6 +85,9 @@ public class Board extends _AQuantum implements DesignObject {
     private DesignRules designRules = new DesignRules();
     private final FusionSync fusionSync = new FusionSync();
     private final FusionTeam fusionTeam = new FusionTeam();
+
+    // Keep tabs on what pins are used.
+    private final ArrayList<ContactRef> contactRefs = new ArrayList<>();
 
     private double limitedWidth;
 
@@ -300,5 +304,19 @@ public class Board extends _AQuantum implements DesignObject {
 //            }
         }
         return null;
+    }
+
+    public List<ContactRef> getContactRefs() {
+        return contactRefs;
+    }
+
+    public boolean hasContactRef(ContactRef cr) {
+        for (ContactRef t : getContactRefs()) {
+            if (cr.getElement().equals(t.getElement())
+                    && cr.getPad().equals(t.getPad())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

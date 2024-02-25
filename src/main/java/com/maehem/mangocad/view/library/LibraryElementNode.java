@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.library;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.Attribute;
+import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementElement;
@@ -39,6 +40,7 @@ import com.maehem.mangocad.model.element.basic.Spline;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Via;
 import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import static com.maehem.mangocad.model.element.enums.PadShape.*;
 import com.maehem.mangocad.model.element.enums.PinFunction;
@@ -55,6 +57,7 @@ import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1268,6 +1271,46 @@ public class LibraryElementNode {
     }
 
     /**
+     * Thermal lines minimum is polygon wire width. Thermal lines max is smaller
+     * of pad w or h.
+     *
+     * @param smd
+     * @param color
+     * @param isolation
+     * @return
+     */
+    public static ArrayList<Shape> createSmdThermal(PadSMD smd, Color color, double isolation, double tMin) {
+
+        double w = smd.getWidth();
+        double h = smd.getHeight();
+
+        double stW = Math.max(tMin, Math.min(w / 2, h / 2));
+
+        double cX = smd.getX();
+        double cY = -smd.getY();
+
+        Line lineH = new Line(
+                cX - w / 2 - isolation, cY,
+                cX + w / 2 + isolation, cY
+        );
+        Line lineV = new Line(
+                cX, cY - w / 2 - isolation,
+                cX, cY + w / 2 + isolation
+        );
+
+        lineH.setStroke(color);
+        lineH.setStrokeWidth(stW);
+        lineV.setStroke(color);
+        lineV.setStrokeWidth(stW);
+
+        ArrayList<Shape> lines = new ArrayList<>();
+        lines.add(lineH);
+        lines.add(lineV);
+
+        return lines;
+    }
+
+    /**
      * THD Pad
      *
      * TODO: Solder Mask, pin name, drill legend.
@@ -2313,6 +2356,65 @@ public class LibraryElementNode {
         return p;
     }
 
+    public static List<Shape> createPackageUnusedPads(Footprint pkg, Board board, ElementElement el, int layer, Color c, double isolation) {
+        ArrayList<Shape> list = new ArrayList<>();
+
+        // element has a name --> i.e. "U1"
+        // element has attributes that overide some pkg.elements.  i.e. >VALUE
+        String partName = el.getName();
+
+        pkg.getElements().forEach((e) -> {
+            if (e instanceof PadSMD padSMD) {
+                //Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                if (padSMD.getLayerNum() == layer) {
+                    ContactRef cr = new ContactRef();
+                    cr.setElement(el.getName());
+                    cr.setPad(padSMD.getName());
+
+                    if (!board.hasContactRef(cr)) {
+                        Shape n = LibraryElementNode.createSmdPad(padSMD, c);
+                        if (isolation > 0.0) { // Add stroke around pad.
+                            n.setStrokeWidth(isolation);
+                            n.setStrokeType(StrokeType.OUTSIDE);
+                            n.setStroke(c);
+                        }
+                        list.add(n);
+                    }
+                }
+                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
+                    list.add(createSmdMask(padSMD, c, false));
+                }
+
+            } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
+                switch (layer) {
+                    case 1 -> {
+                        Shape ss = LibraryElementNode.createThdPad(padTHD, c);
+                        if (isolation > 0.0) {
+                            // Add stroke around pad.
+                            ss.setStrokeWidth(isolation);
+                            ss.setStrokeType(StrokeType.OUTSIDE);
+                            ss.setStroke(c);
+                        }
+                        list.add(ss);
+                    }
+                    case 45 -> {  // Needed?
+                        // Drills/Holes
+                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
+                        list.add(drillShape);
+                    }
+                    case 29 -> { // Needed?
+                        if (!padTHD.isStopmask()) {
+                            break;
+                        }
+                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+                        list.add(ss);
+                    }
+                }
+            }
+        });
+        return list;
+    }
+
     //  TODO: Instead of returning the requested layer, return a manifest of all MFG layers.
     //  THen we won't repeatedly call this.  But maybe it doesn't matter?
     public static Node createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
@@ -2378,53 +2480,53 @@ public class LibraryElementNode {
                 // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
 
 //                if (et.getLayerNum() == layer) {
-                    //Node textNode = LibraryElementNode.createText(et, null, c, null, false);
-                    //p.getChildren().add(textNode);
-                    final ElementText proxyText;
-                    proxyText = et.copy();
+                //Node textNode = LibraryElementNode.createText(et, null, c, null, false);
+                //p.getChildren().add(textNode);
+                final ElementText proxyText;
+                proxyText = et.copy();
 
-                    String attrName = null;
+                String attrName = null;
 
-                    // et.value contains the mnemonic of attribute (name, value, etc.)
-                    if (et.getValue().equals(">NAME")) {
-                        proxyText.setValue(el.getName());
-                        attrName = "NAME";
-                    } else                     if (et.getValue().equals(">VALUE")) {
-                        proxyText.setValue(el.getValue());
-                        attrName = "VALUE";
-                    }
+                // et.value contains the mnemonic of attribute (name, value, etc.)
+                if (et.getValue().equals(">NAME")) {
+                    proxyText.setValue(el.getName());
+                    attrName = "NAME";
+                } else if (et.getValue().equals(">VALUE")) {
+                    proxyText.setValue(el.getValue());
+                    attrName = "VALUE";
+                }
 
-                    if (attrName != null) {
-                        // Attribute Element
-                        //example:  <attribute name="NAME" x="10" y="18.858" size="1.27" layer="25" ratio="15" align="center" />
+                if (attrName != null) {
+                    // Attribute Element
+                    //example:  <attribute name="NAME" x="10" y="18.858" size="1.27" layer="25" ratio="15" align="center" />
 
-                        for (Attribute attr : el.getAttributes()) {
-                            if (attr.getLayerNum() == 29) {
-                                int aa = 1; // Dubugger stop point.
-                            }
-
-                            if (!attr.getName().equals(attrName) || attr.getLayerNum() != layer) {
-                                // Skip if these aren't our attributes.
-                                continue;
-                            }
-
-                            proxyText.setX(attr.getX() - el.getX());
-                            proxyText.setY(attr.getY() - el.getY());
-                            proxyText.setSize(attr.getSize());
-                            proxyText.setAlign(attr.getAlign());
-                            proxyText.setRatio(attr.getRatio());
-
-                            //LOGGER.log(Level.SEVERE, "Rot:  el: {0}  et: {1}  attr: {2}", new Object[]{el.getRot(), et.getRot(), attr.getRotation().getValue()});
-                            proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
-                            Node txtNode = createText(proxyText, null, c, null, false);
-
-                            // Not sure why, but this needs to be rotated.
-                            // but I think the parent applies the same rotation
-                            // and other nodes don't seem to need this. Curious...
-                            txtNode.getTransforms().add(new Rotate(el.getRot()));
-                            p.getChildren().add(txtNode);
+                    for (Attribute attr : el.getAttributes()) {
+                        if (attr.getLayerNum() == 29) {
+                            int aa = 1; // Dubugger stop point.
                         }
+
+                        if (!attr.getName().equals(attrName) || attr.getLayerNum() != layer) {
+                            // Skip if these aren't our attributes.
+                            continue;
+                        }
+
+                        proxyText.setX(attr.getX() - el.getX());
+                        proxyText.setY(attr.getY() - el.getY());
+                        proxyText.setSize(attr.getSize());
+                        proxyText.setAlign(attr.getAlign());
+                        proxyText.setRatio(attr.getRatio());
+
+                        //LOGGER.log(Level.SEVERE, "Rot:  el: {0}  et: {1}  attr: {2}", new Object[]{el.getRot(), et.getRot(), attr.getRotation().getValue()});
+                        proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
+                        Node txtNode = createText(proxyText, null, c, null, false);
+
+                        // Not sure why, but this needs to be rotated.
+                        // but I think the parent applies the same rotation
+                        // and other nodes don't seem to need this. Curious...
+                        txtNode.getTransforms().add(new Rotate(el.getRot()));
+                        p.getChildren().add(txtNode);
                     }
+                }
 
 //                    Node elementTextNode = createText(proxyText, c, rotation);
 //                    textGroup.getChildren().add(elementTextNode);
@@ -2432,7 +2534,6 @@ public class LibraryElementNode {
 //                    textGroup.getChildren().add(LibraryElementNode.crosshairs(
 //                            proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
 //                    ));
-
 //                }
             } else if (e instanceof ElementRectangle elementRectangle) {
                 if (elementRectangle.getLayerNum() == layer) {

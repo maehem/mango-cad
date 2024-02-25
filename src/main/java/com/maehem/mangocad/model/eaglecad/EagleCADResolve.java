@@ -36,7 +36,8 @@ public class EagleCADResolve {
             for (_AQuantum e : s.getElements()) {
                 if (e instanceof ContactRef cr) {
                     cr.setElementO(brd.getElement(cr.getElement()));
-                    LOGGER.log(Level.SEVERE, "cr: {0}.{1}", new Object[]{cr.getElement(), cr.getPad()});
+                    brd.getContactRefs().add(cr);
+                    //LOGGER.log(Level.SEVERE, "cr: {0}.{1}", new Object[]{cr.getElement(), cr.getPad()});
                 }
             }
         }
