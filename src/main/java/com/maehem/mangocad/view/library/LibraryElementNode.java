@@ -1524,6 +1524,7 @@ public class LibraryElementNode {
     public static Shape createThdPad(PadTHD thd, Color color) {
         double padDia = thd.getDerivedDiameter();
 
+        LOGGER.log(Level.SEVERE, "Create TDH Pad: " + padDia);
         switch (thd.getShape()) {
             case SQUARE -> {
                 Rectangle pad = new Rectangle(
@@ -1531,8 +1532,8 @@ public class LibraryElementNode {
                         color
                 );
                 pad.setStroke(null);
-                pad.setLayoutX(thd.getX() - padDia / 2.0);
-                pad.setLayoutY(-thd.getY() - padDia / 2.0);
+                pad.setX(thd.getX() - padDia / 2.0);
+                pad.setY(-thd.getY() - padDia / 2.0);
 
                 return pad;
             }
@@ -1549,8 +1550,8 @@ public class LibraryElementNode {
                 Rotate rotate = new Rotate(360 - thd.getRot());
                 rotate.setPivotX(padDia);
                 rotate.setPivotY(padDia / 2);
-                pad.setLayoutX(thd.getX() - pad.getWidth() / 2.0);
-                pad.setLayoutY(-thd.getY() - padDia / 2.0);
+                pad.setX(thd.getX() - pad.getWidth() / 2.0);
+                pad.setY(-thd.getY() - padDia / 2.0);
                 pad.getTransforms().add(rotate);
 
                 return pad;
@@ -1585,8 +1586,8 @@ public class LibraryElementNode {
                 pad.setArcHeight(padDia);
                 pad.setArcWidth(padDia);
                 pad.setStroke(null);
-                pad.setLayoutX(thd.getX() - pad.getWidth() / 4.0);
-                pad.setLayoutY(-thd.getY() - padDia / 2);
+                pad.setX(thd.getX() - pad.getWidth() / 4.0);
+                pad.setY(-thd.getY() - padDia / 2);
                 Rotate rotate = new Rotate(360 - thd.getRot());
                 rotate.setPivotX(padDia / 2);
                 rotate.setPivotY(padDia / 2);
@@ -1595,9 +1596,11 @@ public class LibraryElementNode {
                 return pad;
             }
             default -> {  // ROUND
-                Circle pad = new Circle(padDia / 2.0, color);
-                pad.setLayoutX(thd.getX());
-                pad.setLayoutY(-thd.getY());
+                Circle pad = new Circle(thd.getX(), -thd.getY(), padDia / 2.0, color);
+                LOGGER.log(Level.SEVERE, "Round Pad   dia: {0} loc:{1},{2}", new Object[]{padDia, thd.getX(), thd.getY()});
+                pad.setFill(color);
+                //pad.setX(thd.getX());
+                //pad.setLayoutY(-thd.getY());
                 pad.setStroke(null);
 
                 return pad;
@@ -1618,6 +1621,7 @@ public class LibraryElementNode {
                         padDia + maskWidth2, padDia + maskWidth2,
                         color
                 );
+                mask.setStroke(null);
                 mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
                 mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
 
@@ -1682,6 +1686,7 @@ public class LibraryElementNode {
                 // SolderMask
                 mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, color);
 
+                mask.setFill(color);
                 mask.setLayoutX(thd.getX());
                 mask.setLayoutY(-thd.getY());
 
@@ -2393,7 +2398,9 @@ public class LibraryElementNode {
             } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
                 switch (layer) {
                     case 1 -> {
+                        LOGGER.log(Level.SEVERE, "Render unused pad:" + padTHD.getName());
                         Shape ss = LibraryElementNode.createThdPad(padTHD, c);
+                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
                         if (isolation > 0.0) {
                             // Add stroke around pad.
                             ss.setStrokeWidth(isolation);
@@ -2412,6 +2419,9 @@ public class LibraryElementNode {
                             break;
                         }
                         Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+                        ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
+                        //ss.setLayoutX(el.getX());
+                        //ss.setLayoutY(-el.getY());
                         list.add(ss);
                     }
                 }
@@ -2448,6 +2458,7 @@ public class LibraryElementNode {
             } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
                 switch (layer) {
                     case 1 -> {
+                        LOGGER.log(Level.SEVERE, "Render PKG pad:" + padTHD.getName());
                         Shape ss = LibraryElementNode.createThdPad(padTHD, c);
                         if (isolation > 0.0) {
                             // Add stroke around pad.
