@@ -586,13 +586,14 @@ public class BoardPreview extends Group {
                     if (pad == null) {
                         LOGGER.log(Level.SEVERE, "Pad not found! Signal: {0} cref: {1}.{2}", new Object[]{sig.getName(), cref.getElement(), cref.getPad()});
                     } else if (pad instanceof PadTHD p) {
+                        LOGGER.log(Level.SEVERE, "Signal: {0} add THD pad: {1}", new Object[]{sig.getName(), p.getName()});
                         Shape thdShape = LibraryElementNode.createThdPad(p, copperColor);
                         thdShape.setLayoutX(cref.getElementO().getX());
                         thdShape.setLayoutY(-cref.getElementO().getY());
                         thdShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
                         copper.add(thdShape);
 
-                        Shape thdIsoShape = LibraryElementNode.createThdPad(p, copperColor);
+                        Shape thdIsoShape = LibraryElementNode.createThdPad(p, substrateColor);
                         thdIsoShape.setStrokeWidth(wireIsolate);
                         thdIsoShape.setStrokeType(StrokeType.OUTSIDE);
                         thdIsoShape.setStroke(solderMaskColor);
@@ -826,6 +827,7 @@ public class BoardPreview extends Group {
         dimMask.setFill(solderMaskColor); // Subtract obliterates original fill color.
         chld.add(dimMask);
 
+        // TODO: Subtract mask from silk
         // Silk
         for (Node n : silkNodes) {
             chld.add(n);
