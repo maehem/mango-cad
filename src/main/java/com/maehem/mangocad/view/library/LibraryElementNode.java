@@ -2507,56 +2507,55 @@ public class LibraryElementNode {
         return list;
     }
 
-    //  TODO: Instead of returning the requested layer, return a manifest of all MFG layers.
-    //  THen we won't repeatedly call this.  But maybe it doesn't matter?
-    public static List<Node> createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
+    public static List<Node> createPackageMfgPreviewTxtNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
         ArrayList<Node> list = new ArrayList<>();
 
         pkg.getElements().forEach((e) -> {
-            if (e instanceof PadSMD padSMD) {
-                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
-                    Shape s = createSmdMask(padSMD, c, false);
-                    s.setLayoutX(el.getX());
-                    s.setLayoutY(-el.getY());
-                    s.getTransforms().add(new Rotate(-el.getRot()));
-                    list.add(s);
-                }
-            } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
-                switch (layer) {
-                    case 45 -> {
-                        // Drills/Holes
-                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
-                        drillShape.setLayoutX(el.getX());
-                        drillShape.setLayoutY(-el.getY());
-                        drillShape.getTransforms().add(new Rotate(-el.getRot()));
-                        list.add(drillShape);
-                    }
-                    case 29 -> { // Needed?
-                        if (!padTHD.isStopmask()) {
-                            break;
-                        }
-                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
-                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
-                        ss.setLayoutX(el.getX());
-                        ss.setLayoutY(-el.getY());
-                        ss.getTransforms().add(new Rotate(-el.getRot()));
-                        list.add(ss);
-                    }
-                }
-            } else if (e instanceof Wire wire) {
-                if (wire.getLayerNum() == layer) {
-                    Shape wireNode = LibraryElementNode.createWireNode(wire, c, false);
-                    if (isolation > 0.0) { // Add stroke around pad.
-                        wireNode.setStrokeWidth(isolation);
-                        wireNode.setStrokeType(StrokeType.OUTSIDE);
-                        wireNode.setStroke(c);
-                    }
-                    wireNode.setLayoutX(el.getX());
-                    wireNode.setLayoutY(-el.getY());
-                    wireNode.getTransforms().add(new Rotate(-el.getRot()));
-                    list.add(wireNode);
-                }
-            } else if (e instanceof ElementText et) {
+//            if (e instanceof PadSMD padSMD) {
+//                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
+//                    Shape s = createSmdMask(padSMD, c, false);
+//                    s.setLayoutX(el.getX());
+//                    s.setLayoutY(-el.getY());
+//                    s.getTransforms().add(new Rotate(-el.getRot()));
+//                    list.add(s);
+//                }
+//            } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
+//                switch (layer) {
+//                    case 45 -> {
+//                        // Drills/Holes
+//                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
+//                        drillShape.setLayoutX(el.getX());
+//                        drillShape.setLayoutY(-el.getY());
+//                        drillShape.getTransforms().add(new Rotate(-el.getRot()));
+//                        list.add(drillShape);
+//                    }
+//                    case 29 -> { // Needed?
+//                        if (!padTHD.isStopmask()) {
+//                            break;
+//                        }
+//                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+//                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
+//                        ss.setLayoutX(el.getX());
+//                        ss.setLayoutY(-el.getY());
+//                        ss.getTransforms().add(new Rotate(-el.getRot()));
+//                        list.add(ss);
+//                    }
+//                }
+//            } else if (e instanceof Wire wire) {
+//                if (wire.getLayerNum() == layer) {
+//                    Shape wireNode = LibraryElementNode.createWireNode(wire, c, false);
+//                    if (isolation > 0.0) { // Add stroke around pad.
+//                        wireNode.setStrokeWidth(isolation);
+//                        wireNode.setStrokeType(StrokeType.OUTSIDE);
+//                        wireNode.setStroke(c);
+//                    }
+//                    wireNode.setLayoutX(el.getX());
+//                    wireNode.setLayoutY(-el.getY());
+//                    wireNode.getTransforms().add(new Rotate(-el.getRot()));
+//                    list.add(wireNode);
+//                }
+//            } else
+            if (e instanceof ElementText et) {
                 // Package Text Element
                 // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
 
@@ -2607,6 +2606,155 @@ public class LibraryElementNode {
                         list.add(txtNode);
                     }
                 }
+//            } else if (e instanceof ElementRectangle elementRectangle) {
+//                if (elementRectangle.getLayerNum() == layer) {
+//                    Shape s = LibraryElementNode.createRectangle(elementRectangle, c, false);
+//                    if (isolation > 0.0) {
+//                        // Add stroke around pad.
+//                        s.setStrokeWidth(isolation);
+//                        s.setStrokeType(StrokeType.OUTSIDE);
+//                        s.setStroke(c);
+//                    }
+//                    s.setLayoutX(el.getX());
+//                    s.setLayoutY(-el.getY());
+//                    s.getTransforms().add(new Rotate(-el.getRot()));
+//                    list.add(s);
+//                }
+//            } else if (e instanceof ElementPolygon elementPolygon) {
+//                if (elementPolygon.getLayerNum() == layer) {
+//                    Shape s = LibraryElementNode.createPolygonCurved(elementPolygon, c, false);
+//                    if (isolation > 0.0) {
+//                        // Add stroke around pad.
+//                        s.setStrokeWidth(isolation);
+//                        s.setStrokeType(StrokeType.OUTSIDE);
+//                        s.setStroke(c);
+//                    }
+//                    s.setLayoutX(el.getX());
+//                    s.setLayoutY(-el.getY());
+//                    s.getTransforms().add(new Rotate(-el.getRot()));
+//                    list.add(s);
+//                }
+//            } else if (e instanceof ElementCircle elementCircle) {
+//                if (elementCircle.getLayerNum() == layer) {
+//                    Shape s = LibraryElementNode.createCircleNode(elementCircle, c, false);
+//                    if (isolation > 0.0) {
+//                        // Add stroke around pad.
+//                        s.setStrokeWidth(isolation);
+//                        s.setStrokeType(StrokeType.OUTSIDE);
+//                        s.setStroke(c);
+//                    }
+//                    s.setLayoutX(el.getX());
+//                    s.setLayoutY(-el.getY());
+//                    s.getTransforms().add(new Rotate(-el.getRot()));
+//                    list.add(s);
+//                }
+            } else {
+                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
+            }
+        });
+
+        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
+        return list;
+    }
+
+    public static List<Shape> createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
+        ArrayList<Shape> list = new ArrayList<>();
+
+        pkg.getElements().forEach((e) -> {
+            if (e instanceof PadSMD padSMD) {
+                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
+                    Shape s = createSmdMask(padSMD, c, false);
+                    s.setLayoutX(el.getX());
+                    s.setLayoutY(-el.getY());
+                    s.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(s);
+                }
+            } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
+                switch (layer) {
+                    case 45 -> {
+                        // Drills/Holes
+                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
+                        drillShape.setLayoutX(el.getX());
+                        drillShape.setLayoutY(-el.getY());
+                        drillShape.getTransforms().add(new Rotate(-el.getRot()));
+                        list.add(drillShape);
+                    }
+                    case 29 -> { // Needed?
+                        if (!padTHD.isStopmask()) {
+                            break;
+                        }
+                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
+                        ss.setLayoutX(el.getX());
+                        ss.setLayoutY(-el.getY());
+                        ss.getTransforms().add(new Rotate(-el.getRot()));
+                        list.add(ss);
+                    }
+                }
+            } else if (e instanceof Wire wire) {
+                if (wire.getLayerNum() == layer) {
+                    Shape wireNode = LibraryElementNode.createWireNode(wire, c, false);
+                    if (isolation > 0.0) { // Add stroke around pad.
+                        wireNode.setStrokeWidth(isolation);
+                        wireNode.setStrokeType(StrokeType.OUTSIDE);
+                        wireNode.setStroke(c);
+                    }
+                    wireNode.setLayoutX(el.getX());
+                    wireNode.setLayoutY(-el.getY());
+                    wireNode.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(wireNode);
+                }
+//            } else if (e instanceof ElementText et) {
+//                // Package Text Element
+//                // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
+//
+////                if (et.getLayerNum() == layer) {
+//                //Node textNode = LibraryElementNode.createText(et, null, c, null, false);
+//                //p.getChildren().add(textNode);
+//                final ElementText proxyText;
+//                proxyText = et.copy();
+//
+//                String attrName = null;
+//
+//                // et.value contains the mnemonic of attribute (name, value, etc.)
+//                if (et.getValue().equals(">NAME")) {
+//                    proxyText.setValue(el.getName());
+//                    attrName = "NAME";
+//                } else if (et.getValue().equals(">VALUE")) {
+//                    proxyText.setValue(el.getValue());
+//                    attrName = "VALUE";
+//                }
+//
+//                if (attrName != null) {
+//                    // Attribute Element
+//                    //example:  <attribute name="NAME" x="10" y="18.858" size="1.27" layer="25" ratio="15" align="center" />
+//
+//                    for (Attribute attr : el.getAttributes()) {
+//                        if (!attr.getName().equals(attrName) || attr.getLayerNum() != layer) {
+//                            // Skip if these aren't our attributes.
+//                            continue;
+//                        }
+//
+//                        proxyText.setX(attr.getX() - el.getX());
+//                        proxyText.setY(attr.getY() - el.getY());
+//                        proxyText.setSize(attr.getSize());
+//                        proxyText.setAlign(attr.getAlign());
+//                        proxyText.setRatio(attr.getRatio());
+//
+//                        proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
+//                        //Node txtNode = createText(proxyText, null, c, null, false);
+//                        Node txtNode = createText(proxyText, null, c, el.getRotation(), false);
+//
+//                        // Not sure why, but this needs to be rotated.
+//                        // but I think the parent applies the same rotation
+//                        // and other nodes don't seem to need this. Curious...
+//                        // update: supplied rotation to the createText(parentRotation) and it does the right thing now.
+//                        //txtNode.getTransforms().add(new Rotate(-el.getRot()));
+//                        txtNode.setLayoutX(el.getX());
+//                        txtNode.setLayoutY(-el.getY());
+//                        list.add(txtNode);
+//                    }
+//                }
             } else if (e instanceof ElementRectangle elementRectangle) {
                 if (elementRectangle.getLayerNum() == layer) {
                     Shape s = LibraryElementNode.createRectangle(elementRectangle, c, false);

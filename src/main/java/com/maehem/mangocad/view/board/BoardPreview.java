@@ -500,11 +500,14 @@ public class BoardPreview extends Group {
                 restrict.addAll(unusedPadsIso);
 
                 // Layer 1 other plain things
-                List<Node> topPlain = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, copperColor, 0);
+                List<Shape> topPlain = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, copperColor, 0);
 //                topPlain.setLayoutX(element.getX());
 //                topPlain.setLayoutY(-element.getY());
 //                topPlain.getTransforms().add(new Rotate(-element.getRot()));
                 rank.get(0).addAll(topPlain);
+
+                List<Shape> topPlainIso = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, copperColor, wireIsolate);
+                restrict.addAll(topPlainIso);
 
 //                // Drills
 //                Node pkgHole = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
@@ -513,32 +516,53 @@ public class BoardPreview extends Group {
 //                pkgHole.getTransforms().add(new Rotate(-element.getRot()));
 //                holeNodes.add(pkgHole);
                 // Drills
-                List<Node> pkgDrills = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
+                List<Shape> pkgDrills = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
                 holeNodes.addAll(pkgDrills);
 
                 // Outlines (ex. cyber-1 card pkg)
-                // Silk Items -- Name
-                List<Node> silkName = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 25, silkScreenColor, 0);
+                // Silk Items -- Shapes only
+                List<Shape> silkShapes = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 25, silkScreenColor, 0);
 //                silkName.setLayoutX(element.getX());
 //                silkName.setLayoutY(-element.getY());
 //                silkName.getTransforms().add(new Rotate(-element.getRot()));
-                silkNodes.addAll(silkName);
+                silkNodes.addAll(silkShapes);
 
                 // Silk Items -- Place
-                List<Node> silkPlace = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 21, silkScreenColor, 0);
+                List<Shape> silkPlace = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 21, silkScreenColor, 0);
 //                silkPlace.setLayoutX(element.getX());
 //                silkPlace.setLayoutY(-element.getY());
 //                silkPlace.getTransforms().add(new Rotate(-element.getRot()));
                 silkNodes.addAll(silkPlace);
 
+                // Text Nodes Silk Place
+                List<Node> silkTxtPlace = LibraryElementNode.createPackageMfgPreviewTxtNode(pkg, element, 21, silkScreenColor, 0);
+                silkNodes.addAll(silkTxtPlace);
+
+                // Text Nodes Silk Name
+                List<Node> silkTxtName = LibraryElementNode.createPackageMfgPreviewTxtNode(pkg, element, 25, silkScreenColor, 0);
+                silkNodes.addAll(silkTxtName);
+
                 // Mask Items
-                List<Node> stopMask = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 29, solderMaskColor, 0);
+                List<Shape> stopMask = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 29, solderMaskColor, 0);
 //                for (Shape s : stopMask) {
 //                    s.setLayoutX(element.getX());
 //                    s.setLayoutY(-element.getY());
 //                    s.getTransforms().add(new Rotate(-element.getRot()));
 //                }
                 maskNodes.addAll(stopMask);
+
+                // Text Mask Nodes
+                List<Node> maskTxt = LibraryElementNode.createPackageMfgPreviewTxtNode(pkg, element, 29, silkScreenColor, 0);
+                maskNodes.addAll(maskTxt);
+
+                // Text Top Copper Nodes
+                List<Node> topCopperText = LibraryElementNode.createPackageMfgPreviewTxtNode(pkg, element, 1, silkScreenColor, 0);
+                rank.get(0).addAll(topCopperText);
+
+                // TODO:  FIX ME!!!
+//                // Text Restrict Nodes
+//                List<Node> restrictText = LibraryElementNode.createPackageMfgPreviewTxtNode(pkg, element, 21, silkScreenColor, 0);
+//                restrict.addAll(restrictText);
 
             } else {
                 LOGGER.log(Level.SEVERE,
