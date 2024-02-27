@@ -2441,28 +2441,6 @@ public class LibraryElementNode {
                 0, 0, 0.5, 0.035, c
         ));
 
-//        // This feels like a hack but it gets the job done.
-//        ArrayList<Node> list = new ArrayList<>();
-//        for (Node n : p.getChildren()) {
-//            list.add(n);
-//            // LIST X,Y and extents in four directions.
-//            Bounds bl = n.getBoundsInLocal();
-//            LOGGER.log(Level.SEVERE, "node: x:{0},{1}  y:{2},{3}",
-//                    new Object[]{
-//                        bl.getMinX(), bl.getMaxX(),
-//                        bl.getMinY(), bl.getMaxY()
-//                    });
-//        }
-//        double w = p.getBoundsInLocal().getWidth() * 1.1;
-//        double h = p.getBoundsInLocal().getHeight() * 1.1;
-//        p.getChildren().clear();
-//
-//        // Establish an area where the center is always our desired center.
-//        Rectangle base = new Rectangle(-w / 2, -h / 2, w, h);
-//        base.setFill(new Color(0.1, 0.1, 0.1, 0.0));
-//        p.getChildren().add(base);
-//
-//        p.getChildren().addAll(list);
         return p;
     }
 
@@ -2532,25 +2510,10 @@ public class LibraryElementNode {
     //  TODO: Instead of returning the requested layer, return a manifest of all MFG layers.
     //  THen we won't repeatedly call this.  But maybe it doesn't matter?
     public static List<Node> createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
-        //Pane p = new Pane();
         ArrayList<Node> list = new ArrayList<>();
-
-        // element has a name --> i.e. "U1"
-        // element has attributes that overide some pkg.elements.  i.e. >VALUE
-        String partName = el.getName();
 
         pkg.getElements().forEach((e) -> {
             if (e instanceof PadSMD padSMD) {
-//                //Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-//                if (padSMD.getLayerNum() == layer) {
-//                    Shape n = LibraryElementNode.createSmdPad(padSMD, c);
-//                    if (isolation > 0.0) { // Add stroke around pad.
-//                        n.setStrokeWidth(isolation);
-//                        n.setStrokeType(StrokeType.OUTSIDE);
-//                        n.setStroke(c);
-//                    }
-//                    p.getChildren().add(n);
-//                }
                 if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
                     Shape s = createSmdMask(padSMD, c, false);
                     s.setLayoutX(el.getX());
@@ -2558,23 +2521,8 @@ public class LibraryElementNode {
                     s.getTransforms().add(new Rotate(-el.getRot()));
                     list.add(s);
                 }
-//                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
-//                    p.getChildren().add(createSmdMask(padSMD, c, false));
-//                }
-//
             } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
                 switch (layer) {
-//                    case 1 -> {
-//                        LOGGER.log(Level.SEVERE, "Render PKG pad:" + padTHD.getName());
-//                        Shape ss = LibraryElementNode.createThdPad(padTHD, c);
-//                        if (isolation > 0.0) {
-//                            // Add stroke around pad.
-//                            ss.setStrokeWidth(isolation);
-//                            ss.setStrokeType(StrokeType.OUTSIDE);
-//                            ss.setStroke(c);
-//                        }
-//                        p.getChildren().add(ss);
-//                    }
                     case 45 -> {
                         // Drills/Holes
                         Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
@@ -2583,18 +2531,6 @@ public class LibraryElementNode {
                         drillShape.getTransforms().add(new Rotate(-el.getRot()));
                         list.add(drillShape);
                     }
-//                    case 45 -> {
-//                        // Drills/Holes
-//                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
-//                        p.getChildren().add(drillShape);
-//                    }
-//                    case 29 -> {
-//                        if (!padTHD.isStopmask()) {
-//                            break;
-//                        }
-//                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
-//                        p.getChildren().add(ss);
-//                    }
                     case 29 -> { // Needed?
                         if (!padTHD.isStopmask()) {
                             break;
@@ -2646,10 +2582,6 @@ public class LibraryElementNode {
                     //example:  <attribute name="NAME" x="10" y="18.858" size="1.27" layer="25" ratio="15" align="center" />
 
                     for (Attribute attr : el.getAttributes()) {
-                        if (attr.getLayerNum() == 29) {
-                            int aa = 1; // Dubugger stop point.
-                        }
-
                         if (!attr.getName().equals(attrName) || attr.getLayerNum() != layer) {
                             // Skip if these aren't our attributes.
                             continue;
@@ -2661,7 +2593,6 @@ public class LibraryElementNode {
                         proxyText.setAlign(attr.getAlign());
                         proxyText.setRatio(attr.getRatio());
 
-                        //LOGGER.log(Level.SEVERE, "Rot:  el: {0}  et: {1}  attr: {2}", new Object[]{el.getRot(), et.getRot(), attr.getRotation().getValue()});
                         proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
                         //Node txtNode = createText(proxyText, null, c, null, false);
                         Node txtNode = createText(proxyText, null, c, el.getRotation(), false);
@@ -2723,8 +2654,7 @@ public class LibraryElementNode {
             }
         });
 
-//        // tOrigins 23   , bOrigins 24
-//        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
+        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
         return list;
     }
 
