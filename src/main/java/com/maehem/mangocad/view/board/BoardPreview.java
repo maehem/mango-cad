@@ -586,12 +586,14 @@ public class BoardPreview extends Group {
             ArrayList<Shape> isolation = isolationSignals2.get(sig.getName());
             ArrayList<Shape> restricts = restricts2.get(sig.getName());
 
+            ArrayList<Shape> sigCopper = new ArrayList<>();
+
             for (_AQuantum el : sig.getElements()) {
                 if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
                     continue; // Only layer 1 for now.
                 }
                 if (el instanceof Wire w) {
-                    copper.add(LibraryElementNode.createWireNode(w, copperColor, false));
+                    sigCopper.add(LibraryElementNode.createWireNode(w, copperColor, false));
 
                     Shape isoWire2 = LibraryElementNode.createWireNode(w, substrateColor, false);
                     isoWire2.setStrokeWidth(w.getWidth() + (wireIsolate * 2.0));
@@ -616,6 +618,9 @@ public class BoardPreview extends Group {
                         thdIsoShape.setLayoutX(cref.getElementO().getX());
                         thdIsoShape.setLayoutY(-cref.getElementO().getY());
                         thdIsoShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
+                        if (sig.getName().equals("GPIO0")) {
+                            int a = 0; /// Debug stop point
+                        }
                         if (p.isThermals()) {
                             double polyLineW = 0;
                             boolean doThermals = false;
@@ -641,7 +646,7 @@ public class BoardPreview extends Group {
                                     thdIsoShape = Shape.subtract(thdIsoShape, ts);
                                 }
                                 thdIsoShape = Shape.subtract(thdIsoShape, thdShape);
-                                copper.addAll(therms);
+                                sigCopper.addAll(therms);
                                 //rank.get(0).addAll(therms);  // Debug.
                                 restricts.add(thdIsoShape); // Absolute isolation
                                 //isolation.add(thdIsoShape);
@@ -650,7 +655,7 @@ public class BoardPreview extends Group {
                             } else {
                                 isolation.add(thdIsoShape);
                             }
-                            copper.add(thdShape);
+                            sigCopper.add(thdShape);
                         }
 
                     } else if (pad instanceof PadSMD p) {
@@ -660,7 +665,7 @@ public class BoardPreview extends Group {
                             smdShape.setLayoutX(cref.getElementO().getX());
                             smdShape.setLayoutY(-cref.getElementO().getY());
                             smdShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
-                            copper.add(smdShape);
+                            sigCopper.add(smdShape);
 
                             // Isolate Pad
                             Shape smdIsoShape = LibraryElementNode.createSmdPad(p, solderMaskColor);
@@ -691,7 +696,7 @@ public class BoardPreview extends Group {
                                         smdIsoShape = Shape.subtract(smdIsoShape, ts);
                                     }
                                     smdIsoShape = Shape.subtract(smdIsoShape, smdShape);
-                                    copper.addAll(therms);
+                                    sigCopper.addAll(therms);
                                     restrict.add(smdIsoShape);
                                 } else {
                                     isolation.add(smdIsoShape);
@@ -705,7 +710,7 @@ public class BoardPreview extends Group {
                     Circle viaC2 = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0, copperColor);
                     viaC2.setLayoutX(v.getX());
                     viaC2.setLayoutY(-v.getY());
-                    copper.add(viaC2);
+                    sigCopper.add(viaC2);
 
                     Circle isoC2 = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0 + wireIsolate, substrateColor);
                     isoC2.setLayoutX(v.getX());
@@ -729,14 +734,15 @@ public class BoardPreview extends Group {
                     LOGGER.log(Level.SEVERE, "    Signal Element not handled: {0}", el.getElementName());
                 }
             }
+            // Merge sigCopper into copper
+            copper.addAll(sigCopper);
         }
 
         ArrayList<Shape> isolationShapes = new ArrayList<>();
         ArrayList<Shape> signalShapes = new ArrayList<>();
 
-        // Shapes on each isolation group are combined.
         for (String key : copperSignals2.keySet()) {
-            {
+            {   // Shapes on each isolation group are combined.
                 ArrayList<Shape> cs = isolationSignals2.get(key);
                 Shape sss = new Rectangle(0, 0, Color.WHITE);
                 sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
@@ -757,8 +763,7 @@ public class BoardPreview extends Group {
                 restrict.add(sss);
             }
 
-            // Shapes on each copper group are combined.
-            {
+            { // Shapes on each copper group are combined.
                 ArrayList<Shape> cs = copperSignals2.get(key);
                 Shape sss = new Rectangle(0, 0, Color.WHITE);
                 sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
@@ -768,7 +773,6 @@ public class BoardPreview extends Group {
                 sss.setFill(copperColor);
                 signalShapes.add(sss);
             }
-
         }
 
         for (int i = 0; i < signalShapes.size(); i++) {
@@ -790,24 +794,7 @@ public class BoardPreview extends Group {
             csp.setFill(copperColor);
             chld.add(csp);
         }
-        // Polys with lower ranks get chomped by isolation polys with higher ranks
 
-////        // Copper
-////        // Ranks 7..1  Back to Front
-////        for (int i = rank.size() - 1; i >= 0; i--) {
-////            //if (i < isolate.length) {
-////            isolate.get(i).forEach(node -> {
-////                chld.add(node);
-////            });
-////
-////            rank.get(i).forEach(node -> {
-////                chld.add(node);
-////            });
-////        }
-//        isolate.get(0).forEach(node -> {
-//            chld.add(node);
-//        });
-//
         rank.get(0).forEach(node -> {
             chld.add(node);
         });
