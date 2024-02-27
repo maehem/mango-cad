@@ -1513,9 +1513,11 @@ public class LibraryElementNode {
     }
 
     private static Shape createThdDrill(PadTHD thd, Color color) {
-        Circle drill = new Circle(thd.getDrill() / 2.0, color);
-        drill.setLayoutX(thd.getX());
-        drill.setLayoutY(-thd.getY());
+        Circle drill = new Circle(
+                thd.getX(), -thd.getY(),
+                thd.getDrill() / 2.0, color);
+        //drill.setLayoutX(thd.getX());
+        //drill.setLayoutY(-thd.getY());
         drill.setStroke(null);
 
         return drill;
@@ -1597,8 +1599,8 @@ public class LibraryElementNode {
             }
             default -> {  // ROUND
                 Circle pad = new Circle(thd.getX(), -thd.getY(), padDia / 2.0, color);
-                LOGGER.log(Level.SEVERE, "Round Pad   dia: {0} loc:{1},{2}", new Object[]{padDia, thd.getX(), thd.getY()});
-                pad.setFill(color);
+                //LOGGER.log(Level.SEVERE, "Round Pad   dia: {0} loc:{1},{2}", new Object[]{padDia, thd.getX(), thd.getY()});
+                //pad.setFill(color);
                 //pad.setX(thd.getX());
                 //pad.setLayoutY(-thd.getY());
                 pad.setStroke(null);
@@ -1618,12 +1620,14 @@ public class LibraryElementNode {
                 // SolderMask
                 double maskWidth2 = MASK_W_DEFAULT * 2;
                 mask = new Rectangle(
-                        padDia + maskWidth2, padDia + maskWidth2,
-                        color
+                        thd.getX() - padDia / 2.0 - MASK_W_DEFAULT,
+                        -thd.getY() - padDia / 2.0 - MASK_W_DEFAULT,
+                        padDia + maskWidth2, padDia + maskWidth2
                 );
+                mask.setFill(color);
                 mask.setStroke(null);
-                mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
-                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+                //mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
+                //mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
 
             }
             case LONG -> {
@@ -1631,10 +1635,14 @@ public class LibraryElementNode {
 
                 // Mask
                 double maskWidth2 = MASK_W_DEFAULT * 2;
+                double w = padDia * padLongMult + maskWidth2;
                 Rectangle r = new Rectangle(
-                        padDia * padLongMult + maskWidth2, padDia + maskWidth2,
-                        color
+                        thd.getX() - w / 2.0 - MASK_W_DEFAULT,
+                        -thd.getY() - padDia / 2.0 - MASK_W_DEFAULT,
+                        w,
+                        padDia + maskWidth2
                 );
+                r.setFill(color);
                 r.setArcHeight(padDia + MASK_W_DEFAULT);
                 r.setArcWidth(padDia + MASK_W_DEFAULT);
 
@@ -1642,8 +1650,8 @@ public class LibraryElementNode {
                 Rotate rotateM = new Rotate(360 - thd.getRot());
                 rotateM.setPivotX(padDia + MASK_W_DEFAULT);
                 rotateM.setPivotY(padDia / 2 + MASK_W_DEFAULT);
-                mask.setLayoutX(thd.getX() - r.getWidth() / 2.0 - MASK_W_DEFAULT);
-                mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
+                //mask.setLayoutX(thd.getX() - r.getWidth() / 2.0 - MASK_W_DEFAULT);
+                //mask.setLayoutY(-thd.getY() - padDia / 2.0 - MASK_W_DEFAULT);
                 mask.getTransforms().add(rotateM);
             }
             case OCTOGON -> {
@@ -1660,35 +1668,41 @@ public class LibraryElementNode {
                         -rr, nn,
                         -rr, -nn
                 );
-                mask.setLayoutX(thd.getX());
-                mask.setLayoutY(-thd.getY());
+                mask.setTranslateX(thd.getX());
+                mask.setTranslateY(-thd.getY());
             }
             case OFFSET -> {
                 double padLongMult = 2.0;
 
                 double maskWidth2 = MASK_W_DEFAULT * 2;
+                double w = padDia * padLongMult + maskWidth2;
+                double h = padDia + maskWidth2;
                 Rectangle r = new Rectangle(
-                        padDia * padLongMult + maskWidth2, padDia + maskWidth2,
-                        color
+                        thd.getX() - padDia / 2.0 - MASK_W_DEFAULT,
+                        -thd.getY() - h / 2.0,
+                        w, h
                 );
                 r.setArcHeight(padDia + MASK_W_DEFAULT);
                 r.setArcWidth(padDia + MASK_W_DEFAULT);
 
                 mask = r;
-                mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
-                mask.setLayoutY(-thd.getY() - r.getHeight() / 2.0);
-                Rotate rotateMask = new Rotate(360 - thd.getRot());
+                //mask.setLayoutX(thd.getX() - padDia / 2.0 - MASK_W_DEFAULT);
+                //mask.setLayoutY(-thd.getY() - r.getHeight() / 2.0);
+                Rotate rotateMask = new Rotate(360 - thd.getRot()); // do we need the 360?
                 rotateMask.setPivotX(padDia / 2 + MASK_W_DEFAULT);
                 rotateMask.setPivotY(padDia / 2 + MASK_W_DEFAULT);
                 mask.getTransforms().add(rotateMask);
             }
             default -> {  // ROUND
                 // SolderMask
-                mask = new Circle(padDia / 2.0 + MASK_W_DEFAULT, color);
+                mask = new Circle(
+                        thd.getX(), -thd.getY(),
+                        padDia / 2.0 + MASK_W_DEFAULT, color
+                );
 
-                mask.setFill(color);
-                mask.setLayoutX(thd.getX());
-                mask.setLayoutY(-thd.getY());
+                //mask.setFill(color);
+                //mask.setLayoutX(thd.getX());
+                //mask.setLayoutY(-thd.getY());
 
             }
         }
@@ -1698,6 +1712,92 @@ public class LibraryElementNode {
         mask.setFill(asHatch ? maskPattern : color);
 
         return mask;
+    }
+
+    /**
+     * Thermal lines minimum is polygon wire width. Thermal lines max is smaller
+     * of pad w or h.
+     *
+     * @param pad
+     * @param color
+     * @param isolation
+     * @return
+     */
+    public static ArrayList<Shape> createThdThermal(PadTHD pad, Color color, double isolation, double tMin) {
+        ArrayList<Shape> lines = new ArrayList<>();
+        double padDia = pad.getDerivedDiameter();
+        double drillRad = pad.getDrill() / 2.0;
+        isolation = 0.0;
+        Line lineH;
+        Line lineV;
+        //double stW = drillRad;
+        double stW = Math.min(tMin, drillRad);
+
+        // stW is min 2X the stroke width of the poly we are thermaling up to
+        // the drill radius.
+        switch (pad.getShape()) {
+            case LONG -> {
+                final double padLongMult = 2.0;
+                double w = padDia * padLongMult;
+                double h = padDia;
+                //stW = Math.min(tMin, drillRad);
+                double cX = pad.getX();
+                double cY = -pad.getY();
+                lineH = new Line(
+                        cX - w / 2 - isolation, cY,
+                        cX + w / 2 + isolation, cY
+                );
+                lineV = new Line(
+                        cX, cY - w / 2 - isolation,
+                        cX, cY + w / 2 + isolation
+                );
+            }
+            case OFFSET -> {
+                final double padLongMult = 2.0;
+                double w = padDia * padLongMult;
+                double h = padDia;
+                //stW = Math.min(tMin, drillRad);
+                double cX = pad.getX() + padDia / 2.0;
+                double cY = -pad.getY();
+                lineH = new Line(
+                        cX - w / 2 - isolation, cY,
+                        cX + w / 2 + isolation, cY
+                );
+                lineV = new Line(
+                        cX, cY - w / 2 - isolation,
+                        cX, cY + w / 2 + isolation
+                );
+            }
+            default -> {
+                LOGGER.log(Level.SEVERE, "default THD thermals.");
+                double w = padDia;
+                //double h = padDia;
+
+                //stW = Math.max(tMin, padDia / 2.0);
+                double cX = pad.getX();
+                double cY = -pad.getY();
+
+                LOGGER.log(Level.SEVERE, "THD thermal: loc: {0},{1}  w/h: {2}   stroke: {3}", new Object[]{cX, cY, w, stW});
+                lineH = new Line(
+                        cX - w / 2 - isolation, cY,
+                        cX + w / 2 + isolation, cY
+                );
+                lineV = new Line(
+                        cX, cY - w / 2 - isolation,
+                        cX, cY + w / 2 + isolation
+                );
+
+            }
+        }
+        lineH.setStroke(color);
+        lineH.setStrokeWidth(stW);
+        lineV.setStroke(color);
+        lineV.setStrokeWidth(stW);
+
+        lines.add(lineH);
+        lines.add(lineV);
+
+        return lines;
     }
 
     /**
@@ -2391,39 +2491,38 @@ public class LibraryElementNode {
                         list.add(n);
                     }
                 }
-                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
-                    list.add(createSmdMask(padSMD, c, false));
-                }
 
             } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
                 switch (layer) {
                     case 1 -> {
                         LOGGER.log(Level.SEVERE, "Render unused pad:" + padTHD.getName());
-                        Shape ss = LibraryElementNode.createThdPad(padTHD, c);
-                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
-                        if (isolation > 0.0) {
-                            // Add stroke around pad.
-                            ss.setStrokeWidth(isolation);
-                            ss.setStrokeType(StrokeType.OUTSIDE);
-                            ss.setStroke(c);
+                        ContactRef cr = new ContactRef();
+                        cr.setElement(el.getName());
+                        cr.setPad(padTHD.getName());
+
+                        if (!board.hasContactRef(cr)) {
+                            Shape ss = LibraryElementNode.createThdPad(padTHD, c);
+                            //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
+                            if (isolation > 0.0) {
+                                // Add stroke around pad.
+                                ss.setStrokeWidth(isolation);
+                                ss.setStrokeType(StrokeType.OUTSIDE);
+                                ss.setStroke(c);
+                            }
+                            list.add(ss);
                         }
-                        list.add(ss);
                     }
-                    case 45 -> {  // Needed?
-                        // Drills/Holes
-                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
-                        list.add(drillShape);
-                    }
-                    case 29 -> { // Needed?
-                        if (!padTHD.isStopmask()) {
-                            break;
-                        }
-                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
-                        ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
-                        //ss.setLayoutX(el.getX());
-                        //ss.setLayoutY(-el.getY());
-                        list.add(ss);
-                    }
+//                    case 29 -> { // Needed?
+//                        if (!padTHD.isStopmask()) {
+//                            break;
+//                        }
+//                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+//                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
+//                        ss.setLayoutX(el.getX());
+//                        ss.setLayoutY(-el.getY());
+//                        ss.getTransforms().add(new Rotate(-el.getRot()));
+//                        list.add(ss);
+//                    }
                 }
             }
         });
@@ -2432,8 +2531,9 @@ public class LibraryElementNode {
 
     //  TODO: Instead of returning the requested layer, return a manifest of all MFG layers.
     //  THen we won't repeatedly call this.  But maybe it doesn't matter?
-    public static Node createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
-        Pane p = new Pane();
+    public static List<Node> createPackageMfgPreviewNode(Footprint pkg, ElementElement el, int layer, Color c, double isolation) {
+        //Pane p = new Pane();
+        ArrayList<Node> list = new ArrayList<>();
 
         // element has a name --> i.e. "U1"
         // element has attributes that overide some pkg.elements.  i.e. >VALUE
@@ -2441,44 +2541,70 @@ public class LibraryElementNode {
 
         pkg.getElements().forEach((e) -> {
             if (e instanceof PadSMD padSMD) {
-                //Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                if (padSMD.getLayerNum() == layer) {
-                    Shape n = LibraryElementNode.createSmdPad(padSMD, c);
-                    if (isolation > 0.0) { // Add stroke around pad.
-                        n.setStrokeWidth(isolation);
-                        n.setStrokeType(StrokeType.OUTSIDE);
-                        n.setStroke(c);
-                    }
-                    p.getChildren().add(n);
-                }
+//                //Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+//                if (padSMD.getLayerNum() == layer) {
+//                    Shape n = LibraryElementNode.createSmdPad(padSMD, c);
+//                    if (isolation > 0.0) { // Add stroke around pad.
+//                        n.setStrokeWidth(isolation);
+//                        n.setStrokeType(StrokeType.OUTSIDE);
+//                        n.setStroke(c);
+//                    }
+//                    p.getChildren().add(n);
+//                }
                 if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
-                    p.getChildren().add(createSmdMask(padSMD, c, false));
+                    Shape s = createSmdMask(padSMD, c, false);
+                    s.setLayoutX(el.getX());
+                    s.setLayoutY(-el.getY());
+                    s.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(s);
                 }
-
+//                if (layer == 29 && padSMD.getLayerNum() == 1) { // Top Mask
+//                    p.getChildren().add(createSmdMask(padSMD, c, false));
+//                }
+//
             } else if (e instanceof PadTHD padTHD) { // No layers, always top or bottom
                 switch (layer) {
-                    case 1 -> {
-                        LOGGER.log(Level.SEVERE, "Render PKG pad:" + padTHD.getName());
-                        Shape ss = LibraryElementNode.createThdPad(padTHD, c);
-                        if (isolation > 0.0) {
-                            // Add stroke around pad.
-                            ss.setStrokeWidth(isolation);
-                            ss.setStrokeType(StrokeType.OUTSIDE);
-                            ss.setStroke(c);
-                        }
-                        p.getChildren().add(ss);
-                    }
+//                    case 1 -> {
+//                        LOGGER.log(Level.SEVERE, "Render PKG pad:" + padTHD.getName());
+//                        Shape ss = LibraryElementNode.createThdPad(padTHD, c);
+//                        if (isolation > 0.0) {
+//                            // Add stroke around pad.
+//                            ss.setStrokeWidth(isolation);
+//                            ss.setStrokeType(StrokeType.OUTSIDE);
+//                            ss.setStroke(c);
+//                        }
+//                        p.getChildren().add(ss);
+//                    }
                     case 45 -> {
                         // Drills/Holes
                         Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
-                        p.getChildren().add(drillShape);
+                        drillShape.setLayoutX(el.getX());
+                        drillShape.setLayoutY(-el.getY());
+                        drillShape.getTransforms().add(new Rotate(-el.getRot()));
+                        list.add(drillShape);
                     }
-                    case 29 -> {
+//                    case 45 -> {
+//                        // Drills/Holes
+//                        Shape drillShape = LibraryElementNode.createThdDrill(padTHD, c);
+//                        p.getChildren().add(drillShape);
+//                    }
+//                    case 29 -> {
+//                        if (!padTHD.isStopmask()) {
+//                            break;
+//                        }
+//                        Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
+//                        p.getChildren().add(ss);
+//                    }
+                    case 29 -> { // Needed?
                         if (!padTHD.isStopmask()) {
                             break;
                         }
                         Shape ss = LibraryElementNode.createThdMask(padTHD, c, false);
-                        p.getChildren().add(ss);
+                        //ss.getTransforms().add(Transform.translate(el.getX(), -el.getY()));
+                        ss.setLayoutX(el.getX());
+                        ss.setLayoutY(-el.getY());
+                        ss.getTransforms().add(new Rotate(-el.getRot()));
+                        list.add(ss);
                     }
                 }
             } else if (e instanceof Wire wire) {
@@ -2489,7 +2615,10 @@ public class LibraryElementNode {
                         wireNode.setStrokeType(StrokeType.OUTSIDE);
                         wireNode.setStroke(c);
                     }
-                    p.getChildren().add(wireNode);
+                    wireNode.setLayoutX(el.getX());
+                    wireNode.setLayoutY(-el.getY());
+                    wireNode.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(wireNode);
                 }
             } else if (e instanceof ElementText et) {
                 // Package Text Element
@@ -2534,23 +2663,19 @@ public class LibraryElementNode {
 
                         //LOGGER.log(Level.SEVERE, "Rot:  el: {0}  et: {1}  attr: {2}", new Object[]{el.getRot(), et.getRot(), attr.getRotation().getValue()});
                         proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
-                        Node txtNode = createText(proxyText, null, c, null, false);
+                        //Node txtNode = createText(proxyText, null, c, null, false);
+                        Node txtNode = createText(proxyText, null, c, el.getRotation(), false);
 
                         // Not sure why, but this needs to be rotated.
                         // but I think the parent applies the same rotation
                         // and other nodes don't seem to need this. Curious...
-                        txtNode.getTransforms().add(new Rotate(el.getRot()));
-                        p.getChildren().add(txtNode);
+                        // update: supplied rotation to the createText(parentRotation) and it does the right thing now.
+                        //txtNode.getTransforms().add(new Rotate(-el.getRot()));
+                        txtNode.setLayoutX(el.getX());
+                        txtNode.setLayoutY(-el.getY());
+                        list.add(txtNode);
                     }
                 }
-
-//                    Node elementTextNode = createText(proxyText, c, rotation);
-//                    textGroup.getChildren().add(elementTextNode);
-//
-//                    textGroup.getChildren().add(LibraryElementNode.crosshairs(
-//                            proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
-//                    ));
-//                }
             } else if (e instanceof ElementRectangle elementRectangle) {
                 if (elementRectangle.getLayerNum() == layer) {
                     Shape s = LibraryElementNode.createRectangle(elementRectangle, c, false);
@@ -2560,7 +2685,10 @@ public class LibraryElementNode {
                         s.setStrokeType(StrokeType.OUTSIDE);
                         s.setStroke(c);
                     }
-                    p.getChildren().add(s);
+                    s.setLayoutX(el.getX());
+                    s.setLayoutY(-el.getY());
+                    s.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(s);
                 }
             } else if (e instanceof ElementPolygon elementPolygon) {
                 if (elementPolygon.getLayerNum() == layer) {
@@ -2571,7 +2699,10 @@ public class LibraryElementNode {
                         s.setStrokeType(StrokeType.OUTSIDE);
                         s.setStroke(c);
                     }
-                    p.getChildren().add(s);
+                    s.setLayoutX(el.getX());
+                    s.setLayoutY(-el.getY());
+                    s.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(s);
                 }
             } else if (e instanceof ElementCircle elementCircle) {
                 if (elementCircle.getLayerNum() == layer) {
@@ -2582,7 +2713,10 @@ public class LibraryElementNode {
                         s.setStrokeType(StrokeType.OUTSIDE);
                         s.setStroke(c);
                     }
-                    p.getChildren().add(s);
+                    s.setLayoutX(el.getX());
+                    s.setLayoutY(-el.getY());
+                    s.getTransforms().add(new Rotate(-el.getRot()));
+                    list.add(s);
                 }
             } else {
                 LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
@@ -2591,7 +2725,7 @@ public class LibraryElementNode {
 
 //        // tOrigins 23   , bOrigins 24
 //        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
-        return p;
+        return list;
     }
 
     public static Node createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {

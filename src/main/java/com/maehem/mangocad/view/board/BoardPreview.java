@@ -235,7 +235,7 @@ public class BoardPreview extends Group {
         Color silkScreenColor = new Color(0.9, 0.9, 0.9, 1.0); // Almost White
         Color backgroundColor = new Color(0.1, 0.1, 0.1, 1.0); // Grey
         Color copperColor = new Color(0.6, 0.5, 0.0, 1.0); // Copper
-        Color substrateColor = new Color(0.2, 0.2, 0.0, 0.8); // Dark Brown-Yellow
+        Color substrateColor = new Color(0.3, 0.3, 0.0, 0.9); // Dark Brown-Yellow
 
         // Board file overrides any mfg colors
         //    <mfgpreviewcolors>
@@ -268,7 +268,6 @@ public class BoardPreview extends Group {
 //        }
 //        LayerElement[] layers = board.getParentDrawing().getLayers();
 //        ColorPalette palette = board.getParentDrawing().getPalette();
-
         ObservableList<Node> chld = getChildren();
 
         ArrayList<Node> silkNodes = new ArrayList<>();
@@ -278,11 +277,11 @@ public class BoardPreview extends Group {
 
         //Map<String, List<Person>> groups = new HashMap<String, List<Person>>();
         Map<String, ArrayList<Shape>> copperSignals2 = new HashMap<>();
-        Map<String, ArrayList<Shape>> isolationSignals2 = new HashMap<>();
+        Map<String, ArrayList<Shape>> isolationSignals2 = new HashMap<>(); // Isolation except own signal.
+        Map<String, ArrayList<Shape>> restricts2 = new HashMap<>(); // Isolation but always.
 
         //ArrayList<ArrayList<Shape>> copperSignals = new ArrayList<>();
         //ArrayList<ArrayList<Shape>> isolationSignals = new ArrayList<>();
-
         ArrayList<ArrayList<SignalPolygon>> signalPolys = new ArrayList<>();
         signalPolys.add(new ArrayList<>());
         signalPolys.add(new ArrayList<>());
@@ -483,6 +482,8 @@ public class BoardPreview extends Group {
             Footprint pkg = lib.getPackage(element.getFootprint());
             if (pkg != null) {
                 List<Shape> unusedPads = LibraryElementNode.createPackageUnusedPads(pkg, board, element, 1, copperColor, 0);
+
+                // TODO: Apply layoutX/Y in createPackage method
                 for (Shape s : unusedPads) {
                     s.setLayoutX(element.getX());
                     s.setLayoutY(-element.getY());
@@ -498,34 +499,46 @@ public class BoardPreview extends Group {
                 }
                 restrict.addAll(unusedPadsIso);
 
+                // Layer 1 other plain things
+                List<Node> topPlain = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 1, copperColor, 0);
+//                topPlain.setLayoutX(element.getX());
+//                topPlain.setLayoutY(-element.getY());
+//                topPlain.getTransforms().add(new Rotate(-element.getRot()));
+                rank.get(0).addAll(topPlain);
+
+//                // Drills
+//                Node pkgHole = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
+//                pkgHole.setLayoutX(element.getX());
+//                pkgHole.setLayoutY(-element.getY());
+//                pkgHole.getTransforms().add(new Rotate(-element.getRot()));
+//                holeNodes.add(pkgHole);
                 // Drills
-                Node pkgHole = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
-                pkgHole.setLayoutX(element.getX());
-                pkgHole.setLayoutY(-element.getY());
-                pkgHole.getTransforms().add(new Rotate(-element.getRot()));
-                holeNodes.add(pkgHole);
+                List<Node> pkgDrills = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 45, backgroundColor, 0);
+                holeNodes.addAll(pkgDrills);
 
                 // Outlines (ex. cyber-1 card pkg)
                 // Silk Items -- Name
-                Node silkName = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 25, silkScreenColor, 0);
-                silkName.setLayoutX(element.getX());
-                silkName.setLayoutY(-element.getY());
-                silkName.getTransforms().add(new Rotate(-element.getRot()));
-                silkNodes.add(silkName);
+                List<Node> silkName = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 25, silkScreenColor, 0);
+//                silkName.setLayoutX(element.getX());
+//                silkName.setLayoutY(-element.getY());
+//                silkName.getTransforms().add(new Rotate(-element.getRot()));
+                silkNodes.addAll(silkName);
 
                 // Silk Items -- Place
-                Node silkPlace = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 21, silkScreenColor, 0);
-                silkPlace.setLayoutX(element.getX());
-                silkPlace.setLayoutY(-element.getY());
-                silkPlace.getTransforms().add(new Rotate(-element.getRot()));
-                silkNodes.add(silkPlace);
+                List<Node> silkPlace = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 21, silkScreenColor, 0);
+//                silkPlace.setLayoutX(element.getX());
+//                silkPlace.setLayoutY(-element.getY());
+//                silkPlace.getTransforms().add(new Rotate(-element.getRot()));
+                silkNodes.addAll(silkPlace);
 
                 // Mask Items
-                Node stopMask = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 29, solderMaskColor, 0);
-                stopMask.setLayoutX(element.getX());
-                stopMask.setLayoutY(-element.getY());
-                stopMask.getTransforms().add(new Rotate(-element.getRot()));
-                maskNodes.add(stopMask);
+                List<Node> stopMask = LibraryElementNode.createPackageMfgPreviewNode(pkg, element, 29, solderMaskColor, 0);
+//                for (Shape s : stopMask) {
+//                    s.setLayoutX(element.getX());
+//                    s.setLayoutY(-element.getY());
+//                    s.getTransforms().add(new Rotate(-element.getRot()));
+//                }
+                maskNodes.addAll(stopMask);
 
             } else {
                 LOGGER.log(Level.SEVERE,
@@ -540,6 +553,7 @@ public class BoardPreview extends Group {
 
             ArrayList<Shape> copper = new ArrayList<>();
             ArrayList<Shape> isolation = new ArrayList<>();
+            ArrayList<Shape> restricts = new ArrayList<>();
 
             for (_AQuantum el : sig.getElements()) {
                 if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
@@ -561,11 +575,16 @@ public class BoardPreview extends Group {
             }
             copperSignals2.put(sig.getName(), copper);
             isolationSignals2.put(sig.getName(), isolation);
+            restricts2.put(sig.getName(), restricts);
         }
 
+        // TODO:
+        //     Gather pins from the same element and perform a union on the isolation/restrict
+        //     before adding to the main iso layer.
         for (Signal sig : board.getSignals()) {
             ArrayList<Shape> copper = copperSignals2.get(sig.getName());
             ArrayList<Shape> isolation = isolationSignals2.get(sig.getName());
+            ArrayList<Shape> restricts = restricts2.get(sig.getName());
 
             for (_AQuantum el : sig.getElements()) {
                 if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
@@ -583,15 +602,12 @@ public class BoardPreview extends Group {
                     ElementElement elm = board.getElement(cref.getElement());
                     _AQuantum pad = elm.getFootprintPkg().getPad(cref.getPad());
 
-                    if (pad == null) {
-                        LOGGER.log(Level.SEVERE, "Pad not found! Signal: {0} cref: {1}.{2}", new Object[]{sig.getName(), cref.getElement(), cref.getPad()});
+                    if (pad == null) { // Do nothing
                     } else if (pad instanceof PadTHD p) {
-                        LOGGER.log(Level.SEVERE, "Signal: {0} add THD pad: {1}", new Object[]{sig.getName(), p.getName()});
                         Shape thdShape = LibraryElementNode.createThdPad(p, copperColor);
                         thdShape.setLayoutX(cref.getElementO().getX());
                         thdShape.setLayoutY(-cref.getElementO().getY());
                         thdShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
-                        copper.add(thdShape);
 
                         Shape thdIsoShape = LibraryElementNode.createThdPad(p, substrateColor);
                         thdIsoShape.setStrokeWidth(wireIsolate);
@@ -600,7 +616,42 @@ public class BoardPreview extends Group {
                         thdIsoShape.setLayoutX(cref.getElementO().getX());
                         thdIsoShape.setLayoutY(-cref.getElementO().getY());
                         thdIsoShape.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
-                        isolation.add(thdIsoShape);
+                        if (p.isThermals()) {
+                            double polyLineW = 0;
+                            boolean doThermals = false;
+                            for (Shape s : copper) {
+                                if ((s instanceof Path) || (s instanceof Polygon)) {
+                                    Shape intersect = Shape.intersect(s, thdShape);
+                                    if (intersect.getBoundsInLocal().getWidth() != -1) {
+                                        doThermals = true;
+                                        polyLineW = s.getStrokeWidth();
+                                        break;
+                                    }
+                                }
+                            }
+                            if (doThermals) {
+                                ArrayList<Shape> therms = LibraryElementNode.createThdThermal(
+                                        p, copperColor,
+                                        thermalIsolate, polyLineW * 2.0
+                                );
+                                for (Shape ts : therms) {
+                                    ts.setLayoutX(cref.getElementO().getX());
+                                    ts.setLayoutY(-cref.getElementO().getY());
+                                    ts.getTransforms().add(new Rotate(-cref.getElementO().getRot()));
+                                    thdIsoShape = Shape.subtract(thdIsoShape, ts);
+                                }
+                                thdIsoShape = Shape.subtract(thdIsoShape, thdShape);
+                                copper.addAll(therms);
+                                //rank.get(0).addAll(therms);  // Debug.
+                                restricts.add(thdIsoShape); // Absolute isolation
+                                //isolation.add(thdIsoShape);
+                                thdIsoShape.setFill(silkScreenColor);
+                                //silkNodes.add(thdIsoShape);  // Debug
+                            } else {
+                                isolation.add(thdIsoShape);
+                            }
+                            copper.add(thdShape);
+                        }
 
                     } else if (pad instanceof PadSMD p) {
                         if ((!elm.getRotation().isMirror() && p.getLayerNum() == 1) || (elm.getRotation().isMirror() && p.getLayerNum() == 16)) {
@@ -672,6 +723,8 @@ public class BoardPreview extends Group {
                     drlC.setLayoutX(v.getX());
                     drlC.setLayoutY(-v.getY());
                     holeNodes.add(drlC);
+                } else if (el instanceof SignalPolygon) {
+                    // Already processed in previous code section.
                 } else {
                     LOGGER.log(Level.SEVERE, "    Signal Element not handled: {0}", el.getElementName());
                 }
@@ -679,40 +732,43 @@ public class BoardPreview extends Group {
         }
 
         ArrayList<Shape> isolationShapes = new ArrayList<>();
-
-        // Shapes on each isolation group are combined.
-        //for (ArrayList<Shape> cs : isolationSignals) {
-        for (String key : isolationSignals2.keySet()) {
-            ArrayList<Shape> cs = isolationSignals2.get(key);
-            Shape sss = new Rectangle(0, 0, Color.WHITE);
-            sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
-            for (Shape sh : cs) {
-                sss = Shape.union(sss, sh);
-            }
-            sss.setFill(substrateColor);
-            isolationShapes.add(sss);
-        }
-
-//        Shape resShape = new Rectangle(0, 0, Color.WHITE);
-//        resShape.setLayoutY(-resShape.getBoundsInLocal().getHeight());
-//        for (Shape s : restrict) {
-//            resShape = Shape.union(resShape, s);
-//        }
-//        resShape.setFill(substrateColor);
-//        isolationShapes.add(resShape);
-        //LOGGER.log(Level.SEVERE, "Created {0} isolation signals.", isolationShapes.size());
         ArrayList<Shape> signalShapes = new ArrayList<>();
 
-        // Shapes on each copper group are combined.
+        // Shapes on each isolation group are combined.
         for (String key : copperSignals2.keySet()) {
-            ArrayList<Shape> cs = copperSignals2.get(key);
-            Shape sss = new Rectangle(0, 0, Color.WHITE);
-            sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
-            for (Shape sh : cs) {
-                sss = Shape.union(sss, sh);
+            {
+                ArrayList<Shape> cs = isolationSignals2.get(key);
+                Shape sss = new Rectangle(0, 0, Color.WHITE);
+                sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
+                for (Shape sh : cs) {
+                    sss = Shape.union(sss, sh);
+                }
+                sss.setFill(substrateColor);
+                isolationShapes.add(sss);
             }
-            sss.setFill(copperColor);
-            signalShapes.add(sss);
+            {
+                ArrayList<Shape> rs = restricts2.get(key);
+                Shape sss = new Rectangle(0, 0, Color.WHITE);
+                sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
+                for (Shape sh : rs) {
+                    sss = Shape.union(sss, sh);
+                }
+                sss.setFill(substrateColor);
+                restrict.add(sss);
+            }
+
+            // Shapes on each copper group are combined.
+            {
+                ArrayList<Shape> cs = copperSignals2.get(key);
+                Shape sss = new Rectangle(0, 0, Color.WHITE);
+                sss.setLayoutY(-sss.getBoundsInLocal().getHeight());
+                for (Shape sh : cs) {
+                    sss = Shape.union(sss, sh);
+                }
+                sss.setFill(copperColor);
+                signalShapes.add(sss);
+            }
+
         }
 
         for (int i = 0; i < signalShapes.size(); i++) {
@@ -723,33 +779,35 @@ public class BoardPreview extends Group {
                     csp = Shape.subtract(csp, isolationShapes.get(j));
                 }
             }
+
+            // Subtract restrict shapes
+            // debug
             for (int k = 0; k < restrict.size(); k++) {
                 csp = Shape.subtract(csp, restrict.get(k));
             }
 
-            // Subtract restrict shapes
             //signalShapes.set(i, csp);
             csp.setFill(copperColor);
             chld.add(csp);
         }
         // Polys with lower ranks get chomped by isolation polys with higher ranks
 
-//        // Copper
-//        // Ranks 7..1  Back to Front
-//        for (int i = rank.size() - 1; i >= 0; i--) {
-//            //if (i < isolate.length) {
-//            isolate.get(i).forEach(node -> {
-//                chld.add(node);
-//            });
+////        // Copper
+////        // Ranks 7..1  Back to Front
+////        for (int i = rank.size() - 1; i >= 0; i--) {
+////            //if (i < isolate.length) {
+////            isolate.get(i).forEach(node -> {
+////                chld.add(node);
+////            });
+////
+////            rank.get(i).forEach(node -> {
+////                chld.add(node);
+////            });
+////        }
+//        isolate.get(0).forEach(node -> {
+//            chld.add(node);
+//        });
 //
-//            rank.get(i).forEach(node -> {
-//                chld.add(node);
-//            });
-//        }
-        isolate.get(0).forEach(node -> {
-            chld.add(node);
-        });
-
         rank.get(0).forEach(node -> {
             chld.add(node);
         });
