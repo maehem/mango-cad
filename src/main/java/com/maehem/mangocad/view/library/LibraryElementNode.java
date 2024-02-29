@@ -775,6 +775,211 @@ public class LibraryElementNode {
         return createText(et, null, color, parentRotation, true);
     }
 
+    public static ArrayList<Shape> createText2(ElementText et, Color color) {
+        return createText2(et, null, color, null, true);
+    }
+
+    public static ArrayList<Shape> createText2(ElementText et, Color color, Rotation parentRotation) {
+        return createText2(et, null, color, parentRotation, true);
+    }
+
+    /**
+     * Re-implementation of createText, but items are shapes.
+     *
+     * @param et
+     * @param altText overrides text content of et element.
+     * @param color
+     * @param parentRotation if applicable, null if not used.
+     * @param showCross display zero point anchor/marker.
+     * @return
+     */
+    public static ArrayList<Shape> createText2(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
+        boolean showBorder = false;
+
+        ArrayList<Shape> list = new ArrayList<>();
+
+        Rotation rotation = et.getRotation();
+        double rot = rotation.getValue();
+        boolean mir = rotation.isMirror();
+
+        double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
+        boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
+
+        double fontSizeMult = 0.7272; // INCH to Point ratio
+        double fontSize = et.getSize() / fontSizeMult;
+        fontSize *= FONT_SCALE;
+
+        //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
+        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
+        Text tt = new Text(altText != null ? altText : et.getValue());
+        tt.setFont(font);
+        tt.setFill(color);
+        tt.setStrokeWidth(et.getDerivedStroke());
+        tt.setStrokeType(StrokeType.CENTERED);
+        tt.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        tt.setStroke(color);
+
+
+        // JavaFX has not yet exposed FontMetrics so we make these assumtions.
+        // Update should be fixed in Java 20.
+        // TODO: Use Java Font Metrics.
+        // Use known example text to deterimine line height.
+        Text exLine = new Text("EXAMPLE");
+        exLine.setFont(font);
+        double lineHeight = exLine.getBoundsInLocal().getHeight();
+
+        double fontAsc = lineHeight * FONT_ASC_PCT; // Font ascends this much.
+        double fontDesc = lineHeight * (1.0 - FONT_ASC_PCT);
+        tt.setLineSpacing(fontAsc * et.getDistance() * 0.01 - fontDesc);
+
+        double textWidth = tt.getBoundsInLocal().getWidth();
+        double textHeight = tt.getBoundsInLocal().getHeight();
+        double borderW = 0.05;
+
+        // fontAsc, borderW and StrokeWidth can effect where the text lands by a few pixels.
+        tt.setLayoutY(fontAsc + borderW + tt.getStrokeWidth() / 2.0);
+        tt.setLayoutX(tt.getStrokeWidth() / 2.0);
+
+        // Flip text 180 for certain rotations.
+        if (rot == 180
+                || (mir && rotation.getValue() == 90)
+                || (!mir && rotation.getValue() == 270)) {
+            Rotate tR = new Rotate(180.0, textWidth / 2.0, -textHeight * FONT_ASC_PCT / 2.0);
+            tt.getTransforms().add(tR);
+        }
+
+        list.add(tt);
+
+        // TODO: Implement a box/marqee to display around text.
+        // Text lives inside a Pane area that might be
+        // colored/backgrounded based on DRC error.
+        //Pane ttG = new Pane(tt);
+        // Debug Box for entire text area.
+//        Rectangle textAreaRect = new Rectangle(textWidth, textHeight, Color.TRANSPARENT);
+//        textAreaRect.setStroke(Color.GREENYELLOW);
+//        textAreaRect.setStrokeWidth(0.08);
+//        ttG.getChildren().add(textAreaRect);
+        //ttG.setPrefHeight(textHeight - fontDesc + borderW * 2.0);
+        //ttG.setPrefWidth(textWidth);
+        // Text Area Width
+        double taWidth = textWidth;
+        double taHeight = textHeight - fontDesc + borderW * 2.0;
+
+        double x = et.getX();
+        double y = et.getY();
+
+        double pivotX;
+        double pivotY;
+
+        switch (et.getAlign()) {
+            case BOTTOM_LEFT -> {
+                pivotX = mir ? taWidth : 0;
+                pivotY = -taHeight;
+            }
+            case BOTTOM_CENTER -> {
+                pivotX = taWidth / 2.0;
+                pivotY = -taHeight;
+            }
+            case BOTTOM_RIGHT -> {
+                pivotX = mir ? 0 : taWidth;
+                pivotY = -taHeight;
+                tt.setTextAlignment(TextAlignment.RIGHT);
+            }
+            case CENTER_LEFT -> {
+                pivotX = mir ? taWidth : 0;
+                pivotY = -taHeight / 2.0;
+
+            }
+            case CENTER -> {
+                pivotX = taWidth / 2.0;
+                pivotY = -taHeight / 2.0;
+            }
+            case CENTER_RIGHT -> {
+                pivotX = mir ? 0 : taWidth;
+                pivotY = -taHeight / 2.0;
+                tt.setTextAlignment(TextAlignment.RIGHT);
+            }
+            case TOP_LEFT -> {
+                pivotX = mir ? taWidth : 0;
+                pivotY = 0;
+
+            }
+            case TOP_CENTER -> {
+                pivotX = taWidth / 2.0;
+                pivotY = 0;
+            }
+            default -> { // TOP_RIGHT
+                pivotX = mir ? 0 : taWidth;
+                pivotY = 0;
+                tt.setTextAlignment(TextAlignment.RIGHT);
+            }
+        }
+
+        tt.setX(x - pivotX);
+        tt.setY(-y + pivotY);
+
+        double rotG = mir ? et.getRot() : -et.getRot();
+        Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
+        tt.getTransforms().add(rTTG);
+        tt.getTransforms().add(rTTG);
+
+        if (parentMir) {
+            double trFact = 0.0;
+            if (et.getAlign().name().endsWith("_RIGHT")) {
+                trFact = 1.0;
+            } else if (et.getAlign().name().endsWith("_LEFT")) {
+                trFact = -1.0;
+            }
+            Translate tr = new Translate(trFact * tt.getBoundsInLocal().getWidth(), 0);
+            tt.getTransforms().add(tr);
+        }
+
+        if (showBorder) {
+            Rectangle border = new Rectangle(x - pivotX, -y + pivotY, taWidth, taHeight);
+            border.setFill(null);
+            border.setStroke(Color.BLUE);
+            border.setStrokeWidth(borderW);
+            border.getTransforms().add(rTTG);
+            list.add(border);
+//            ttG.setBorder(new Border(new BorderStroke(
+//                    Color.BLUE, BorderStrokeStyle.SOLID,
+//                    CornerRadii.EMPTY,
+//                    new BorderWidths(borderW))));
+        }
+//        ttG.setLayoutX(x - pivotX);
+//        ttG.setLayoutY(-y + pivotY);
+//        g.getChildren().addAll(ttG);
+
+        if (showCross) {
+            double chSize = 0.8; // Crosshairs size
+            double chStroke = 0.05;
+
+            // Crosshairs (original axis)
+// For Debug
+//            Line chP = new Line(-chSize, 0, chSize, 0);
+//            chP.setStroke(Color.MAGENTA);
+//            chP.setStrokeWidth(chStroke);
+//            Line cvP = new Line(0, -chSize, 0, +chSize);
+//            cvP.setStroke(Color.MAGENTA);
+//            cvP.setStrokeWidth(chStroke);
+//            ttG.getChildren().addAll(chP,cvP);
+            // Crosshairs ( visible )
+            Line ch = new Line(x - chSize, -y, x + chSize, -y);
+            ch.setStroke(Color.WHITE);
+            ch.setStrokeWidth(chStroke);
+            ch.getTransforms().add(rTTG);
+            Line cv = new Line(x, -y - chSize, x, -y + chSize);
+            cv.setStroke(Color.WHITE);
+            cv.setStrokeWidth(chStroke);
+            cv.getTransforms().add(rTTG);
+
+            list.add(ch);
+            list.add(cv);
+        }
+
+        return list;
+    }
+
     public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
         boolean showBorder = false;
 

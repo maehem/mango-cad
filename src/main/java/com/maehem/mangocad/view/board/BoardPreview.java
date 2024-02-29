@@ -314,6 +314,20 @@ public class BoardPreview extends Group {
         ArrayList<Node> holeNodes = new ArrayList<>();
         ArrayList<Wire> substrateWires = new ArrayList<>(); // Wires that should make a closed shape.
 
+        DesignRules dr = board.getDesignRules();
+        String drMinWire = dr.getRule(DrcDefs.MS_WIDTH); // Wire Width
+        Double wireMin = Units.toMM(drMinWire);
+        String drWire2Wire = dr.getRule(DrcDefs.MD_WIRE2WIRE); // Wire to Wire
+        Double wireIsolate = Units.toMM(drWire2Wire);
+//        String drDim2Wire = dr.getRule(DrcDefs.MD_COPPER2DIMENSION);
+//        Double dimIsolate = Units.toMM(drDim2Wire);
+        String drThIso = dr.getRule(DrcDefs.SL_THERMAL_ISOLATE); // Thermal Isolation
+        Double thermalIsolate = Units.toMM(drThIso);
+//        String mlStopMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME); // Thermal Isolation
+//        Double viaStopMask = Units.toMM(mlStopMax);
+        String mlViaStopLimit = dr.getRule(DrcDefs.ML_VIA_STOP_LIMIT); // Thermal Isolation
+        Double viaStopLimit = Units.toMM(mlViaStopLimit);
+
         // Decide Top or bottom
         // Draw background
         // Draw substrate
@@ -385,12 +399,29 @@ public class BoardPreview extends Group {
                     case 1 /*, 16 */ -> {
                         // Text in etch.
                         // TODO: Toggle top or bottom.
-                        Node n = LibraryElementNode.createText(e, null, copperColor, null, false);
-                        rank.get(0).add(n);
+                        List<Shape> n = LibraryElementNode.createText2(e, null, copperColor, null, false);
+                        rank.get(0).addAll(n);
+
+                        ElementText textIsolate = e.copy();
+                        int ratio = textIsolate.getRatio();
+                        double size = textIsolate.getSize();
+                        double stroke = textIsolate.getDerivedStroke();
+                        double thick = stroke + wireIsolate * 2.0;
+                        double newRatio = thick / (size * 0.01);
+
+                        //textIsolate.setRatio((int) newRatio);
+                        textIsolate.setRatio((int) newRatio);
+                        LOGGER.log(Level.SEVERE,
+                                "Old ratio: {0}  new ratio: {1} oldStroke: {2}   new Stroke:{3}",
+                                new Object[]{ratio, newRatio, stroke, textIsolate.getDerivedStroke()}
+                        );
+
+                        List<Shape> rn = LibraryElementNode.createText2(textIsolate, null, copperColor, null, false);
+                        restrict.addAll(rn);
                     }
                     case 21 /*, 22 */, 25 /*, 26 */ -> {
-                        Node n = LibraryElementNode.createText(e, null, silkScreenColor, null, false);
-                        silkNodes.add(n);
+                        List<Shape> n = LibraryElementNode.createText2(e, null, silkScreenColor, null, true);
+                        silkNodes.addAll(n);
                     }
                     case 29 -> {
                         Node n = LibraryElementNode.createText(e, null, solderMaskColor, null, false);
@@ -461,19 +492,6 @@ public class BoardPreview extends Group {
         Shape dimOutline = null;
         Shape dimMask = null;
         Shape pcbClip = null;
-        DesignRules dr = board.getDesignRules();
-        String drMinWire = dr.getRule(DrcDefs.MS_WIDTH); // Wire Width
-        Double wireMin = Units.toMM(drMinWire);
-        String drWire2Wire = dr.getRule(DrcDefs.MD_WIRE2WIRE); // Wire to Wire
-        Double wireIsolate = Units.toMM(drWire2Wire);
-//        String drDim2Wire = dr.getRule(DrcDefs.MD_COPPER2DIMENSION);
-//        Double dimIsolate = Units.toMM(drDim2Wire);
-        String drThIso = dr.getRule(DrcDefs.SL_THERMAL_ISOLATE); // Thermal Isolation
-        Double thermalIsolate = Units.toMM(drThIso);
-//        String mlStopMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME); // Thermal Isolation
-//        Double viaStopMask = Units.toMM(mlStopMax);
-        String mlViaStopLimit = dr.getRule(DrcDefs.ML_VIA_STOP_LIMIT); // Thermal Isolation
-        Double viaStopLimit = Units.toMM(mlViaStopLimit);
 
         LOGGER.log(Level.SEVERE, "Do Elements.");
         for (ElementElement element : board.getElements()) { // Component Packages
