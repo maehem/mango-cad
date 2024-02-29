@@ -142,6 +142,10 @@ public class ElementText extends _AQuantum {
         this.ratio = ratio;
     }
 
+    public double getDerivedStroke() {
+        return getRatio() * 0.01 * getSize() * 0.5;
+    }
+
     /**
      * @return the rotation
      */
@@ -226,10 +230,16 @@ public class ElementText extends _AQuantum {
         copy.setFont(font);
         copy.setLayer(getLayerNum());
         copy.setRatio(ratio);
-        copy.setRot(getRot());
         copy.setSize(size);
         copy.setValue(value);
 
+        // Copy GroupRefs
+        for (String ref : grouprefs) {
+            copy.grouprefs.add(ref);
+        }
+        Rotation.copyValues(getRotation(), copy.getRotation());
+
         return copy;
     }
+
 }
