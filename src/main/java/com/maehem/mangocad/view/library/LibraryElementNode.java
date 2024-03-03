@@ -108,7 +108,8 @@ public class LibraryElementNode {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
-    public static final String FONT_PATH = "/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
+    //public static final String FONT_PATH = "/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
+    public static final String FONT_PATH = "/fonts/mango-classic.ttf";  // Test Font
     public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
     private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
 
