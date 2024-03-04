@@ -143,7 +143,8 @@ public class ElementText extends _AQuantum {
     }
 
     public double getDerivedStroke() {
-        return getRatio() * 0.01 * getSize() * 0.5;
+        //return getRatio() * 0.01 * getSize() * 0.5;
+        return getRatio() * 0.01 * getSize();
     }
 
     /**

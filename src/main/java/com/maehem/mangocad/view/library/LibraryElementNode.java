@@ -110,8 +110,10 @@ public class LibraryElementNode {
 
     //public static final String FONT_PATH = "/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
     public static final String FONT_PATH = "/fonts/mango-classic.ttf";  // Test Font
-    public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
-    private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
+    //public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
+    public static final double FONT_SCALE = 1.000; // Mango Custom. Font height can vary depending on Family.
+    //private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
+    private static final double FONT_ASC_PCT = 0.47; // 53%   (0.0 - 1.0)  == 450/960 from font.
 
     private enum PatternStyle {
         DARK_THIN, DARK_MED, DARK_THICK, LIGHT_THIN, LIGHT_MED, LIGHT_THICK
@@ -795,7 +797,7 @@ public class LibraryElementNode {
      * @return
      */
     public static ArrayList<Shape> createText2(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
-        boolean showBorder = false;
+        boolean showBorder = true;
 
         ArrayList<Shape> list = new ArrayList<>();
 
@@ -806,10 +808,20 @@ public class LibraryElementNode {
         double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
         boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
 
-        double fontSizeMult = 0.7272; // INCH to Point ratio
-        double fontSize = et.getSize() / fontSizeMult;
-        fontSize *= FONT_SCALE;
+        // 1 Point == 1/72 inch == 0.013888 inch == 0.35277 mm
+        // MM to points   1 to 2.835
+        double fontSize = et.getSize();
+        //double fontSizeMult = 0.60; //0.7272; // INCH to Point ratio
+        double fontSizeMult = 1.666; // JavaFX pixel units to font size ratio. Found experimentally.
 
+        fontSize *= fontSizeMult;
+
+        // Makes font fit requested height regardless of boldness.
+        // Higher ratio text will be reduced in font size to make height fit size.
+        fontSize *= ((100 - et.getRatio()) * 0.01);
+        fontSize *= FONT_SCALE; // Font specific.
+
+        LOGGER.log(Level.SEVERE, "Font size: eagle: " + et.getSize() + "   font: " + fontSize);
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
         Text tt = new Text(altText != null ? altText : et.getValue());
@@ -829,16 +841,36 @@ public class LibraryElementNode {
         exLine.setFont(font);
         double lineHeight = exLine.getBoundsInLocal().getHeight();
 
-        double fontAsc = lineHeight * FONT_ASC_PCT; // Font ascends this much.
-        double fontDesc = lineHeight * (1.0 - FONT_ASC_PCT);
+        //double fontAsc = lineHeight * FONT_ASC_PCT; // Font ascends this much.
+        //double fontAsc = et.getSize();
+        double fontAsc = lineHeight;
+        //double fontDesc = lineHeight * (1.0 - FONT_ASC_PCT);
+        double fontDesc = lineHeight * 0.444;
         tt.setLineSpacing(fontAsc * et.getDistance() * 0.01 - fontDesc);
 
         double textWidth = tt.getBoundsInLocal().getWidth();
+        if (textWidth > 0.99) { // Bounds always seems to be one mm larger than actual text.
+            textWidth -= 0.99;
+        }
         double textHeight = tt.getBoundsInLocal().getHeight();
         double borderW = 0.05;
 
+        double taWidth = textWidth;
+        //double taHeight = textHeight - fontDesc + borderW * 2.0;
+        double taHeight = et.getSize() + borderW * 2.0;
+
+        double boxWidth = textWidth;
+        //double boxHeight = lineHeight + borderW * 2.0;
+        double boxHeight = taHeight;
+
+        LOGGER.log(Level.SEVERE,
+                "requested size: {0}  lineHeight: {1} textHeight: {2}  taHeight: {3}",
+                new Object[]{et.getSize(), lineHeight, textHeight, taHeight}
+        );
+
         // fontAsc, borderW and StrokeWidth can effect where the text lands by a few pixels.
-        tt.setLayoutY(fontAsc + borderW + tt.getStrokeWidth() / 2.0);
+        //tt.setLayoutY(fontAsc + borderW + tt.getStrokeWidth() / 2.0);
+        tt.setLayoutY(taHeight - tt.getStrokeWidth() / 2.0); // + borderW);//+ tt.getStrokeWidth() / 2.0);
         tt.setLayoutX(tt.getStrokeWidth() / 2.0);
 
         // Flip text 180 for certain rotations.
@@ -850,21 +882,6 @@ public class LibraryElementNode {
         }
 
         list.add(tt);
-
-        // TODO: Implement a box/marqee to display around text.
-        // Text lives inside a Pane area that might be
-        // colored/backgrounded based on DRC error.
-        //Pane ttG = new Pane(tt);
-        // Debug Box for entire text area.
-//        Rectangle textAreaRect = new Rectangle(textWidth, textHeight, Color.TRANSPARENT);
-//        textAreaRect.setStroke(Color.GREENYELLOW);
-//        textAreaRect.setStrokeWidth(0.08);
-//        ttG.getChildren().add(textAreaRect);
-        //ttG.setPrefHeight(textHeight - fontDesc + borderW * 2.0);
-        //ttG.setPrefWidth(textWidth);
-        // Text Area Width
-        double taWidth = textWidth;
-        double taHeight = textHeight - fontDesc + borderW * 2.0;
 
         double x = et.getX();
         double y = et.getY();
@@ -936,20 +953,24 @@ public class LibraryElementNode {
         }
 
         if (showBorder) {
-            Rectangle border = new Rectangle(x - pivotX, -y + pivotY, taWidth, taHeight);
+            Rectangle border = new Rectangle(x - pivotX, -y + pivotY + borderW, boxWidth, boxHeight);
             border.setFill(null);
             border.setStroke(Color.BLUE);
             border.setStrokeWidth(borderW);
             border.getTransforms().add(rTTG);
             list.add(border);
-//            ttG.setBorder(new Border(new BorderStroke(
-//                    Color.BLUE, BorderStrokeStyle.SOLID,
-//                    CornerRadii.EMPTY,
-//                    new BorderWidths(borderW))));
         }
-//        ttG.setLayoutX(x - pivotX);
-//        ttG.setLayoutY(-y + pivotY);
-//        g.getChildren().addAll(ttG);
+
+//        if (showBorder) {  // RED Character height box
+//            Rectangle border = new Rectangle(x + 1, -y - 4.5, 4.5, 4.5);
+//            border.setFill(null);
+//            border.setStroke(Color.RED);
+//            border.setStrokeWidth(0.08);
+//            border.getTransforms().add(rTTG);
+//
+//            list.add(border);
+//
+//        }
 
         if (showCross) {
             double chSize = 0.8; // Crosshairs size
