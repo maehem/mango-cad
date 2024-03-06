@@ -64,6 +64,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -797,9 +798,12 @@ public class LibraryElementNode {
      * @return
      */
     public static ArrayList<Shape> createText2(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
-        boolean showBorder = true;
+        boolean showBorder = false;
 
         ArrayList<Shape> list = new ArrayList<>();
+
+        double x = et.getX();
+        double y = et.getY();
 
         Rotation rotation = et.getRotation();
         double rot = rotation.getValue();
@@ -808,9 +812,13 @@ public class LibraryElementNode {
         double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
         boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
 
+        double stroke = et.getDerivedStroke();
+
+        double size = et.getSize();
+
         // 1 Point == 1/72 inch == 0.013888 inch == 0.35277 mm
         // MM to points   1 to 2.835
-        double fontSize = et.getSize();
+        double fontSize = size;
         //double fontSizeMult = 0.60; //0.7272; // INCH to Point ratio
         double fontSizeMult = 1.666; // JavaFX pixel units to font size ratio. Found experimentally.
 
@@ -824,13 +832,16 @@ public class LibraryElementNode {
         LOGGER.log(Level.SEVERE, "Font size: eagle: " + et.getSize() + "   font: " + fontSize);
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
+
+        // Text
         Text tt = new Text(altText != null ? altText : et.getValue());
         tt.setFont(font);
         tt.setFill(color);
-        tt.setStrokeWidth(et.getDerivedStroke());
+        tt.setStrokeWidth(stroke);
         tt.setStrokeType(StrokeType.CENTERED);
         tt.setStrokeLineJoin(StrokeLineJoin.ROUND);
         tt.setStroke(color);
+        tt.setTextOrigin(VPos.BASELINE);
 
 
         // JavaFX has not yet exposed FontMetrics so we make these assumtions.
@@ -853,13 +864,17 @@ public class LibraryElementNode {
             textWidth -= 0.99;
         }
         double textHeight = tt.getBoundsInLocal().getHeight();
-        double borderW = 0.05;
 
-        double taWidth = textWidth;
+        double borderW = 0.0;
+        if (showBorder) {
+            borderW = 0.03;
+        }
+
+        double taWidth = textWidth + borderW * 2.0;
         //double taHeight = textHeight - fontDesc + borderW * 2.0;
-        double taHeight = et.getSize() + borderW * 2.0;
+        double taHeight = size + borderW * 2.0;
 
-        double boxWidth = textWidth;
+        double boxWidth = taWidth;
         //double boxHeight = lineHeight + borderW * 2.0;
         double boxHeight = taHeight;
 
@@ -870,75 +885,131 @@ public class LibraryElementNode {
 
         // fontAsc, borderW and StrokeWidth can effect where the text lands by a few pixels.
         //tt.setLayoutY(fontAsc + borderW + tt.getStrokeWidth() / 2.0);
-        tt.setLayoutY(taHeight - tt.getStrokeWidth() / 2.0); // + borderW);//+ tt.getStrokeWidth() / 2.0);
-        tt.setLayoutX(tt.getStrokeWidth() / 2.0);
+//        tt.setLayoutY(taHeight - tt.getStrokeWidth() / 2.0); // + borderW);//+ tt.getStrokeWidth() / 2.0);
+//        tt.setLayoutX(tt.getStrokeWidth() / 2.0);
+        //Translate ttT = new Translate(tt.getStrokeWidth() / 2.0, taHeight - tt.getStrokeWidth() / 2.0);
+
+        //tt.getTransforms().add(ttT);
 
         // Flip text 180 for certain rotations.
-        if (rot == 180
-                || (mir && rotation.getValue() == 90)
-                || (!mir && rotation.getValue() == 270)) {
-            Rotate tR = new Rotate(180.0, textWidth / 2.0, -textHeight * FONT_ASC_PCT / 2.0);
-            tt.getTransforms().add(tR);
-        }
-
+        // This won't work at all!
+//        if (rot == 180
+//                || (mir && rotation.getValue() == 90)
+//                || (!mir && rotation.getValue() == 270)) {
+//            Rotate tR = new Rotate(180.0, textWidth / 2.0, -textHeight * FONT_ASC_PCT / 2.0);
+//            tt.getTransforms().add(tR);
+//        }
         list.add(tt);
 
-        double x = et.getX();
-        double y = et.getY();
+        tt.setLayoutX(x);
+        tt.setLayoutY(-y);
 
         double pivotX;
-        double pivotY;
+        double pivotY = stroke / 2.0;
+        double transX = stroke / 2.0;
+        double transY = -stroke / 2.0;
 
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
-                pivotX = mir ? taWidth : 0;
-                pivotY = -taHeight;
+                pivotX = mir ? taWidth : -stroke / 2.0;
+                //pivotY = -taHeight;// + 0.2;
             }
             case BOTTOM_CENTER -> {
                 pivotX = taWidth / 2.0;
-                pivotY = -taHeight;
+                //pivotY = -taHeight;
+                transX = -textWidth / 2.0;
             }
             case BOTTOM_RIGHT -> {
                 pivotX = mir ? 0 : taWidth;
-                pivotY = -taHeight;
-                tt.setTextAlignment(TextAlignment.RIGHT);
+                transX = -textWidth;
+                //pivotY = -taHeight;
             }
             case CENTER_LEFT -> {
                 pivotX = mir ? taWidth : 0;
-                pivotY = -taHeight / 2.0;
-
+                //pivotY = -taHeight / 2.0;
+                transY = size / 2.0;
             }
             case CENTER -> {
                 pivotX = taWidth / 2.0;
-                pivotY = -taHeight / 2.0;
+                //pivotY = -taHeight / 2.0;
+                transX = -textWidth / 2.0;
+                transY = size / 2.0;
             }
             case CENTER_RIGHT -> {
                 pivotX = mir ? 0 : taWidth;
-                pivotY = -taHeight / 2.0;
-                tt.setTextAlignment(TextAlignment.RIGHT);
+                //pivotY = -taHeight / 2.0;
+                transX = -textWidth;
+                transY = size / 2.0;
             }
             case TOP_LEFT -> {
                 pivotX = mir ? taWidth : 0;
-                pivotY = 0;
-
+                pivotY = taHeight - stroke;// - borderW;
+                transY = size;
+                // TOP is to far for how we use it. There is no VPos.CAPS.
+                // So we use pivotY to adjust text position acurately.
             }
             case TOP_CENTER -> {
                 pivotX = taWidth / 2.0;
-                pivotY = 0;
+                pivotY = taHeight - stroke;// - borderW;
+                transX = -textWidth / 2.0;
+                transY = size;
             }
             default -> { // TOP_RIGHT
                 pivotX = mir ? 0 : taWidth;
-                pivotY = 0;
-                tt.setTextAlignment(TextAlignment.RIGHT);
+                pivotY = taHeight - stroke;// - borderW;
+                transX = -textWidth;
+                transY = size;
             }
         }
 
-        tt.setX(x - pivotX);
-        tt.setY(-y + pivotY);
+        if (rot > 90 && rot <= 270) {
+            LOGGER.log(Level.SEVERE, "x: {0} y: {1}  taWidth: {2}  rot: {3}", new Object[]{x, y, taWidth, rot});
+
+            //Rotate tR = new Rotate(180.0, -taWidth / 2.0, taHeight / 2.0);
+            // Rotate tR = new Rotate(180, -2.4, -1.7);//  4.8 (2 + 2.8 ) ( x + tWidth/2.0),  3.4 ( 2 + 1.4 )
+            //Rotate tR = new Rotate(180, x + textWidth / 2.0, -y - size / 2.0);
+            //Translate tRt = new Translate(-taWidth / 2.0, -size / 2.0);
+            //tt.getTransforms().add(tRt);
+            Rotate tR = new Rotate(180, taWidth / 2.0, -size / 2.0);
+            tt.getTransforms().add(tR);
+
+            //Translate t = new Translate(taWidth, -size);
+            //tt.getTransforms().add(t);
+            //tt.setRotate(rot + 180.0);
+
+            pivotX = taWidth;
+            pivotY = -size;
+            //transX = 0;
+            //transY = 0;
+
+            //pivotX = x;
+            //pivotY = -y;
+            //    pivotX += textWidth + stroke / 2.0;
+            //    pivotY += -size + stroke / 2.0;
+            //transX -= x;
+            //transY -= y;
+
+            //transX -= -textWidth;
+            //transY += size;
+            // Must change pivot of future rotations as we have flipped the text.
+            //Rotate testR = new Rotate(-rot, taWidth, -size);
+            //tt.getTransforms().add(testR);
+
+        }
+
+        //tt.setX(x - pivotX);
+        //tt.setY(-y + pivotY);
+        //tt.setLayoutX(x);
+        //tt.setLayoutY(-y);
+
+        Translate tranG = new Translate(transX, transY);
 
         double rotG = mir ? et.getRot() : -et.getRot();
-        Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
-        tt.getTransforms().add(rTTG);
+        //Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
+        //Rotate rTTG = new Rotate(rotG, taWidth / 2.0, -taHeight / 2.0);
+        Rotate rTTG = new Rotate(rotG, pivotX, pivotY);
+
+        tt.getTransforms().add(tranG);
         tt.getTransforms().add(rTTG);
 
         if (parentMir) {
@@ -953,11 +1024,25 @@ public class LibraryElementNode {
         }
 
         if (showBorder) {
-            Rectangle border = new Rectangle(x - pivotX, -y + pivotY + borderW, boxWidth, boxHeight);
+            //Rectangle border = new Rectangle(x - pivotX, -y + pivotY + borderW, boxWidth, boxHeight);
+            Rectangle border = new Rectangle(x - borderW, -y + borderW, boxWidth, boxHeight);
             border.setFill(null);
             border.setStroke(Color.BLUE);
             border.setStrokeWidth(borderW);
-            border.getTransforms().add(rTTG);
+            //Rotate r = new Rotate(-rot, pivotX, -pivotY);
+//            double rr = -rot;
+//            if (rot > 90.0 && rot <= 270.0) {
+//                rr = rot;
+//            }
+            int bPiv = 1;
+            if (rot > 90 && rot <= 270) {
+                bPiv = -1;
+            }
+            Rotate r = new Rotate(-rot, x + borderW, -y - borderW);
+            //border.getTransforms().addAll(rTTG);
+            Translate t = new Translate(transX, -taHeight + transY);
+            border.getTransforms().addAll(r, t);
+
             list.add(border);
         }
 
@@ -974,7 +1059,7 @@ public class LibraryElementNode {
 
         if (showCross) {
             double chSize = 0.8; // Crosshairs size
-            double chStroke = 0.05;
+            double chStroke = 0.01;
 
             // Crosshairs (original axis)
 // For Debug
@@ -989,15 +1074,29 @@ public class LibraryElementNode {
             Line ch = new Line(x - chSize, -y, x + chSize, -y);
             ch.setStroke(Color.WHITE);
             ch.setStrokeWidth(chStroke);
-            ch.getTransforms().add(rTTG);
+            //ch.getTransforms().add(rTTG);
             Line cv = new Line(x, -y - chSize, x, -y + chSize);
             cv.setStroke(Color.WHITE);
             cv.setStrokeWidth(chStroke);
-            cv.getTransforms().add(rTTG);
+            //cv.getTransforms().add(rTTG);
 
             list.add(ch);
             list.add(cv);
         }
+
+        double chSize = 0.4; // Crosshairs size
+        double chStroke = 0.01;
+        Line ch = new Line(-chSize, 0, chSize, 0);
+        ch.setStroke(Color.WHITE);
+        ch.setStrokeWidth(chStroke);
+        //ch.getTransforms().add(rTTG);
+        Line cv = new Line(0, -chSize, 0, chSize);
+        cv.setStroke(Color.WHITE);
+        cv.setStrokeWidth(chStroke);
+        //cv.getTransforms().add(rTTG);
+
+        list.add(ch);
+        list.add(cv);
 
         return list;
     }
