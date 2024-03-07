@@ -910,22 +910,6 @@ public class LibraryElementNode {
 //        }
         list.add(tt);
 
-        long lineCount = tt.getText().lines().count();
-        if (lineCount > 1) {
-            switch (et.getAlign()) {
-                case BOTTOM_CENTER, BOTTOM_LEFT, BOTTOM_RIGHT -> {
-                    Transform ta = new Translate(0, (lineCount - 1) * -(size + lineSpace));
-                    tt.getTransforms().add(ta);
-                }
-                case CENTER, CENTER_LEFT, CENTER_RIGHT -> {
-                    Transform ta = new Translate(0, 0.5 * (lineCount - 1) * -(size + lineSpace));
-                    tt.getTransforms().add(ta);
-                }
-                default -> {
-                } // Top is correct.
-            }
-        }
-
         tt.setLayoutX(x);
         tt.setLayoutY(-y);
 
@@ -934,54 +918,85 @@ public class LibraryElementNode {
         double transX = stroke / 2.0;
         double transY = -stroke / 2.0;
 
+        long lineCount = tt.getText().lines().count();
+
+        // Baseline of first line to bottom of last line.
+        double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
+
+        if (lineCount > 1) {
+            switch (et.getAlign()) {
+                case BOTTOM_CENTER, BOTTOM_LEFT, BOTTOM_RIGHT -> {
+                    Transform ta = new Translate(0, baselineToBottom);
+                    tt.getTransforms().add(ta);
+                }
+                case CENTER, CENTER_LEFT, CENTER_RIGHT -> {
+                    Transform ta = new Translate(0, 0.5 * baselineToBottom);
+                    tt.getTransforms().add(ta);
+                }
+                default -> {
+                } // Top is correct.
+            }
+        }
+
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
                 pivotX = mir ? taWidth : -stroke / 2.0;
+                pivotY = -baselineToBottom;
                 //pivotY = -taHeight;// + 0.2;
             }
             case BOTTOM_CENTER -> {
                 pivotX = taWidth / 2.0;
                 //pivotY = -taHeight;
+                pivotY = -baselineToBottom;
                 transX = -textWidth / 2.0;
             }
             case BOTTOM_RIGHT -> {
                 pivotX = mir ? 0 : taWidth;
+                pivotY = -baselineToBottom;
                 transX = -textWidth;
                 //pivotY = -taHeight;
             }
             case CENTER_LEFT -> {
                 pivotX = mir ? taWidth : 0;
                 //pivotY = -taHeight / 2.0;
+                pivotY = -0.5 * (baselineToBottom + size);
                 transY = size / 2.0;
             }
             case CENTER -> {
                 pivotX = taWidth / 2.0;
                 //pivotY = -taHeight / 2.0;
+                pivotY = -0.5 * (baselineToBottom + size);
                 transX = -textWidth / 2.0;
                 transY = size / 2.0;
             }
             case CENTER_RIGHT -> {
                 pivotX = mir ? 0 : taWidth;
                 //pivotY = -taHeight / 2.0;
+                pivotY = -0.5 * (baselineToBottom + size);
                 transX = -textWidth;
                 transY = size / 2.0;
             }
             case TOP_LEFT -> {
                 pivotX = mir ? taWidth : 0;
-                pivotY = taHeight - stroke;// - borderW;
+                //pivotY = taHeight - stroke;// - borderW;
+                //pivotY = size - stroke;
+                pivotY = -size;
                 transY = size;
                 // TOP is to far for how we use it. There is no VPos.CAPS.
                 // So we use pivotY to adjust text position acurately.
             }
             case TOP_CENTER -> {
                 pivotX = taWidth / 2.0;
-                pivotY = taHeight - stroke;// - borderW;
+                //pivotY = taHeight - stroke;// - borderW;
+                pivotY = -size;
                 transX = -textWidth / 2.0;
                 transY = size;
             }
             default -> { // TOP_RIGHT
                 pivotX = mir ? 0 : taWidth;
-                pivotY = taHeight - stroke;// - borderW;
+                //pivotY = taHeight - stroke;// - borderW;
+                //pivotY = size - stroke;
+                pivotY = -size;
                 transX = -textWidth;
                 transY = size;
             }
