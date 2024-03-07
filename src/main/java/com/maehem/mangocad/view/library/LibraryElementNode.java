@@ -921,10 +921,8 @@ public class LibraryElementNode {
                     Transform ta = new Translate(0, 0.5 * (lineCount - 1) * -(size + lineSpace));
                     tt.getTransforms().add(ta);
                 }
-                default -> { // TOP_
-                    //Transform ta = new Translate(0, (lineCount - 1) * -(size + lineSpace));
-                    //tt.getTransforms().add(ta);
-                }
+                default -> {
+                } // Top is correct.
             }
         }
 
