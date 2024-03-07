@@ -816,7 +816,8 @@ public class LibraryElementNode {
 
         double size = et.getSize();
 
-        // 1 Point == 1/72 inch == 0.013888 inch == 0.35277 mm
+        // 1 Point == 1/72   inch == 0.013888 inch == 0.35277 mm
+        // 1 point == 1/25.4 inch ==  0.039 inch == 1 mm
         // MM to points   1 to 2.835
         double fontSize = size;
         //double fontSizeMult = 0.60; //0.7272; // INCH to Point ratio
@@ -829,7 +830,6 @@ public class LibraryElementNode {
         fontSize *= ((100 - et.getRatio()) * 0.01);
         fontSize *= FONT_SCALE; // Font specific.
 
-        LOGGER.log(Level.SEVERE, "Font size: eagle: " + et.getSize() + "   font: " + fontSize);
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
 
@@ -854,10 +854,17 @@ public class LibraryElementNode {
 
         //double fontAsc = lineHeight * FONT_ASC_PCT; // Font ascends this much.
         //double fontAsc = et.getSize();
-        double fontAsc = lineHeight;
+        //double fontAsc = lineHeight;
         //double fontDesc = lineHeight * (1.0 - FONT_ASC_PCT);
-        double fontDesc = lineHeight * 0.444;
-        tt.setLineSpacing(fontAsc * et.getDistance() * 0.01 - fontDesc);
+        //double fontDesc = lineHeight * 0.444;
+        // Font line spacing value. In pixels.
+        double lineSpaceFx = size * (et.getDistance() * 0.01 - 0.66);
+        // Actual space height. In mm.
+        double lineSpace = size * (et.getDistance() * 0.01);
+        tt.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
+        //tt.setLineSpacing(-0.66); // 1%
+        //tt.setLineSpacing(-0.18); // 50%
+        //tt.setLineSpacing(0.33);// 100%
 
         double textWidth = tt.getBoundsInLocal().getWidth();
         if (textWidth > 0.99) { // Bounds always seems to be one mm larger than actual text.
@@ -871,8 +878,10 @@ public class LibraryElementNode {
         }
 
         double taWidth = textWidth + borderW * 2.0;
-        //double taHeight = textHeight - fontDesc + borderW * 2.0;
-        double taHeight = size + borderW * 2.0;
+        //double taHeight = size + borderW * 2.0;
+
+        // Full text height minus one line of text, minus extra line space
+        double taHeight = textHeight - size + borderW * 2.0;
 
         double boxWidth = taWidth;
         //double boxHeight = lineHeight + borderW * 2.0;
@@ -900,6 +909,24 @@ public class LibraryElementNode {
 //            tt.getTransforms().add(tR);
 //        }
         list.add(tt);
+
+        long lineCount = tt.getText().lines().count();
+        if (lineCount > 1) {
+            switch (et.getAlign()) {
+                case BOTTOM_CENTER, BOTTOM_LEFT, BOTTOM_RIGHT -> {
+                    Transform ta = new Translate(0, (lineCount - 1) * -(size + lineSpace));
+                    tt.getTransforms().add(ta);
+                }
+                case CENTER, CENTER_LEFT, CENTER_RIGHT -> {
+                    Transform ta = new Translate(0, 0.5 * (lineCount - 1) * -(size + lineSpace));
+                    tt.getTransforms().add(ta);
+                }
+                default -> { // TOP_
+                    //Transform ta = new Translate(0, (lineCount - 1) * -(size + lineSpace));
+                    //tt.getTransforms().add(ta);
+                }
+            }
+        }
 
         tt.setLayoutX(x);
         tt.setLayoutY(-y);
