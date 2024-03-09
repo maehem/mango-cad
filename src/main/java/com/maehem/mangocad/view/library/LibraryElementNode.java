@@ -1001,7 +1001,7 @@ public class LibraryElementNode {
                 transY = size;
             }
             default -> { // TOP_RIGHT
-                pivotX = mir ? 0 : textWidth - s2;
+                pivotX = mir ? s2 : textWidth - s2;
                 //pivotX = -pivotX;
                 //pivotY = taHeight - stroke;// - borderW;
                 //pivotY = size - stroke;
@@ -1046,7 +1046,7 @@ public class LibraryElementNode {
                     transX = -transX;
                 }
                 case BOTTOM_RIGHT -> {
-                    pivotX = mir ? textWidth - s2 : 0;
+                    pivotX = mir ? textWidth - s2 : s2;
                     pivotY = -size + stroke;
                     transX = -transX;
                 }
@@ -1060,7 +1060,7 @@ public class LibraryElementNode {
                     transX = -transX;
                 }
                 case CENTER_RIGHT -> {
-                    pivotX = 0;
+                    pivotX = s2;
                     transY = -transY;
                     transX = -transX;
                 }
