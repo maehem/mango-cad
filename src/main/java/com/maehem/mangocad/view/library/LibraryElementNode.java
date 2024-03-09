@@ -844,6 +844,8 @@ public class LibraryElementNode {
         tt.setTextOrigin(VPos.BASELINE);
 
 
+        long lineCount = tt.getText().lines().count();
+
         // JavaFX has not yet exposed FontMetrics so we make these assumtions.
         // Update should be fixed in Java 20.
         // TODO: Use Java Font Metrics.
@@ -872,6 +874,8 @@ public class LibraryElementNode {
         }
         double textHeight = tt.getBoundsInLocal().getHeight();
 
+        double stackHeight = (lineCount * size) + (lineCount - 1) * lineSpace;
+
         double borderW = 0.0;
         if (showBorder) {
             borderW = 0.03;
@@ -883,6 +887,7 @@ public class LibraryElementNode {
         // Full text height minus one line of text, minus extra line space
         double taHeight = textHeight - size + borderW * 2.0;
 
+        LOGGER.log(Level.SEVERE, "textWidth: {0}  textHeight: {1}", new Object[]{textWidth, textHeight});
         double boxWidth = taWidth;
         //double boxHeight = lineHeight + borderW * 2.0;
         double boxHeight = taHeight;
@@ -913,12 +918,11 @@ public class LibraryElementNode {
         tt.setLayoutX(x);
         tt.setLayoutY(-y);
 
+        double s2 = stroke / 2.0;
         double pivotX;
-        double pivotY = stroke / 2.0;
+        double pivotY; // = stroke / 2.0;
         double transX = stroke / 2.0;
         double transY = -stroke / 2.0;
-
-        long lineCount = tt.getText().lines().count();
 
         // Baseline of first line to bottom of last line.
         double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
@@ -977,11 +981,14 @@ public class LibraryElementNode {
                 transY = size / 2.0;
             }
             case TOP_LEFT -> {
-                pivotX = mir ? taWidth : 0;
+                pivotX = mir ? textWidth : -s2;
                 //pivotY = taHeight - stroke;// - borderW;
                 //pivotY = size - stroke;
-                pivotY = -size;
-                transY = size;
+                pivotY = -size + s2;
+                //transY = size - stroke / 2.0;
+                transX = s2;
+                transY = size - s2;
+                //transX = stroke / 2.0;
                 // TOP is to far for how we use it. There is no VPos.CAPS.
                 // So we use pivotY to adjust text position acurately.
             }
@@ -993,7 +1000,8 @@ public class LibraryElementNode {
                 transY = size;
             }
             default -> { // TOP_RIGHT
-                pivotX = mir ? 0 : taWidth;
+                pivotX = mir ? 0 : taWidth - stroke / 2.0;
+                //pivotX = -pivotX;
                 //pivotY = taHeight - stroke;// - borderW;
                 //pivotY = size - stroke;
                 pivotY = -size;
@@ -1010,15 +1018,68 @@ public class LibraryElementNode {
             //Rotate tR = new Rotate(180, x + textWidth / 2.0, -y - size / 2.0);
             //Translate tRt = new Translate(-taWidth / 2.0, -size / 2.0);
             //tt.getTransforms().add(tRt);
-            Rotate tR = new Rotate(180, taWidth / 2.0, -size / 2.0);
+            //Rotate tR = new Rotate(180, taWidth / 2.0, -size / 2.0);
+            //Rotate tR = new Rotate(180, textWidth / 2.0, (0.5 * (baselineToBottom + size) ));
+            //Rotate tR = new Rotate(180, textWidth / 2.0 - 0.3, -1.3);
+            // Single line      y == -size/2.0
+            // linecCount > 1   y == stackHeight/2.0 -size
+            Rotate tR = new Rotate(180,
+                    textWidth / 2.0,
+                    //(lineCount * size) / 2.0 + ((lineCount - 1) * lineSpace) / 2.0
+                    lineCount > 1 ? (stackHeight / 2.0 - size) : -size / 2.0
+            //(lineCount - 1) * lineSpace + lineCount * size * 0.5 + stroke / 2.0
+            );
             tt.getTransforms().add(tR);
 
             //Translate t = new Translate(taWidth, -size);
             //tt.getTransforms().add(t);
             //tt.setRotate(rot + 180.0);
-
-            pivotX = taWidth;
-            pivotY = -size;
+            switch (et.getAlign()) {
+                case BOTTOM_LEFT -> {
+                    pivotX = textWidth - stroke / 2.0;
+                    pivotY = -size;
+                    //transY = size;
+                }
+                case BOTTOM_CENTER -> {
+                    pivotY = -size + stroke;
+                    transX = -transX;
+                }
+                case BOTTOM_RIGHT -> {
+                    pivotX = mir ? textWidth - stroke / 2.0 : 0;
+                    pivotY = -size + stroke;
+                    transX = -transX;
+                }
+                // TODO: CENTER_* need to translate upward by approx. the stroke width,
+                case CENTER_LEFT -> {
+                    pivotX = textWidth - stroke / 2.0;
+                    transY = -transY;
+                }
+                case CENTER -> {
+                    transY = -transY;
+                    transX = -transX;
+                }
+                case CENTER_RIGHT -> {
+                    pivotX = 0;
+                    transY = -transY;
+                    transX = -transX;
+                }
+                case TOP_LEFT -> {
+                    pivotX = textWidth - stroke / 2.0;
+                    pivotY = -baselineToBottom;// + stroke / 2.0;
+                    transY = -transY;
+                }
+                case TOP_CENTER -> {  // Works already.
+                    pivotY = -baselineToBottom + stroke;
+                    transX = -transX;
+                    transY = -transY;
+                }
+                case TOP_RIGHT -> {
+                    pivotX = mir ? textWidth - stroke / 2.0 : 0;
+                    pivotY = -baselineToBottom + stroke;
+                    transX = -transX;
+                    transY = -transY;
+                }
+            }
             //transX = 0;
             //transY = 0;
 
@@ -1044,6 +1105,11 @@ public class LibraryElementNode {
 
         Translate tranG = new Translate(transX, transY);
 
+//        // Dot at pivot.
+//        Circle c = new Circle(pivotX, pivotY, .02, Color.RED);
+//        c.setTranslateX(x);
+//        c.setTranslateY(-y);
+//        list.add(c);
         double rotG = mir ? et.getRot() : -et.getRot();
         //Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
         //Rotate rTTG = new Rotate(rotG, taWidth / 2.0, -taHeight / 2.0);
