@@ -869,6 +869,7 @@ public class LibraryElementNode {
         //tt.setLineSpacing(0.33);// 100%
 
         double textWidth = tt.getBoundsInLocal().getWidth();
+        double rawTextWidth = textWidth;
         if (textWidth > 0.99) { // Bounds always seems to be one mm larger than actual text.
             textWidth -= 0.99;
         }
@@ -880,6 +881,8 @@ public class LibraryElementNode {
         if (showBorder) {
             borderW = 0.03;
         }
+
+        //textWidth += stroke;
 
         double taWidth = textWidth + borderW * 2.0;
         //double taHeight = size + borderW * 2.0;
@@ -918,7 +921,21 @@ public class LibraryElementNode {
         tt.setLayoutX(x);
         tt.setLayoutY(-y);
 
+        // Debug Box around tt
+        Rectangle debugBox = new Rectangle(textWidth, size);
+        debugBox.setStroke(Color.MAGENTA);
+        debugBox.setStrokeWidth(0.02);
+        debugBox.setFill(null);
+
+        debugBox.setLayoutX(x);
+        debugBox.setLayoutY(-y - size);
+
+        Rotate dr = new Rotate(-rot, 0, size);
+        debugBox.getTransforms().add(dr);
+        list.add(debugBox);
+
         double s2 = stroke / 2.0;
+        double tw2 = textWidth / 2.0;
         double pivotX;
         double pivotY; // = stroke / 2.0;
         double transX = s2;
@@ -945,39 +962,42 @@ public class LibraryElementNode {
 
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
-                pivotX = mir ? textWidth : -s2;
-                pivotY = -baselineToBottom;
-                //pivotY = -taHeight;// + 0.2;
+                //pivotX = mir ? textWidth - s2 : -s2;
+                pivotX = -s2;//s2 / 2.0;
+                pivotY = -baselineToBottom + s2;// + s2;
+
+                //transX = mir ? -textWidth + s2 : transX;
+                //transX = 0;
+
             }
             case BOTTOM_CENTER -> {
-                pivotX = textWidth / 2.0;
-                //pivotY = -taHeight;
+                pivotX = tw2;
                 pivotY = -baselineToBottom;
-                transX = -textWidth / 2.0;
+
+                transX = -tw2;
             }
             case BOTTOM_RIGHT -> {
                 pivotX = mir ? 0 : textWidth;
                 pivotY = -baselineToBottom;
+
                 transX = -textWidth;
-                //pivotY = -taHeight;
             }
             case CENTER_LEFT -> {
                 pivotX = mir ? textWidth : s2;
-                //pivotY = -taHeight / 2.0;
                 pivotY = -0.5 * (baselineToBottom + size);
                 transY = size / 2.0 - s2;
             }
             case CENTER -> {
-                pivotX = textWidth / 2.0;
-                //pivotY = -taHeight / 2.0;
+                pivotX = tw2;
                 pivotY = -0.5 * (baselineToBottom + size);
+
                 transX = -textWidth / 2.0;
                 transY = size / 2.0 - s2;
             }
             case CENTER_RIGHT -> {
                 pivotX = mir ? 0 : textWidth;
-                //pivotY = -taHeight / 2.0;
                 pivotY = -0.5 * (baselineToBottom + size);
+
                 transX = -textWidth;
                 transY = size / 2.0 - s2;
             }
@@ -995,8 +1015,8 @@ public class LibraryElementNode {
             }
             case TOP_CENTER -> {
                 pivotX = textWidth / 2.0;
-                //pivotY = taHeight - stroke;// - borderW;
                 pivotY = -size;
+
                 transX = -textWidth / 2.0;
                 transY = size;
             }
@@ -1006,9 +1026,15 @@ public class LibraryElementNode {
                 //pivotY = taHeight - stroke;// - borderW;
                 //pivotY = size - stroke;
                 pivotY = -size;
+
                 transX = -textWidth;
                 transY = size;
             }
+        }
+
+        if (mir) {
+            Scale mirror = new Scale(-1.0, 1.0);
+            tt.getTransforms().add(mirror);
         }
 
         if (rot > 90 && rot <= 270) {
@@ -1025,21 +1051,26 @@ public class LibraryElementNode {
             // Single line      y == -size/2.0
             // linecCount > 1   y == stackHeight/2.0 -size
             Rotate tR = new Rotate(180,
-                    textWidth / 2.0,
-                    //(lineCount * size) / 2.0 + ((lineCount - 1) * lineSpace) / 2.0
+                    textWidth / 2.0, // + s2,
                     lineCount > 1 ? (stackHeight / 2.0 - size) : -size / 2.0
-            //(lineCount - 1) * lineSpace + lineCount * size * 0.5 + stroke / 2.0
             );
-            tt.getTransforms().add(tR);
+            Rotate tR2 = new Rotate(180, -2.0, 2.7);
+            if (!mir) {
+                tt.getTransforms().add(tR);
+            }
 
             //Translate t = new Translate(taWidth, -size);
             //tt.getTransforms().add(t);
             //tt.setRotate(rot + 180.0);
             switch (et.getAlign()) {
                 case BOTTOM_LEFT -> {
+                    //
+                    // Works
                     pivotX = textWidth - s2;
-                    pivotY = -size;
-                    //transY = size;
+                    pivotY = -size + s2;
+
+                    transX = s2;
+                    transY = -s2;
                 }
                 case BOTTOM_CENTER -> {
                     pivotY = -size + s2;
@@ -1111,11 +1142,12 @@ public class LibraryElementNode {
 //        c.setTranslateX(x);
 //        c.setTranslateY(-y);
 //        list.add(c);
-        double rotG = mir ? et.getRot() : -et.getRot();
+        double rotG = mir ? -rot : -rot;
+        //double rotG = et.getRot();
         //Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
         //Rotate rTTG = new Rotate(rotG, taWidth / 2.0, -taHeight / 2.0);
         Rotate rTTG = new Rotate(rotG, pivotX, pivotY);
-
+        Rotate rTTG2 = new Rotate(90, textWidth, -size);
         tt.getTransforms().add(tranG);
         tt.getTransforms().add(rTTG);
 
@@ -1165,7 +1197,7 @@ public class LibraryElementNode {
 //        }
 
         if (showCross) {
-            double chSize = 0.8; // Crosshairs size
+            double chSize = 0.5; // Crosshairs size
             double chStroke = 0.01;
 
             // Crosshairs (original axis)
