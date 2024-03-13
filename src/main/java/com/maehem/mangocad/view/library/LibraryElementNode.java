@@ -989,8 +989,8 @@ public class LibraryElementNode {
         double tw2 = textWidth / 2.0;
         double pivotX;
         double pivotY; // = stroke / 2.0;
-        double transX = s2 - sFudge;
-        double transY = -s2;
+        double transX; // = s2 - sFudge;
+        double transY; // = -s2;
 
         // Baseline of first line to bottom of last line.
         double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
@@ -1013,50 +1013,46 @@ public class LibraryElementNode {
 
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
-                //pivotX = mir ? textWidth - s2 : -s2;
-                pivotX = -s2 + sFudge;//s2 / 2.0;
-                pivotY = -baselineToBottom + s2;// + s2;
+                transX = s2 - sFudge;
+                transY = -s2;
 
-                //transX = mir ? -textWidth + s2 : transX;
-                //transX = 0;
-
+                pivotX = -s2 + sFudge;
+                pivotY = -baselineToBottom + s2;
             }
             case BOTTOM_CENTER -> {
+                transX = -tw2 + 3.5 * sFudge;
+                transY = -s2;
+
                 // WORKS
                 pivotX = tw2 - s2 + 2 * sFudge;
                 pivotY = -baselineToBottom + s2;
-
-                transX = -tw2 + 3.5 * sFudge;
             }
             case BOTTOM_RIGHT -> {
+                transX = -textWidth + s2 - sFudge;
+                transY = -s2;
+
                 pivotX = mir ? 0 : textWidth - s2 + sFudge;
                 pivotY = -baselineToBottom + s2;
-
-                transX = -textWidth + s2 - sFudge;
             }
             case CENTER_LEFT -> {
+                transX = s2 - sFudge;
+                transY = size / 2.0 - s2;
+
                 pivotX = mir ? textWidth : -s2 + sFudge;
                 pivotY = -0.5 * (baselineToBottom + size) + s2;
-                transY = size / 2.0 - s2;
             }
             case CENTER -> {
                 transX = -tw2 + 0.7 * s2;
-                //transY = size / 2.0 - s2;
                 transY = 0.5 * (baselineToBottom + size) - s2;
 
-                //pivotX = tw2 - stroke;
                 pivotX = -transX;
-                //pivotY = -0.5 * (baselineToBottom + size);
                 pivotY = -transY;
-
             }
             case CENTER_RIGHT -> {
                 transX = -textWidth + 0.66 * s2;
                 transY = size / 2.0 - s2;
 
-                //pivotX = mir ? 0 : textWidth;
                 pivotX = -transX;
-                //pivotY = -0.5 * (baselineToBottom + size);
                 pivotY = -transY;
             }
             case TOP_LEFT -> {
@@ -1064,13 +1060,7 @@ public class LibraryElementNode {
                 transY = size - s2;
 
                 pivotX = mir ? textWidth : -transX;
-                //pivotY = taHeight - stroke;// - borderW;
-                //pivotY = size - stroke;
                 pivotY = -transY;
-                //transY = size - stroke / 2.0;
-                //transX = stroke / 2.0;
-                // TOP is to far for how we use it. There is no VPos.CAPS.
-                // So we use pivotY to adjust text position acurately.
             }
             case TOP_CENTER -> {
                 transX = -textWidth / 2.0 + 0.70 * s2;
@@ -1083,12 +1073,7 @@ public class LibraryElementNode {
                 transX = -textWidth + 0.66 * s2;
                 transY = size - s2;
 
-                pivotX = mir ? s2 : textWidth - s2;
                 pivotX = -transX;
-                //pivotX = -pivotX;
-                //pivotY = taHeight - stroke;// - borderW;
-                //pivotY = size - stroke;
-                pivotY = -size;
                 pivotY = -transY;
             }
         }
