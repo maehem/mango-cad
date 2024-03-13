@@ -18,6 +18,7 @@ package com.maehem.mangocad.tools;
 
 import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
 import com.maehem.mangocad.view.library.LibraryElementNode;
@@ -51,7 +52,7 @@ public class TextTester extends Application {
     private final PreviewContent previewContentPane = new PreviewContent();
     private final TextPropertiesList propertiesList = new TextPropertiesList(this, et);
 
-    private final String textValue = "Hello";
+    private final String textValue = "HridH";
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -76,12 +77,12 @@ public class TextTester extends Application {
 
         SplitPane splitPane = new SplitPane(previewContentPane, propertiesList);
 
-        contentArea.setScaleX(100);
-        contentArea.setScaleY(100);
+        contentArea.setScaleX(200);
+        contentArea.setScaleY(200);
         previewContentPane.setItem(contentArea);
 
         BorderPane root = new BorderPane(splitPane);
-        root.setPrefSize(1200, 1000);
+        root.setPrefSize(1400, 1000);
 
         splitPane.setDividerPosition(0, 800);
 
@@ -106,11 +107,13 @@ public class TextTester extends Application {
             Platform.exit();
         });
 
-        et.setX(2);
-        et.setY(-2);
+        et.setX(0);
+        et.setY(0);
         et.setValue(textValue);
         et.setSize(1.0);
+        et.setRatio(10);
         et.setLayer(21);
+        et.setAlign(TextAlign.TOP_RIGHT);
 
         updateContent();
 
@@ -136,14 +139,14 @@ public class TextTester extends Application {
     public void updateContent() {
         contentArea.getChildren().clear();
 
-        Rectangle r = new Rectangle(-5, -5, 10, 10);
+        Rectangle r = new Rectangle(-7, -5, 14, 10);
         r.setFill(Color.BLACK.brighter());
         contentArea.getChildren().add(r);
         contentArea.getChildren().addAll(
                 LibraryElementNode.createText2(et, Color.CORAL)
         );
 
-        Line hLine = new Line(-5, -et.getY(), 5, -et.getY());
+        Line hLine = new Line(-7, -et.getY(), 7, -et.getY());
         hLine.setStroke(Color.DARKBLUE);
         hLine.setStrokeWidth(0.01);
         hLine.setStrokeType(StrokeType.CENTERED);

@@ -62,7 +62,7 @@ public class SliderWidget extends Widget {
         } else {
             slider.setMajorTickUnit(((int) max - min) / 4);
         }
-        //slider.setBlockIncrement(0.1f);
+        slider.setBlockIncrement(0.1f);
         //slider.setPrefWidth(WIDGET_WIDTH - 100);
         HBox.setHgrow(slider, Priority.ALWAYS);
         HBox.setMargin(slider, new Insets(1, 4, 1, 8));
