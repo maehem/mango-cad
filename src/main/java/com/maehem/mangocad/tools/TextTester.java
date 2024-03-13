@@ -52,7 +52,7 @@ public class TextTester extends Application {
     private final PreviewContent previewContentPane = new PreviewContent();
     private final TextPropertiesList propertiesList = new TextPropertiesList(this, et);
 
-    private final String textValue = "HridH";
+    private final String textValue = "HridH\nXXXXX\nHHHHH";
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -77,8 +77,8 @@ public class TextTester extends Application {
 
         SplitPane splitPane = new SplitPane(previewContentPane, propertiesList);
 
-        contentArea.setScaleX(200);
-        contentArea.setScaleY(200);
+        contentArea.setScaleX(100);
+        contentArea.setScaleY(100);
         previewContentPane.setItem(contentArea);
 
         BorderPane root = new BorderPane(splitPane);
@@ -111,9 +111,10 @@ public class TextTester extends Application {
         et.setY(0);
         et.setValue(textValue);
         et.setSize(1.0);
-        et.setRatio(10);
+        et.setRatio(8);
         et.setLayer(21);
         et.setAlign(TextAlign.TOP_RIGHT);
+        et.setDistance(50);
 
         updateContent();
 
@@ -139,12 +140,25 @@ public class TextTester extends Application {
     public void updateContent() {
         contentArea.getChildren().clear();
 
-        Rectangle r = new Rectangle(-7, -5, 14, 10);
+        Rectangle r = new Rectangle(-7, -6, 14, 12);
         r.setFill(Color.BLACK.brighter());
         contentArea.getChildren().add(r);
-        contentArea.getChildren().addAll(
-                LibraryElementNode.createText2(et, Color.CORAL)
-        );
+
+        // GRID
+        for (int i = 0; i < 11; i++) {
+            Line hLine = new Line(-7, i - 5, 7, i - 5);
+            hLine.setStroke(new Color(1.0, 1.0, 1.0, 0.3));
+            hLine.setStrokeWidth(0.01);
+            hLine.setStrokeType(StrokeType.CENTERED);
+            contentArea.getChildren().add(hLine);
+        }
+        for (int i = 0; i < 11; i++) {
+            Line vLine = new Line(i - 5, -5, i - 5, 5);
+            vLine.setStroke(new Color(1.0, 1.0, 1.0, 0.3));
+            vLine.setStrokeWidth(0.01);
+            vLine.setStrokeType(StrokeType.CENTERED);
+            contentArea.getChildren().add(vLine);
+        }
 
         Line hLine = new Line(-7, -et.getY(), 7, -et.getY());
         hLine.setStroke(Color.DARKBLUE);
@@ -157,6 +171,11 @@ public class TextTester extends Application {
         vLine.setStrokeType(StrokeType.CENTERED);
 
         contentArea.getChildren().addAll(hLine, vLine);
+
+        // TEXT
+        contentArea.getChildren().addAll(
+                LibraryElementNode.createText2(et, Color.CORAL)
+        );
 
     }
 
