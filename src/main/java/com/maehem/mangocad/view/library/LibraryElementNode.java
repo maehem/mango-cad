@@ -830,6 +830,8 @@ public class LibraryElementNode {
         fontSize *= ((100 - et.getRatio()) * 0.01);
         fontSize *= FONT_SCALE; // Font specific.
 
+        LOGGER.log(Level.SEVERE, "Font Size: " + fontSize);
+
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
 
@@ -842,7 +844,6 @@ public class LibraryElementNode {
         tt.setStrokeLineJoin(StrokeLineJoin.ROUND);
         tt.setStroke(color);
         tt.setTextOrigin(VPos.BASELINE);
-
 
         long lineCount = tt.getText().lines().count();
 
@@ -860,10 +861,59 @@ public class LibraryElementNode {
         //double fontDesc = lineHeight * (1.0 - FONT_ASC_PCT);
         //double fontDesc = lineHeight * 0.444;
         // Font line spacing value. In pixels.
-        double lineSpaceFx = size * (et.getDistance() * 0.01 - 0.66);
+        //
+        // TODO: LineSpace needs to factor in strokewidth.
+        //
+        // 1 Point == 1/72   inch == 0.013888 inch == 0.35277 mm
+        //
+        //  Font ratio == 1     line space fx == 0.2   fontSize: 1.649  sp/font: 8.245
+        //  Font ratio == 10    line space fx == 0.37  fontSize: 1.4994 sp/font: 4.052  fs*rat=0.14994
+        //  Font ratio == 20    line space fx == 0.55  fontSize: 1.3328 sp/font: 2.433  fs*rat=0.2666
+        //
+        //  fontSize - size = default spacing for 0  ascenders + descenders.
+        /*
+
+        Size: 1.0  *  0.72   Ratio: 5  ::
+                    Line Spacing: dist: 100  base:1  fx: 0.28  font-1: 0.583  lineHeight: 1.581  linesSp: 1 dFact: 0.72  ratDiff: 0.95
+
+        Size: 1.0  *  0.633   Ratio: 10  ::
+                    Line Spacing:  dist:  50  base: 0.5  fx: -0.133   font-1: 0.499  lineHeight: 1.498
+                    Line Spacing:  dist: 100  base: 1.0  fx:  0.367   font-1: 0.499  lineHeight: 1.498
+
+        Size: 0.5  *  1.266   Ratio: 10  ::
+                    Line Spacing:  dist: 100  base: 0.5  fx: 0.183    font-1: -0.25  lineHeight: 0.749
+
+         */
+        //
+        //double lineSpaceFx = size * (et.getDistance() * 0.01 - 0.66);
+        //double lineSpaceFx = size * (et.getDistance() * 0.01 - 0.8);
+        //double fontH = fontSize*0.6;
         // Actual space height. In mm.
         double lineSpace = size * (et.getDistance() * 0.01);
+
+        //double distFactor = 0.633;  // Ratio = 10    == 0.798 - 0.165 (ratio*1.66)
+        //double distFactor = 0.715;   //  Ratio =  5  == 0.798 - 0.078
+        //double distFactor = 0.798;   //  Ratio =  1
+        double distFactor = 0.802 - et.getRatio() * 0.01 * fontSizeMult;
+
+        double ratDiff = 1.0 - et.getRatio() * 0.01;
+
+        // Almost there!
+        // double lineSpaceFx = size * (et.getDistance() * 0.01 - size * (fontSizeMult - 1));
+        //double lineSpaceFx = size * (et.getDistance() * 0.01 - size * 1.266);
+        double lineSpaceFx = size * (et.getDistance() * 0.01 - distFactor);
+
+        LOGGER.log(Level.SEVERE,
+                "Line Spacing: dist: {0}  base:{1}  fx: {2}  font-1: {3}  lineHeight: {4}  linesSp: {5} dFact: {6}  ratDiff: {7}",
+                new Object[]{et.getDistance(),
+                    lineSpace, lineSpaceFx,
+                    (fontSize - 1.0), lineHeight, lineSpace,
+                    distFactor, ratDiff
+                }
+        );
+
         tt.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
+        //tt.setLineSpacing(-1.649);
         //tt.setLineSpacing(-0.66); // 1%
         //tt.setLineSpacing(-0.18); // 50%
         //tt.setLineSpacing(0.33);// 100%
@@ -879,6 +929,9 @@ public class LibraryElementNode {
         double textHeight = tt.getBoundsInLocal().getHeight();
 
         double stackHeight = (lineCount * size) + (lineCount - 1) * lineSpace;
+
+        // Baseline of first line to bottom of last line.
+        double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
 
         double borderW = 0.0;
         if (showBorder) {
@@ -925,7 +978,7 @@ public class LibraryElementNode {
         tt.setLayoutY(-y);
 
         // Debug Box around tt
-        Rectangle debugBox = new Rectangle(textWidth, size);
+        Rectangle debugBox = new Rectangle(textWidth, stackHeight);
         debugBox.setStroke(Color.MAGENTA);
         debugBox.setStrokeWidth(0.005);
         debugBox.setFill(null);
@@ -950,17 +1003,17 @@ public class LibraryElementNode {
             case CENTER_LEFT -> {
                 debugBox.setLayoutX(x); // CL
                 debugBox.setLayoutY(-y - size / 2.0);  // CL
-                dr = new Rotate(-rot, 0, size / 2.0); // CL
+                dr = new Rotate(-rot, 0, 0.5 * (baselineToBottom + size)); // CL
             }
             case CENTER -> {
                 debugBox.setLayoutX(x - textWidth / 2.0); // CC
                 debugBox.setLayoutY(-y - size / 2.0);  // CC
-                dr = new Rotate(-rot, textWidth / 2.0, size / 2.0); // CC
+                dr = new Rotate(-rot, textWidth / 2.0, 0.5 * (baselineToBottom + size)); // CC
             }
             case CENTER_RIGHT -> {
                 debugBox.setLayoutX(x - textWidth); // CR
                 debugBox.setLayoutY(-y - size / 2.0);  // CR
-                dr = new Rotate(-rot, textWidth, size / 2.0); // CR
+                dr = new Rotate(-rot, textWidth, 0.5 * (baselineToBottom + size)); // CR
             }
             case TOP_LEFT -> {
                 debugBox.setLayoutX(x); // TL
@@ -987,13 +1040,10 @@ public class LibraryElementNode {
         double s2 = stroke / 2.0;
 
         double tw2 = textWidth / 2.0;
-        double pivotX;
-        double pivotY; // = stroke / 2.0;
-        double transX; // = s2 - sFudge;
-        double transY; // = -s2;
-
-        // Baseline of first line to bottom of last line.
-        double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
+        double pivotX = 0;
+        double pivotY = 0; // = stroke / 2.0;
+        double transX = 0; // = s2 - sFudge;
+        double transY = 0; // = -s2;
 
         if (lineCount > 1) {
             switch (et.getAlign()) {
@@ -1069,11 +1119,11 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = -transY;
             }
-            default -> { // TOP_RIGHT
+            case TOP_RIGHT -> {
                 transX = -textWidth + 0.66 * s2;
                 transY = size - s2;
 
-                pivotX = -transX;
+                pivotX = -transX - 0.66 * s2;
                 pivotY = -transY;
             }
         }
@@ -1132,18 +1182,22 @@ public class LibraryElementNode {
                 // TODO: CENTER_* need to translate upward by approx. the stroke width,
                 case CENTER_LEFT -> {
                     transY = -size / 2.0 - s2;
-                    transX += sFudge;
+                    transX = s2;
 
                     pivotX = textWidth - s2 + 2 * sFudge;
                     //pivotY = -0.5 * (baselineToBottom + size) + s2;
                 }
                 case CENTER -> {
                     transX = tw2 + s2 + sFudge;
+                    transY = 0.5 * (baselineToBottom + size) - s2;
                     transY = -transY - stroke;
                 }
                 case CENTER_RIGHT -> {
+                    transX = -textWidth + 0.66 * s2;
                     transX = -transX + 0.9 * stroke;
                     //transX = textWidth + s2;
+
+                    transY = size / 2.0 - s2;
                     transY = -transY - stroke;
 
                     pivotX = mir ? textWidth - s2 : -3.5 * sFudge;
@@ -1153,6 +1207,7 @@ public class LibraryElementNode {
                 }
                 case TOP_LEFT -> {
                     transX = 1.05 * s2;
+                    transY = size - s2;
                     transY = -transY - stroke;
                     //transY = -size - s2;
 
@@ -1164,12 +1219,15 @@ public class LibraryElementNode {
                 }
                 case TOP_CENTER -> {  // Works already.
                     transX = tw2 + 1.05 * s2;
+                    transY = size - s2;
                     transY = -transY - stroke;
 
                     pivotY = -baselineToBottom + s2;
                 }
                 case TOP_RIGHT -> {
+                    transX = -textWidth + 0.66 * s2;
                     transX = -transX + 0.9 * stroke;
+                    transY = size - s2;
                     transY = -transY - stroke;
 
                     pivotX = mir ? textWidth - s2 : -3.5 * sFudge;
