@@ -869,10 +869,13 @@ public class LibraryElementNode {
         //tt.setLineSpacing(0.33);// 100%
 
         double textWidth = tt.getBoundsInLocal().getWidth();
-        double rawTextWidth = textWidth;
-        if (textWidth > 0.99) { // Bounds always seems to be one mm larger than actual text.
-            textWidth -= 0.99;
+        //double rawTextWidth = textWidth;
+        if (textWidth > 1.00) { // Bounds always seems to be one mm larger than actual text.
+            textWidth -= 1.00;
         }
+        double sFudge = (et.getDerivedStroke() * 0.099); // Nudge by 1%
+        //textWidth -= sFudge;
+
         double textHeight = tt.getBoundsInLocal().getHeight();
 
         double stackHeight = (lineCount * size) + (lineCount - 1) * lineSpace;
@@ -924,21 +927,69 @@ public class LibraryElementNode {
         // Debug Box around tt
         Rectangle debugBox = new Rectangle(textWidth, size);
         debugBox.setStroke(Color.MAGENTA);
-        debugBox.setStrokeWidth(0.02);
+        debugBox.setStrokeWidth(0.005);
         debugBox.setFill(null);
 
-        debugBox.setLayoutX(x);
-        debugBox.setLayoutY(-y - size);
+        Rotate dr = null;
+        switch (et.getAlign()) {
+            case BOTTOM_LEFT -> {
+                debugBox.setLayoutX(x); // BL
+                debugBox.setLayoutY(-y - size);  // BL
+                dr = new Rotate(-rot, 0, size); // BL
+            }
+            case BOTTOM_CENTER -> {
+                debugBox.setLayoutX(x - textWidth / 2.0); // BC
+                debugBox.setLayoutY(-y - size);  // BC
+                dr = new Rotate(-rot, textWidth / 2.0, size); // BC
+            }
+            case BOTTOM_RIGHT -> {
+                debugBox.setLayoutX(x - textWidth); // BR
+                debugBox.setLayoutY(-y - size);  // BR
+                dr = new Rotate(-rot, textWidth, size); // BR
+            }
+            case CENTER_LEFT -> {
+                debugBox.setLayoutX(x); // CL
+                debugBox.setLayoutY(-y - size / 2.0);  // CL
+                dr = new Rotate(-rot, 0, size / 2.0); // CL
+            }
+            case CENTER -> {
+                debugBox.setLayoutX(x - textWidth / 2.0); // CC
+                debugBox.setLayoutY(-y - size / 2.0);  // CC
+                dr = new Rotate(-rot, textWidth / 2.0, size / 2.0); // CC
+            }
+            case CENTER_RIGHT -> {
+                debugBox.setLayoutX(x - textWidth); // CR
+                debugBox.setLayoutY(-y - size / 2.0);  // CR
+                dr = new Rotate(-rot, textWidth, size / 2.0); // CR
+            }
+            case TOP_LEFT -> {
+                debugBox.setLayoutX(x); // TL
+                debugBox.setLayoutY(-y);  // TL
+                dr = new Rotate(-rot, 0, 0); // TL
+            }
+            case TOP_CENTER -> {
+                debugBox.setLayoutX(x - textWidth / 2.0); // BC
+                debugBox.setLayoutY(-y);  // BC
+                dr = new Rotate(-rot, textWidth / 2.0, 0); // BC
+            }
+            case TOP_RIGHT -> {
+                debugBox.setLayoutX(x - textWidth); // TR
+                debugBox.setLayoutY(-y);  // TR
+                dr = new Rotate(-rot, textWidth, 0); // TR
+            }
 
-        Rotate dr = new Rotate(-rot, 0, size);
-        debugBox.getTransforms().add(dr);
+        }
+        if (dr != null) {
+            debugBox.getTransforms().add(dr);
+        }
         list.add(debugBox);
 
         double s2 = stroke / 2.0;
+
         double tw2 = textWidth / 2.0;
         double pivotX;
         double pivotY; // = stroke / 2.0;
-        double transX = s2;
+        double transX = s2 - sFudge;
         double transY = -s2;
 
         // Baseline of first line to bottom of last line.
@@ -963,7 +1014,7 @@ public class LibraryElementNode {
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
                 //pivotX = mir ? textWidth - s2 : -s2;
-                pivotX = -s2;//s2 / 2.0;
+                pivotX = -s2 + sFudge;//s2 / 2.0;
                 pivotY = -baselineToBottom + s2;// + s2;
 
                 //transX = mir ? -textWidth + s2 : transX;
@@ -971,64 +1022,74 @@ public class LibraryElementNode {
 
             }
             case BOTTOM_CENTER -> {
-                pivotX = tw2;
-                pivotY = -baselineToBottom;
+                // WORKS
+                pivotX = tw2 - s2 + 2 * sFudge;
+                pivotY = -baselineToBottom + s2;
 
-                transX = -tw2;
+                transX = -tw2 + 3.5 * sFudge;
             }
             case BOTTOM_RIGHT -> {
-                pivotX = mir ? 0 : textWidth;
-                pivotY = -baselineToBottom;
+                pivotX = mir ? 0 : textWidth - s2 + sFudge;
+                pivotY = -baselineToBottom + s2;
 
-                transX = -textWidth;
+                transX = -textWidth + s2 - sFudge;
             }
             case CENTER_LEFT -> {
-                pivotX = mir ? textWidth : s2;
-                pivotY = -0.5 * (baselineToBottom + size);
+                pivotX = mir ? textWidth : -s2 + sFudge;
+                pivotY = -0.5 * (baselineToBottom + size) + s2;
                 transY = size / 2.0 - s2;
             }
             case CENTER -> {
-                pivotX = tw2;
-                pivotY = -0.5 * (baselineToBottom + size);
+                transX = -tw2 + 0.7 * s2;
+                //transY = size / 2.0 - s2;
+                transY = 0.5 * (baselineToBottom + size) - s2;
 
-                transX = -textWidth / 2.0;
-                transY = size / 2.0 - s2;
+                //pivotX = tw2 - stroke;
+                pivotX = -transX;
+                //pivotY = -0.5 * (baselineToBottom + size);
+                pivotY = -transY;
+
             }
             case CENTER_RIGHT -> {
-                pivotX = mir ? 0 : textWidth;
-                pivotY = -0.5 * (baselineToBottom + size);
-
-                transX = -textWidth;
+                transX = -textWidth + 0.66 * s2;
                 transY = size / 2.0 - s2;
+
+                //pivotX = mir ? 0 : textWidth;
+                pivotX = -transX;
+                //pivotY = -0.5 * (baselineToBottom + size);
+                pivotY = -transY;
             }
             case TOP_LEFT -> {
-                pivotX = mir ? textWidth : -s2;
+                transX = 0.7 * s2;
+                transY = size - s2;
+
+                pivotX = mir ? textWidth : -transX;
                 //pivotY = taHeight - stroke;// - borderW;
                 //pivotY = size - stroke;
-                pivotY = -size + s2;
+                pivotY = -transY;
                 //transY = size - stroke / 2.0;
-                transX = s2;
-                transY = size - s2;
                 //transX = stroke / 2.0;
                 // TOP is to far for how we use it. There is no VPos.CAPS.
                 // So we use pivotY to adjust text position acurately.
             }
             case TOP_CENTER -> {
-                pivotX = textWidth / 2.0;
-                pivotY = -size;
+                transX = -textWidth / 2.0 + 0.70 * s2;
+                transY = size - s2;
 
-                transX = -textWidth / 2.0;
-                transY = size;
+                pivotX = -transX;
+                pivotY = -transY;
             }
             default -> { // TOP_RIGHT
+                transX = -textWidth + 0.66 * s2;
+                transY = size - s2;
+
                 pivotX = mir ? s2 : textWidth - s2;
+                pivotX = -transX;
                 //pivotX = -pivotX;
                 //pivotY = taHeight - stroke;// - borderW;
                 //pivotY = size - stroke;
                 pivotY = -size;
-
-                transX = -textWidth;
-                transY = size;
+                pivotY = -transY;
             }
         }
 
@@ -1051,7 +1112,7 @@ public class LibraryElementNode {
             // Single line      y == -size/2.0
             // linecCount > 1   y == stackHeight/2.0 -size
             Rotate tR = new Rotate(180,
-                    textWidth / 2.0, // + s2,
+                    textWidth / 2.0 + sFudge, // + s2,
                     lineCount > 1 ? (stackHeight / 2.0 - size) : -size / 2.0
             );
             Rotate tR2 = new Rotate(180, -2.0, 2.7);
@@ -1065,51 +1126,69 @@ public class LibraryElementNode {
             switch (et.getAlign()) {
                 case BOTTOM_LEFT -> {
                     //
-                    // Works
-                    pivotX = textWidth - s2;
+                    // WORKS
+                    pivotX = textWidth - s2 + sFudge;
                     pivotY = -size + s2;
 
-                    transX = s2;
+                    transX = s2 + sFudge;
                     transY = -s2;
                 }
                 case BOTTOM_CENTER -> {
+                    // WORKS
                     pivotY = -size + s2;
-                    transX = -transX;
+                    transX = tw2 + s2;
                 }
                 case BOTTOM_RIGHT -> {
-                    pivotX = mir ? textWidth - s2 : s2;
-                    pivotY = -size + stroke;
-                    transX = -transX;
+                    transX = textWidth + s2;
+                    // WORKS
+                    pivotX = mir ? textWidth - s2 : -3 * sFudge;
+                    pivotY = -size + s2;
                 }
                 // TODO: CENTER_* need to translate upward by approx. the stroke width,
                 case CENTER_LEFT -> {
-                    pivotX = textWidth - s2;
-                    transY = -transY + s2;
+                    transY = -size / 2.0 - s2;
+                    transX += sFudge;
+
+                    pivotX = textWidth - s2 + 2 * sFudge;
+                    //pivotY = -0.5 * (baselineToBottom + size) + s2;
                 }
                 case CENTER -> {
-                    transY = -transY;
-                    transX = -transX;
+                    transX = tw2 + s2 + sFudge;
+                    transY = -transY - stroke;
                 }
                 case CENTER_RIGHT -> {
-                    pivotX = s2;
-                    transY = -transY;
-                    transX = -transX;
+                    transX = -transX + 0.9 * stroke;
+                    //transX = textWidth + s2;
+                    transY = -transY - stroke;
+
+                    pivotX = mir ? textWidth - s2 : -3.5 * sFudge;
+                    //pivotX = s2;
+                    ///pivotX = -transX;
+                    //pivotY = -transY;
                 }
                 case TOP_LEFT -> {
-                    pivotX = textWidth - s2;
-                    pivotY = -baselineToBottom + s2;// + stroke / 2.0;
-                    transY = -transY;
+                    transX = 1.05 * s2;
+                    transY = -transY - stroke;
+                    //transY = -size - s2;
+
+
+                    pivotX = mir ? 0 : textWidth - s2 + 1.5 * sFudge;
+                    pivotY = -baselineToBottom + s2;
+                    //pivotX = textWidth - s2 + sFudge;
+                    //pivotY = -baselineToBottom + s2 - sFudge;// + stroke / 2.0;
                 }
                 case TOP_CENTER -> {  // Works already.
+                    transX = tw2 + 1.05 * s2;
+                    transY = -transY - stroke;
+
                     pivotY = -baselineToBottom + s2;
-                    transX = -transX;
-                    transY = -transY;
                 }
                 case TOP_RIGHT -> {
-                    pivotX = mir ? textWidth - s2 : s2;
+                    transX = -transX + 0.9 * stroke;
+                    transY = -transY - stroke;
+
+                    pivotX = mir ? textWidth - s2 : -3.5 * sFudge;
                     pivotY = -baselineToBottom + s2;
-                    transX = -transX;
-                    transY = -transY;
                 }
             }
             //transX = 0;
