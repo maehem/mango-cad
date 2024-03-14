@@ -1086,24 +1086,24 @@ public class LibraryElementNode {
             }
             case CENTER_LEFT -> {
                 transX = s2 - sFudge;
-                transY = size / 2.0 - s2;
+                transY = 0.5 * size - s2;
 
                 pivotX = mir ? textWidth : -s2 + sFudge;
-                pivotY = -0.5 * (baselineToBottom + size) + s2;
+                pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
             }
             case CENTER -> {
                 transX = -tw2 + 0.7 * s2;
-                transY = 0.5 * (baselineToBottom + size) - s2;
+                transY = 0.5 * size - s2;
 
                 pivotX = -transX;
-                pivotY = -transY;
+                pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
             }
             case CENTER_RIGHT -> {
                 transX = -textWidth + 0.66 * s2;
-                transY = size / 2.0 - s2;
+                transY = 0.5 * size - s2;
 
                 pivotX = -transX;
-                pivotY = -transY;
+                pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
             }
             case TOP_LEFT -> {
                 transX = 0.7 * s2;
@@ -1189,8 +1189,10 @@ public class LibraryElementNode {
                 }
                 case CENTER -> {
                     transX = tw2 + s2 + sFudge;
-                    transY = 0.5 * (baselineToBottom + size) - s2;
+                    //transY = 0.5 * (baselineToBottom + size) - s2;
                     transY = -transY - stroke;
+
+                    pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
                 }
                 case CENTER_RIGHT -> {
                     transX = -textWidth + 0.66 * s2;
