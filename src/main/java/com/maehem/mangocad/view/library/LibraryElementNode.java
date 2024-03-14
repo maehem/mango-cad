@@ -808,6 +808,8 @@ public class LibraryElementNode {
         Rotation rotation = et.getRotation();
         double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
+        boolean spin = rotation.isSpin();
+
 //        if (mir) {
 //            rot = -rot;
 //        }
@@ -1167,7 +1169,7 @@ public class LibraryElementNode {
             tt.getTransforms().add(mirror);
         }
 
-        if (rot > 90 && rot <= 270) {
+        if (!spin && (rot > 90 && rot <= 270)) {
             //LOGGER.log(Level.SEVERE, "x: {0} y: {1}  taWidth: {2}  rot: {3}", new Object[]{x, y, taWidth, rot});
 
             //Rotate tR = new Rotate(180.0, -taWidth / 2.0, taHeight / 2.0);
