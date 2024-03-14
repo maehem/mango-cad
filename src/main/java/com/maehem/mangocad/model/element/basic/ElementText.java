@@ -154,6 +154,15 @@ public class ElementText extends _AQuantum {
         return rotation;
     }
 
+    /**
+     * Copy the values of source rotation into our rotation.
+     *
+     * @param rotation
+     */
+    public void setRotation(Rotation r) {
+        Rotation.copyValues(r, this.getRotation());
+    }
+
     public double getRot() {
         return rotation.getValue();
     }

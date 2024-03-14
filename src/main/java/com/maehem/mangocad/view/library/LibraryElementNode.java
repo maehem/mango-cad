@@ -1942,7 +1942,7 @@ public class LibraryElementNode {
      * @param maskColor
      * @return JavaFX Node
      */
-    public static Node createThd(PadTHD thd, Color padColor, Color maskColor) {
+    public static Node createThd(PadTHD thd, Color padColor, Color maskColor, Color silkColor) {
         Group g = new Group();
 //        double padDia = thd.getDerivedDiameter();
 //        ImagePattern maskPattern = makeHatch(10, true, maskColor);
@@ -2129,7 +2129,7 @@ public class LibraryElementNode {
         et.setSize(0.5);
         et.setX(thd.getX());
         et.setY(-thd.getY());
-        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGREY));
+        g.getChildren().addAll(LibraryElementNode.createText2(et, silkColor));
 
         return g;
     }
@@ -3033,7 +3033,8 @@ public class LibraryElementNode {
                 n.toBack();
             } else if (e instanceof PadTHD padTHD) {
                 Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                Node n = LibraryElementNode.createThd(padTHD, c, maskColor);
+                Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
+                Node n = LibraryElementNode.createThd(padTHD, c, maskColor, silkColor);
                 p.getChildren().add(n);
                 n.toBack();
             } else if (e instanceof Wire wire) {
@@ -3207,24 +3208,27 @@ public class LibraryElementNode {
                             continue;
                         }
 
-                        proxyText.setX(attr.getX() - el.getX());
-                        proxyText.setY(attr.getY() - el.getY());
+                        //proxyText.setX(attr.getX() - el.getX());
+                        //proxyText.setY(attr.getY() - el.getY());
+                        proxyText.setX(attr.getX());
+                        proxyText.setY(attr.getY());
                         proxyText.setSize(attr.getSize());
                         proxyText.setAlign(attr.getAlign());
                         proxyText.setRatio(attr.getRatio());
+                        proxyText.setRotation(attr.getRotation());
 
-                        proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
+                        //proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
                         //Node txtNode = createText(proxyText, null, c, null, false);
-                        Node txtNode = createText(proxyText, null, c, el.getRotation(), false);
+                        List<Shape> txtNode = createText2(proxyText, null, c, el.getRotation(), false);
 
                         // Not sure why, but this needs to be rotated.
                         // but I think the parent applies the same rotation
                         // and other nodes don't seem to need this. Curious...
                         // update: supplied rotation to the createText(parentRotation) and it does the right thing now.
                         //txtNode.getTransforms().add(new Rotate(-el.getRot()));
-                        txtNode.setLayoutX(el.getX());
-                        txtNode.setLayoutY(-el.getY());
-                        list.add(txtNode);
+                 //       txtNode.setLayoutX(el.getX());
+                        //       txtNode.setLayoutY(-el.getY());
+                        list.addAll(txtNode);
                     }
                 }
 //            } else if (e instanceof ElementRectangle elementRectangle) {

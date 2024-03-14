@@ -43,7 +43,7 @@ public class Attribute extends _AQuantum {
     private String value;
     private double size;
     private final Rotation rotation = new Rotation();  // rot
-    private int ratio;
+    private int ratio = 8;
     private String display = "value";
     private boolean constant = false;
     private TextAlign align = TextAlign.BOTTOM_LEFT;
