@@ -808,6 +808,9 @@ public class LibraryElementNode {
         Rotation rotation = et.getRotation();
         double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
+//        if (mir) {
+//            rot = -rot;
+//        }
 
         double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
         boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
@@ -831,7 +834,6 @@ public class LibraryElementNode {
         fontSize *= FONT_SCALE; // Font specific.
 
         //LOGGER.log(Level.SEVERE, "Font Size: " + fontSize);
-
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
 
@@ -897,7 +899,6 @@ public class LibraryElementNode {
         double distFactor = 0.802 - et.getRatio() * 0.01 * fontSizeMult;
 
         //double ratDiff = 1.0 - et.getRatio() * 0.01;
-
         // Almost there!
         // double lineSpaceFx = size * (et.getDistance() * 0.01 - size * (fontSizeMult - 1));
         //double lineSpaceFx = size * (et.getDistance() * 0.01 - size * 1.266);
@@ -911,7 +912,6 @@ public class LibraryElementNode {
 //                    distFactor, ratDiff
 //                }
 //        );
-
         tt.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
         //tt.setLineSpacing(-1.649);
         //tt.setLineSpacing(-0.66); // 1%
@@ -939,7 +939,6 @@ public class LibraryElementNode {
         }
 
         //textWidth += stroke;
-
         double taWidth = textWidth + borderW * 2.0;
         //double taHeight = size + borderW * 2.0;
 
@@ -955,15 +954,12 @@ public class LibraryElementNode {
 //                "requested size: {0}  lineHeight: {1} textHeight: {2}  taHeight: {3}",
 //                new Object[]{et.getSize(), lineHeight, textHeight, taHeight}
 //        );
-
         // fontAsc, borderW and StrokeWidth can effect where the text lands by a few pixels.
         //tt.setLayoutY(fontAsc + borderW + tt.getStrokeWidth() / 2.0);
 //        tt.setLayoutY(taHeight - tt.getStrokeWidth() / 2.0); // + borderW);//+ tt.getStrokeWidth() / 2.0);
 //        tt.setLayoutX(tt.getStrokeWidth() / 2.0);
         //Translate ttT = new Translate(tt.getStrokeWidth() / 2.0, taHeight - tt.getStrokeWidth() / 2.0);
-
         //tt.getTransforms().add(ttT);
-
         // Flip text 180 for certain rotations.
         // This won't work at all!
 //        if (rot == 180
@@ -977,69 +973,105 @@ public class LibraryElementNode {
         tt.setLayoutX(x);
         tt.setLayoutY(-y);
 
+        double s2 = stroke / 2.0;
+
+        double tw2 = textWidth / 2.0;
+        double sh2 = stackHeight / 2.0;
+
         // Debug Box around tt
         Rectangle debugBox = new Rectangle(textWidth, stackHeight);
         debugBox.setStroke(Color.MAGENTA);
         debugBox.setStrokeWidth(0.005);
         debugBox.setFill(null);
+//        if (mir) {
+//            Scale sc = new Scale(-1, -1);
+//            debugBox.getTransforms().add(sc);
+//
+//        }
 
+        double rotDB = -rot;
+        if (mir) {
+            rotDB = rot;
+        }
         Rotate dr = null;
+        //LOGGER.log(Level.SEVERE, "Align: " + et.getAlign().name());
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
                 debugBox.setLayoutX(x); // BL
                 debugBox.setLayoutY(-y - stackHeight);  // BL
+
                 dr = new Rotate(-rot, 0, stackHeight); // BL
             }
             case BOTTOM_CENTER -> {
-                debugBox.setLayoutX(x - textWidth / 2.0); // BC
+                debugBox.setLayoutX(mir ? x + tw2 : x - tw2); // BC
                 debugBox.setLayoutY(-y - stackHeight);  // BC
-                dr = new Rotate(-rot, textWidth / 2.0, stackHeight); // BC
+                dr = new Rotate(-rot, tw2, stackHeight); // BC
             }
             case BOTTOM_RIGHT -> {
-                debugBox.setLayoutX(x - textWidth); // BR
+                debugBox.setLayoutX(x); // BR
                 debugBox.setLayoutY(-y - stackHeight);  // BR
-                dr = new Rotate(-rot, textWidth, stackHeight); // BR
+                //if (!mir) {
+                    Scale scc = new Scale(-1.0, 1.0);
+                    debugBox.getTransforms().add(scc);
+                //}
+
+                dr = new Rotate(rot, 0, stackHeight); // BR
             }
             case CENTER_LEFT -> {
                 debugBox.setLayoutX(x); // CL
-                debugBox.setLayoutY(-y - 0.5 * stackHeight);  // CL
-                dr = new Rotate(-rot, 0, 0.5 * stackHeight); // CL
+                debugBox.setLayoutY(-y - sh2);  // CL
+                dr = new Rotate(-rot, 0, sh2); // CL
             }
             case CENTER -> {
-                debugBox.setLayoutX(x - textWidth / 2.0); // CC
-                debugBox.setLayoutY(-y - 0.5 * stackHeight);  // CC
-                dr = new Rotate(-rot, textWidth / 2.0, 0.5 * stackHeight); // CC
+                debugBox.setLayoutX(mir ? x + tw2 : x - tw2); // CC
+                debugBox.setLayoutY(-y - sh2);  // CC
+                dr = new Rotate(-rot, textWidth / 2.0, sh2); // CC
             }
             case CENTER_RIGHT -> {
-                debugBox.setLayoutX(x - textWidth); // CR
-                debugBox.setLayoutY(-y - 0.5 * stackHeight);  // CR
-                dr = new Rotate(-rot, textWidth, 0.5 * stackHeight); // CR
+                //debugBox.setLayoutX(x - textWidth); // CR
+                debugBox.setLayoutX(x); // CR
+                debugBox.setLayoutY(-y - sh2);  // CR
+                //if (!mir) {
+                    Scale scc = new Scale(-1.0, 1.0);
+                    debugBox.getTransforms().add(scc);
+                //}
+                dr = new Rotate(rot, 0, sh2); // CR
             }
             case TOP_LEFT -> {
                 debugBox.setLayoutX(x); // TL
                 debugBox.setLayoutY(-y);  // TL
+
                 dr = new Rotate(-rot, 0, 0); // TL
             }
             case TOP_CENTER -> {
-                debugBox.setLayoutX(x - textWidth / 2.0); // BC
+                debugBox.setLayoutX(mir ? x + tw2 : x - tw2); // BC
                 debugBox.setLayoutY(-y);  // BC
-                dr = new Rotate(-rot, textWidth / 2.0, 0); // BC
+
+                dr = new Rotate(-rot, tw2, 0); // BC
             }
             case TOP_RIGHT -> {
-                debugBox.setLayoutX(x - textWidth); // TR
+                debugBox.setLayoutX(x); // TR
                 debugBox.setLayoutY(-y);  // TR
-                dr = new Rotate(-rot, textWidth, 0); // TR
+                //if (!mir) {
+                    Scale scc = new Scale(-1.0, 1.0);
+                    debugBox.getTransforms().add(scc);
+                //}
+
+                dr = new Rotate(rot, 0, 0); // TR
             }
 
         }
+
+        if (mir) {
+            Scale scc = new Scale(-1.0, 1.0);
+            debugBox.getTransforms().add(scc);
+        }
+
         if (dr != null) {
             debugBox.getTransforms().add(dr);
         }
         list.add(debugBox);
 
-        double s2 = stroke / 2.0;
-
-        double tw2 = textWidth / 2.0;
         double pivotX = 0;
         double pivotY = 0; // = stroke / 2.0;
         double transX = 0; // = s2 - sFudge;
@@ -1081,14 +1113,16 @@ public class LibraryElementNode {
                 transX = -textWidth + s2 - sFudge;
                 transY = -s2;
 
-                pivotX = mir ? 0 : textWidth - s2 + sFudge;
+                //pivotX = mir ? 0 : textWidth - s2 + sFudge;
+                pivotX = -transX;
                 pivotY = -baselineToBottom + s2;
             }
             case CENTER_LEFT -> {
                 transX = s2 - sFudge;
                 transY = 0.5 * size - s2;
 
-                pivotX = mir ? textWidth : -s2 + sFudge;
+                //pivotX = mir ? textWidth : -s2 + sFudge;
+                pivotX = -s2 + sFudge;
                 pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
             }
             case CENTER -> {
@@ -1109,17 +1143,17 @@ public class LibraryElementNode {
                 transX = 0.7 * s2;
                 transY = size - s2;
 
-                pivotX = mir ? textWidth : -transX;
+                pivotX = -transX;
                 pivotY = -transY;
             }
             case TOP_CENTER -> {
-                transX = -textWidth / 2.0 + 0.70 * s2;
+                transX = -tw2 + 0.70 * s2;
                 transY = size - s2;
 
                 pivotX = -transX;
                 pivotY = -transY;
             }
-            case TOP_RIGHT -> {
+            case TOP_RIGHT -> { // MIR works
                 transX = -textWidth + 0.66 * s2;
                 transY = size - s2;
 
@@ -1134,7 +1168,7 @@ public class LibraryElementNode {
         }
 
         if (rot > 90 && rot <= 270) {
-            LOGGER.log(Level.SEVERE, "x: {0} y: {1}  taWidth: {2}  rot: {3}", new Object[]{x, y, taWidth, rot});
+            //LOGGER.log(Level.SEVERE, "x: {0} y: {1}  taWidth: {2}  rot: {3}", new Object[]{x, y, taWidth, rot});
 
             //Rotate tR = new Rotate(180.0, -taWidth / 2.0, taHeight / 2.0);
             // Rotate tR = new Rotate(180, -2.4, -1.7);//  4.8 (2 + 2.8 ) ( x + tWidth/2.0),  3.4 ( 2 + 1.4 )
@@ -1148,35 +1182,36 @@ public class LibraryElementNode {
             // linecCount > 1   y == stackHeight/2.0 -size
             Rotate tR = new Rotate(180,
                     textWidth / 2.0 + sFudge, // + s2,
-                    lineCount > 1 ? (stackHeight / 2.0 - size) : -size / 2.0
+                    lineCount > 1 ? (sh2 - size) : -size / 2.0
             );
-            Rotate tR2 = new Rotate(180, -2.0, 2.7);
-            if (!mir) {
+            //Rotate tR2 = new Rotate(180, -2.0, 2.7);
+            //if (!mir) {
                 tt.getTransforms().add(tR);
-            }
+            //}
 
             //Translate t = new Translate(taWidth, -size);
             //tt.getTransforms().add(t);
             //tt.setRotate(rot + 180.0);
             switch (et.getAlign()) {
                 case BOTTOM_LEFT -> {
+                    transX = s2 + sFudge;
+                    transY = -s2;
                     //
                     // WORKS
                     pivotX = textWidth - s2 + sFudge;
                     pivotY = -size + s2;
 
-                    transX = s2 + sFudge;
-                    transY = -s2;
                 }
                 case BOTTOM_CENTER -> {
+                    //transX = -tw2 + 0.35 * stroke;
+                    transX = mir ? -transX + 0.8 * stroke : tw2 + s2;
                     // WORKS
                     pivotY = -size + s2;
-                    transX = tw2 + s2;
                 }
                 case BOTTOM_RIGHT -> {
                     transX = textWidth + s2;
                     // WORKS
-                    pivotX = mir ? textWidth - s2 : -3 * sFudge;
+                    pivotX = -3 * sFudge;
                     pivotY = -size + s2;
                 }
                 // TODO: CENTER_* need to translate upward by approx. the stroke width,
@@ -1188,7 +1223,7 @@ public class LibraryElementNode {
                     //pivotY = -0.5 * (baselineToBottom + size) + s2;
                 }
                 case CENTER -> {
-                    transX = tw2 + s2 + sFudge;
+                    transX = mir ? -transX + 0.8 * stroke : tw2 + s2 + sFudge;
                     //transY = 0.5 * (baselineToBottom + size) - s2;
                     transY = -transY - stroke;
 
@@ -1202,7 +1237,7 @@ public class LibraryElementNode {
                     transY = size / 2.0 - s2;
                     transY = -transY - stroke;
 
-                    pivotX = mir ? textWidth - s2 : -3.5 * sFudge;
+                    pivotX = /*mir ? textWidth - s2 :*/ -3.5 * sFudge;
                     //pivotX = s2;
                     ///pivotX = -transX;
                     //pivotY = -transY;
@@ -1213,14 +1248,14 @@ public class LibraryElementNode {
                     transY = -transY - stroke;
                     //transY = -size - s2;
 
+                    pivotX = textWidth - s2 + 1.5 * sFudge;
 
-                    pivotX = mir ? 0 : textWidth - s2 + 1.5 * sFudge;
                     pivotY = -baselineToBottom + s2;
                     //pivotX = textWidth - s2 + sFudge;
                     //pivotY = -baselineToBottom + s2 - sFudge;// + stroke / 2.0;
                 }
                 case TOP_CENTER -> {  // Works already.
-                    transX = tw2 + 1.05 * s2;
+                    transX = mir ? -transX + 0.8 * stroke : tw2 + 1.05 * s2;
                     transY = size - s2;
                     transY = -transY - stroke;
 
@@ -1232,7 +1267,7 @@ public class LibraryElementNode {
                     transY = size - s2;
                     transY = -transY - stroke;
 
-                    pivotX = mir ? textWidth - s2 : -3.5 * sFudge;
+                    pivotX = -3.5 * sFudge;
                     pivotY = -baselineToBottom + s2;
                 }
             }
@@ -1245,20 +1280,17 @@ public class LibraryElementNode {
             //    pivotY += -size + stroke / 2.0;
             //transX -= x;
             //transY -= y;
-
             //transX -= -textWidth;
             //transY += size;
             // Must change pivot of future rotations as we have flipped the text.
             //Rotate testR = new Rotate(-rot, taWidth, -size);
             //tt.getTransforms().add(testR);
-
         }
 
         //tt.setX(x - pivotX);
         //tt.setY(-y + pivotY);
         //tt.setLayoutX(x);
         //tt.setLayoutY(-y);
-
         Translate tranG = new Translate(transX, transY);
 
 //        // Dot at pivot.
@@ -1319,7 +1351,6 @@ public class LibraryElementNode {
 //            list.add(border);
 //
 //        }
-
         if (showCross) {
             double chSize = 0.5; // Crosshairs size
             double chStroke = 0.01;
@@ -2292,7 +2323,6 @@ public class LibraryElementNode {
                 //mask.setFill(color);
                 //mask.setLayoutX(thd.getX());
                 //mask.setLayoutY(-thd.getY());
-
             }
         }
 
