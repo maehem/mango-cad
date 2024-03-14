@@ -47,6 +47,7 @@
                 <configuration>
                     <mainClass>com.maehem.mangocad/com.maehem.mangocad.view.ControlPanel</mainClass>
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.ScaledItemTest</mainClass-->
+                    <!--<mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.TextTester</mainClass> -->
                 </configuration>
                 <executions>
                     <execution>
