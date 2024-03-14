@@ -19,11 +19,6 @@ package com.maehem.mangocad.tools.widgets;
 import java.text.DecimalFormat;
 import javafx.geometry.Insets;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
@@ -41,17 +36,19 @@ public class SliderWidget extends Widget {
     private final Text valueText = new Text("999");
 
     public SliderWidget(String title, double min, double max, double val, WidgetListener listener) {
+        super(title);
+
         this.listener = listener;
 
-        setId(title);
+        //setId(title);
         //setMaxWidth(WIDGET_WIDTH);
-        setBorder(new Border(new BorderStroke(
-                Color.GRAY,
-                BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY,
-                new BorderWidths(1),
-                Insets.EMPTY
-        )));
+//        setBorder(new Border(new BorderStroke(
+//                Color.GRAY,
+//                BorderStrokeStyle.SOLID,
+//                CornerRadii.EMPTY,
+//                new BorderWidths(1),
+//                Insets.EMPTY
+//        )));
 
         slider = new Slider(min, max, val);
         slider.setId(title);
@@ -67,9 +64,9 @@ public class SliderWidget extends Widget {
         HBox.setHgrow(slider, Priority.ALWAYS);
         HBox.setMargin(slider, new Insets(1, 4, 1, 8));
 
-        Text titleText = new Text(title);
-        titleText.setFont(Font.font(20.0));
-        titleText.setFill(Color.GREY);
+//        Text titleText = new Text(title);
+//        titleText.setFont(Font.font(20.0));
+//        titleText.setFill(Color.GREY);
 
         valueText.setFont(Font.font(12.0));
         valueText.setFill(Color.GREY);
@@ -77,7 +74,7 @@ public class SliderWidget extends Widget {
 
         HBox valueZone = new HBox(valueText, slider);
 
-        getChildren().addAll(titleText, valueZone);
+        getChildren().addAll(/*titleText, */valueZone);
 
         slider.valueProperty().addListener((ov, n, n2) -> {
             DecimalFormat df = new DecimalFormat("0.00");

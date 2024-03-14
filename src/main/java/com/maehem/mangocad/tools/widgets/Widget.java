@@ -16,13 +16,41 @@
  */
 package com.maehem.mangocad.tools.widgets;
 
+import javafx.geometry.Insets;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public abstract class Widget extends VBox {
+
+    public Widget(String title) {
+        setId(title);
+
+        //setMaxWidth(WIDGET_WIDTH);
+        setBorder(new Border(new BorderStroke(
+                Color.GRAY,
+                BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY,
+                new BorderWidths(1),
+                Insets.EMPTY
+        )));
+
+        Text titleText = new Text(title);
+        titleText.setFont(Font.font(20.0));
+        titleText.setFill(Color.GREY);
+
+        getChildren().add(titleText);
+    }
 
     public abstract void updateValue(double val);
 

@@ -16,59 +16,53 @@
  */
 package com.maehem.mangocad.tools.widgets;
 
+import com.maehem.mangocad.model.element.enums.TextAlign;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.VBox;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextWidget extends Widget {
+public class ListSelectWidget extends Widget {
 
-    TextField tf;
+    private final WidgetListener listener;
 
-    public TextWidget(String title, String val, WidgetListener listener) {
+    ComboBox<String> alignSelector;
+
+    public ListSelectWidget(String title, WidgetListener listener) {
         super(title);
 
-        //setId(title);
+        this.listener = listener;
 
-        //setMaxWidth(WIDGET_WIDTH);
-//        setBorder(new Border(new BorderStroke(
-//                Color.GRAY,
-//                BorderStrokeStyle.SOLID,
-//                CornerRadii.EMPTY,
-//                new BorderWidths(1),
-//                Insets.EMPTY
-//        )));
+        alignSelector = new ComboBox<String>(FXCollections.observableArrayList(TextAlign.asStringList()));
+        alignSelector.getSelectionModel().selectFirst();
 
-        tf = new TextField(val);
+        VBox.setMargin(alignSelector, new Insets(1, 4, 1, 40));
 
-        HBox.setHgrow(tf, Priority.ALWAYS);
-        HBox.setMargin(tf, new Insets(1, 4, 1, 8));
+        getChildren().add(alignSelector);
 
-//        Text titleText = new Text(title);
-//        titleText.setFont(Font.font(20.0));
-//        titleText.setFill(Color.GREY);
-
-        HBox valueZone = new HBox(tf);
-
-        getChildren().addAll(/*titleText, */valueZone);
+        alignSelector.getSelectionModel().selectedItemProperty().addListener((o) -> {
+            listener.widgetChanged(this);
+        });
     }
 
-    public void setText(String text) {
-        tf.setText(text);
+    public void setValue(TextAlign align) {
+
+    }
+
+    public String getValue() {
+        return alignSelector.getSelectionModel().getSelectedItem();
     }
 
     @Override
     public void updateValue(double val) {
-        tf.setText(String.valueOf(val));
     }
 
     @Override
     public void updateValue(String val) {
-        tf.setText(val);
     }
 
 }

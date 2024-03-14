@@ -147,27 +147,27 @@ public class TextTester extends Application {
         // GRID
         for (int i = 0; i < 11; i++) {
             Line hLine = new Line(-7, i - 5, 7, i - 5);
-            hLine.setStroke(new Color(1.0, 1.0, 1.0, 0.3));
+            hLine.setStroke(new Color(1.0, 1.0, 1.0, 0.2));
             hLine.setStrokeWidth(0.01);
             hLine.setStrokeType(StrokeType.CENTERED);
             contentArea.getChildren().add(hLine);
         }
         for (int i = 0; i < 11; i++) {
             Line vLine = new Line(i - 5, -5, i - 5, 5);
-            vLine.setStroke(new Color(1.0, 1.0, 1.0, 0.3));
+            vLine.setStroke(new Color(1.0, 1.0, 1.0, 0.2));
             vLine.setStrokeWidth(0.01);
             vLine.setStrokeType(StrokeType.CENTERED);
             contentArea.getChildren().add(vLine);
         }
 
         Line hLine = new Line(-7, -et.getY(), 7, -et.getY());
-        hLine.setStroke(Color.DARKBLUE);
-        hLine.setStrokeWidth(0.01);
+        hLine.setStroke(new Color(0.2, 0.2, 1.0, 0.6));
+        hLine.setStrokeWidth(0.02);
         hLine.setStrokeType(StrokeType.CENTERED);
 
         Line vLine = new Line(et.getX(), -5, et.getX(), 5);
-        vLine.setStroke(Color.DARKBLUE);
-        vLine.setStrokeWidth(0.01);
+        vLine.setStroke(new Color(0.2, 0.2, 1.0, 0.6));
+        vLine.setStrokeWidth(0.02);
         vLine.setStrokeType(StrokeType.CENTERED);
 
         contentArea.getChildren().addAll(hLine, vLine);

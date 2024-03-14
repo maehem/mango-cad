@@ -17,6 +17,7 @@
 package com.maehem.mangocad.tools;
 
 import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.tools.widgets.ListSelectWidget;
 import com.maehem.mangocad.tools.widgets.SliderWidget;
 import com.maehem.mangocad.tools.widgets.TextWidget;
 import com.maehem.mangocad.tools.widgets.Widget;
@@ -36,6 +37,7 @@ public class TextPropertiesList extends VBox implements WidgetListener {
     private final SliderWidget posXWidget = new SliderWidget("X", -5, 5, 0, this);
     private final SliderWidget posYWidget = new SliderWidget("Y", -5, 5, 0, this);
     private final SliderWidget rotWidget = new SliderWidget("Rotate", 0, 360, 0, this);
+    private final ListSelectWidget alignWidget = new ListSelectWidget("Alignment", this);
 
     public TextPropertiesList(TextTester parent, ElementText et) {
         this.parent = parent;
@@ -47,6 +49,7 @@ public class TextPropertiesList extends VBox implements WidgetListener {
         getChildren().add(posXWidget);
         getChildren().add(posYWidget);
         getChildren().add(rotWidget);
+        getChildren().add(alignWidget);
 
         updateWidget();
     }
@@ -73,6 +76,10 @@ public class TextPropertiesList extends VBox implements WidgetListener {
             case "Rotate" -> {
                 SliderWidget s = (SliderWidget) widget;
                 et.getRotation().setValue(s.getSlider().getValue());
+            }
+            case "Alignment" -> {
+                ListSelectWidget s = (ListSelectWidget) widget;
+                et.setAlign(s.getValue());
             }
         }
 
