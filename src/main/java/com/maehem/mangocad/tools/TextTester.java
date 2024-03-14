@@ -52,7 +52,8 @@ public class TextTester extends Application {
     private final PreviewContent previewContentPane = new PreviewContent();
     private final TextPropertiesList propertiesList = new TextPropertiesList(this, et);
 
-    private final String textValue = "HridH\nXXXXX\nHHHHH";
+    //private final String textValue = "HridH\nXXXXX\nHHHHH";
+    private final String textValue = "HridH";
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -113,8 +114,10 @@ public class TextTester extends Application {
         et.setSize(1.0);
         et.setRatio(8);
         et.setLayer(21);
-        et.setAlign(TextAlign.TOP_RIGHT);
+        et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
+        et.getRotation().setMirror(true);
+        et.getRotation().setSpin(true);
 
         updateContent();
 
