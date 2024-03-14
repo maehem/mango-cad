@@ -830,7 +830,7 @@ public class LibraryElementNode {
         fontSize *= ((100 - et.getRatio()) * 0.01);
         fontSize *= FONT_SCALE; // Font specific.
 
-        LOGGER.log(Level.SEVERE, "Font Size: " + fontSize);
+        //LOGGER.log(Level.SEVERE, "Font Size: " + fontSize);
 
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
@@ -896,21 +896,21 @@ public class LibraryElementNode {
         //double distFactor = 0.798;   //  Ratio =  1
         double distFactor = 0.802 - et.getRatio() * 0.01 * fontSizeMult;
 
-        double ratDiff = 1.0 - et.getRatio() * 0.01;
+        //double ratDiff = 1.0 - et.getRatio() * 0.01;
 
         // Almost there!
         // double lineSpaceFx = size * (et.getDistance() * 0.01 - size * (fontSizeMult - 1));
         //double lineSpaceFx = size * (et.getDistance() * 0.01 - size * 1.266);
         double lineSpaceFx = size * (et.getDistance() * 0.01 - distFactor);
 
-        LOGGER.log(Level.SEVERE,
-                "Line Spacing: dist: {0}  base:{1}  fx: {2}  font-1: {3}  lineHeight: {4}  linesSp: {5} dFact: {6}  ratDiff: {7}",
-                new Object[]{et.getDistance(),
-                    lineSpace, lineSpaceFx,
-                    (fontSize - 1.0), lineHeight, lineSpace,
-                    distFactor, ratDiff
-                }
-        );
+//        LOGGER.log(Level.SEVERE,
+//                "Line Spacing: dist: {0}  base:{1}  fx: {2}  font-1: {3}  lineHeight: {4}  linesSp: {5} dFact: {6}  ratDiff: {7}",
+//                new Object[]{et.getDistance(),
+//                    lineSpace, lineSpaceFx,
+//                    (fontSize - 1.0), lineHeight, lineSpace,
+//                    distFactor, ratDiff
+//                }
+//        );
 
         tt.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
         //tt.setLineSpacing(-1.649);
@@ -946,15 +946,15 @@ public class LibraryElementNode {
         // Full text height minus one line of text, minus extra line space
         double taHeight = textHeight - size + borderW * 2.0;
 
-        LOGGER.log(Level.SEVERE, "textWidth: {0}  textHeight: {1}", new Object[]{textWidth, textHeight});
+        //LOGGER.log(Level.SEVERE, "textWidth: {0}  textHeight: {1}", new Object[]{textWidth, textHeight});
         double boxWidth = taWidth;
         //double boxHeight = lineHeight + borderW * 2.0;
         double boxHeight = taHeight;
 
-        LOGGER.log(Level.SEVERE,
-                "requested size: {0}  lineHeight: {1} textHeight: {2}  taHeight: {3}",
-                new Object[]{et.getSize(), lineHeight, textHeight, taHeight}
-        );
+//        LOGGER.log(Level.SEVERE,
+//                "requested size: {0}  lineHeight: {1} textHeight: {2}  taHeight: {3}",
+//                new Object[]{et.getSize(), lineHeight, textHeight, taHeight}
+//        );
 
         // fontAsc, borderW and StrokeWidth can effect where the text lands by a few pixels.
         //tt.setLayoutY(fontAsc + borderW + tt.getStrokeWidth() / 2.0);
@@ -987,33 +987,33 @@ public class LibraryElementNode {
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
                 debugBox.setLayoutX(x); // BL
-                debugBox.setLayoutY(-y - size);  // BL
-                dr = new Rotate(-rot, 0, size); // BL
+                debugBox.setLayoutY(-y - stackHeight);  // BL
+                dr = new Rotate(-rot, 0, stackHeight); // BL
             }
             case BOTTOM_CENTER -> {
                 debugBox.setLayoutX(x - textWidth / 2.0); // BC
-                debugBox.setLayoutY(-y - size);  // BC
-                dr = new Rotate(-rot, textWidth / 2.0, size); // BC
+                debugBox.setLayoutY(-y - stackHeight);  // BC
+                dr = new Rotate(-rot, textWidth / 2.0, stackHeight); // BC
             }
             case BOTTOM_RIGHT -> {
                 debugBox.setLayoutX(x - textWidth); // BR
-                debugBox.setLayoutY(-y - size);  // BR
-                dr = new Rotate(-rot, textWidth, size); // BR
+                debugBox.setLayoutY(-y - stackHeight);  // BR
+                dr = new Rotate(-rot, textWidth, stackHeight); // BR
             }
             case CENTER_LEFT -> {
                 debugBox.setLayoutX(x); // CL
-                debugBox.setLayoutY(-y - size / 2.0);  // CL
-                dr = new Rotate(-rot, 0, 0.5 * (baselineToBottom + size)); // CL
+                debugBox.setLayoutY(-y - 0.5 * stackHeight);  // CL
+                dr = new Rotate(-rot, 0, 0.5 * stackHeight); // CL
             }
             case CENTER -> {
                 debugBox.setLayoutX(x - textWidth / 2.0); // CC
-                debugBox.setLayoutY(-y - size / 2.0);  // CC
-                dr = new Rotate(-rot, textWidth / 2.0, 0.5 * (baselineToBottom + size)); // CC
+                debugBox.setLayoutY(-y - 0.5 * stackHeight);  // CC
+                dr = new Rotate(-rot, textWidth / 2.0, 0.5 * stackHeight); // CC
             }
             case CENTER_RIGHT -> {
                 debugBox.setLayoutX(x - textWidth); // CR
-                debugBox.setLayoutY(-y - size / 2.0);  // CR
-                dr = new Rotate(-rot, textWidth, 0.5 * (baselineToBottom + size)); // CR
+                debugBox.setLayoutY(-y - 0.5 * stackHeight);  // CR
+                dr = new Rotate(-rot, textWidth, 0.5 * stackHeight); // CR
             }
             case TOP_LEFT -> {
                 debugBox.setLayoutX(x); // TL
