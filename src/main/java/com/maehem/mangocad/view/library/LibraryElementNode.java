@@ -678,34 +678,56 @@ public class LibraryElementNode {
         double size = le.getSize();
         double length = le.getValue().length();
 
-        Text t = new Text(le.getValue());
-        double fontSizeMult = 0.72272; // INCH to Point ratio
+        double fontSizeMult = 0.7272; // INCH to Point ratio
         double fontSize = le.getSize() / fontSizeMult;
         fontSize *= FONT_SCALE;
-
-        //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
-        t.setFont(font);
-        labelGroup.getChildren().add(t);
-        t.setFill(color);
-        double height = t.getBoundsInLocal().getHeight();
-        double width = t.getBoundsInLocal().getWidth();
-        t.setLayoutX(le.getX() + le.getSize());
-        t.setLayoutY(-le.getY() + height * 0.25);
 
-        if ((le.getRot() == 0 && le.getRotation().isMirror())
-                || (le.getRot() == 180 && !le.getRotation().isMirror())
-                || le.getRot() == 270) { // Flip Text
-            Rotate r = new Rotate(180, width / 2.0, -height * 0.25);
-            t.getTransforms().add(r);
+
+        ElementText et = new ElementText();
+        if (le.isXref()) {
+            et.setX(x + size * 1.1);
+            et.setAlign(CENTER_LEFT);
+        } else {
+            et.setX(x);
+            et.setAlign(BOTTOM_LEFT);
         }
+        et.setY(-y);
+        et.setLayer(95);
+        et.setSize(fontSize);
+        et.setValue(le.getValue());
+
+        // TODO: Need to correct for parent rotation
+        labelGroup.getChildren().addAll(createText2(et, color));//, le.getRotation()));
+        double textWidth = labelGroup.getChildren().getFirst().getBoundsInLocal().getWidth();
+
+//        Text t = new Text(le.getValue());
+//        //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
+//        t.setFont(font);
+//        t.setStroke(color);
+//        t.setStrokeWidth(fontSize * 0.08);
+//        t.setFill(color);
+
+//        double height = t.getBoundsInLocal().getHeight();
+//        double width = t.getBoundsInLocal().getWidth();
+//        t.setLayoutX(le.getX() + le.getSize());
+//        t.setLayoutY(-le.getY() + height * 0.25);
+//
+//        labelGroup.getChildren().add(t);
+
+//        if ((le.getRot() == 0 && le.getRotation().isMirror())
+//                || (le.getRot() == 180 && !le.getRotation().isMirror())
+//                || le.getRot() == 270) { // Flip Text
+//            Rotate r = new Rotate(180, width / 2.0, -height * 0.25);
+//            t.getTransforms().add(r);
+//        }
 
         if (le.isXref()) {
             Polygon outline = new Polygon(
                     x, y,
                     x + size, y + size,
-                    x + ((length + 1) * size), y + size,
-                    x + ((length + 1) * size), y - size,
+                    x + textWidth + size, y + size,
+                    x + textWidth + size, y - size,
                     x + size, y - size
             );
             outline.setStroke(color);
@@ -788,7 +810,8 @@ public class LibraryElementNode {
     }
 
     /**
-     * Re-implementation of createText, but items are shapes.
+     * Re-implementation of createText, but items are shapes. Element at index 0
+     * is always the text.
      *
      * @param et
      * @param altText overrides text content of et element.
