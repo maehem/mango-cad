@@ -810,10 +810,6 @@ public class LibraryElementNode {
         boolean mir = rotation.isMirror();
         boolean spin = rotation.isSpin();
 
-//        if (mir) {
-//            rot = -rot;
-//        }
-
         double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
         boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
 
@@ -839,8 +835,16 @@ public class LibraryElementNode {
         //String fontPath = "/fonts/Source_Code_Pro/static/SourceCodePro-Bold.ttf";
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
 
+        String text = altText != null ? altText : et.getValue();
+        boolean barOver = false;
+        // Replace exclamation with bar over text.
+        if (text.startsWith("!")) {
+            text = text.substring(1);
+            barOver = true;
+        }
+
         // Text
-        Text tt = new Text(altText != null ? altText : et.getValue());
+        Text tt = new Text(text);
         tt.setFont(font);
         tt.setFill(color);
         tt.setStrokeWidth(stroke);
@@ -857,7 +861,7 @@ public class LibraryElementNode {
         // Use known example text to deterimine line height.
         Text exLine = new Text("EXAMPLE");
         exLine.setFont(font);
-        double lineHeight = exLine.getBoundsInLocal().getHeight();
+        //double lineHeight = exLine.getBoundsInLocal().getHeight();
 
         //double fontAsc = lineHeight * FONT_ASC_PCT; // Font ascends this much.
         //double fontAsc = et.getSize();
@@ -980,6 +984,10 @@ public class LibraryElementNode {
         double tw2 = textWidth / 2.0;
         double sh2 = stackHeight / 2.0;
 
+        if (barOver) {
+            barOver(list, x, y, et.getRotation(), stroke, textWidth, size, et.getAlign(), color);
+        }
+
         // Debug Box around tt
         Rectangle debugBox = new Rectangle(textWidth, stackHeight);
         debugBox.setStroke(Color.MAGENTA);
@@ -1013,8 +1021,8 @@ public class LibraryElementNode {
                 debugBox.setLayoutX(x); // BR
                 debugBox.setLayoutY(-y - stackHeight);  // BR
                 //if (!mir) {
-                    Scale scc = new Scale(-1.0, 1.0);
-                    debugBox.getTransforms().add(scc);
+                Scale scc = new Scale(-1.0, 1.0);
+                debugBox.getTransforms().add(scc);
                 //}
 
                 dr = new Rotate(rot, 0, stackHeight); // BR
@@ -1034,8 +1042,8 @@ public class LibraryElementNode {
                 debugBox.setLayoutX(x); // CR
                 debugBox.setLayoutY(-y - sh2);  // CR
                 //if (!mir) {
-                    Scale scc = new Scale(-1.0, 1.0);
-                    debugBox.getTransforms().add(scc);
+                Scale scc = new Scale(-1.0, 1.0);
+                debugBox.getTransforms().add(scc);
                 //}
                 dr = new Rotate(rot, 0, sh2); // CR
             }
@@ -1055,8 +1063,8 @@ public class LibraryElementNode {
                 debugBox.setLayoutX(x); // TR
                 debugBox.setLayoutY(-y);  // TR
                 //if (!mir) {
-                    Scale scc = new Scale(-1.0, 1.0);
-                    debugBox.getTransforms().add(scc);
+                Scale scc = new Scale(-1.0, 1.0);
+                debugBox.getTransforms().add(scc);
                 //}
 
                 dr = new Rotate(rot, 0, 0); // TR
@@ -1188,7 +1196,7 @@ public class LibraryElementNode {
             );
             //Rotate tR2 = new Rotate(180, -2.0, 2.7);
             //if (!mir) {
-                tt.getTransforms().add(tR);
+            tt.getTransforms().add(tR);
             //}
 
             //Translate t = new Translate(taWidth, -size);
@@ -1395,6 +1403,163 @@ public class LibraryElementNode {
         list.add(cv);
 
         return list;
+    }
+
+    private static void barOver(
+            ArrayList<Shape> list,
+            double x, double y, Rotation r,
+            double stroke, double textWidth, double textHeight,
+            TextAlign align, Color color) {
+
+        double sx3 = 3.0 * stroke;
+        double so2 = stroke / 2.0;
+
+        Line l = new Line(x + so2, y - 1.5 * stroke, x + textWidth - so2, y - 1.5 * stroke);
+        l.setStroke(color);
+        l.setStrokeWidth(stroke);
+        l.setStrokeLineCap(StrokeLineCap.ROUND);
+        list.add(l);
+
+        double transX = 0;
+        double transY = 0;
+        double pivotX = 0;
+        double pivotY = 0;
+
+        switch (align) {
+            case BOTTOM_LEFT -> {
+                transX = 0;
+                transY = -textHeight;
+
+                pivotX = 0;
+                pivotY = -transY;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = 0;
+                    transY = sx3;
+                    //pivotX = 0;
+                    pivotY = -transY;
+                }
+            }
+            case BOTTOM_CENTER -> {
+                transX = -textWidth / 2.0;
+                transY = -textHeight;
+
+                pivotX = -transX;
+                pivotY = -transY;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = 0;
+                    transY = sx3;
+                    //pivotX = 0;
+                    pivotY = -transY;
+                }
+            }
+            case BOTTOM_RIGHT -> {
+                transX = -textWidth;
+                transY = -textHeight;
+
+                pivotX = -transX;
+                pivotY = -transY;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = 0;
+                    transY = stroke * 3.0;
+                    //pivotX = 0;
+                    pivotY = -transY;
+                }
+            }
+            case CENTER_LEFT -> {
+                transX = 0.0;
+                transY = -textHeight / 2.0;
+
+                pivotX = 0.0;
+                pivotY = -transY;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = -textWidth / 2.0;
+                    transY = textHeight / 2.0 + sx3;
+                    //pivotX = -transX;
+                    pivotY = -transY;
+                }
+            }
+            case CENTER -> {
+                transX = -textWidth / 2.0;
+                transY = -textHeight / 2.0;
+
+                pivotX = -transX;
+                pivotY = -transY;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = -textWidth / 2.0;
+                    transY = textHeight / 2.0 + sx3;
+                    //pivotX = -transX;
+                    pivotY = -transY;
+                }
+            }
+            case CENTER_RIGHT -> {
+                transX = -textWidth;
+                transY = -textHeight / 2.0;
+
+                pivotX = -transX;
+                pivotY = -transY;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = -textWidth / 2.0;
+                    transY = textHeight / 2.0 + sx3;
+                    //pivotX = -transX;
+                    pivotY = -transY;
+                }
+            }
+            case TOP_LEFT -> {
+                transX = 0;
+                transY = 0;
+
+                pivotX = 0;
+                pivotY = 0;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    transX = 0;
+                    transY = textHeight + stroke * 3.0;
+                    //pivotX = 0;
+                    pivotY = -transY;
+
+                }
+            }
+            case TOP_CENTER -> {
+                transX = -textWidth / 2.0;
+                transY = 0;
+
+                pivotX = -transX;
+                pivotY = 0;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = -textWidth / 2.0;
+                    transY = textHeight + stroke * 3.0;
+                    //pivotX = -transX;
+                    pivotY = -transY;
+
+                }
+            }
+            case TOP_RIGHT -> {
+                transX = -textWidth;
+                transY = 0;
+
+                pivotX = -transX;
+                pivotY = 0;
+
+                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                    //transX = 0;
+                    transY = textHeight + stroke * 3.0;
+
+                    pivotX = -transX;
+                    pivotY = -transY;
+
+                }
+            }
+        }
+
+        l.getTransforms().add(new Translate(transX, transY));
+        l.getTransforms().add(new Rotate(-r.getValue(), pivotX, pivotY));
     }
 
     public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
@@ -3242,7 +3407,7 @@ public class LibraryElementNode {
                         // and other nodes don't seem to need this. Curious...
                         // update: supplied rotation to the createText(parentRotation) and it does the right thing now.
                         //txtNode.getTransforms().add(new Rotate(-el.getRot()));
-                 //       txtNode.setLayoutX(el.getX());
+                        //       txtNode.setLayoutX(el.getX());
                         //       txtNode.setLayoutY(-el.getY());
                         list.addAll(txtNode);
                     }
