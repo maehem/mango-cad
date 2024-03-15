@@ -641,7 +641,7 @@ public class BoardPreview extends Group {
                     isoWire2.setStrokeWidth(w.getWidth() + (wireIsolate * 2.0));
                     isolation.add(isoWire2);
                 } else if (el instanceof ContactRef cref) { // Look up pads with this signal
-                    LOGGER.log(Level.SEVERE, "ContactRef: {0}.{1}", new Object[]{cref.getElement(), cref.getPad()});
+                    //LOGGER.log(Level.SEVERE, "ContactRef: {0}.{1}", new Object[]{cref.getElement(), cref.getPad()});
                     // Will generate thermals for signal polygons.
                     ElementElement elm = board.getElement(cref.getElement());
                     _AQuantum pad = elm.getFootprintPkg().getPad(cref.getPad());
@@ -702,7 +702,7 @@ public class BoardPreview extends Group {
 
                     } else if (pad instanceof PadSMD p) {
                         if ((!elm.getRotation().isMirror() && p.getLayerNum() == 1) || (elm.getRotation().isMirror() && p.getLayerNum() == 16)) {
-                            LOGGER.log(Level.SEVERE, "Add Pad: sig: {0}  pad: {1}.{2}", new Object[]{sig.getName(), cref.getElement(), cref.getPad()});
+                            //LOGGER.log(Level.SEVERE, "Add Pad: sig: {0}  pad: {1}.{2}", new Object[]{sig.getName(), cref.getElement(), cref.getPad()});
                             Shape smdShape = LibraryElementNode.createSmdPad(p, copperColor);
                             smdShape.setLayoutX(cref.getElementO().getX());
                             smdShape.setLayoutY(-cref.getElementO().getY());

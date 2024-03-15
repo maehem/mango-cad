@@ -3051,7 +3051,7 @@ public class LibraryElementNode {
             } else if (e instanceof ElementCircle elementCircle) {
                 p.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
             } else {
-                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
+                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName() + " @3054");
             }
         });
 
@@ -3273,9 +3273,10 @@ public class LibraryElementNode {
 //                    s.getTransforms().add(new Rotate(-el.getRot()));
 //                    list.add(s);
 //                }
-            } else {
-                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
             }
+//            else {
+//                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName() + " @3278");
+//            }
         });
 
         // TODO:  Need constants for layer numbers and names. And stroke widths/size.
@@ -3329,6 +3330,8 @@ public class LibraryElementNode {
                     wireNode.getTransforms().add(new Rotate(-el.getRot()));
                     list.add(wireNode);
                 }
+            } else if (e instanceof ElementText) {  // Handled elsewhere!
+
 //            } else if (e instanceof ElementText et) {
 //                // Package Text Element
 //                // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
@@ -3423,7 +3426,7 @@ public class LibraryElementNode {
                     list.add(s);
                 }
             } else {
-                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName());
+                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName() + " @3426");
             }
         });
 
