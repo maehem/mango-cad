@@ -2928,7 +2928,7 @@ public class LibraryElementNode {
         );
         padName.setFont(padFont);
         padName.setFill(padColor);
-        padName.setStroke(pinNameColor);
+        padName.setStroke(padColor);
         padName.setStrokeLineJoin(StrokeLineJoin.ROUND);
         padName.setStrokeWidth(padFontSize * 0.08);
         double padWidth = padName.getBoundsInLocal().getWidth();
