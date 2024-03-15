@@ -1405,6 +1405,24 @@ public class LibraryElementNode {
         return list;
     }
 
+    /**
+     * Place a bar over the top of the text when the Negate flag (!) is used.
+     * Bar is generated based on params and placed in the Shapes list.
+     *
+     * @TODO: The negate should be a toggle on/off flag within the string so
+     * that     * the bar only appears over the parts of the text desired.
+     *
+     *
+     * @param list to add Shapes to.
+     * @param x location
+     * @param y location
+     * @param r rotation
+     * @param stroke width
+     * @param textWidth rendered text width
+     * @param textHeight rendered text height
+     * @param align of text
+     * @param color of text
+     */
     private static void barOver(
             ArrayList<Shape> list,
             double x, double y, Rotation r,
