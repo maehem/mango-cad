@@ -126,7 +126,7 @@ public class BoardPreview extends Group {
             } else if (element instanceof Wire e) {
                 chld.add(LibraryElementNode.createWireNode(e, c, false));
             } else if (element instanceof ElementText e) {
-                chld.add(LibraryElementNode.createText(e, c));
+                chld.addAll(LibraryElementNode.createText2(e, c));
             } else if (element instanceof Dimension e) {
                 chld.add(LibraryElementNode.createDimensionNode(
                         e, layers, palette)
@@ -424,8 +424,8 @@ public class BoardPreview extends Group {
                         silkNodes.addAll(n);
                     }
                     case 29 -> {
-                        Node n = LibraryElementNode.createText(e, null, solderMaskColor, null, false);
-                        maskNodes.add(n);
+                        List<Shape> n = LibraryElementNode.createText2(e, null, solderMaskColor, null, false);
+                        maskNodes.addAll(n);
                     }
                     default -> {
                         //Node n = LibraryElementNode.createText(e, c);

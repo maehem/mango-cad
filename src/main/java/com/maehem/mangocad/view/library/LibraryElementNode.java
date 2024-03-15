@@ -1796,7 +1796,7 @@ public class LibraryElementNode {
      * @param maskColor
      * @return JavaFX Node.
      */
-    public static Node createSmd(PadSMD smd, Color color, Color maskColor) {
+    public static Node createSmd(PadSMD smd, Color color, Color maskColor, Color silkColor) {
         Group g = new Group();
 
         double roundPct = smd.getRoundness() * 0.01;
@@ -1813,7 +1813,7 @@ public class LibraryElementNode {
         et.setSize(0.5);
         et.setX(smd.getX());
         et.setY(smd.getY());
-        g.getChildren().add(LibraryElementNode.createText(et, Color.LIGHTGRAY));
+        g.getChildren().addAll(LibraryElementNode.createText2(et, silkColor));
 
         return g;
     }
@@ -2148,7 +2148,7 @@ public class LibraryElementNode {
     public static Shape createThdPad(PadTHD thd, Color color) {
         double padDia = thd.getDerivedDiameter();
 
-        LOGGER.log(Level.SEVERE, "Create TDH Pad: " + padDia);
+        //LOGGER.log(Level.SEVERE, "Create THD Pad: " + padDia);
         switch (thd.getShape()) {
             case SQUARE -> {
                 Rectangle pad = new Rectangle(
@@ -2572,7 +2572,7 @@ public class LibraryElementNode {
         et.setSize(via.getDrill() * 0.25);
         et.setX(via.getX());
         et.setY(via.getY());
-        g.getChildren().add(LibraryElementNode.createText(
+        g.getChildren().addAll(LibraryElementNode.createText2(
                 et, null,
                 new Color(1.0, 1.0, 1.0, 0.25),
                 null, false
@@ -2686,6 +2686,9 @@ public class LibraryElementNode {
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), PIN_FONT_SIZE);
         pinName.setFont(font);
         pinName.setFill(pinNameColor);
+        pinName.setStroke(pinNameColor);
+        pinName.setStrokeWidth(PIN_FONT_SIZE * 0.08);
+        pinName.setStrokeLineJoin(StrokeLineJoin.ROUND);
         double pinNameTextWidth = pinName.getBoundsInLocal().getWidth();
         double pinNameTextHeight = pinName.getBoundsInLocal().getHeight();
         pinName.setLayoutX(symbX + (pinMirror ? -PIN_NAME_MARGIN : PIN_NAME_MARGIN) + (pinMirror ? -pinNameTextWidth : 0.0));
@@ -2712,12 +2715,16 @@ public class LibraryElementNode {
             }
         }
         Text padName = new Text(padValue);
+        double padFontSize = PIN_FONT_SIZE * 0.8;
         Font padFont = Font.loadFont(
                 LibraryElementNode.class.getResourceAsStream(FONT_PATH),
-                PIN_FONT_SIZE * 0.8
+                padFontSize
         );
         padName.setFont(padFont);
         padName.setFill(padColor);
+        padName.setStroke(pinNameColor);
+        padName.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        padName.setStrokeWidth(padFontSize * 0.08);
         double padWidth = padName.getBoundsInLocal().getWidth();
         //double padHeight = padName.getBoundsInLocal().getHeight();
         padName.setLayoutX(pX - (pinMirror ? padWidth : 0.0));
@@ -2735,10 +2742,13 @@ public class LibraryElementNode {
         // Direction and Swap-Level  ( ex.   io 0  )
         if (showDetails) {
             Text dirSwap = new Text(p.getDirection().code() + "  " + p.getSwapLevel());
+            double dirSwapFontSize = PIN_FONT_SIZE * 0.6;
             Font dirSwapFont = Font.loadFont(
                     LibraryElementNode.class.getResourceAsStream(FONT_PATH),
-                    PIN_FONT_SIZE * 0.6
+                    dirSwapFontSize
             );
+            dirSwap.setStroke(PIN_DIR_SWAP_COLOR);
+            dirSwap.setStrokeWidth(dirSwapFontSize * 0.08);
             dirSwap.setFont(dirSwapFont);
             dirSwap.setFill(PIN_DIR_SWAP_COLOR);
             double dsWidth = dirSwap.getBoundsInLocal().getWidth();
@@ -2921,7 +2931,7 @@ public class LibraryElementNode {
 
             // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
             if (e instanceof ElementPolygon ep) {
-                elementGroup.getChildren().add(LibraryElementNode.createPolygon(ep, c, false));
+                elementGroup.getChildren().add(LibraryElementNode.createPolygonCurved(ep, c, false));
             } else if (e instanceof Wire w) {
                 elementGroup.getChildren().add(LibraryElementNode.createWireNode(w, c, false));
             } else if (e instanceof ElementText et) {
@@ -2964,16 +2974,21 @@ public class LibraryElementNode {
                         proxyText.setX(attr.getX() - inst.getX());
                         proxyText.setY(attr.getY() - inst.getY());
 
-                        proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
+                        proxyText.setSize(attr.getSize());
+                        proxyText.setAlign(attr.getAlign());
+                        proxyText.setRatio(attr.getRatio());
+                        proxyText.setRotation(attr.getRotation());
+
+                        //proxyText.getRotation().setValue((attr.getRotation().getValue()) % 360.0);
                     }
                 }
 
-                Node elementTextNode = createText(proxyText, c, rotation);
-                textGroup.getChildren().add(elementTextNode);
+                ArrayList<Shape> elementTextNode = createText2(proxyText, null, c, rotation, true);
+                textGroup.getChildren().addAll(elementTextNode);
 
-                textGroup.getChildren().add(LibraryElementNode.crosshairs(
-                        proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
-                ));
+//                textGroup.getChildren().add(LibraryElementNode.crosshairs(
+//                        proxyText.getX(), -proxyText.getY(), 0.5, 0.035, c
+//                ));
             } else if (e instanceof Dimension dim) {
                 elementGroup.getChildren().add(createDimensionNode(dim, layers, palette));
             } else if (e instanceof Pin pin) {
@@ -3028,7 +3043,8 @@ public class LibraryElementNode {
 
             if (e instanceof PadSMD padSMD) {
                 Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor);
+                Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
+                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor, silkColor);
                 p.getChildren().add(n);
                 n.toBack();
             } else if (e instanceof PadTHD padTHD) {
@@ -3040,8 +3056,8 @@ public class LibraryElementNode {
             } else if (e instanceof Wire wire) {
                 p.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
             } else if (e instanceof ElementText elementText) {
-                Node textNode = LibraryElementNode.createText(elementText, c);
-                p.getChildren().add(textNode);
+                ArrayList<Shape> textNode = LibraryElementNode.createText2(elementText, c);
+                p.getChildren().addAll(textNode);
                 // TODO: Get proper tOrigin/bOrigin layer info for crosshair color.
                 p.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementRectangle elementRectangle) {

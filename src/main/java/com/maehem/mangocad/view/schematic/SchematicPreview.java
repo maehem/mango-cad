@@ -56,6 +56,7 @@ public class SchematicPreview extends Group {
         this.schematic = schematic;
         this.index = index;
 
+
         if (schematic.getSheets().get(index) != null) {
             populateNode(schematic, index);
         } else {
@@ -86,7 +87,7 @@ public class SchematicPreview extends Group {
             } else if (element instanceof Wire e) {
                 getChildren().add(LibraryElementNode.createWireNode(e, c, false));
             } else if (element instanceof ElementText e) {
-                getChildren().add(LibraryElementNode.createText(e, c));
+                getChildren().addAll(LibraryElementNode.createText2(e, c));
             } else if (element instanceof Dimension e) {
                 getChildren().add(LibraryElementNode.createDimensionNode(e, layers, palette));
             } else if (element instanceof ElementCircle e) {

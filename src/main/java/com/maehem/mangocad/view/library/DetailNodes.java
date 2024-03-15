@@ -164,8 +164,8 @@ public class DetailNodes {
                     gateName = gate.getName();
                 }
                 //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
-                g.getChildren().add(LibraryElementNode.createText(elementText, gateName, c, null, true));
-                g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
+                g.getChildren().addAll(LibraryElementNode.createText2(elementText, gateName, c, null, true));
+                //g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
             } else if (e instanceof ElementPolygon elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygonCurved(elementPolygon, c, false));
             } else if (e instanceof Pin pin) {
