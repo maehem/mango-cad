@@ -3,8 +3,12 @@
 
 ## Icons (license: Creative Commons)
 
+Book               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/book
+File               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/file
+Floppy-Disk        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/floppy-disk
 Folder             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/folder
 Photo Album        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/useful/photo-album (plus modified as Library)
+Printer            icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/printer
 Cube Isometric     icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/cube-isometric
 Integrated Circuit icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/integrated-circuit
 Transistor         icon by Arthur Shlain from Usefulicons  https://usefulicons.com/electronic-symbols/transistor-alt
