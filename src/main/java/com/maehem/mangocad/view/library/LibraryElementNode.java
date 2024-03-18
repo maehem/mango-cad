@@ -683,7 +683,6 @@ public class LibraryElementNode {
         fontSize *= FONT_SCALE;
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
 
-
         ElementText et = new ElementText();
         if (le.isXref()) {
             et.setX(x + size * 1.1);
@@ -707,21 +706,18 @@ public class LibraryElementNode {
 //        t.setStroke(color);
 //        t.setStrokeWidth(fontSize * 0.08);
 //        t.setFill(color);
-
 //        double height = t.getBoundsInLocal().getHeight();
 //        double width = t.getBoundsInLocal().getWidth();
 //        t.setLayoutX(le.getX() + le.getSize());
 //        t.setLayoutY(-le.getY() + height * 0.25);
 //
 //        labelGroup.getChildren().add(t);
-
 //        if ((le.getRot() == 0 && le.getRotation().isMirror())
 //                || (le.getRot() == 180 && !le.getRotation().isMirror())
 //                || le.getRot() == 270) { // Flip Text
 //            Rotate r = new Rotate(180, width / 2.0, -height * 0.25);
 //            t.getTransforms().add(r);
 //        }
-
         if (le.isXref()) {
             Polygon outline = new Polygon(
                     x, y,
@@ -1433,7 +1429,7 @@ public class LibraryElementNode {
      * Bar is generated based on params and placed in the Shapes list.
      *
      * @TODO: The negate should be a toggle on/off flag within the string so
-     * that     * the bar only appears over the parts of the text desired.
+     * that * the bar only appears over the parts of the text desired.
      *
      *
      * @param list to add Shapes to.
@@ -3242,49 +3238,50 @@ public class LibraryElementNode {
         //Group p = new Group();
         Pane p = new Pane();
 
-        pkg.getElements().forEach((e) -> {
-            LayerElement le = layers[e.getLayerNum()];
-            int colorIndex = le.getColorIndex();
-            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+        if (pkg != null) {
+            pkg.getElements().forEach((e) -> {
+                LayerElement le = layers[e.getLayerNum()];
+                int colorIndex = le.getColorIndex();
+                Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
-            if (e instanceof PadSMD padSMD) {
-                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
-                Node n = LibraryElementNode.createSmd(padSMD, c, maskColor, silkColor);
-                p.getChildren().add(n);
-                n.toBack();
-            } else if (e instanceof PadTHD padTHD) {
-                Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
-                Node n = LibraryElementNode.createThd(padTHD, c, maskColor, silkColor);
-                p.getChildren().add(n);
-                n.toBack();
-            } else if (e instanceof Wire wire) {
-                p.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
-            } else if (e instanceof ElementText elementText) {
-                ArrayList<Shape> textNode = LibraryElementNode.createText2(elementText, c);
-                p.getChildren().addAll(textNode);
-                // TODO: Get proper tOrigin/bOrigin layer info for crosshair color.
-                p.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if (e instanceof ElementRectangle elementRectangle) {
-                p.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
-            } else if (e instanceof ElementPolygon elementPolygon) {
-                p.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
-            } else if (e instanceof ElementCircle elementCircle) {
-                p.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
-            } else {
-                LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName() + " @3054");
-            }
-        });
+                if (e instanceof PadSMD padSMD) {
+                    Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                    Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
+                    Node n = LibraryElementNode.createSmd(padSMD, c, maskColor, silkColor);
+                    p.getChildren().add(n);
+                    n.toBack();
+                } else if (e instanceof PadTHD padTHD) {
+                    Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
+                    Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
+                    Node n = LibraryElementNode.createThd(padTHD, c, maskColor, silkColor);
+                    p.getChildren().add(n);
+                    n.toBack();
+                } else if (e instanceof Wire wire) {
+                    p.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
+                } else if (e instanceof ElementText elementText) {
+                    ArrayList<Shape> textNode = LibraryElementNode.createText2(elementText, c);
+                    p.getChildren().addAll(textNode);
+                    // TODO: Get proper tOrigin/bOrigin layer info for crosshair color.
+                    p.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
+                } else if (e instanceof ElementRectangle elementRectangle) {
+                    p.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
+                } else if (e instanceof ElementPolygon elementPolygon) {
+                    p.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
+                } else if (e instanceof ElementCircle elementCircle) {
+                    p.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
+                } else {
+                    LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName() + " @3054");
+                }
+            });
 
-        // tOrigins 23   , bOrigins 24
-        // TODO:  Need constants for layer numbers and names. And stroke widths/size.
-        int cIdx = layers[23].getColorIndex();
-        Color c = ColorUtils.getColor(palette.getHex(cIdx));
-        p.getChildren().add(LibraryElementNode.crosshairs(
-                0, 0, 0.5, 0.035, c
-        ));
-
+            // tOrigins 23   , bOrigins 24
+            // TODO:  Need constants for layer numbers and names. And stroke widths/size.
+            int cIdx = layers[23].getColorIndex();
+            Color c = ColorUtils.getColor(palette.getHex(cIdx));
+            p.getChildren().add(LibraryElementNode.crosshairs(
+                    0, 0, 0.5, 0.035, c
+            ));
+        }
         return p;
     }
 
