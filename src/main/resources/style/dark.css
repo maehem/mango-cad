@@ -3,7 +3,7 @@
     -fx-focus-color: derive(-fx-accent, -20%);
     
     /* -fx-base: #373e43;  */
-    -fx-base: #121418;
+    -fx-base: #222428;
     -fx-control-inner-background: derive(-fx-base, 35%);
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 
@@ -33,6 +33,7 @@
 
 .button{
     -fx-focus-traversable: false;
+    -fx-background-color: derive( -fx-base, 45% );
 }
 
 .button:hover{
@@ -46,7 +47,7 @@
 }
 
 .scroll-bar{
-    -fx-background-color: derive(-fx-base,45%)
+    -fx-background-color: derive(-fx-base,35%)
 }
 
 .button:default {
@@ -91,6 +92,10 @@
 .list-cell:filled:selected {
     -fx-background-color: derive(-fx-focus-color, -40%);
     -fx-text-fill: #33F; /* Does nothing. FX Bug? */
+}
+
+#button-icon{
+    -fx-blend-mode: color-dodge;
 }
 
 #control-panel-preview-area-heading{
