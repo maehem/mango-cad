@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.view.ControlPanel;
-import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;

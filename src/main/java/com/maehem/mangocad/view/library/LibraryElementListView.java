@@ -24,6 +24,7 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ElementType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,10 +32,15 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -46,14 +52,15 @@ import javafx.scene.layout.VBox;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class LibraryElementListView extends VBox {
+
     private static final Logger LOGGER = Logger.getLogger("LibraryElementListView");
 
     private final Library lib;
     private final ElementType type;
-    private ListView listView;
+    private ListView<String> listView;
 
     @SuppressWarnings("unchecked")
-    public LibraryElementListView(TableOfContentsPane listener, Library lib, ElementType type) { // Type?
+    public LibraryElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) { // Type?
 
         this.lib = lib;
         this.type = type;
@@ -99,6 +106,8 @@ public class LibraryElementListView extends VBox {
             }
         });
 
+        initContextMenus();
+
         // TODO: List in ScrollPane?
         ScrollPane sp = new ScrollPane(listView);
         sp.setMaxHeight(Double.MAX_VALUE);
@@ -111,7 +120,7 @@ public class LibraryElementListView extends VBox {
     }
 
     @SuppressWarnings("unchecked")
-    public void select( String item ) {
+    public void select(String item) {
         LOGGER.log(Level.FINER, "{0} select: {1}", new Object[]{type, item});
         listView.getSelectionModel().select(item);
     }
@@ -131,5 +140,209 @@ public class LibraryElementListView extends VBox {
 
     void clearSelections() {
         listView.getSelectionModel().clearSelection();
+    }
+
+    private void initContextMenus() {
+        listView.setCellFactory(lv -> {
+
+            ListCell<String> cell = new ListCell<>();
+
+            ContextMenu contextMenu = new ContextMenu();
+
+            MenuItem editItem = new MenuItem();
+            //editItem.textProperty().bind(Bindings.format("Edit"));
+            editItem.setText("Edit");
+            editItem.setOnAction(event -> {
+                ObjectProperty<String> itemProperty = cell.itemProperty();
+                String item = cell.getItem();
+                // code to edit item...
+            });
+
+            MenuItem updateItem = new MenuItem("Update to latest version");
+            //updateItem.textProperty().bind(Bindings.format("Update \"%s\"", cell.itemProperty()));
+            updateItem.setOnAction(event -> {
+                //listView.getItems().remove(cell.getItem());
+                LOGGER.log(Level.WARNING, "Library ToC List: {0}: Menu Item, Update to lastest version. Not implemented yet.", type.text());
+            });
+            updateItem.setDisable(true);
+
+            contextMenu.getItems().addAll(
+                    editItem,
+                    updateItem
+            );
+
+            if (type == ElementType.FOOTPRINT) {
+                MenuItem updateFootprints = new MenuItem("Update Footprints from Library");
+                updateFootprints.setDisable(true);
+                //updateFootprints.setOnAction(event -> {});  // TODO
+
+                contextMenu.getItems().add(updateFootprints);
+            }
+
+            if (type != ElementType.PACKAGE3D) {
+                // Footprint :  Update Footprints from Library
+                MenuItem duplicateItem = new MenuItem("Duplicate");
+                duplicateItem.setDisable(true);
+                //duplicateItem.setOnAction(event -> { });  // TODO
+
+                MenuItem renameItem = new MenuItem("Rename"); // NOT 3D
+                renameItem.setDisable(true);
+                //renameItem.setOnAction(event -> {}); // TODO
+
+                contextMenu.getItems().addAll(duplicateItem, renameItem);
+            }
+
+            MenuItem removeItem = new MenuItem("Remove"); // Not 3D
+            //removeItem.setOnAction(event -> {}); // TODO
+            removeItem.setDisable(true);
+
+            contextMenu.getItems().addAll(removeItem);
+
+            MenuItem editDescriptionItem = new MenuItem("Edit Description");
+            //editDescriptionItem.setOnAction(event -> {}); // TODO
+            editDescriptionItem.setDisable(true);
+
+            MenuItem copyUrnItem = new MenuItem("Copy Urn");
+            //copyUrnItem.setOnAction(event -> {});// TODO
+            copyUrnItem.setDisable(true);
+
+            contextMenu.getItems().addAll(
+                    editDescriptionItem,
+                    new SeparatorMenuItem(),
+                    copyUrnItem
+            );
+
+            if (type == ElementType.PACKAGE3D) {
+                MenuItem viewOnWeb = new MenuItem("View On Web");
+                //viewOnWeb.setOnAction(event -> {}); // TODO
+                viewOnWeb.setDisable(true);
+
+                Menu usedFootprints = new Menu("Used Footprints");
+                //usedFootprints.setOnAction(event -> {}); // TODO
+
+                // Using device sets sample
+                MenuItem devSet1 = new MenuItem("DIP14");
+                devSet1.setDisable(true);
+                MenuItem devSet2 = new MenuItem("SOI16");
+                devSet2.setDisable(true);
+                MenuItem devSet3 = new MenuItem("DERP33");
+                devSet3.setDisable(true);
+                MenuItem devSet4 = new MenuItem("BLAH12");
+                devSet4.setDisable(true);
+                MenuItem devSet5 = new MenuItem("NEER33");
+                devSet5.setDisable(true);
+                usedFootprints.getItems().addAll(devSet1, devSet2, devSet3, devSet4, devSet5);
+
+                contextMenu.getItems().addAll(viewOnWeb, new SeparatorMenuItem(), usedFootprints);
+            }
+
+            if (type == ElementType.DEVICE) {
+                Menu usedFootprints = new Menu("Used Footprints");
+                //usedFootprints.setOnAction(event -> { });
+
+                // Using device sets sample
+                MenuItem devSet1 = new MenuItem("DIP14");
+                devSet1.setDisable(true);
+                MenuItem devSet2 = new MenuItem("SOI16");
+                devSet2.setDisable(true);
+                MenuItem devSet3 = new MenuItem("DERP33");
+                devSet3.setDisable(true);
+                MenuItem devSet4 = new MenuItem("BLAH12");
+                devSet4.setDisable(true);
+                MenuItem devSet5 = new MenuItem("NEER33");
+                devSet5.setDisable(true);
+                usedFootprints.getItems().addAll(devSet1, devSet2, devSet3, devSet4, devSet5);
+
+                Menu used3DPackages = new Menu("Used 3D Packages");
+                // Using device sets sample
+                MenuItem u3d1 = new MenuItem("DIP143D");
+                u3d1.setDisable(true);
+                MenuItem u3d2 = new MenuItem("SOI163D");
+                u3d2.setDisable(true);
+                MenuItem u3d3 = new MenuItem("DERP333D");
+                u3d3.setDisable(true);
+                MenuItem u3d4 = new MenuItem("BLAH123D");
+                u3d4.setDisable(true);
+                MenuItem u3d5 = new MenuItem("NEER333D");
+                u3d5.setDisable(true);
+                used3DPackages.getItems().addAll(u3d1, u3d2, u3d3, u3d4, u3d5);
+
+                Menu usedSymbols = new Menu("Used Symbols");
+                // Using device sets sample
+                MenuItem us1 = new MenuItem("DIP14");
+                us1.setDisable(true);
+                MenuItem us2 = new MenuItem("SOI16");
+                us2.setDisable(true);
+                MenuItem us3 = new MenuItem("DERP33");
+                us3.setDisable(true);
+                MenuItem us4 = new MenuItem("BLAH12");
+                us4.setDisable(true);
+                MenuItem us5 = new MenuItem("NEER33");
+                us5.setDisable(true);
+                usedSymbols.getItems().addAll(us1, us2, us3, us4, us5);
+
+                contextMenu.getItems().addAll(
+                        new SeparatorMenuItem(),
+                        usedFootprints, used3DPackages, usedSymbols
+                );
+            }
+
+            if (type == ElementType.SYMBOL) {
+                Menu usingDeviceSets = new Menu("Using Device Sets"); // Symbol only
+                // Using device sets sample
+                MenuItem devSet1 = new MenuItem("0402");
+                devSet1.setDisable(true);
+                MenuItem devSet2 = new MenuItem("0603");
+                devSet2.setDisable(true);
+                MenuItem devSet3 = new MenuItem("0805");
+                devSet3.setDisable(true);
+                MenuItem devSet4 = new MenuItem("1220");
+                devSet4.setDisable(true);
+                MenuItem devSet5 = new MenuItem("1460");
+                devSet5.setDisable(true);
+                usingDeviceSets.getItems().addAll(devSet1, devSet2, devSet3, devSet4, devSet5);
+
+                contextMenu.getItems().addAll(new SeparatorMenuItem(), usingDeviceSets);
+            }
+
+            if (type == ElementType.FOOTPRINT) {
+                Menu using3DPackages = new Menu("Using 3D Packages"); // Symbol only
+                using3DPackages.setOnAction(event -> {
+                });
+
+                // Using device sets sample
+                MenuItem devSet1 = new MenuItem("0402");
+                devSet1.setDisable(true);
+                MenuItem devSet2 = new MenuItem("0603");
+                devSet2.setDisable(true);
+                MenuItem devSet3 = new MenuItem("0805");
+                devSet3.setDisable(true);
+                MenuItem devSet4 = new MenuItem("1220");
+                devSet4.setDisable(true);
+                MenuItem devSet5 = new MenuItem("1460");
+                devSet5.setDisable(true);
+                using3DPackages.getItems().addAll(devSet1, devSet2, devSet3, devSet4, devSet5);
+
+                contextMenu.getItems().addAll(new SeparatorMenuItem(), using3DPackages);
+            }
+
+            if (type == ElementType.DEVICE) {
+                Menu addToSchematic = new Menu("Add to Schematic"); // Device only
+                addToSchematic.setDisable(true);
+                contextMenu.getItems().addAll(new SeparatorMenuItem(), addToSchematic);
+            }
+
+            cell.textProperty().bind(cell.itemProperty());
+
+            cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
+                if (isNowEmpty) {
+                    cell.setContextMenu(null);
+                } else {
+                    cell.setContextMenu(contextMenu);
+                }
+            });
+            return cell;
+        });
+
     }
 }

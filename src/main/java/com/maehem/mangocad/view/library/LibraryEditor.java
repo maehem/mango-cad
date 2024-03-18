@@ -14,9 +14,9 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view;
+package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.view.library.TableOfContentsPane;
+import com.maehem.mangocad.view.library.LibraryTableOfContentsPane;
 import java.io.File;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -47,7 +47,7 @@ public class LibraryEditor extends BorderPane {
         setLeft(leftToolBar);
         
         // center: work area
-        setCenter(new TableOfContentsPane(file));
+        setCenter(new LibraryTableOfContentsPane(file));
 
 
 

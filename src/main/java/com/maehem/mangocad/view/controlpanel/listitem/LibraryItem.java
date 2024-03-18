@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
-import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;

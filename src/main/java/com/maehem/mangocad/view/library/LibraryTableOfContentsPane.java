@@ -1,30 +1,30 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.LibraryCache;
-import com.maehem.mangocad.model.element.highlevel.DeviceSet;
-import com.maehem.mangocad.view.ElementType;
-import com.maehem.mangocad.model.element.highlevel.Package3d;
-import com.maehem.mangocad.model.element.basic.PackageInstance;
-import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.basic.Gate;
+import com.maehem.mangocad.model.element.basic.PackageInstance;
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.highlevel.Device;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.ElementType;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +36,7 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TableOfContentsPane extends SplitPane {
+public class LibraryTableOfContentsPane extends SplitPane {
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
@@ -50,7 +50,7 @@ public class TableOfContentsPane extends SplitPane {
 
     private boolean selectorUpdating = false;
 
-    public TableOfContentsPane(File lbrFile) {
+    public LibraryTableOfContentsPane(File lbrFile) {
 
 //        try {
 //            lib = EagleCADUtils.importLBR(lbrFile);
@@ -80,6 +80,7 @@ public class TableOfContentsPane extends SplitPane {
         package3dList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         symbolList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         //detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
+
 
         getItems().addAll(deviceList, footprintList, package3dList, symbolList, detailsArea);
 

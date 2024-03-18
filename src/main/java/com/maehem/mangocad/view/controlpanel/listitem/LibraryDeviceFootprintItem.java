@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
 import com.maehem.mangocad.view.library.GroupContainer;
-import com.maehem.mangocad.view.LibraryEditor;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
 import java.io.File;
 import java.util.logging.Level;
