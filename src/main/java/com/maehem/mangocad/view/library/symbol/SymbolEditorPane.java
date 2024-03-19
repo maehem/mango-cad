@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import java.io.File;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -29,15 +29,15 @@ import javafx.scene.layout.VBox;
  */
 public class SymbolEditorPane extends BorderPane {
 
-    private final File file;
+    private final LibraryEditor parent;
 
     private final ToolBar topToolbar1 = new ToolBar();
     private final VBox topArea = new VBox(topToolbar1);
     private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
-    public SymbolEditorPane(File file) {
-        this.file = file;
+    public SymbolEditorPane(LibraryEditor parent) {
+        this.parent = parent;
 
         // top:  two tool bar rows
         setTop(topToolbar1);
@@ -46,7 +46,7 @@ public class SymbolEditorPane extends BorderPane {
         setLeft(leftToolBar);
 
         SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
-        workArea.setDividerPosition(0, getBoundsInLocal().getWidth() - 400);
+        workArea.setDividerPosition(0, 0.8);
         // center: work area
         setCenter(workArea);
 
@@ -54,10 +54,10 @@ public class SymbolEditorPane extends BorderPane {
         setBottom(bottomArea);
 
         // right: nothing.
-        topArea.setPrefHeight(64);
+        topArea.setPrefHeight(24);
         topArea.setFillWidth(true);
-        topToolbar1.setPrefHeight(32);
-        bottomArea.setPrefHeight(32);
+        topToolbar1.setPrefHeight(24);
+        bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
     }
 

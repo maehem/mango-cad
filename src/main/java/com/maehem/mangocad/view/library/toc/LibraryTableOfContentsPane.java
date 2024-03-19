@@ -25,11 +25,11 @@ import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.ElementType;
-import java.io.File;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.SplitPane;
-import static javafx.scene.layout.Priority.ALWAYS;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
@@ -49,17 +49,13 @@ public class LibraryTableOfContentsPane extends SplitPane {
     private final DetailsArea detailsArea = new DetailsArea();
 
     private boolean selectorUpdating = false;
+    private final LibraryEditor parentEditor;
 
-    public LibraryTableOfContentsPane(File lbrFile) {
+    public LibraryTableOfContentsPane(LibraryEditor parentEditor) {
 
-//        try {
-//            lib = EagleCADUtils.importLBR(lbrFile);
-//        } catch (IOException ex) {
-//            LOGGER.log(Level.SEVERE, null, ex);
-//        } catch (EagleCADLibraryFileException ex) {
-//            LOGGER.log(Level.SEVERE, null, ex);
-//        }
-        lib = LibraryCache.getInstance().getLibrary(lbrFile);
+        this.parentEditor = parentEditor;
+
+        lib = LibraryCache.getInstance().getLibrary(parentEditor.getFile());
         if ( lib == null ) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
         }
@@ -76,9 +72,9 @@ public class LibraryTableOfContentsPane extends SplitPane {
 
         // Cause the panes to expand to height of window.
         //deviceList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-        footprintList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-        package3dList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-        symbolList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
+        footprintList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
+        package3dList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
+        symbolList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
         //detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
 
 
@@ -192,6 +188,26 @@ public class LibraryTableOfContentsPane extends SplitPane {
         }
         selectorUpdating = false;
         detailsArea.setItem(lib, src, newValue);
+    }
+
+    void editItem(ElementType type, String item) {
+        switch (type) {
+            case DEVICE -> {
+
+            }
+            case FOOTPRINT -> {
+
+            }
+            case PACKAGE3D -> {
+
+            }
+            case SYMBOL -> {
+                // Invoke Symbol Editor
+                LOGGER.log(Level.SEVERE, "Invoke Symbol Editor for : " + item);
+                parentEditor.setEditor(type, item);
+            }
+        }
+
     }
 
 }

@@ -36,8 +36,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
         setFitToWidth(true);
         setFitToHeight(true);
         setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        setHbarPolicy(ScrollBarPolicy.ALWAYS);
+        setVbarPolicy(ScrollBarPolicy.ALWAYS);
 
         workArea.setPrefSize(2000, 2000);
         workArea.setBackground(new Background(new BackgroundFill(Color.DARKGREY, CornerRadii.EMPTY, Insets.EMPTY)));

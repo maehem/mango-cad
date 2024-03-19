@@ -24,7 +24,6 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ElementType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -55,13 +54,14 @@ public class TocElementListView extends VBox {
 
     private static final Logger LOGGER = Logger.getLogger("TocElementListView");
 
+    private LibraryTableOfContentsPane listener;
     private final Library lib;
     private final ElementType type;
     private ListView<String> listView;
 
     @SuppressWarnings("unchecked")
     public TocElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) { // Type?
-
+        this.listener = listener;
         this.lib = lib;
         this.type = type;
 
@@ -153,9 +153,9 @@ public class TocElementListView extends VBox {
             //editItem.textProperty().bind(Bindings.format("Edit"));
             editItem.setText("Edit");
             editItem.setOnAction(event -> {
-                ObjectProperty<String> itemProperty = cell.itemProperty();
+                //ObjectProperty<String> itemProperty = cell.itemProperty();
                 String item = cell.getItem();
-                // code to edit item...
+                listener.editItem(type, item);
             });
 
             MenuItem updateItem = new MenuItem("Update to latest version");

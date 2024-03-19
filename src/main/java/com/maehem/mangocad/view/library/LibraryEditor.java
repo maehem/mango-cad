@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library;
 
+import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.symbol.SymbolEditorPane;
 import com.maehem.mangocad.view.library.toc.LibraryTocSubEditor;
@@ -65,13 +66,15 @@ public class LibraryEditor extends BorderPane {
     //private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
+    // The editors.  Only one showing in the center at a time.
+    private Node currentEditor = null;
     private LibraryTocSubEditor tocPane = null;
     private SymbolEditorPane symbolPane = null;
+
     //private DeviceEditorPane devicePane = null;
     //private FootprintEditorPane footprintPane = null;
     //private Package3DEditorPane packagePane = null;
-
-    public LibraryEditor( File file) {
+    public LibraryEditor(File file) {
         this.file = file;
 
         // top:  two tool bar rows
@@ -79,27 +82,23 @@ public class LibraryEditor extends BorderPane {
 
         // left: tool bar
         //setLeft(leftToolBar);
-
         // center: work area
         this.tocPane = new LibraryTocSubEditor(this);
+        this.currentEditor = tocPane;
         setCenter(tocPane);
-
-
 
         // bottom: message area
         setBottom(bottomArea);
 
         // right: nothing.
-
         //topArea.setPrefHeight(48);
         topArea.setFillWidth(true);
         mainToolbar.setPrefHeight(24);
         //topToolbar2.setPrefHeight(32);
-        bottomArea.setPrefHeight(32);
+        bottomArea.setPrefHeight(16);
         bottomArea.setFillHeight(true);
 
         initMainToolbar();
-
     }
 
     private void initMainToolbar() {
@@ -126,5 +125,30 @@ public class LibraryEditor extends BorderPane {
 
     public File getFile() {
         return file;
+    }
+
+    public void setEditor(ElementType type, String item) {
+        if (type == null) {
+            currentEditor = tocPane;
+        } else {
+            switch (type) {
+                case DEVICE -> {
+
+                }
+                case FOOTPRINT -> {
+
+                }
+                case PACKAGE3D -> {
+
+                }
+                case SYMBOL -> {
+                    if (symbolPane == null) {
+                        symbolPane = new SymbolEditorPane(this);
+                    }
+                    currentEditor = symbolPane;
+                }
+            }
+        }
+        setCenter(currentEditor);
     }
 }

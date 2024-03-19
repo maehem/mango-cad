@@ -50,7 +50,7 @@ public class LibraryTocSubEditor extends BorderPane {
         // left: tool bar
         setLeft(leftToolBar);
 
-        tocPane = new LibraryTableOfContentsPane(parent.getFile());
+        tocPane = new LibraryTableOfContentsPane(parent);
         setCenter(tocPane);
 
         // bottom: message area
