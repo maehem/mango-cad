@@ -21,7 +21,7 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
-import com.maehem.mangocad.view.library.GroupContainer;
+import com.maehem.mangocad.view.GroupContainer;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.schematic.SchematicPreview;

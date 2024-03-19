@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library;
+package com.maehem.mangocad.view.library.toc;
 
 import com.maehem.mangocad.model.LibraryCache;
 import com.maehem.mangocad.model.element.basic.Gate;
@@ -42,10 +42,10 @@ public class LibraryTableOfContentsPane extends SplitPane {
 
     private static final double PANE_W = 0.15;
     private Library lib = new Library();
-    private final LibraryElementListView deviceList;
-    private final LibraryElementListView footprintList;
-    private final LibraryElementListView package3dList;
-    private final LibraryElementListView symbolList;
+    private final TocElementListView deviceList;
+    private final TocElementListView footprintList;
+    private final TocElementListView package3dList;
+    private final TocElementListView symbolList;
     private final DetailsArea detailsArea = new DetailsArea();
 
     private boolean selectorUpdating = false;
@@ -65,13 +65,13 @@ public class LibraryTableOfContentsPane extends SplitPane {
         }
 
         // TODO: Add selectoin listener.
-        deviceList = new LibraryElementListView(this, lib, ElementType.DEVICE);
+        deviceList = new TocElementListView(this, lib, ElementType.DEVICE);
         //VBox footprintList = new VBox(new Label("Footprint List"));
-        footprintList = new LibraryElementListView(this, lib, ElementType.FOOTPRINT);
+        footprintList = new TocElementListView(this, lib, ElementType.FOOTPRINT);
         //VBox package3dList = new VBox(new Label("3D Package List"));
-        package3dList = new LibraryElementListView(this, lib, ElementType.PACKAGE3D);
+        package3dList = new TocElementListView(this, lib, ElementType.PACKAGE3D);
         //VBox symbolList = new VBox(new Label("Symbol List"));
-        symbolList = new LibraryElementListView(this, lib, ElementType.SYMBOL);
+        symbolList = new TocElementListView(this, lib, ElementType.SYMBOL);
 
 
         // Cause the panes to expand to height of window.

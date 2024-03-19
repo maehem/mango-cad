@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library;
 
+import com.maehem.mangocad.view.GroupContainer;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;

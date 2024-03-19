@@ -20,7 +20,7 @@ import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.BoardCache;
 import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
-import com.maehem.mangocad.view.library.GroupContainer;
+import com.maehem.mangocad.view.GroupContainer;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.board.BoardPreview;

@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library;
+package com.maehem.mangocad.view.library.toc;
 
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
@@ -51,16 +51,16 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryElementListView extends VBox {
+public class TocElementListView extends VBox {
 
-    private static final Logger LOGGER = Logger.getLogger("LibraryElementListView");
+    private static final Logger LOGGER = Logger.getLogger("TocElementListView");
 
     private final Library lib;
     private final ElementType type;
     private ListView<String> listView;
 
     @SuppressWarnings("unchecked")
-    public LibraryElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) { // Type?
+    public TocElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) { // Type?
 
         this.lib = lib;
         this.type = type;

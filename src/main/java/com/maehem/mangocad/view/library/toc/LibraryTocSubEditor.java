@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.library.toc;
 
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
-import com.maehem.mangocad.view.library.LibraryTableOfContentsPane;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ToolBar;

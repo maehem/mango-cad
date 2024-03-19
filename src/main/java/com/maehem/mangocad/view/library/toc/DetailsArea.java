@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations 
     under the License.
  */
-package com.maehem.mangocad.view.library;
+package com.maehem.mangocad.view.library.toc;
 
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
@@ -23,6 +23,8 @@ import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.library.DetailNodes;
+import com.maehem.mangocad.view.GroupContainer;
 import java.util.logging.Logger;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
