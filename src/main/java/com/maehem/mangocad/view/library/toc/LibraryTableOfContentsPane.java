@@ -196,7 +196,7 @@ public class LibraryTableOfContentsPane extends SplitPane {
 
             }
             case FOOTPRINT -> {
-
+                parentEditor.setEditor(type, item);
             }
             case PACKAGE3D -> {
 

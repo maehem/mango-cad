@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
+import com.maehem.mangocad.view.library.footprint.FootprintEditorPane;
 import com.maehem.mangocad.view.library.symbol.SymbolEditorPane;
 import com.maehem.mangocad.view.library.toc.LibraryTocSubEditor;
 import java.io.File;
@@ -70,6 +71,7 @@ public class LibraryEditor extends BorderPane {
     private Node currentEditor = null;
     private LibraryTocSubEditor tocPane = null;
     private SymbolEditorPane symbolPane = null;
+    private FootprintEditorPane footprintPane = null;
 
     //private DeviceEditorPane devicePane = null;
     //private FootprintEditorPane footprintPane = null;
@@ -136,7 +138,10 @@ public class LibraryEditor extends BorderPane {
 
                 }
                 case FOOTPRINT -> {
-
+                    if (footprintPane == null) {
+                        footprintPane = new FootprintEditorPane(this);
+                    }
+                    currentEditor = footprintPane;
                 }
                 case PACKAGE3D -> {
 

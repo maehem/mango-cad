@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library.symbol;
+package com.maehem.mangocad.view.library.footprint;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
@@ -29,11 +29,11 @@ import javafx.scene.text.Text;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorInteractiveArea extends ScrollPane {
+public class FootprintEditorInteractiveArea extends ScrollPane {
 
     private Pane workArea = new Pane();
 
-    public SymbolEditorInteractiveArea() {
+    public FootprintEditorInteractiveArea() {
         setFitToWidth(true);
         setFitToHeight(true);
         setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -44,7 +44,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
         workArea.setBackground(new Background(new BackgroundFill(Color.DARKGREY, CornerRadii.EMPTY, Insets.EMPTY)));
         setContent(workArea);
 
-        workArea.getChildren().add(new Text("\nSymbol Editor"));
+        workArea.getChildren().add(new Text("\nFootprint Editor"));
     }
 
 }

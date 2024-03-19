@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library.symbol;
+package com.maehem.mangocad.view.library.footprint;
 
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import com.maehem.mangocad.view.library.LibraryEditor;
@@ -28,7 +28,7 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPane extends BorderPane {
+public class FootprintEditorPane extends BorderPane {
 
     private final LibraryEditor parent;
 
@@ -37,7 +37,7 @@ public class SymbolEditorPane extends BorderPane {
     private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
-    public SymbolEditorPane(LibraryEditor parent) {
+    public FootprintEditorPane(LibraryEditor parent) {
         this.parent = parent;
 
         // top:  two tool bar rows
@@ -46,7 +46,7 @@ public class SymbolEditorPane extends BorderPane {
         // left: tool bar
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new FootprintEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
         workArea.setDividerPosition(0, 0.8);
         // center: work area
         setCenter(workArea);
@@ -60,7 +60,6 @@ public class SymbolEditorPane extends BorderPane {
         topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
-
     }
 
 }

@@ -14,39 +14,33 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library.symbol;
+package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.element.highlevel.Symbol;
-import javafx.scene.control.Tab;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import com.maehem.mangocad.model._AQuantum;
+import javafx.scene.control.TabPane;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPropertiesListTab extends Tab {
+public class SymbolEditorPropertiesTabPane extends TabPane {
 
-    private final Symbol symbol;
-    private final VBox propertyNodes = new VBox();
+    private SymbolEditorPropertiesListTab propertiesTab;
 
-    public SymbolEditorPropertiesListTab(Symbol item) {
-        super("Inspector");
-        this.setContent(propertyNodes);
+    public SymbolEditorPropertiesTabPane() {
+        propertiesTab = new SymbolEditorPropertiesListTab(null);
+        propertiesTab.setClosable(false);
 
-        this.symbol = item;
-
-        updateContent(item);
+        getTabs().addAll(propertiesTab);
     }
 
-    void updateContent(Symbol item) {
-        propertyNodes.getChildren().clear();
-        if (item != null) {
-            propertyNodes.getChildren().add(new Text("Symbol: " + symbol.getName()));
-        } else {
-            propertyNodes.getChildren().add(new Text("Nothing selected."));
-        }
+    public void setPropertiesItem(_AQuantum item) {
+        getSelectionModel().select(propertiesTab);
+
+        // Set
+        // propertiesTab.setItem( item );
+        // Refill the properties widgets.
+        propertiesTab.updateContent(item);
 
     }
-
 }
