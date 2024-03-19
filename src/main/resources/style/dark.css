@@ -54,6 +54,7 @@
     -fx-base: -fx-accent ;
 }
 
+
 .table-view{
     /*-fx-background-color: derive(-fx-base, 10%);*/
     -fx-selection-bar-non-focused: derive(-fx-base, 50%);
@@ -95,7 +96,11 @@
 }
 
 #button-icon{
-    -fx-blend-mode: color-dodge;
+    -fx-padding: 2;
+    -fx-border-width: 2;
+    -fx-border-insets: 3;
+    -fx-border-radius: 3;
+;
 }
 
 #control-panel-preview-area-heading{
