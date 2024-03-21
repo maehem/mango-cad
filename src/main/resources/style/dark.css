@@ -40,6 +40,10 @@
     -fx-text-fill: white;
 }
 
+.button:default {
+    -fx-base: -fx-accent ;
+}
+
 .separator *.line {
     -fx-background-color: #3C3C3C;
     -fx-border-style: solid;
@@ -49,11 +53,6 @@
 .scroll-bar{
     -fx-background-color: derive(-fx-base,35%)
 }
-
-.button:default {
-    -fx-base: -fx-accent ;
-}
-
 
 .table-view{
     /*-fx-background-color: derive(-fx-base, 10%);*/
@@ -93,6 +92,14 @@
 .list-cell:filled:selected {
     -fx-background-color: derive(-fx-focus-color, -40%);
     -fx-text-fill: #33F; /* Does nothing. FX Bug? */
+}
+
+.toggle-button:selected{
+    -fx-base: -fx-accent;
+}
+
+.tool-bar {
+    -fx-spacing: 6px;
 }
 
 #button-icon{
