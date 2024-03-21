@@ -24,11 +24,11 @@ import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.view.ControlPanel;
-import com.maehem.mangocad.view.library.LibraryEditor;
+import com.maehem.mangocad.view.GroupContainer;
 import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.library.DetailNodes;
-import com.maehem.mangocad.view.GroupContainer;
+import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -83,9 +83,11 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
     );
 
     private Stage stage = null;
+    private final Library library;
 
-    public LibraryDeviceSetItem(String name, String description, File file) {
+    public LibraryDeviceSetItem(String name, String description, File file, Library library) {
         super(name, description, file);
+        this.library = library;
 
 //        if (file != null) {
 //            // TODO: Maybe get date format from AppSettings? Let user define format in settings panel.
@@ -107,7 +109,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
 
             if (stage == null) {
                 stage = new Stage();
-                LibraryEditor root = new LibraryEditor(getFile());
+                LibraryEditor root = new LibraryEditor(getFile(), library);
                 stage.setTitle("Library Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();

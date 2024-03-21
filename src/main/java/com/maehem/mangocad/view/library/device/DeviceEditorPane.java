@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library.symbol;
+package com.maehem.mangocad.view.library.device;
 
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
@@ -29,7 +29,7 @@ import javafx.scene.text.Text;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPane extends BorderPane {
+public class DeviceEditorPane extends BorderPane {
 
     private final LibraryEditor parent;
 
@@ -38,7 +38,7 @@ public class SymbolEditorPane extends BorderPane {
     private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
-    public SymbolEditorPane(LibraryEditor parent, String item) {
+    public DeviceEditorPane(LibraryEditor parent, String item) {
         this.parent = parent;
 
         // top:  two tool bar rows
@@ -47,7 +47,7 @@ public class SymbolEditorPane extends BorderPane {
         // left: tool bar
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new DeviceEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
         workArea.setDividerPosition(0, 0.8);
         // center: work area
         setCenter(workArea);
@@ -62,7 +62,6 @@ public class SymbolEditorPane extends BorderPane {
         topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
-
     }
 
 }

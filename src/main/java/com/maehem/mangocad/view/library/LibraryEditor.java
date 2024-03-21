@@ -16,26 +16,44 @@
  */
 package com.maehem.mangocad.view.library;
 
+import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
+import com.maehem.mangocad.view.library.device.DeviceEditorPane;
 import com.maehem.mangocad.view.library.footprint.FootprintEditorPane;
 import com.maehem.mangocad.view.library.symbol.SymbolEditorPane;
 import com.maehem.mangocad.view.library.toc.LibraryTocSubEditor;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class LibraryEditor extends BorderPane {
+
+    // TODO: Get from i18n bundle.
+    private static final String TOC_STR = "Table of Contents";
+    private static final String DEV_STR = "Device";
+    private static final String FPT_STR = "Footprint";
+    private static final String SYM_STR = "Symbol";
 
     private static final Image FILE_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/file.png")
@@ -60,9 +78,21 @@ public class LibraryEditor extends BorderPane {
     );
 
     private final File file;
+    private final Library library;
 
     private final ToolBar mainToolbar = new ToolBar();
-    //private final ToolBar topToolbar2 = new ToolBar();
+    private final Button openButton = ViewUtils.createIconButton("Open", FILE_IMAGE);
+    private final Button saveButton = ViewUtils.createIconButton("Save", SAVE_IMAGE);
+    private final Button printButton = ViewUtils.createIconButton("Print", PRINT_IMAGE);
+
+    private final ToggleButton tocButton = ViewUtils.createIconToggleButton(TOC_STR, TOC_IMAGE);
+    private final ToggleButton deviceButton = ViewUtils.createIconToggleButton(DEV_STR, DEVICE_IMAGE);
+    private final ToggleButton footprintButton = ViewUtils.createIconToggleButton(FPT_STR, FOOTPRINT_IMAGE);
+    private final ToggleButton symbolButton = ViewUtils.createIconToggleButton(SYM_STR, SYMBOL_IMAGE);
+
+    final ToggleGroup modeToggle = new ToggleGroup();
+    private Toggle currentToggle = tocButton;
+
     private final VBox topArea = new VBox(mainToolbar);//, topToolbar2);
     //private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
@@ -70,14 +100,16 @@ public class LibraryEditor extends BorderPane {
     // The editors.  Only one showing in the center at a time.
     private Node currentEditor = null;
     private LibraryTocSubEditor tocPane = null;
+    private DeviceEditorPane devicePane = null;
     private SymbolEditorPane symbolPane = null;
     private FootprintEditorPane footprintPane = null;
 
     //private DeviceEditorPane devicePane = null;
     //private FootprintEditorPane footprintPane = null;
     //private Package3DEditorPane packagePane = null;
-    public LibraryEditor(File file) {
+    public LibraryEditor(File file, Library library) {
         this.file = file;
+        this.library = library;
 
         // top:  two tool bar rows
         setTop(topArea);
@@ -92,68 +124,145 @@ public class LibraryEditor extends BorderPane {
         // bottom: message area
         setBottom(bottomArea);
 
-        // right: nothing.
-        //topArea.setPrefHeight(48);
         topArea.setFillWidth(true);
-        mainToolbar.setPrefHeight(24);
-        //topToolbar2.setPrefHeight(32);
         bottomArea.setPrefHeight(16);
         bottomArea.setFillHeight(true);
+        bottomArea.getChildren().add(new Text(library.getFile().getAbsolutePath()));
 
-        initMainToolbar();
+        initToolbar();
     }
 
-    private void initMainToolbar() {
-        ObservableList<Node> items = mainToolbar.getItems();
-        //// File section
-        // Open  --  file.png
-        items.add(ViewUtils.createIconButton("Open", FILE_IMAGE));
-        // Save -- floppy-disk.png
-        items.add(ViewUtils.createIconButton("Save", SAVE_IMAGE));
-        // Print
-        items.add(ViewUtils.createIconButton("Print", PRINT_IMAGE));
+    private void initToolbar() {
+        mainToolbar.setPrefHeight(24);
 
+        tocButton.setToggleGroup(modeToggle);
+
+        deviceButton.setToggleGroup(modeToggle);
+        footprintButton.setToggleGroup(modeToggle);
+        symbolButton.setToggleGroup(modeToggle);
+
+        tocButton.setSelected(true);
+        deviceButton.setSelected(false);
+        footprintButton.setSelected(false);
+        symbolButton.setSelected(false);
+
+        /* Add toolbar buttons */
+        ObservableList<Node> items = mainToolbar.getItems();
+        items.add(openButton);
+        items.add(saveButton);
+        items.add(printButton);
+        items.add(new Region());
         items.add(new Separator());
-        //// Sub-editor Section
-        // ToC icon  --  book.png
-        items.add(ViewUtils.createIconButton("ToC", TOC_IMAGE));
-        // Device icon  -- Chip+Gate+DownArrow
-        items.add(ViewUtils.createIconButton("Device", DEVICE_IMAGE));
-        // Footprint icon -- Chip
-        items.add(ViewUtils.createIconButton("Footprint", FOOTPRINT_IMAGE));
-        // Symbol icon -- Gate
-        items.add(ViewUtils.createIconButton("Symbol", SYMBOL_IMAGE));
+        items.add(new Region());
+        items.add(tocButton);
+        items.add(deviceButton);
+        items.add(footprintButton);
+        items.add(symbolButton);
+
+        /*
+         *  Button callbacks
+         */
+//        tocButton.setOnAction((t) -> {
+//            if (currentEditor != tocPane) {
+//                setEditor(null, null);
+//            }
+//        });
+//        deviceButton.setOnAction((t) -> {
+//            LOGGER.log(Level.SEVERE, "Device Button Togggled.");
+//
+//            // On cancel or fail, select ToC Button
+//        });
+        modeToggle.selectedToggleProperty().addListener((ov, toggle, newToggle) -> {
+            if (newToggle == null) { // If newToggle is null, reselect it.
+                currentToggle.setSelected(true); // user action might have un-toggled it.
+            } else {
+                currentToggle = newToggle;
+                initiateSwitchEditorAction();
+            }
+            //currentToggle.setSelected(true);
+
+//            String tStr = toggle != null ? (String) (toggle.getUserData()) : "null";
+//            String t2Str = newToggle != null ? (String) (newToggle.getUserData()) : "null";
+//            LOGGER.log(Level.SEVERE, "Mode Toggle has Changed: t:{0}  newT:{1}  current:{2}",
+//                    new Object[]{tStr, t2Str, (String) (currentToggle.getUserData())}
+//            );
+        });
     }
 
     public File getFile() {
         return file;
     }
 
+    private void initiateSwitchEditorAction() {
+        // TOC, always there just witch back
+        String togName = (String) currentToggle.getUserData();
+        switch (togName) {
+            case TOC_STR -> {
+                setEditor(null, null);
+            }
+            case DEV_STR -> {
+                // Present Device chooser
+                setEditor(ElementType.DEVICE, null);
+            }
+            case FPT_STR -> {
+                // Present Footprint Chooser
+                setEditor(ElementType.FOOTPRINT, null);
+            }
+            case SYM_STR -> {
+                // Present Symbol
+                setEditor(ElementType.SYMBOL, null);
+            }
+        }
+
+    }
+
     public void setEditor(ElementType type, String item) {
         if (type == null) {
             currentEditor = tocPane;
+            tocButton.setSelected(true);
         } else {
             switch (type) {
                 case DEVICE -> {
-
+                    if (devicePane == null) {
+                        if (item == null) {
+                            // Present chooser
+                            ArrayList<String> deviceSets = new ArrayList<>();
+                            for (DeviceSet ds : library.getDeviceSets()) {
+                                deviceSets.add(ds.getName());
+                            }
+                            Collections.sort(deviceSets);
+                            ChoiceDialog choiceDialog = new ChoiceDialog<>(deviceSets.get(0), deviceSets);
+                            choiceDialog.showAndWait();
+                            // If cancel, return
+                        }
+                        devicePane = new DeviceEditorPane(this, item);
+                    }
+                    currentEditor = devicePane;
+                    deviceButton.setSelected(true);
                 }
                 case FOOTPRINT -> {
                     if (footprintPane == null) {
-                        footprintPane = new FootprintEditorPane(this);
+                        if (item == null) {
+                            // Present chooser
+                        }
+                        footprintPane = new FootprintEditorPane(this, item);
                     }
                     currentEditor = footprintPane;
+                    footprintButton.setSelected(true);
                 }
                 case PACKAGE3D -> {
 
                 }
                 case SYMBOL -> {
                     if (symbolPane == null) {
-                        symbolPane = new SymbolEditorPane(this);
+                        symbolPane = new SymbolEditorPane(this, item);
                     }
                     currentEditor = symbolPane;
+                    symbolButton.setSelected(true);
                 }
             }
         }
         setCenter(currentEditor);
     }
+
 }

@@ -14,47 +14,44 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.library.symbol;
+package com.maehem.mangocad.view.board;
 
-import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import java.io.File;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPane extends BorderPane {
+public class BoardEditor extends BorderPane {
 
-    private final LibraryEditor parent;
+    private final File file;
 
     private final ToolBar topToolbar1 = new ToolBar();
     private final VBox topArea = new VBox(topToolbar1);
     private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
-    public SymbolEditorPane(LibraryEditor parent, String item) {
-        this.parent = parent;
+    public BoardEditor(File file) {
+        this.file = file;
 
-        // top:  two tool bar rows
-        setTop(topToolbar1);
+        // top:  tool bar
+        setTop(topArea);
 
         // left: tool bar
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new BoardEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
         workArea.setDividerPosition(0, 0.8);
-        // center: work area
         setCenter(workArea);
 
         // bottom: message area
         setBottom(bottomArea);
-        bottomArea.getChildren().add(new Text("Editing: " + item));
 
         // right: nothing.
         topArea.setPrefHeight(24);
@@ -62,7 +59,6 @@ public class SymbolEditorPane extends BorderPane {
         topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
-
     }
 
 }

@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
@@ -22,8 +22,8 @@ import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.view.GroupContainer;
-import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
+import com.maehem.mangocad.view.schematic.SchematicEditor;
 import com.maehem.mangocad.view.schematic.SchematicPreview;
 import java.io.File;
 import java.text.MessageFormat;
@@ -99,7 +99,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 
             if (stage == null) {
                 stage = new Stage();
-                LibraryEditor root = new LibraryEditor(getFile());
+                SchematicEditor root = new SchematicEditor(getFile());
                 stage.setTitle("Schematic Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();
@@ -117,10 +117,10 @@ public class SchematicFileItem extends ControlPanelListItem {
         menuItem4.setOnAction((event) -> {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem4.getText()});
 
-            //   AppProperties.getInstance().getHostServices().showDocument() 
-            //   from the Application class. So, the URI of home directory on 
-            //   Windows is typically: file:///C:/Users/$USER/. The link to 
-            //   documentation. 
+            //   AppProperties.getInstance().getHostServices().showDocument()
+            //   from the Application class. So, the URI of home directory on
+            //   Windows is typically: file:///C:/Users/$USER/. The link to
+            //   documentation.
             //   If you have a Path object, you can do .toUri().toString() for example.
             AppProperties.getInstance().getHostServices().showDocument(getFile().toURI().toString());
 
@@ -267,7 +267,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 //
 //        TableView tableView = new TableView();
 //        tableView.setPlaceholder( new Label("No rows to display"));
-//        
+//
 //        TableColumn<Map, String> sheetname = new TableColumn<>("Sheet");
 //        sheetname.setCellValueFactory(new MapValueFactory<>("sheet"));
 //
@@ -276,7 +276,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 //        // someday but not right now.
 ////        TableColumn<Map, String> size = new TableColumn<>("Size");
 ////        size.setCellValueFactory(new MapValueFactory<>("size"));
-//        
+//
 //        TableColumn<Map, String> desc = new TableColumn<>("Description");
 //        desc.setCellValueFactory(new MapValueFactory<>("description"));
 //
@@ -296,12 +296,12 @@ public class SchematicFileItem extends ControlPanelListItem {
 //            //item.put("size", "???");
 //            item.put("description", sheet.getDescription().getValue());
 //            items.add(item);
-//            
+//
 //            sheetIndex++;
 //        }
 //
 //        tableView.getItems().addAll(items);
-//            
+//
 //        return tableView;
 //    }
     @Override
@@ -330,7 +330,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 
         node.setRotate(-90);  // Landscape
 
-        // Without StackPane and Group, node might print off page because of 
+        // Without StackPane and Group, node might print off page because of
         // raw values and any rotation scaling that was added to Node.
         StackPane printNode = new StackPane(new Group(node));
 

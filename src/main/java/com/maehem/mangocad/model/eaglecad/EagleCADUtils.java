@@ -55,7 +55,8 @@ public class EagleCADUtils {
         LOGGER.log(Level.SEVERE, "Library Import: {0}", file.getAbsolutePath());
 
         Library lib = (Library) convertEagleXMLtoLBR(eagleXML).getDrawing().getDesign();
-        lib.setFilePath(file.getAbsolutePath());
+        lib.setFilePath(file.getAbsolutePath()); // TODO: Remove. Use lib.getFile().getAbsoloutePath()
+        lib.setFile(file);
 
         return lib;
     }

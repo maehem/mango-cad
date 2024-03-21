@@ -17,6 +17,8 @@
 package com.maehem.mangocad.view;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -35,6 +37,14 @@ public class ViewUtils {
     public static final int ICON_IMG_SIZE = 24;
 
     public static Button createIconButton(String name, Image img) {
+        return (Button) createIconButton(name, img, false);
+    }
+
+    public static ToggleButton createIconToggleButton(String name, Image img) {
+        return (ToggleButton) createIconButton(name, img, true);
+    }
+
+    public static ButtonBase createIconButton(String name, Image img, boolean asToggle) {
         ImageView icon = new ImageView(img);
         icon.setFitHeight(ICON_IMG_SIZE);
         icon.setPreserveRatio(true);
@@ -60,7 +70,14 @@ public class ViewUtils {
         );
 
         icon.setEffect(blush);
-        Button b = new Button();
+
+        ButtonBase b;
+        if (asToggle) {
+            b = new ToggleButton();
+        } else {
+            b = new Button();
+        }
+        b.setUserData(name);
         b.setId("button-icon");
         b.setGraphic(icon);
         b.setTooltip(new Tooltip(name));

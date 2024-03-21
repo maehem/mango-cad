@@ -1,37 +1,38 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import java.util.ArrayList;
 import com.maehem.mangocad.model._AQuantum;
-import com.maehem.mangocad.model.element.misc.Description;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.misc.Description;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * library ( description?, packages?, packages3d?, symbols?, devicesets? )
  *    name          %String;       #REQUIRED
  *    urn           %Urn;          ""
- *    
+ *
  *    name: Only in libraries used inside boards or schematics
  *    urn:  Only in online libraries used inside boards or schematics
- * 
+ *
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
@@ -44,10 +45,14 @@ public class Library extends _AQuantum implements DesignObject {
 
     //private final Grid grid = new Grid();
     //private final ArrayList<Setting> settings = new ArrayList<>();
-    
+
     //private final ArrayList<Note> notes = new ArrayList<>();
     //private final LayerElement layers[] = new LayerElement[256];
     //private final ArrayList<Filter> filters = new ArrayList<>();
+
+    private String filePath;
+    private File file;
+    private Drawing parentDrawing = null;
 
     private final ArrayList<Description> descriptions = new ArrayList<>();
     private final ArrayList<Footprint> packages = new ArrayList<>();
@@ -55,9 +60,6 @@ public class Library extends _AQuantum implements DesignObject {
     private final ArrayList<DeviceSet> deviceSets = new ArrayList<>();
     private final ArrayList<Symbol> symbols = new ArrayList<>();
 
-    private String filePath;
-    private Drawing parentDrawing = null;
-    
     private String name;// Only in libraries used inside boards or schematics
     private String urn; // Only in online libraries used inside boards or schematics
 
@@ -75,8 +77,8 @@ public class Library extends _AQuantum implements DesignObject {
         this.parentDrawing = parent;
     }
 
-    
-    
+
+
 //    public ColorPalette getPalette() {
 //        return colorPalette;
 //    }
@@ -84,7 +86,7 @@ public class Library extends _AQuantum implements DesignObject {
 //    public Grid getGrid() {
 //        return grid;
 //    }
-//    
+//
     // TODO:  Add getDescription based on local.
     /**
      * @return the description
@@ -183,7 +185,7 @@ public class Library extends _AQuantum implements DesignObject {
     public ArrayList<DeviceSet> getDeviceSets() {
         return deviceSets;
     }
-    
+
     public DeviceSet getDeviceSet( String name ) {
         for ( DeviceSet ds: getDeviceSets() ) {
             if ( ds.getName().equals(name) ) {
@@ -224,14 +226,14 @@ public class Library extends _AQuantum implements DesignObject {
     public ArrayList<Package3d> getPackages3d() {
         return packages3d;
     }
-    
+
     public Package3d getPackage3D( String pkgName ) {
         for ( Package3d pkg: getPackages3d() ) {
             if (pkg.getName().equals(pkgName )) {
                 return pkg;
             }
         }
-        
+
         return null;
     }
 
@@ -254,6 +256,24 @@ public class Library extends _AQuantum implements DesignObject {
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    /**
+     * File for the Library. Might be null if never saved.
+     *
+     * @return file object
+     */
+    public File getFile() {
+        return file;
+    }
+
+    /**
+     * Assign a file object to this library
+     *
+     * @param file
+     */
+    public void setFile(File file) {
+        this.file = file;
     }
 
     /**
@@ -287,11 +307,11 @@ public class Library extends _AQuantum implements DesignObject {
 //    public List<Setting> getSettings() {
 //        return settings;
 //    }
-//    
+//
 //    public List<Filter> getFilters() {
 //        return filters;
 //    }
-    
+
 
     @Override
     public String getElementName() {

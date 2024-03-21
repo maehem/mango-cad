@@ -16,13 +16,14 @@
  */
 package com.maehem.mangocad.view.library.footprint;
 
-import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import com.maehem.mangocad.view.library.LibraryEditor;
+import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -37,7 +38,7 @@ public class FootprintEditorPane extends BorderPane {
     private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
-    public FootprintEditorPane(LibraryEditor parent) {
+    public FootprintEditorPane(LibraryEditor parent, String item) {
         this.parent = parent;
 
         // top:  two tool bar rows
@@ -53,6 +54,7 @@ public class FootprintEditorPane extends BorderPane {
 
         // bottom: message area
         setBottom(bottomArea);
+        bottomArea.getChildren().add(new Text("Editing: " + item));
 
         // right: nothing.
         topArea.setPrefHeight(24);

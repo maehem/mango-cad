@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.view.controlpanel.listitem;
@@ -19,10 +19,9 @@ package com.maehem.mangocad.view.controlpanel.listitem;
 import com.maehem.mangocad.AppProperties;
 import com.maehem.mangocad.model.BoardCache;
 import com.maehem.mangocad.model.element.drawing.Board;
-import com.maehem.mangocad.view.controlpanel.ControlPanelUtils;
 import com.maehem.mangocad.view.GroupContainer;
-import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.MarkdownUtils;
+import com.maehem.mangocad.view.board.BoardEditor;
 import com.maehem.mangocad.view.board.BoardPreview;
 import java.io.File;
 import java.text.MessageFormat;
@@ -92,7 +91,7 @@ public class BoardFileItem extends ControlPanelListItem {
 
             if (stage == null) {
                 stage = new Stage();
-                LibraryEditor root = new LibraryEditor(getFile());
+                BoardEditor root = new BoardEditor(getFile());
                 stage.setTitle("Board Editor: " + getName());
                 stage.setScene(new Scene(root, 1280, 960));
                 stage.centerOnScreen();

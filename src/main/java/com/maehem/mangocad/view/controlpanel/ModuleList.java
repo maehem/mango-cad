@@ -238,16 +238,17 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                     item = new TreeItem(new LibraryItem(
                             lbrFile.getName(),
                             Library.getDescriptionShort(library.getDescription()),
-                            lbrFile
+                            lbrFile,
+                            library
                     ));
                     parentItem.getChildren().add(item);
                 } else {
-                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile));
+                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile, library));
                     parentItem.getChildren().add(item);
                 }
                 populateLibraryDetailItems(library, lbrFile, item);
             } else {
-                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
+                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null, null));
                 parentItem.getChildren().add(item);
             }
         }
@@ -267,7 +268,11 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
             return sdir.isDirectory();
         });
         for (File sdir : sdirs) {
-            TreeItem item = new TreeItem(new ProjectSubFolderItem(sdir.getName(), ControlPanelUtils.getFolderDescriptionShort(sdir), sdir));
+            TreeItem item = new TreeItem(new ProjectSubFolderItem(
+                    sdir.getName(),
+                    ControlPanelUtils.getFolderDescriptionShort(sdir),
+                    sdir
+            ));
             parentItem.getChildren().add(item);
             populateProjectFolder(sdir, item);
         }
@@ -288,7 +293,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                 parentItem.getChildren().add(item);
                 //populateSchematicDetailItems(schem, schFile, item);
             } else {
-                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null));
+                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null, null));
                 parentItem.getChildren().add(item);
             }
         }
@@ -309,17 +314,17 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
                 item = new TreeItem(new BoardFileItem(brdFile.getName(), board.getDescription().getValue(), brdFile));
                 parentItem.getChildren().add(item);
             } else {
-                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Board Error", null));
+                TreeItem item = new TreeItem(new LibraryItem("ERROR", "Board Error", null, null));
                 parentItem.getChildren().add(item);
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     private void populateLibraryDetailItems(Library library, File file, TreeItem parentItem) {
         // List each deviceset as item (leaf)
         for (DeviceSet ds : library.getDeviceSets()) {
-            TreeItem item = new TreeItem(new LibraryDeviceSetItem(ds.getName(), ds.getDescription(), file));
+            TreeItem item = new TreeItem(new LibraryDeviceSetItem(ds.getName(), ds.getDescription(), file, library));
             parentItem.getChildren().add(item);
         }
 
@@ -330,7 +335,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         parentItem.getChildren().add(item);
         for (Footprint f : library.getPackages()) {
             TreeItem footprintItem = new TreeItem(new LibraryDeviceFootprintItem(
-                    f.getName(), f.getDescription().getValue(), file
+                    f.getName(), f.getDescription().getValue(), file, library
             ));
             item.getChildren().add(footprintItem);
         }
@@ -339,7 +344,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         item = new TreeItem(new LibrarySubItem("3D Packages", "", file));
         parentItem.getChildren().add(item);
         for (Package3d f : library.getPackages3d()) {
-            TreeItem package3dItem = new TreeItem(new LibraryDevicePackage3dItem(f.getName(), f.getDescription(), file));
+            TreeItem package3dItem = new TreeItem(new LibraryDevicePackage3dItem(f.getName(), f.getDescription(), file, library));
             item.getChildren().add(package3dItem);
         }
 
@@ -348,7 +353,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         parentItem.getChildren().add(item);
         for (Symbol f : library.getSymbols()) {
             TreeItem symbolItem = new TreeItem(new LibraryDeviceSymbolItem(
-                    f.getName(), f.getDescription().getValue(), file
+                    f.getName(), f.getDescription().getValue(), file, library
             ));
             item.getChildren().add(symbolItem);
         }
