@@ -193,7 +193,8 @@ public class LibraryTableOfContentsPane extends SplitPane {
     void editItem(ElementType type, String item) {
         switch (type) {
             case DEVICE -> {
-
+                LOGGER.log(Level.SEVERE, "Invoke Device Editor for : " + item);
+                parentEditor.setEditor(ElementType.DEVICE, item);
             }
             case FOOTPRINT -> {
                 parentEditor.setEditor(type, item);
