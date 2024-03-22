@@ -44,6 +44,11 @@
     -fx-base: -fx-accent ;
 }
 
+.dialog-pane .header-panel {
+    -fx-background-color: -fx-accent;
+
+}
+
 .separator *.line {
     -fx-background-color: #3C3C3C;
     -fx-border-style: solid;
