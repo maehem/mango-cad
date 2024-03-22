@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
@@ -24,6 +25,7 @@ import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.ColorInput;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -35,6 +37,8 @@ import javafx.scene.paint.Color;
 public class ViewUtils {
 
     public static final int ICON_IMG_SIZE = 24;
+    public static final double DIALOG_GRAPHIC_SIZE = 48;
+    public static final String CSS_FILE = "/style/dark.css";
 
     public static Button createIconButton(String name, Image img) {
         return (Button) createIconButton(name, img, false);
@@ -45,31 +49,35 @@ public class ViewUtils {
     }
 
     public static ButtonBase createIconButton(String name, Image img, boolean asToggle) {
-        ImageView icon = new ImageView(img);
-        icon.setFitHeight(ICON_IMG_SIZE);
-        icon.setPreserveRatio(true);
+//        ImageView icon = new ImageView(img);
+//        icon.setFitHeight(ICON_IMG_SIZE);
+//        icon.setPreserveRatio(true);
 
-        ImageView clip = new ImageView(img);
-        clip.setFitHeight(ICON_IMG_SIZE);
-        clip.setPreserveRatio(true);
-        icon.setClip(clip);
+//        ImageView clip = new ImageView(img);
+//        clip.setFitHeight(ICON_IMG_SIZE);
+//        clip.setPreserveRatio(true);
+//        icon.setClip(clip);
 
-        ColorAdjust monochrome = new ColorAdjust();
-        monochrome.setSaturation(-1.0);
+//        ColorAdjust monochrome = new ColorAdjust();
+//        monochrome.setSaturation(-1.0);
 
-        Blend blush = new Blend(
-                BlendMode.SCREEN,
-                monochrome,
-                new ColorInput(
-                        0,
-                        0,
-                        icon.getBoundsInLocal().getWidth(),
-                        icon.getBoundsInLocal().getHeight(),
-                        Color.LIGHTGRAY
-                )
-        );
+//        Blend blush = new Blend(
+//                BlendMode.SCREEN,
+//                monochrome,
+//                new ColorInput(
+//                        0,
+//                        0,
+//                        icon.getBoundsInLocal().getWidth(),
+//                        icon.getBoundsInLocal().getHeight(),
+//                        Color.LIGHTGRAY
+//                )
+//        );
 
-        icon.setEffect(blush);
+        //icon.setEffect(blush);
+//        icon.setEffect(getColorIconEffect(icon,
+//                Color.LIGHTGRAY, ICON_IMG_SIZE, ICON_IMG_SIZE
+//        ));
+        ImageView icon = createIcon(img, ICON_IMG_SIZE);
 
         ButtonBase b;
         if (asToggle) {
@@ -86,4 +94,34 @@ public class ViewUtils {
         return b;
     }
 
+    public static final Effect getColorIconEffect(ImageView imgView, Color c, double w, double h) {
+        ImageView clip = new ImageView(imgView.getImage());
+        clip.setFitHeight(h);
+        clip.setPreserveRatio(true);
+        imgView.setClip(clip);
+
+        ColorAdjust monochrome = new ColorAdjust();
+        monochrome.setSaturation(-1.0);
+
+        Blend blush = new Blend(
+                BlendMode.SCREEN,
+                monochrome,
+                new ColorInput(0, 0, w, h, c)
+        );
+
+        return blush;
+    }
+
+    public static final ImageView createIcon(Image img, double size) {
+        ImageView graphic = new ImageView(img);
+        graphic.setFitHeight(size);
+        graphic.setPreserveRatio(true);
+        graphic.setEffect(getColorIconEffect(graphic, Color.LIGHTGRAY, size, size));
+
+        return graphic;
+    }
+
+    public static final void applyAppStylesheet(ObservableList<String> sylesheetList) {
+        sylesheetList.add(ViewUtils.class.getResource(CSS_FILE).toExternalForm());
+    }
 }
