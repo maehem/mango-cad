@@ -55,25 +55,25 @@ public class LibraryEditor extends BorderPane {
     private static final String FPT_STR = "Footprint";
     private static final String SYM_STR = "Symbol";
 
-    private static final Image FILE_IMAGE = new Image(
+    public static final Image FILE_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/file.png")
     );
-    private static final Image SAVE_IMAGE = new Image(
+    public static final Image SAVE_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/floppy-disk.png")
     );
-    private static final Image PRINT_IMAGE = new Image(
+    public static final Image PRINT_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/printer.png")
     );
-    private static final Image TOC_IMAGE = new Image(
+    public static final Image TOC_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/book.png")
     );
-    private static final Image DEVICE_IMAGE = new Image(
+    public static final Image DEVICE_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/photo-album.png")
     );
-    private static final Image FOOTPRINT_IMAGE = new Image(
+    public static final Image FOOTPRINT_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/integrated-circuit.png")
     );
-    private static final Image SYMBOL_IMAGE = new Image(
+    public static final Image SYMBOL_IMAGE = new Image(
             LibraryEditor.class.getResourceAsStream("/icons/logic-gate.png")
     );
 
@@ -162,16 +162,6 @@ public class LibraryEditor extends BorderPane {
         /*
          *  Button callbacks
          */
-//        tocButton.setOnAction((t) -> {
-//            if (currentEditor != tocPane) {
-//                setEditor(null, null);
-//            }
-//        });
-//        deviceButton.setOnAction((t) -> {
-//            LOGGER.log(Level.SEVERE, "Device Button Togggled.");
-//
-//            // On cancel or fail, select ToC Button
-//        });
         modeToggle.selectedToggleProperty().addListener((ov, toggle, newToggle) -> {
             if (newToggle == null) { // If newToggle is null, reselect it.
                 currentToggle.setSelected(true); // user action might have un-toggled it.
@@ -179,13 +169,7 @@ public class LibraryEditor extends BorderPane {
                 currentToggle = newToggle;
                 initiateSwitchEditorAction();
             }
-            //currentToggle.setSelected(true);
 
-//            String tStr = toggle != null ? (String) (toggle.getUserData()) : "null";
-//            String t2Str = newToggle != null ? (String) (newToggle.getUserData()) : "null";
-//            LOGGER.log(Level.SEVERE, "Mode Toggle has Changed: t:{0}  newT:{1}  current:{2}",
-//                    new Object[]{tStr, t2Str, (String) (currentToggle.getUserData())}
-//            );
         });
     }
 
@@ -224,18 +208,36 @@ public class LibraryEditor extends BorderPane {
             switch (type) {
                 case DEVICE -> {
                     if (devicePane == null) {
+                        final String NEW_DEVICE = "Create New Device...";
                         if (item == null) {
-                            // Present chooser
                             ArrayList<String> deviceSets = new ArrayList<>();
                             for (DeviceSet ds : library.getDeviceSets()) {
                                 deviceSets.add(ds.getName());
                             }
                             Collections.sort(deviceSets);
-                            ChoiceDialog choiceDialog = new ChoiceDialog<>(deviceSets.get(0), deviceSets);
-                            choiceDialog.showAndWait();
-                            // If cancel, return
+                            deviceSets.add(0, NEW_DEVICE);
+
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, deviceSets);
+                            dialog.showAndWait(); // Present chooser
+
+                            Object result = dialog.getResult();
+                            if (result == null) { // User Canceled
+                                return;
+                            } else {
+                                item = (String) result;
+                            }
+                            if (item.equals(NEW_DEVICE)) {
+                                deviceSets.remove(NEW_DEVICE);
+                                String newName = LibraryEditorDialogs.presentNewDevNameDialog(library, deviceSets, null);
+                                if (newName != null) { // A valid new device was added, go edit it.
+                                    devicePane = new DeviceEditorPane(this, newName);
+                                } else {
+                                    return; // User cancelled.
+                                }
+                            } else { // Edit existing device.
+                                devicePane = new DeviceEditorPane(this, item);
+                            }
                         }
-                        devicePane = new DeviceEditorPane(this, item);
                     }
                     currentEditor = devicePane;
                     deviceButton.setSelected(true);
