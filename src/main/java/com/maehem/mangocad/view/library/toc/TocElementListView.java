@@ -22,7 +22,9 @@ import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ElementType;
+import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditorDialogs;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -41,6 +43,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -95,6 +98,7 @@ public class TocElementListView extends VBox {
             }
         }
 
+        Collections.sort(list);
         listView = new ListView(list);
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -131,8 +135,41 @@ public class TocElementListView extends VBox {
         label.setPadding(new Insets(3, 0, 0, 6));
         Pane gapper = new Pane();
         HBox.setHgrow(gapper, Priority.ALWAYS);
-        Button sortButton = new Button("^");
-        Button addButton = new Button("+");
+        Pane sortPane = new Pane();
+        //Button sortButton = new Button("^");
+        Button sortAscButton = ViewUtils.createHeaderButton("^",
+                new Image(getClass().getResourceAsStream("/icons/chevron-up.png")), // icon of current mode
+                "Sort Descending" // new mode if user clicks it.
+        );
+        Button sortDesButton = ViewUtils.createHeaderButton("⌄",
+                new Image(getClass().getResourceAsStream("/icons/chevron-down.png")),
+                "Sort Ascending"
+        );
+        sortPane.getChildren().add(sortDesButton);
+
+        // These two toggle up -down
+        sortAscButton.setOnAction((t) -> {
+            sortPane.getChildren().clear();
+            sortPane.getChildren().add(sortDesButton);
+            // Sort to match post-action, sort descending
+            listView.getItems().sort((o1, o2) -> {
+                return o2.compareTo(o1);
+            });
+        });
+        sortDesButton.setOnAction((t) -> {
+            sortPane.getChildren().clear();
+            sortPane.getChildren().add(sortAscButton);
+            // Sort to match post-action, sort ascending
+            listView.getItems().sort((o1, o2) -> {
+                return o1.compareTo(o2);
+            });
+        });
+
+        //Button addButton = new Button("+");
+        Button addButton = ViewUtils.createHeaderButton("+",
+                new Image(getClass().getResourceAsStream("/icons/plus-circle.png")),
+                "Add " + type.text() + "..."
+        );
         addButton.setOnAction((t) -> {
             // Dialog for add new *type*
             String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
@@ -140,7 +177,8 @@ public class TocElementListView extends VBox {
                 listener.getParentEditor().setEditor(type, newName);
             }
         });
-        HBox header = new HBox(label, gapper, sortButton, addButton);
+        HBox header = new HBox(label, gapper, sortPane, addButton);
+        header.setSpacing(2);
         header.setMaxHeight(24);
         return header;
 
