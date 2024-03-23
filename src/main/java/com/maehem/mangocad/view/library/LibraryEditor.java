@@ -178,7 +178,7 @@ public class LibraryEditor extends BorderPane {
     }
 
     private void initiateSwitchEditorAction() {
-        // TOC, always there just witch back
+        // TOC, always there just switch back
         String togName = (String) currentToggle.getUserData();
         switch (togName) {
             case TOC_STR -> {
