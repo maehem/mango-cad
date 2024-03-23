@@ -56,7 +56,7 @@ public class LibraryTableOfContentsPane extends SplitPane {
         this.parentEditor = parentEditor;
 
         lib = LibraryCache.getInstance().getLibrary(parentEditor.getFile());
-        if ( lib == null ) {
+        if (lib == null) {
             LOGGER.log(Level.SEVERE, "OOPS! Library File didn't load!");
         }
 
@@ -69,14 +69,12 @@ public class LibraryTableOfContentsPane extends SplitPane {
         //VBox symbolList = new VBox(new Label("Symbol List"));
         symbolList = new TocElementListView(this, lib, ElementType.SYMBOL);
 
-
         // Cause the panes to expand to height of window.
         //deviceList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         footprintList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
         package3dList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
         symbolList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
         //detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
-
 
         getItems().addAll(deviceList, footprintList, package3dList, symbolList, detailsArea);
 
@@ -146,6 +144,9 @@ public class LibraryTableOfContentsPane extends SplitPane {
                                     }
                                 }
                             }
+//                            for (Gate g : ds.getGates()) {
+//                                symbolList.select(g.getSymbol());
+//                            }
                         }
                     }
                 }
