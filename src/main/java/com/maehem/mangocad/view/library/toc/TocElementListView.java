@@ -128,6 +128,8 @@ public class TocElementListView extends VBox {
     public void select(String item) {
         LOGGER.log(Level.FINER, "{0} select: {1}", new Object[]{type, item});
         listView.getSelectionModel().select(item);
+        listView.getFocusModel().focus(-1);
+
     }
 
     private Node getHeader() {
