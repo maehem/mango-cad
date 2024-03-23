@@ -37,6 +37,7 @@ import javafx.scene.paint.Color;
 public class ViewUtils {
 
     public static final int ICON_IMG_SIZE = 24;
+    public static final int HDR_IMG_SIZE = 16;
     public static final double DIALOG_GRAPHIC_SIZE = 48;
     public static final String CSS_FILE = "/style/dark.css";
 
@@ -49,34 +50,6 @@ public class ViewUtils {
     }
 
     public static ButtonBase createIconButton(String name, Image img, boolean asToggle) {
-//        ImageView icon = new ImageView(img);
-//        icon.setFitHeight(ICON_IMG_SIZE);
-//        icon.setPreserveRatio(true);
-
-//        ImageView clip = new ImageView(img);
-//        clip.setFitHeight(ICON_IMG_SIZE);
-//        clip.setPreserveRatio(true);
-//        icon.setClip(clip);
-
-//        ColorAdjust monochrome = new ColorAdjust();
-//        monochrome.setSaturation(-1.0);
-
-//        Blend blush = new Blend(
-//                BlendMode.SCREEN,
-//                monochrome,
-//                new ColorInput(
-//                        0,
-//                        0,
-//                        icon.getBoundsInLocal().getWidth(),
-//                        icon.getBoundsInLocal().getHeight(),
-//                        Color.LIGHTGRAY
-//                )
-//        );
-
-        //icon.setEffect(blush);
-//        icon.setEffect(getColorIconEffect(icon,
-//                Color.LIGHTGRAY, ICON_IMG_SIZE, ICON_IMG_SIZE
-//        ));
         ImageView icon = createIcon(img, ICON_IMG_SIZE);
 
         ButtonBase b;
@@ -90,6 +63,20 @@ public class ViewUtils {
         b.setGraphic(icon);
         b.setTooltip(new Tooltip(name));
         b.setMaxSize(ICON_IMG_SIZE, ICON_IMG_SIZE);
+
+        return b;
+    }
+
+    public static Button createHeaderButton(String name, Image img, String tooltip) {
+        ImageView icon = createIcon(img, HDR_IMG_SIZE);
+
+        Button b;
+        b = new Button();
+        b.setUserData(name);
+        b.setId("button-icon");
+        b.setGraphic(icon);
+        b.setTooltip(new Tooltip(tooltip));
+        b.setMaxSize(HDR_IMG_SIZE, HDR_IMG_SIZE);
 
         return b;
     }
