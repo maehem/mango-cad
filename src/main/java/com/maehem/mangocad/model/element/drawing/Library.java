@@ -16,12 +16,18 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Description;
+import com.maehem.mangocad.view.ElementType;
+import static com.maehem.mangocad.view.ElementType.DEVICE;
+import static com.maehem.mangocad.view.ElementType.FOOTPRINT;
+import static com.maehem.mangocad.view.ElementType.PACKAGE3D;
+import static com.maehem.mangocad.view.ElementType.SYMBOL;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -134,6 +140,76 @@ public class Library extends _AQuantum implements DesignObject {
 //    }
 //
     /**
+     * Helper to make higher level queries easier.
+     *
+     * @param type of library element
+     * @param elementName
+     * @return true if requested type is contained in the library.
+     */
+    public boolean hasElement(ElementType type, String elementName) {
+        switch (type) {
+            case DEVICE -> {
+                return hasDeviceSet(elementName);
+            }
+            case FOOTPRINT -> {
+                return hasFootprint(elementName);
+            }
+            case SYMBOL -> {
+                return hasSymbol(elementName);
+            }
+            case PACKAGE3D -> {
+                return hasPackage3d(elementName);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Create an empty new element of requested type
+     *
+     * @param type of element to create
+     * @param name of new element
+     * @return object created or null if not created.
+     */
+    public LibraryElement createNewElement(ElementType type, String name) {
+        // TODO: Check if name/type exists.
+
+        switch (type) {
+            case DEVICE -> {
+                DeviceSet dsNew = new DeviceSet();
+                dsNew.setName(name);
+                if (getDeviceSets().add(dsNew)) {
+                    return dsNew;
+                }
+            }
+            case FOOTPRINT -> {
+                Footprint fpNew = new Footprint();
+                fpNew.setName(name);
+                if (getPackages().add(fpNew)) {
+                    return fpNew;
+                }
+            }
+            case SYMBOL -> {
+                Symbol symNew = new Symbol();
+                symNew.setName(name);
+                if (getSymbols().add(symNew)) {
+                    return symNew;
+                }
+            }
+            // TODO: Appears borked.   Should be a _AQuantum element?
+//            case PACKAGE3D -> {
+//                Package3d p3dNew = new Package3d();
+//                p3dNew.setName(name);
+//                if (getPackages3d().add(p3dNew)) {
+//                    return p3dNew;
+//                }
+//            }
+        }
+        return null;
+    }
+
+    /**
      * @return the packages
      */
     public ArrayList<Footprint> getPackages() {
@@ -149,13 +225,14 @@ public class Library extends _AQuantum implements DesignObject {
         return null;
     }
 
-//    /**
-//     * @param packages the packages to set
-//     */
-//    public void setPackages(ArrayList<Footprint> packages) {
-//        this.packages = packages;
-//    }
-//
+    public boolean hasFootprint(String fName) {
+        return getPackage(fName) != null;
+    }
+
+    public boolean addFootprint(Footprint ds) {
+        return getPackages().add(ds);
+    }
+
     /**
      * @return the symbols
      */
@@ -179,6 +256,14 @@ public class Library extends _AQuantum implements DesignObject {
         return null;
     }
 
+    public boolean hasSymbol(String sName) {
+        return getSymbol(sName) != null;
+    }
+
+    public boolean addSymbol(Symbol ds) {
+        return getSymbols().add(ds);
+    }
+
     /**
      * @return the deviceSets
      */
@@ -195,12 +280,14 @@ public class Library extends _AQuantum implements DesignObject {
         return null;
     }
 
-//    /**
-//     * @param deviceSets the devices to set
-//     */
-//    public void setDeviceSets(ArrayList<DeviceSet> deviceSets) {
-//        this.deviceSets = deviceSets;
-//    }
+    public boolean hasDeviceSet(String dsName) {
+        return getDeviceSet(dsName) != null;
+    }
+
+    public boolean addDeviceSet(DeviceSet ds) {
+        return getDeviceSets().add(ds);
+    }
+
 //
 //    /**
 //     * @return the notes
@@ -235,6 +322,14 @@ public class Library extends _AQuantum implements DesignObject {
         }
 
         return null;
+    }
+
+    public boolean hasPackage3d(String pName) {
+        return getPackage3D(pName) != null;
+    }
+
+    public boolean addPackage3d(Package3d p) {
+        return getPackages3d().add(p);
     }
 
 //    /**

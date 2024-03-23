@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.LibraryElement;
 import javafx.scene.control.TabPane;
 
 /**
@@ -34,7 +34,7 @@ public class SymbolEditorPropertiesTabPane extends TabPane {
         getTabs().addAll(propertiesTab);
     }
 
-    public void setPropertiesItem(_AQuantum item) {
+    public void setPropertiesItem(LibraryElement item) {
         getSelectionModel().select(propertiesTab);
 
         // Set

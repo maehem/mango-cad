@@ -315,7 +315,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                 item.put("f", lib.getPackage(d.getFootprint()));
                 item.put("footprint", d.getFootprint());
                 item.put("has3D", haz3d);
-                item.put("description", pkg.getDescription().getValue());
+                item.put("description", pkg.getDescription());
                 items.add(item);
             } else {
                 for (Technology t : technologies) {
@@ -336,7 +336,7 @@ public class LibraryDeviceSetItem extends ControlPanelListItem {
                     item.put("f", lib.getPackage(d.getFootprint()));
                     item.put("footprint", d.getFootprint());
                     item.put("has3D", haz3d);
-                    item.put("description", pkg.getDescription().getValue());
+                    item.put("description", pkg.getDescription());
                     items.add(item);
                 }
             }

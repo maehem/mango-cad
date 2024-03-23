@@ -194,10 +194,10 @@ public class LibraryTableOfContentsPane extends SplitPane {
         switch (type) {
             case DEVICE -> {
                 LOGGER.log(Level.SEVERE, "Invoke Device Editor for : " + item);
-                parentEditor.setEditor(ElementType.DEVICE, item);
+                getParentEditor().setEditor(ElementType.DEVICE, item);
             }
             case FOOTPRINT -> {
-                parentEditor.setEditor(type, item);
+                getParentEditor().setEditor(type, item);
             }
             case PACKAGE3D -> {
 
@@ -205,10 +205,18 @@ public class LibraryTableOfContentsPane extends SplitPane {
             case SYMBOL -> {
                 // Invoke Symbol Editor
                 LOGGER.log(Level.SEVERE, "Invoke Symbol Editor for : " + item);
-                parentEditor.setEditor(type, item);
+                getParentEditor().setEditor(type, item);
             }
+
         }
 
+    }
+
+    /**
+     * @return the parentEditor
+     */
+    public LibraryEditor getParentEditor() {
+        return parentEditor;
     }
 
 }

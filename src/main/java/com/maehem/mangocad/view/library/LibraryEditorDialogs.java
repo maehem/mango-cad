@@ -16,12 +16,12 @@
  */
 package com.maehem.mangocad.view.library;
 
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
-import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
@@ -49,20 +49,18 @@ public class LibraryEditorDialogs {
         return choiceDialog;
     }
 
-    public static final String presentNewDevNameDialog(Library library, ArrayList<String> deviceSets, String message) {
-        // Name New Device Dialog.
+    public static final String presentNewLibElementNameDialog(Library library, ElementType type, String message) {
         TextInputDialog inputDialog = new TextInputDialog();
+        ViewUtils.applyAppStylesheet(inputDialog.getDialogPane().getStylesheets());
         inputDialog.getEditor().addEventFilter(KeyEvent.KEY_TYPED, (event) -> {
 
+            // Validate the name only letters, digits and some characters (_*?).
             String c = event.getCharacter().toUpperCase();
-            if (!"ABCDEFGHIJKLMNOPQRSTUVWXYZ_?*0123456789".contains(c)) {
-                event.consume();
-            } else {
+            if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ_?*0123456789".contains(c)) {
                 TextInputControl source = (TextInputControl) event.getSource();
-                //source.deletePreviousChar();
                 source.appendText(c);
-                event.consume();
-            }
+            } //else  Nothing appended if no match.
+            event.consume();
         });
 
         if (message != null) {
@@ -72,23 +70,24 @@ public class LibraryEditorDialogs {
         }
 
         inputDialog.showAndWait();
-        Object nameResult = inputDialog.getResult();
+        String nameResult = inputDialog.getResult();
         if (nameResult == null) {
             return null;
         } else {
-            LOGGER.log(Level.SEVERE, "User Typed: " + nameResult);
-            if (deviceSets.contains(nameResult)) { // Check if typed value is already in Library.
-                // If so, pop-up deny dialog and recursively re-present input dialog.
-                return presentNewDevNameDialog(library, deviceSets, "ERROR: Device name is already in library!");
-            } else if (!DeviceSet.isValidName(nameResult)) {
-                return presentNewDevNameDialog(library, deviceSets, "ERROR: Device name invalid. Try a different name.");
-            } else { // create new device in library, set item, create DevicePane().
+            //LOGGER.log(Level.SEVERE, "User Typed: " + nameResult);
 
-                DeviceSet dsNew = new DeviceSet();
-                dsNew.setName((String) nameResult);
-                library.getDeviceSets().add(dsNew);
-                return dsNew.getName();
+            if (library.hasElement(type, nameResult)) { // Check if typed value is already in Library.
+                // If so, pop-up deny dialog and recursively re-present input dialog.
+                return presentNewLibElementNameDialog(library, type, "ERROR: " + type.text() + " name is already in library!");
+            } else if (!DeviceSet.isValidName(nameResult)) {
+                return presentNewLibElementNameDialog(library, type, "ERROR: " + type.text() + " name invalid. Try a different name.");
+            } else { // create new device in library, set item, create DevicePane().
+                LibraryElement newElement = library.createNewElement(type, nameResult);
+                if (newElement != null) {
+                    return newElement.getName();
+                }
             }
         }
+        return null;
     }
 }

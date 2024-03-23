@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
@@ -43,7 +44,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Footprint extends _AQuantum { // class name "Package" is reserved by Java.
+public class Footprint extends LibraryElement { // class name "Package" is reserved by Java.
 
     public static final String ELEMENT_NAME = "package";
 
@@ -51,84 +52,83 @@ public class Footprint extends _AQuantum { // class name "Package" is reserved b
     private final Description description = new Description();
     private final ArrayList<_AQuantum> elements = new ArrayList<>();
 
-    private String name;
-    private String urn;
-    private boolean locallyModified = false;
-    private int libraryVersion = 0;
-    private boolean libraryLocallyModified = false;
+    //private String name;
+    //private String urn;
+    //private boolean locallyModified = false;
+    //private int libraryVersion = 0;
+    //private boolean libraryLocallyModified = false;
 
-    @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+//    /**
+//     * @return the name
+//     */
+//    public String getName() {
+//        return name;
+//    }
+//
+//    /**
+//     * @param name the name to set
+//     */
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public void setUrn(String urn) {
+//        this.urn = urn;
+//    }
+//
+//    public String getUrn() {
+//        return urn;
+//    }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+//    /**
+//     * @return the locallyModified
+//     */
+//    public boolean isLocallyModified() {
+//        return locallyModified;
+//    }
+//
+//    /**
+//     * @param locallyModified the locallyModified to set
+//     */
+//    public void setLocallyModified(boolean locallyModified) {
+//        this.locallyModified = locallyModified;
+//    }
+//
+//    /**
+//     * @return the libraryVersion
+//     */
+//    public int getLibraryVersion() {
+//        return libraryVersion;
+//    }
+//
+//    /**
+//     * @param libraryVersion the libraryVersion to set
+//     */
+//    public void setLibraryVersion(int libraryVersion) {
+//        this.libraryVersion = libraryVersion;
+//    }
 
-    public void setUrn(String urn) {
-        this.urn = urn;
-    }
+//    /**
+//     * @return the libraryLocallyModified
+//     */
+//    public boolean isLibraryLocallyModified() {
+//        return libraryLocallyModified;
+//    }
+//
+//    /**
+//     * @param libraryLocallyModified the libraryLocallyModified to set
+//     */
+//    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
+//        this.libraryLocallyModified = libraryLocallyModified;
+//    }
 
-    public String getUrn() {
-        return urn;
-    }
-
-    /**
-     * @return the locallyModified
-     */
-    public boolean isLocallyModified() {
-        return locallyModified;
-    }
-
-    /**
-     * @param locallyModified the locallyModified to set
-     */
-    public void setLocallyModified(boolean locallyModified) {
-        this.locallyModified = locallyModified;
-    }
-
-    /**
-     * @return the libraryVersion
-     */
-    public int getLibraryVersion() {
-        return libraryVersion;
-    }
-
-    /**
-     * @param libraryVersion the libraryVersion to set
-     */
-    public void setLibraryVersion(int libraryVersion) {
-        this.libraryVersion = libraryVersion;
-    }
-
-    /**
-     * @return the libraryLocallyModified
-     */
-    public boolean isLibraryLocallyModified() {
-        return libraryLocallyModified;
-    }
-
-    /**
-     * @param libraryLocallyModified the libraryLocallyModified to set
-     */
-    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
-        this.libraryLocallyModified = libraryLocallyModified;
-    }
-
-    public Description getDescription() {
-        return description;
-    }
+//    public Description getDescription() {
+//        return description;
+//    }
 
     public List<_AQuantum> getElements() {
         return elements;

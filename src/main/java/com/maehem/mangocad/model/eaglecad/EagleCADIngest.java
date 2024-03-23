@@ -535,7 +535,7 @@ public class EagleCADIngest {
                 case "description" -> { // Zero or One descriptions
                     // Gets put into 'description' instead of 'elements'.
                     // There should only be one description.
-                    ingestDescription(pkg.getDescription(), node);
+                    ingestDescription(pkg, node);
                 }
                 default ->
                     throw new EagleCADLibraryFileException("Unknown Package element encountered: <" + node.getNodeName() + ">");
@@ -572,7 +572,7 @@ public class EagleCADIngest {
             // description?, (polygon | wire | text | dimension | pin | circle | rectangle | frame)*
             switch (node.getNodeName()) {
                 case "description" -> // Only one description allowed.
-                    ingestDescription(symbol.getDescription(), node);
+                    ingestDescription(symbol, node);
                 case "polygon" ->
                     ingestPolygon(elements, node);
                 case "wire" ->

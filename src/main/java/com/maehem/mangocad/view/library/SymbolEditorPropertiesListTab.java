@@ -16,8 +16,7 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model._AQuantum;
-import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.LibraryElement;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -28,22 +27,22 @@ import javafx.scene.text.Text;
  */
 public class SymbolEditorPropertiesListTab extends Tab {
 
-    private final Symbol symbol;
+    private final LibraryElement element;
     private final VBox propertyNodes = new VBox();
 
-    public SymbolEditorPropertiesListTab(Symbol item) {
+    public SymbolEditorPropertiesListTab(LibraryElement item) {
         super("Inspector");
         this.setContent(propertyNodes);
 
-        this.symbol = item;
+        this.element = item;
 
         updateContent(item);
     }
 
-    void updateContent(_AQuantum item) {
+    protected void updateContent(LibraryElement item) {
         propertyNodes.getChildren().clear();
         if (item != null) {
-            propertyNodes.getChildren().add(new Text("Symbol: " + symbol.getName()));
+            propertyNodes.getChildren().add(new Text("Symbol: " + element.getName()));
         } else {
             propertyNodes.getChildren().add(new Text("Nothing selected."));
         }

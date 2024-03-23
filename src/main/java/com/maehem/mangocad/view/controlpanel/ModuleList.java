@@ -335,7 +335,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         parentItem.getChildren().add(item);
         for (Footprint f : library.getPackages()) {
             TreeItem footprintItem = new TreeItem(new LibraryDeviceFootprintItem(
-                    f.getName(), f.getDescription().getValue(), file, library
+                    f.getName(), f.getDescription(), file, library
             ));
             item.getChildren().add(footprintItem);
         }
@@ -353,7 +353,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         parentItem.getChildren().add(item);
         for (Symbol f : library.getSymbols()) {
             TreeItem symbolItem = new TreeItem(new LibraryDeviceSymbolItem(
-                    f.getName(), f.getDescription().getValue(), file, library
+                    f.getName(), f.getDescription(), file, library
             ));
             item.getChildren().add(symbolItem);
         }

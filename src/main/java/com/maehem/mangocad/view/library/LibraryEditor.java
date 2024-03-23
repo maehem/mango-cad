@@ -227,17 +227,17 @@ public class LibraryEditor extends BorderPane {
                                 item = (String) result;
                             }
                             if (item.equals(NEW_DEVICE)) {
-                                deviceSets.remove(NEW_DEVICE);
-                                String newName = LibraryEditorDialogs.presentNewDevNameDialog(library, deviceSets, null);
-                                if (newName != null) { // A valid new device was added, go edit it.
-                                    devicePane = new DeviceEditorPane(this, newName);
+                                //deviceSets.remove(NEW_DEVICE);
+                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+                                if (newName == null) { // A valid new device was added, go edit it.
+                                    return;
                                 } else {
-                                    return; // User cancelled.
+                                    item = newName;
                                 }
-                            } else { // Edit existing device.
-                                devicePane = new DeviceEditorPane(this, item);
                             }
                         }
+                        devicePane = new DeviceEditorPane(this, item);
+
                     }
                     currentEditor = devicePane;
                     deviceButton.setSelected(true);

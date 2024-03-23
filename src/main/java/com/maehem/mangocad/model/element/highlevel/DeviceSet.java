@@ -16,9 +16,8 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.basic.Gate;
-import com.maehem.mangocad.model.element.misc.Description;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,37 +25,37 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class DeviceSet extends _AQuantum {
+public class DeviceSet extends LibraryElement {
     public static final String ELEMENT_NAME = "deviceset";
     //  deviceset (description?, gates, devices, spice?)>
     //      ATTLIST deviceset
     //          name          %String;       #REQUIRED
     //          urn              %Urn;       ""
     //          locally_modified %Bool;      "no"
-    //          prefix        %String;       ""
-    //          uservalue     %Bool;         "no"
     //          library_version  %Int;       ""
     //          library_locally_modified %Bool; "no"
+
+    //          prefix        %String;       ""
+    //          uservalue     %Bool;         "no"
     //          >
     //          <!-- library_version and library_locally_modified: Only in managed libraries inside boards or schematics -->
 
-    private String name;
-    private String urn;
-    private boolean locallyModified = false;
-
+//    private String name;
+//    private String urn;
+//    private boolean locallyModified = false;
+//
 
     private String prefix = "";
     private boolean uservalue = false;
 
-    private int libraryVersion = 0;
-    private boolean libraryLocallyModified = false;
+//    private int libraryVersion = 0;
+//    private boolean libraryLocallyModified = false;
 
-    private final List<Description> descriptions = new ArrayList<>();
+//    private final List<Description> descriptions = new ArrayList<>();
     private final List<Gate> gates = new ArrayList<>();
     private final List<Device> devices = new ArrayList<>();
     //private List<Spice> spice = new ArrayList<>();
 
-    @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
@@ -103,47 +102,47 @@ public class DeviceSet extends _AQuantum {
         return devices;
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the urn
-     */
-    public String getUrn() {
-        return urn;
-    }
-
-    /**
-     * @param urn the urn to set
-     */
-    public void setUrn(String urn) {
-        this.urn = urn;
-    }
-
-    /**
-     * @return the locallyModified
-     */
-    public boolean isLocallyModified() {
-        return locallyModified;
-    }
-
-    /**
-     * @param locallyModified the locallyModified to set
-     */
-    public void setLocallyModified(boolean locallyModified) {
-        this.locallyModified = locallyModified;
-    }
+//    /**
+//     * @return the name
+//     */
+//    public String getName() {
+//        return name;
+//    }
+//
+//    /**
+//     * @param name the name to set
+//     */
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    /**
+//     * @return the urn
+//     */
+//    public String getUrn() {
+//        return urn;
+//    }
+//
+//    /**
+//     * @param urn the urn to set
+//     */
+//    public void setUrn(String urn) {
+//        this.urn = urn;
+//    }
+//
+//    /**
+//     * @return the locallyModified
+//     */
+//    public boolean isLocallyModified() {
+//        return locallyModified;
+//    }
+//
+//    /**
+//     * @param locallyModified the locallyModified to set
+//     */
+//    public void setLocallyModified(boolean locallyModified) {
+//        this.locallyModified = locallyModified;
+//    }
 
     /**
      * @return the uservalue
@@ -152,48 +151,48 @@ public class DeviceSet extends _AQuantum {
         return uservalue;
     }
 
-    /**
-     * @return the libraryVersion
-     */
-    public int getLibraryVersion() {
-        return libraryVersion;
-    }
+//    /**
+//     * @return the libraryVersion
+//     */
+//    public int getLibraryVersion() {
+//        return libraryVersion;
+//    }
+//
+//    /**
+//     * @param libraryVersion the libraryVersion to set
+//     */
+//    public void setLibraryVersion(int libraryVersion) {
+//        this.libraryVersion = libraryVersion;
+//    }
+//
+//    /**
+//     * @return the libraryLocallyModified
+//     */
+//    public boolean isLibraryLocallyModified() {
+//        return libraryLocallyModified;
+//    }
+//
+//    /**
+//     * @param libraryLocallyModified the libraryLocallyModified to set
+//     */
+//    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
+//        this.libraryLocallyModified = libraryLocallyModified;
+//    }
 
-    /**
-     * @param libraryVersion the libraryVersion to set
-     */
-    public void setLibraryVersion(int libraryVersion) {
-        this.libraryVersion = libraryVersion;
-    }
-
-    /**
-     * @return the libraryLocallyModified
-     */
-    public boolean isLibraryLocallyModified() {
-        return libraryLocallyModified;
-    }
-
-    /**
-     * @param libraryLocallyModified the libraryLocallyModified to set
-     */
-    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
-        this.libraryLocallyModified = libraryLocallyModified;
-    }
-
-    /**
-     * @return the descriptions
-     */
-    public List<Description> getDescriptions() {
-        return descriptions;
-    }
-
-    public String getDescription() {
-        if ( descriptions.isEmpty() ) {
-            return "";
-        }
-        // TODO: Return based on user's locale if avaialble.
-        return descriptions.get(0).getValue();
-    }
+//    /**
+//     * @return the descriptions
+//     */
+//    public List<Description> getDescriptions() {
+//        return descriptions;
+//    }
+//
+//    public String getDescription() {
+//        if ( descriptions.isEmpty() ) {
+//            return "";
+//        }
+//        // TODO: Return based on user's locale if avaialble.
+//        return descriptions.get(0).getValue();
+//    }
 
     public Device getNamedDevice(String named) {
         for ( Device device : devices ) {

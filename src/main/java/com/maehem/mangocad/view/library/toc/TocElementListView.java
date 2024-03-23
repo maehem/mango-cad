@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ElementType;
+import com.maehem.mangocad.view.library.LibraryEditorDialogs;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -55,14 +56,14 @@ public class TocElementListView extends VBox {
     private static final Logger LOGGER = Logger.getLogger("TocElementListView");
 
     private LibraryTableOfContentsPane listener;
-    private final Library lib;
+    private final Library library;
     private final ElementType type;
     private ListView<String> listView;
 
     @SuppressWarnings("unchecked")
-    public TocElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) { // Type?
+    public TocElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) {
         this.listener = listener;
-        this.lib = lib;
+        this.library = lib;
         this.type = type;
 
         VBox.setVgrow(this, Priority.ALWAYS);
@@ -132,6 +133,13 @@ public class TocElementListView extends VBox {
         HBox.setHgrow(gapper, Priority.ALWAYS);
         Button sortButton = new Button("^");
         Button addButton = new Button("+");
+        addButton.setOnAction((t) -> {
+            // Dialog for add new *type*
+            String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+            if (newName != null) { // A valid new device was added, go edit it.
+                listener.getParentEditor().setEditor(type, newName);
+            }
+        });
         HBox header = new HBox(label, gapper, sortButton, addButton);
         header.setMaxHeight(24);
         return header;
