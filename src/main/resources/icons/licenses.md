@@ -25,7 +25,26 @@ Plus Circle        icon by Arthur Shlain from Usefulicons  https://usefulicons.c
 Printer            icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/printer
 Transistor         icon by Arthur Shlain from Usefulicons  https://usefulicons.com/electronic-symbols/transistor-alt
 
+Selection          icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/selection
+Eye                icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/eye-alt
+Information        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/information
+Move               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/move
+Copy               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/copy
+Trash Can          icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/trash-can
+Wrench             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/wrench
+Paint Roller       icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/paint-roller
+Tag                icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/tag
+Link               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/link
+Unlink             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/unlink
+Compass Tool       icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/compass-tool
 
 Circuit Heart      icon by Unknown from Noun Project   https://thenounproject.com/icon/heart-3123019/
 
 Logic Gate         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Add Symbol         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Array              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Grid               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Layers             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Name               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Value              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+
