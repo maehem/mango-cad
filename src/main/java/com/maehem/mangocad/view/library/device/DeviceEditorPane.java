@@ -16,11 +16,19 @@
  */
 package com.maehem.mangocad.view.library.device;
 
+import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -30,6 +38,59 @@ import javafx.scene.text.Text;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class DeviceEditorPane extends BorderPane {
+
+    private static final int TOOLBAR_ICON_SIZE = 20;
+    private static final Image INFO_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/information.png")
+    );
+    private static final Image LOOK_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/eye.png")
+    );
+    private static final Image SELECT_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/selection.png")
+    );
+    private static final Image MOVE_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/move.png")
+    );
+    private static final Image COPY_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/copy.png")
+    );
+    private static final Image TRASH_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/trash-can.png")
+    );
+    private static final Image WRENCH_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/wrench.png")
+    );
+    private static final Image TAG_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/tag.png")
+    );
+    private static final Image PAINT_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/paint-roller.png")
+    );
+    private static final Image LINK_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/link.png")
+    );
+    private static final Image UNLINK_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/unlink.png")
+    );
+    private static final Image MARK_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/compass-tool.png")
+    );
+    private static final Image ADD_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/add-symbol.png")
+    );
+    private static final Image GRID_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/grid.png")
+    );
+    private static final Image NAME_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/name.png")
+    );
+    private static final Image VALUE_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/value.png")
+    );
+    private static final Image ARRAY_IMAGE = new Image(
+            DeviceEditorPane.class.getResourceAsStream("/icons/array.png")
+    );
 
     private final LibraryEditor parent;
 
@@ -62,6 +123,103 @@ public class DeviceEditorPane extends BorderPane {
         topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
+
+        initToolbar();
+
     }
 
+    private void initToolbar() {
+        leftToolBar.setOrientation(Orientation.VERTICAL);
+        leftToolBar.setPrefWidth(48);
+
+        ToggleGroup toggleGroup = new ToggleGroup();
+
+        // Note: Paintroller example --  https://www.facebook.com/watch/?v=497104337543477
+        // GridPane for each section
+        // Inspect region
+        ToggleButton infoButton = createToolbarButton("Information", INFO_IMAGE);
+        ToggleButton lookButton = createToolbarButton("Show", LOOK_IMAGE);
+        ToggleButton selectButton = createToolbarButton("Group", SELECT_IMAGE);
+        GridPane inspPane = createToolbarGroup();
+        inspPane.add(infoButton, 0, 0);
+        inspPane.add(lookButton, 1, 0);
+        inspPane.add(selectButton, 0, 1);
+
+        // Move region
+        ToggleButton moveButton = createToolbarButton("Move", MOVE_IMAGE);
+        GridPane movePane = createToolbarGroup();
+        movePane.add(moveButton, 0, 0);
+
+        // Copy/Paste region
+        ToggleButton copyButton = createToolbarButton("Copy", COPY_IMAGE);
+        ToggleButton trashButton = createToolbarButton("Delete", TRASH_IMAGE);
+        ToggleButton wrenchButton = createToolbarButton("Copy", WRENCH_IMAGE);
+        GridPane copyPastePane = createToolbarGroup();
+        copyPastePane.add(copyButton, 0, 0);
+        copyPastePane.add(trashButton, 1, 0);
+        copyPastePane.add(wrenchButton, 0, 1);
+
+        // Add region
+        ToggleButton addButton = createToolbarButton("Add Symbol", ADD_IMAGE);
+        GridPane addPane = createToolbarGroup();
+        addPane.add(addButton, 0, 0);
+
+        // Tag region
+        ToggleButton tagButton = createToolbarButton("Tag", TAG_IMAGE);
+        ToggleButton nameButton = createToolbarButton("Name", NAME_IMAGE);
+        ToggleButton paintButton = createToolbarButton("Paint", PAINT_IMAGE);
+        ToggleButton arrayButton = createToolbarButton("Array", ARRAY_IMAGE);
+        GridPane tagPane = createToolbarGroup();
+        tagPane.add(tagButton, 0, 0);
+        tagPane.add(nameButton, 1, 0);
+        tagPane.add(paintButton, 0, 1);
+        tagPane.add(arrayButton, 1, 1);
+
+        // Link region
+        ToggleButton linkButton = createToolbarButton("Link", LINK_IMAGE);
+        ToggleButton unlinkButton = createToolbarButton("Unlink", UNLINK_IMAGE);
+        GridPane linkPane = createToolbarGroup();
+        linkPane.add(linkButton, 0, 0);
+        linkPane.add(unlinkButton, 1, 0);
+
+        // Link region
+        ToggleButton markButton = createToolbarButton("Mark", MARK_IMAGE);
+        GridPane markPane = createToolbarGroup();
+        markPane.add(markButton, 0, 0);
+
+        leftToolBar.getItems().addAll(
+                inspPane, new Separator(),
+                movePane, new Separator(),
+                copyPastePane, new Separator(),
+                addPane, new Separator(),
+                tagPane, new Separator(),
+                linkPane, new Separator(),
+                markPane, new Separator()
+        );
+
+        toggleGroup.getToggles().addAll(
+                infoButton, lookButton, selectButton,
+                moveButton,
+                copyButton, trashButton, wrenchButton,
+                addButton,
+                tagButton, nameButton, paintButton, arrayButton,
+                linkButton, unlinkButton
+        );
+    }
+
+    private static final GridPane createToolbarGroup() {
+        GridPane gp = new GridPane();
+        gp.setId("toolbar-gridpane");
+
+        return gp;
+    }
+
+    private static final ToggleButton createToolbarButton(String name, Image img) {
+        ToggleButton b = (ToggleButton) ViewUtils.createIconButton(name, img, TOOLBAR_ICON_SIZE, true);
+        b.setTooltip(new Tooltip(name));
+        b.getGraphic().setId("toolbar-button-icon");
+        b.setId("toolbar-button");
+
+        return b;
+    }
 }
