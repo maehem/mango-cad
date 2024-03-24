@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.view.GroupContainer;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
@@ -27,12 +26,14 @@ import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
+import com.maehem.mangocad.view.GroupContainer;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,11 +71,18 @@ public class DetailNodes {
         pane.setOrientation(Orientation.HORIZONTAL);
         SplitPane pkgPane = new SplitPane();
         pkgPane.setOrientation(Orientation.VERTICAL);
-        Group footprintPreview = footprintPreview(
-                lib.getPackage(devSet.getDevices().get(0).getFootprint()),
-                lib,
-                true
-        );
+        List<Device> devices = devSet.getDevices();
+        Group footprintPreview;
+        if (!devices.isEmpty()) {
+            footprintPreview = footprintPreview(
+                    lib.getPackage(devSet.getDevices().get(0).getFootprint()),
+                    lib,
+                    true
+            );
+        } else {
+            // There are no footprints in device yet.
+            footprintPreview = new Group();
+        }
         GroupContainer footprintPane = new GroupContainer(footprintPreview, 0.1);
 
         pkgPane.getItems().add(footprintPane);
