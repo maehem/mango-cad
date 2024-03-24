@@ -107,12 +107,32 @@
     -fx-spacing: 6px;
 }
 
+#toolbar-gridpane {
+    -fx-hgap: 4;
+    -fx-vgap: 4;
+}
+
+#toolbar-button {
+    -fx-background-color: -fx-base;
+    -fx-padding: 0;
+}
+
+#toolbar-button:hover {
+    -fx-background-color: derive(-fx-focus-color, -40%);
+}
+
 #button-icon{
     -fx-padding: 2;
     -fx-border-width: 2;
     -fx-border-insets: 3;
     -fx-border-radius: 3;
-;
+}
+
+#toolbar-button-icon{
+    -fx-padding: 0;
+    -fx-border-width: 1;
+    -fx-border-insets: 1;
+    -fx-border-radius: 2;
 }
 
 #control-panel-preview-area-heading{
