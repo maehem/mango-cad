@@ -42,15 +42,15 @@ public class ViewUtils {
     public static final String CSS_FILE = "/style/dark.css";
 
     public static Button createIconButton(String name, Image img) {
-        return (Button) createIconButton(name, img, false);
+        return (Button) createIconButton(name, img, ICON_IMG_SIZE, false);
     }
 
     public static ToggleButton createIconToggleButton(String name, Image img) {
-        return (ToggleButton) createIconButton(name, img, true);
+        return (ToggleButton) createIconButton(name, img, ICON_IMG_SIZE, true);
     }
 
-    public static ButtonBase createIconButton(String name, Image img, boolean asToggle) {
-        ImageView icon = createIcon(img, ICON_IMG_SIZE);
+    public static ButtonBase createIconButton(String name, Image img, int size, boolean asToggle) {
+        ImageView icon = createIcon(img, size);
 
         ButtonBase b;
         if (asToggle) {
