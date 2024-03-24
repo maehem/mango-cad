@@ -120,26 +120,18 @@ public class LibraryEditor extends VBox {
     private SymbolEditorPane symbolPane = null;
     private FootprintEditorPane footprintPane = null;
 
-    //private DeviceEditorPane devicePane = null;
-    //private FootprintEditorPane footprintPane = null;
-    //private Package3DEditorPane packagePane = null;
     public LibraryEditor(File file, Library library) {
         this.file = file;
         this.library = library;
 
-        // top:  two tool bar rows
-        mainPane.setTop(topArea);
-
-        // left: tool bar
-        //setLeft(leftToolBar);
-        // center: work area
         this.tocPane = new LibraryTocSubEditor(this);
         this.currentEditor = tocPane;
-        mainPane.setCenter(tocPane);
+
         VBox.setVgrow(mainPane, Priority.ALWAYS);
 
-        // bottom: message area
-        mainPane.setBottom(bottomArea);
+        mainPane.setTop(topArea);
+        mainPane.setCenter(tocPane);
+        mainPane.setBottom(bottomArea); // bottom: message area
 
         topArea.setFillWidth(true);
         bottomArea.setPrefHeight(16);
@@ -149,7 +141,6 @@ public class LibraryEditor extends VBox {
         initToolbar();  // Top Ribbon
         initMenuBar();  // File, View, Options, Window, Help, etc.
         getChildren().add(mainPane);
-
     }
 
     private void initMenuBar() {
@@ -202,7 +193,6 @@ public class LibraryEditor extends VBox {
                 currentToggle = newToggle;
                 initiateSwitchEditorAction();
             }
-
         });
     }
 
@@ -218,15 +208,12 @@ public class LibraryEditor extends VBox {
                 setEditor(null, null);
             }
             case DEV_STR -> {
-                // Present Device chooser
                 setEditor(ElementType.DEVICE, null);
             }
             case FPT_STR -> {
-                // Present Footprint Chooser
                 setEditor(ElementType.FOOTPRINT, null);
             }
             case SYM_STR -> {
-                // Present Symbol
                 setEditor(ElementType.SYMBOL, null);
             }
         }
