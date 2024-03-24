@@ -58,10 +58,14 @@ public class TocElementListView extends VBox {
 
     private static final Logger LOGGER = Logger.getLogger("TocElementListView");
 
+    private final String SAVE_EMOJI = "💾";  // Floppy Emoji --  U+1F4BE
+
     private LibraryTableOfContentsPane listener;
     private final Library library;
     private final ElementType type;
     private ListView<String> listView;
+
+    private boolean sortAscend = true;
 
     @SuppressWarnings("unchecked")
     public TocElementListView(LibraryTableOfContentsPane listener, Library lib, ElementType type) {
@@ -153,18 +157,22 @@ public class TocElementListView extends VBox {
         sortAscButton.setOnAction((t) -> {
             sortPane.getChildren().clear();
             sortPane.getChildren().add(sortDesButton);
+            sortAscend = false;
+            doSort();
             // Sort to match post-action, sort descending
-            listView.getItems().sort((o1, o2) -> {
-                return o2.compareTo(o1);
-            });
+//            listView.getItems().sort((o1, o2) -> {
+//                return o2.compareTo(o1);
+//            });
         });
         sortDesButton.setOnAction((t) -> {
             sortPane.getChildren().clear();
             sortPane.getChildren().add(sortAscButton);
+            sortAscend = true;
+            doSort();
             // Sort to match post-action, sort ascending
-            listView.getItems().sort((o1, o2) -> {
-                return o1.compareTo(o2);
-            });
+//            listView.getItems().sort((o1, o2) -> {
+//                return o1.compareTo(o2);
+//            });
         });
 
         //Button addButton = new Button("+");
@@ -176,6 +184,8 @@ public class TocElementListView extends VBox {
             // Dialog for add new *type*
             String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
             if (newName != null) { // A valid new device was added, go edit it.
+                listView.getItems().add(newName);
+                doSort();
                 listener.getParentEditor().setEditor(type, newName);
             }
         });
@@ -392,5 +402,17 @@ public class TocElementListView extends VBox {
             return cell;
         });
 
+    }
+
+    private void doSort() {
+        if (sortAscend) {
+            listView.getItems().sort((o1, o2) -> {
+                return o1.compareTo(o2);
+            });
+        } else {
+            listView.getItems().sort((o1, o2) -> {
+                return o2.compareTo(o1);
+            });
+        }
     }
 }
