@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.library.footprint;
 
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -62,6 +63,9 @@ public class FootprintEditorPane extends BorderPane {
         topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
+
+        leftToolBar.setOrientation(Orientation.VERTICAL);
+        leftToolBar.setPrefWidth(48);
     }
 
 }
