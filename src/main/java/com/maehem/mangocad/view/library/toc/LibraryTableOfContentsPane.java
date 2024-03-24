@@ -62,19 +62,14 @@ public class LibraryTableOfContentsPane extends SplitPane {
 
         // TODO: Add selectoin listener.
         deviceList = new TocElementListView(this, lib, ElementType.DEVICE);
-        //VBox footprintList = new VBox(new Label("Footprint List"));
         footprintList = new TocElementListView(this, lib, ElementType.FOOTPRINT);
-        //VBox package3dList = new VBox(new Label("3D Package List"));
         package3dList = new TocElementListView(this, lib, ElementType.PACKAGE3D);
-        //VBox symbolList = new VBox(new Label("Symbol List"));
         symbolList = new TocElementListView(this, lib, ElementType.SYMBOL);
 
         // Cause the panes to expand to height of window.
-        //deviceList.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
         footprintList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
         package3dList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
         symbolList.getChildren().forEach(child -> VBox.setVgrow(child, Priority.ALWAYS));
-        //detailsArea.getChildren().forEach(child -> VBox.setVgrow(child, ALWAYS));
 
         getItems().addAll(deviceList, footprintList, package3dList, symbolList, detailsArea);
 
@@ -144,9 +139,6 @@ public class LibraryTableOfContentsPane extends SplitPane {
                                     }
                                 }
                             }
-//                            for (Gate g : ds.getGates()) {
-//                                symbolList.select(g.getSymbol());
-//                            }
                         }
                     }
                 }
@@ -194,8 +186,7 @@ public class LibraryTableOfContentsPane extends SplitPane {
     void editItem(ElementType type, String item) {
         switch (type) {
             case DEVICE -> {
-                LOGGER.log(Level.SEVERE, "Invoke Device Editor for : " + item);
-                getParentEditor().setEditor(ElementType.DEVICE, item);
+                getParentEditor().setEditor(type, item);
             }
             case FOOTPRINT -> {
                 getParentEditor().setEditor(type, item);
@@ -204,8 +195,6 @@ public class LibraryTableOfContentsPane extends SplitPane {
 
             }
             case SYMBOL -> {
-                // Invoke Symbol Editor
-                LOGGER.log(Level.SEVERE, "Invoke Symbol Editor for : " + item);
                 getParentEditor().setEditor(type, item);
             }
 
