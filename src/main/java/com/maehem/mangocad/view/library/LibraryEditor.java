@@ -18,6 +18,8 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.device.DeviceEditorPane;
@@ -27,10 +29,14 @@ import com.maehem.mangocad.view.library.toc.LibraryTocSubEditor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -39,15 +45,19 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryEditor extends BorderPane {
+public class LibraryEditor extends VBox {
+
+    private final BorderPane mainPane = new BorderPane();
 
     // TODO: Get from i18n bundle.
     private static final String TOC_STR = "Table of Contents";
@@ -79,6 +89,12 @@ public class LibraryEditor extends BorderPane {
 
     private final File file;
     private final Library library;
+
+    private final Menu fileMenu = new Menu("File");
+    private final Menu viewMenu = new Menu("View");
+    private final Menu optionsMenu = new Menu("Options");
+    private final Menu windowMenu = new Menu("Window");
+    private final Menu helpMenu = new Menu("Help");
 
     private final ToolBar mainToolbar = new ToolBar();
     private final Button openButton = ViewUtils.createIconButton("Open", FILE_IMAGE);
@@ -112,24 +128,41 @@ public class LibraryEditor extends BorderPane {
         this.library = library;
 
         // top:  two tool bar rows
-        setTop(topArea);
+        mainPane.setTop(topArea);
 
         // left: tool bar
         //setLeft(leftToolBar);
         // center: work area
         this.tocPane = new LibraryTocSubEditor(this);
         this.currentEditor = tocPane;
-        setCenter(tocPane);
+        mainPane.setCenter(tocPane);
+        VBox.setVgrow(mainPane, Priority.ALWAYS);
 
         // bottom: message area
-        setBottom(bottomArea);
+        mainPane.setBottom(bottomArea);
 
         topArea.setFillWidth(true);
         bottomArea.setPrefHeight(16);
         bottomArea.setFillHeight(true);
         bottomArea.getChildren().add(new Text(library.getFile().getAbsolutePath()));
 
-        initToolbar();
+        initToolbar();  // Top Ribbon
+        initMenuBar();  // File, View, Options, Window, Help, etc.
+        getChildren().add(mainPane);
+
+    }
+
+    private void initMenuBar() {
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(
+                fileMenu, viewMenu, optionsMenu, windowMenu, helpMenu
+        );
+
+        final String os = System.getProperty("os.name");
+        if (os != null && os.startsWith("Mac")) {
+            Platform.runLater(() -> menuBar.setUseSystemMenuBar(true));
+        }
+        getChildren().add(menuBar);
     }
 
     private void initToolbar() {
@@ -205,19 +238,19 @@ public class LibraryEditor extends BorderPane {
             currentEditor = tocPane;
             tocButton.setSelected(true);
         } else {
+            final String CREATE_NEW_MSG = "Create New " + type.text() + "...";
             switch (type) {
                 case DEVICE -> {
                     if (devicePane == null) {
-                        final String NEW_DEVICE = "Create New Device...";
                         if (item == null) {
-                            ArrayList<String> deviceSets = new ArrayList<>();
-                            for (DeviceSet ds : library.getDeviceSets()) {
-                                deviceSets.add(ds.getName());
+                            ArrayList<String> list = new ArrayList<>();
+                            for (DeviceSet element : library.getDeviceSets()) {
+                                list.add(element.getName());
                             }
-                            Collections.sort(deviceSets);
-                            deviceSets.add(0, NEW_DEVICE);
+                            Collections.sort(list);
+                            list.add(0, CREATE_NEW_MSG);
 
-                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, deviceSets);
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, list);
                             dialog.showAndWait(); // Present chooser
 
                             Object result = dialog.getResult();
@@ -226,8 +259,8 @@ public class LibraryEditor extends BorderPane {
                             } else {
                                 item = (String) result;
                             }
-                            if (item.equals(NEW_DEVICE)) {
-                                //deviceSets.remove(NEW_DEVICE);
+                            if (item.equals(CREATE_NEW_MSG)) {
+                                //deviceSets.remove(CREATE_NEW_MSG);
                                 String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
                                 if (newName == null) { // A valid new device was added, go edit it.
                                     return;
@@ -237,7 +270,6 @@ public class LibraryEditor extends BorderPane {
                             }
                         }
                         devicePane = new DeviceEditorPane(this, item);
-
                     }
                     currentEditor = devicePane;
                     deviceButton.setSelected(true);
@@ -245,7 +277,31 @@ public class LibraryEditor extends BorderPane {
                 case FOOTPRINT -> {
                     if (footprintPane == null) {
                         if (item == null) {
-                            // Present chooser
+                            ArrayList<String> list = new ArrayList<>();
+                            for (Footprint element : library.getPackages()) {
+                                list.add(element.getName());
+                            }
+                            Collections.sort(list);
+                            list.add(0, CREATE_NEW_MSG);
+
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, list);
+                            dialog.showAndWait(); // Present chooser
+
+                            Object result = dialog.getResult();
+                            if (result == null) { // User Canceled
+                                return;
+                            } else {
+                                item = (String) result;
+                            }
+                            if (item.equals(CREATE_NEW_MSG)) {
+                                //deviceSets.remove(CREATE_NEW_MSG);
+                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+                                if (newName == null) { // A valid new device was added, go edit it.
+                                    return;
+                                } else {
+                                    item = newName;
+                                }
+                            }
                         }
                         footprintPane = new FootprintEditorPane(this, item);
                     }
@@ -257,6 +313,31 @@ public class LibraryEditor extends BorderPane {
                 }
                 case SYMBOL -> {
                     if (symbolPane == null) {
+                        ArrayList<String> list = new ArrayList<>();
+                        for (Symbol element : library.getSymbols()) {
+                            list.add(element.getName());
+                        }
+                        Collections.sort(list);
+                        list.add(0, CREATE_NEW_MSG);
+
+                        ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, list);
+                        dialog.showAndWait(); // Present chooser
+
+                        Object result = dialog.getResult();
+                        if (result == null) { // User Canceled
+                            return;
+                        } else {
+                            item = (String) result;
+                        }
+                        if (item.equals(CREATE_NEW_MSG)) {
+                            //deviceSets.remove(CREATE_NEW_MSG);
+                            String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+                            if (newName == null) { // A valid new device was added, go edit it.
+                                return;
+                            } else {
+                                item = newName;
+                            }
+                        }
                         symbolPane = new SymbolEditorPane(this, item);
                     }
                     currentEditor = symbolPane;
@@ -264,7 +345,22 @@ public class LibraryEditor extends BorderPane {
                 }
             }
         }
-        setCenter(currentEditor);
+        mainPane.setCenter(currentEditor);
     }
 
+    public static final Stage invokeWindow(Library library, String name, File file) {
+        final Stage stage = new Stage();
+        LibraryEditor root = new LibraryEditor(file, library);
+        stage.setTitle("Library Editor: " + name);
+        stage.setScene(new Scene(root, 1280, 960));
+        stage.centerOnScreen();
+        stage.setOnCloseRequest((t) -> {
+            // TODO: Popup if file edited and not saved.
+
+            stage.close();
+            //stage = null;
+        });
+
+        return stage;
+    }
 }
