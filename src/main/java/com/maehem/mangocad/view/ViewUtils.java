@@ -111,4 +111,8 @@ public class ViewUtils {
     public static final void applyAppStylesheet(ObservableList<String> sylesheetList) {
         sylesheetList.add(ViewUtils.class.getResource(CSS_FILE).toExternalForm());
     }
+
+    public static final Image getImage(String jarPath) {
+        return new Image(ViewUtils.class.getResourceAsStream(jarPath));
+    }
 }
