@@ -231,13 +231,13 @@ public class LibraryEditor extends VBox {
                     if (devicePane == null) {
                         if (item == null) {
                             ArrayList<String> list = new ArrayList<>();
-                            for (DeviceSet element : library.getDeviceSets()) {
+                            for (DeviceSet element : getLibrary().getDeviceSets()) {
                                 list.add(element.getName());
                             }
                             Collections.sort(list);
                             list.add(0, CREATE_NEW_MSG);
 
-                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, list);
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
                             dialog.showAndWait(); // Present chooser
 
                             Object result = dialog.getResult();
@@ -248,7 +248,7 @@ public class LibraryEditor extends VBox {
                             }
                             if (item.equals(CREATE_NEW_MSG)) {
                                 //deviceSets.remove(CREATE_NEW_MSG);
-                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(getLibrary(), type, null);
                                 if (newName == null) { // A valid new device was added, go edit it.
                                     return;
                                 } else {
@@ -265,13 +265,13 @@ public class LibraryEditor extends VBox {
                     if (footprintPane == null) {
                         if (item == null) {
                             ArrayList<String> list = new ArrayList<>();
-                            for (Footprint element : library.getPackages()) {
+                            for (Footprint element : getLibrary().getPackages()) {
                                 list.add(element.getName());
                             }
                             Collections.sort(list);
                             list.add(0, CREATE_NEW_MSG);
 
-                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, list);
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
                             dialog.showAndWait(); // Present chooser
 
                             Object result = dialog.getResult();
@@ -282,7 +282,7 @@ public class LibraryEditor extends VBox {
                             }
                             if (item.equals(CREATE_NEW_MSG)) {
                                 //deviceSets.remove(CREATE_NEW_MSG);
-                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(getLibrary(), type, null);
                                 if (newName == null) { // A valid new device was added, go edit it.
                                     return;
                                 } else {
@@ -301,13 +301,13 @@ public class LibraryEditor extends VBox {
                 case SYMBOL -> {
                     if (symbolPane == null) {
                         ArrayList<String> list = new ArrayList<>();
-                        for (Symbol element : library.getSymbols()) {
+                        for (Symbol element : getLibrary().getSymbols()) {
                             list.add(element.getName());
                         }
                         Collections.sort(list);
                         list.add(0, CREATE_NEW_MSG);
 
-                        ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(library, list);
+                        ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
                         dialog.showAndWait(); // Present chooser
 
                         Object result = dialog.getResult();
@@ -318,7 +318,7 @@ public class LibraryEditor extends VBox {
                         }
                         if (item.equals(CREATE_NEW_MSG)) {
                             //deviceSets.remove(CREATE_NEW_MSG);
-                            String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(library, type, null);
+                            String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(getLibrary(), type, null);
                             if (newName == null) { // A valid new device was added, go edit it.
                                 return;
                             } else {
@@ -330,6 +330,7 @@ public class LibraryEditor extends VBox {
                     currentEditor = symbolPane;
                     symbolButton.setSelected(true);
                 }
+
             }
         }
         mainPane.setCenter(currentEditor);
@@ -349,5 +350,12 @@ public class LibraryEditor extends VBox {
         });
 
         return stage;
+    }
+
+    /**
+     * @return the library
+     */
+    public Library getLibrary() {
+        return library;
     }
 }

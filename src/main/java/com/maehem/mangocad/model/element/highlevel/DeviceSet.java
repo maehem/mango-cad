@@ -26,6 +26,7 @@ import java.util.List;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class DeviceSet extends LibraryElement {
+
     public static final String ELEMENT_NAME = "deviceset";
     //  deviceset (description?, gates, devices, spice?)>
     //      ATTLIST deviceset
@@ -44,6 +45,7 @@ public class DeviceSet extends LibraryElement {
 //    private String urn;
 //    private boolean locallyModified = false;
 //
+    private boolean needsSave = false;
 
     private String prefix = "";
     private boolean uservalue = false;
@@ -212,6 +214,20 @@ public class DeviceSet extends LibraryElement {
     public static boolean isValidName(Object nameResult) {
         // TODO: Check for invalid things like characters in name, or name starts with a digit.
         return true;
+    }
+
+    /**
+     * @return the needsSave
+     */
+    public boolean isNeedsSave() {
+        return needsSave;
+    }
+
+    /**
+     * @param needsSave the needsSave to set
+     */
+    public void setNeedsSave(boolean needsSave) {
+        this.needsSave = needsSave;
     }
 
 }

@@ -1940,7 +1940,8 @@ public class EagleCADIngest {
         }
     }
 
-    static void ingestEagleLayers(LayerElement[] layers, Node node) throws EagleCADLibraryFileException {
+    //static void ingestEagleLayers(LayerElement[] layers, Node node) throws EagleCADLibraryFileException {
+    static void ingestEagleLayers(Layers layers, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -1958,7 +1959,7 @@ public class EagleCADIngest {
         }
     }
 
-    static void ingestEagleLayer(LayerElement[] layers, Node node) throws EagleCADLibraryFileException {
+    static void ingestEagleLayer(Layers layers, Node node) throws EagleCADLibraryFileException {
 
         LayerElement layer = new LayerElement();
 
@@ -1993,7 +1994,8 @@ public class EagleCADIngest {
 
         }
         //LOGGER.log(Level.SEVERE, layer.toString());
-        layers[layer.getNumber()] = layer;
+        //layers[layer.getNumber()] = layer;
+        layers.getElements().add(layer);
     }
 
     /**

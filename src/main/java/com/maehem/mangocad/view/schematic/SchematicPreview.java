@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.schematic;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.*;
+import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import com.maehem.mangocad.model.element.highlevel.Device;
@@ -67,7 +68,8 @@ public class SchematicPreview extends Group {
 
     @SuppressWarnings("unchecked")
     private void populateNode(Schematic schem, int index) {
-        LayerElement[] layers = schem.getParentDrawing().getLayers();
+        //LayerElement[] layers = schem.getParentDrawing().getLayers();
+        Layers layers = schem.getParentDrawing().getLayers();
         ColorPalette palette = schem.getParentDrawing().getPalette();
         //LOGGER.log(Level.SEVERE, "Populate Page: " + (index+1));
         Sheet sheet = schem.getSheets().get(index);
@@ -79,7 +81,7 @@ public class SchematicPreview extends Group {
 //            LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
 //        }
         for (_AQuantum element : sheet.getPlain()) {
-            LayerElement layer = layers[element.getLayerNum()];
+            LayerElement layer = layers.get(element.getLayerNum());
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
@@ -165,7 +167,7 @@ public class SchematicPreview extends Group {
                 //LOGGER.log(Level.SEVERE, "Draw Seg");
 
                 seg.forEach((element) -> {
-                    int colorIndex = layers[element.getLayerNum()].getColorIndex();
+                    int colorIndex = layers.get(element.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     if (element instanceof PinRef e) {
                         // Might not have any visual element.

@@ -20,12 +20,12 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.Board;
+import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Signal;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.DrcDefs;
 import com.maehem.mangocad.model.util.Units;
 import com.maehem.mangocad.view.ColorUtils;
@@ -112,12 +112,13 @@ public class BoardPreview extends Group {
     }
 
     private void populateNodeAsDesign() {
-        LayerElement[] layers = board.getParentDrawing().getLayers();
+        //LayerElement[] layers = board.getParentDrawing().getLayers();
+        Layers layers = board.getParentDrawing().getLayers();
         ColorPalette palette = board.getParentDrawing().getPalette();
         ObservableList<Node> chld = getChildren();
 
         for (_AQuantum element : board.getPlain()) {
-            int colorIndex = layers[element.getLayerNum()].getColorIndex();
+            int colorIndex = layers.get(element.getLayerNum()).getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
@@ -141,11 +142,11 @@ public class BoardPreview extends Group {
             } else if (element instanceof FrameElement e) {
                 chld.add(LibraryElementNode.createFrameNode(e, c));
             } else if (element instanceof Hole e) {
-                int ocColorIndex = layers[20].getColorIndex();
+                int ocColorIndex = layers.get(20).getColorIndex();
                 Color oc = ColorUtils.getColor(palette.getHex(ocColorIndex));
-                int tmColorIndex = layers[29].getColorIndex();
+                int tmColorIndex = layers.get(29).getColorIndex();
                 Color tm = ColorUtils.getColor(palette.getHex(tmColorIndex));
-                int bmColorIndex = layers[30].getColorIndex();
+                int bmColorIndex = layers.get(30).getColorIndex();
                 Color bm = ColorUtils.getColor(palette.getHex(bmColorIndex));
                 chld.add(LibraryElementNode.createHoleNode(
                         e, 0.04,
@@ -186,7 +187,7 @@ public class BoardPreview extends Group {
                     new Object[]{sig.getName(), sig.getNetClassNum()});
             for (_AQuantum el : sig.getElements()) {
                 if (el instanceof Wire w) {
-                    int colorIndex = layers[el.getLayerNum()].getColorIndex();
+                    int colorIndex = layers.get(el.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     LOGGER.log(Level.FINER, "    Element: {0} on layerNum: {1} at: {2},{3} to {4},{5} with width: {6}",
                             new Object[]{
@@ -206,16 +207,16 @@ public class BoardPreview extends Group {
                             }
                     );
                 } else if (el instanceof Via v) {
-                    Color padColor = ColorUtils.getColor(palette.getHex(layers[18].getColorIndex()));
-                    Color tm = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                    Color bm = ColorUtils.getColor(palette.getHex(layers[30].getColorIndex()));
+                    Color padColor = ColorUtils.getColor(palette.getHex(layers.get(18).getColorIndex()));
+                    Color tm = ColorUtils.getColor(palette.getHex(layers.get(29).getColorIndex()));
+                    Color bm = ColorUtils.getColor(palette.getHex(layers.get(30).getColorIndex()));
                     chld.add(LibraryElementNode.createVia(
                             v,
                             padColor, tm, bm,
                             board.getDesignRules()
                     ));
                 } else if (el instanceof ElementPolygon ep) {
-                    int colorIndex = layers[el.getLayerNum()].getColorIndex();
+                    int colorIndex = layers.get(el.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     chld.add(LibraryElementNode.createPolygonCurved(ep, c, false));
                 } else {

@@ -41,6 +41,7 @@ import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Via;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.drawing.Board;
+import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import static com.maehem.mangocad.model.element.enums.PadShape.*;
 import com.maehem.mangocad.model.element.enums.PinFunction;
@@ -3114,7 +3115,7 @@ public class LibraryElementNode {
         return new ImagePattern(p.snapshot(sp, wi), 0, 0, 2, 2, false);
     }
 
-    public static Group createSymbolNode(Device device, Symbol symbol, Instance inst, Part part, Map<String, String> vars, LayerElement[] layers, ColorPalette palette) {
+    public static Group createSymbolNode(Device device, Symbol symbol, Instance inst, Part part, Map<String, String> vars, Layers layers, ColorPalette palette) {
         Group elementGroup = new Group();
         Group textGroup = new Group();
         Group g = new Group(elementGroup, textGroup);
@@ -3124,7 +3125,7 @@ public class LibraryElementNode {
         final boolean mirror = inst == null ? false : inst.getRotation().isMirror();
 
         symbol.getElements().forEach((e) -> {
-            LayerElement le = layers[e.getLayerNum()];
+            LayerElement le = layers.get(e.getLayerNum());
             if (le == null) {
                 LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
             }
@@ -3214,7 +3215,7 @@ public class LibraryElementNode {
 
         });
 
-        int cIdx = layers[symbol.getLayerNum()].getColorIndex();
+        int cIdx = layers.get(symbol.getLayerNum()).getColorIndex();
         Color c = ColorUtils.getColor(palette.getHex(cIdx));
         elementGroup.getChildren().add(LibraryElementNode.crosshairs(
                 0, 0, 0.5, 0.035, c
@@ -3234,25 +3235,25 @@ public class LibraryElementNode {
         return g;
     }
 
-    public static Node createPackageNode(Footprint pkg, LayerElement[] layers, ColorPalette palette) {
+    public static Node createPackageNode(Footprint pkg, Layers layers, ColorPalette palette) {
         //Group p = new Group();
         Pane p = new Pane();
 
         if (pkg != null) {
             pkg.getElements().forEach((e) -> {
-                LayerElement le = layers[e.getLayerNum()];
+                LayerElement le = layers.get(e.getLayerNum());
                 int colorIndex = le.getColorIndex();
                 Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
                 if (e instanceof PadSMD padSMD) {
-                    Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                    Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
+                    Color maskColor = ColorUtils.getColor(palette.getHex(layers.get(29).getColorIndex()));
+                    Color silkColor = ColorUtils.getColor(palette.getHex(layers.get(21).getColorIndex()));
                     Node n = LibraryElementNode.createSmd(padSMD, c, maskColor, silkColor);
                     p.getChildren().add(n);
                     n.toBack();
                 } else if (e instanceof PadTHD padTHD) {
-                    Color maskColor = ColorUtils.getColor(palette.getHex(layers[29].getColorIndex()));
-                    Color silkColor = ColorUtils.getColor(palette.getHex(layers[21].getColorIndex()));
+                    Color maskColor = ColorUtils.getColor(palette.getHex(layers.get(29).getColorIndex()));
+                    Color silkColor = ColorUtils.getColor(palette.getHex(layers.get(21).getColorIndex()));
                     Node n = LibraryElementNode.createThd(padTHD, c, maskColor, silkColor);
                     p.getChildren().add(n);
                     n.toBack();
@@ -3276,7 +3277,7 @@ public class LibraryElementNode {
 
             // tOrigins 23   , bOrigins 24
             // TODO:  Need constants for layer numbers and names. And stroke widths/size.
-            int cIdx = layers[23].getColorIndex();
+            int cIdx = layers.get(23).getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(cIdx));
             p.getChildren().add(LibraryElementNode.crosshairs(
                     0, 0, 0.5, 0.035, c
@@ -3653,8 +3654,8 @@ public class LibraryElementNode {
         return list;
     }
 
-    public static Node createDimensionNode(Dimension dim, LayerElement[] layers, ColorPalette palette) {
-        LayerElement le = layers[dim.getLayerNum()];
+    public static Node createDimensionNode(Dimension dim, Layers layers, ColorPalette palette) {
+        LayerElement le = layers.get(dim.getLayerNum());
         int colorIndex = le.getColorIndex();
         Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 

@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.basic.Gate;
 import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.Device;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
@@ -107,10 +108,14 @@ public class DetailNodes {
      * bottom.
      *
      * @param symbol
+     * @param lib
+     * @param showGauge
      * @return
      */
     public static Group symbolPreview(Symbol symbol, Library lib, boolean showGauge) {
-        LayerElement[] layers = lib.getParentDrawing().getLayers();
+        //LayerElement[] layers = lib.getParentDrawing().getLayers();
+        Layers layers = lib.getParentDrawing().getLayers();
+
         ColorPalette palette = lib.getParentDrawing().getPalette();
 
         Node g = LibraryElementNode.createSymbolNode(null, symbol, null, null, null, layers, palette);
@@ -146,7 +151,8 @@ public class DetailNodes {
      * @return
      */
     public static Node deviceGatePreview(Gate gate, Library lib) {
-        LayerElement[] layers = lib.getParentDrawing().getLayers();
+        //LayerElement[] layers = lib.getParentDrawing().getLayers();
+        Layers layers2 = lib.getParentDrawing().getLayers();
         ColorPalette palette = lib.getParentDrawing().getPalette();
 
         Group g = new Group();
@@ -156,7 +162,8 @@ public class DetailNodes {
         symbol.getElements().forEach((e) -> {
             //LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
             int layerNum = e.getLayerNum();
-            LayerElement le = layers[layerNum];
+            //LayerElement le = layers[layerNum];
+            LayerElement le = layers2.get(layerNum);
             if (le == null) {
                 LOGGER.log(Level.SEVERE, "No Layer for: {0}", layerNum);
             }
@@ -200,7 +207,8 @@ public class DetailNodes {
      * @return
      */
     public static Group footprintPreview(Footprint footprint, Library lib, boolean showGauge) {
-        LayerElement[] layers = lib.getParentDrawing().getLayers();
+        //LayerElement[] layers = lib.getParentDrawing().getLayers();
+        Layers layers = lib.getParentDrawing().getLayers();
         ColorPalette palette = lib.getParentDrawing().getPalette();
 
         //Group g = new Group();
