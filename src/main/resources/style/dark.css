@@ -154,6 +154,13 @@
     -fx-font-size:120%;
 }
 
+#layer-chooser-button {
+    -fx-background-color: #aaa;
+}
+#layer-chooser-button .text {
+    -fx-fill: #444;
+}
+
 .md-body{
     -fx-font-family: Arial;
     -fx-fill: #EEEEF2;
