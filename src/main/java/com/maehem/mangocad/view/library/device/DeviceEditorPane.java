@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.library.device;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Drawing;
+import com.maehem.mangocad.view.CommandFieldWidget;
 import com.maehem.mangocad.view.LayerChooser;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
@@ -36,6 +37,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 /**
@@ -106,8 +109,10 @@ public class DeviceEditorPane extends BorderPane {
         Drawing drawing = parent.getLibrary().getParentDrawing();
         ColorPalette palette = drawing.getPalette();
         LayerChooser layerChooser = new LayerChooser(drawing.getPalette(), drawing.getLayers()); // Does nothing for this editor.
+        CommandFieldWidget commandField = new CommandFieldWidget();
+        Rectangle spacer = new Rectangle(16, 16, Color.TRANSPARENT);
 
-        topToolBar.getItems().addAll(infoButton, gridButton, new Separator(), layerChooser);
+        topToolBar.getItems().addAll(infoButton, gridButton, new Separator(), layerChooser, spacer, commandField);
     }
 
     private void initLeftToolbar() {
