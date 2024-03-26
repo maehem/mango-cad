@@ -29,10 +29,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * Layer Chooser Widget.
+ *
+ * A pull-down combo-box for selecting a layer in the design.
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class LayerChooser extends HBox {
+
+    private static final String CELL_CSS_ID = "layer-chooser-button";
 
     private final Label label = new Label("Layers: ");
 
@@ -51,13 +56,13 @@ public class LayerChooser extends HBox {
         setAlignment(Pos.CENTER);
     }
 
-    static class ColorRectCell extends ListCell<LayerElement> {
+    private static class ColorRectCell extends ListCell<LayerElement> {
 
         ColorPalette palette;
 
         public ColorRectCell(ColorPalette palette) {
             this.palette = palette;
-            setId("layer-chooser-button");
+            setId(CELL_CSS_ID);
         }
 
         @Override
