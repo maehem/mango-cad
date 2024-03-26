@@ -57,7 +57,6 @@ public class SchematicPreview extends Group {
         this.schematic = schematic;
         this.index = index;
 
-
         if (schematic.getSheets().get(index) != null) {
             populateNode(schematic, index);
         } else {
