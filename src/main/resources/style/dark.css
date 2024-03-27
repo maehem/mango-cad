@@ -13,7 +13,7 @@
     -fx-border-radius: 5;
 }
 
-.text{
+.text {
     /*-fx-fill: #CCCCE6*/
     -fx-fill: #bbb;
 }
@@ -159,6 +159,11 @@
 }
 #layer-chooser-button .text {
     -fx-fill: #444;
+}
+
+#grid-settings {
+    -fx-fill: #bbb;
+    -fx-font-size:90%;
 }
 
 .md-body{
