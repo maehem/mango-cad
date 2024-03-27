@@ -82,10 +82,10 @@ public class ControlPanel extends Application {
         appProperties.setHostServices(getHostServices());
 
         final Menu fileMenu = new Menu(MSG.getString("MENU_FILE"));
-        final Menu viewMenu = new Menu("View");
-        final Menu optionsMenu = new Menu("Options");
-        final Menu windowMenu = new Menu("Window");
-        final Menu helpMenu = new Menu("Help");
+        final Menu viewMenu = new Menu(MSG.getString("MENU_VIEW"));
+        final Menu optionsMenu = new Menu(MSG.getString("MENU_OPTIONS"));
+        final Menu windowMenu = new Menu(MSG.getString("MENU_WINDOW"));
+        final Menu helpMenu = new Menu(MSG.getString("MENU_HELP"));
 
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(
@@ -152,11 +152,11 @@ public class ControlPanel extends Application {
     }
 
     private void initOptionsMenu(Menu menu) {
-        MenuItem dirs = new MenuItem("Directories...");
+        MenuItem dirs = new MenuItem(MSG.getString("MENU_OPTIONS_DIR"));
         dirs.setOnAction((t) -> new DirectoriesConfigDialog()); // Loving those Lamdas!
 
-        MenuItem backups = new MenuItem("Backups/Locking...");
-        MenuItem userIface = new MenuItem("User Interface...");
+        MenuItem backups = new MenuItem(MSG.getString("MENU_OPTIONS_BKP"));
+        MenuItem userIface = new MenuItem(MSG.getString("MENU_OPTIONS_UI"));
         menu.getItems().addAll(dirs, backups, userIface);
     }
 
