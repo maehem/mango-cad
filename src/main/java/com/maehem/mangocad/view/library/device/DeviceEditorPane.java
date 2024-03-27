@@ -23,6 +23,7 @@ import com.maehem.mangocad.view.LayerChooser;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import com.maehem.mangocad.view.settings.GridSettingsDialog;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
@@ -102,11 +103,14 @@ public class DeviceEditorPane extends BorderPane {
         initLeftToolbar();
     }
     private void initTopToolbar() {
+        Drawing drawing = parent.getLibrary().getParentDrawing();
         topToolBar.setPrefHeight(24);
         Button infoButton = createToolbarButton("Layers", LAYERS_IMAGE);
         Button gridButton = createToolbarButton("Grid", GRID_IMAGE);
+        gridButton.setOnAction((t) -> {
+            GridSettingsDialog gridSettings = new GridSettingsDialog(drawing.getGrid());
+        });
 
-        Drawing drawing = parent.getLibrary().getParentDrawing();
         ColorPalette palette = drawing.getPalette();
         LayerChooser layerChooser = new LayerChooser(drawing.getPalette(), drawing.getLayers()); // Does nothing for this editor.
         CommandFieldWidget commandField = new CommandFieldWidget();

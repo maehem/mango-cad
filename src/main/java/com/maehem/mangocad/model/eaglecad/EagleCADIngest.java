@@ -2625,12 +2625,12 @@ public class EagleCADIngest {
             Node it = att.item(j);
             String value = it.getNodeValue();
             switch (it.getNodeName()) {
-                case "distance" ->
-                    grid.setDistance(Double.parseDouble(value));
-                case "unitdist" ->
-                    grid.setUnitDist(GridUnit.fromCode(value));
-                case "unit" ->
-                    grid.setUnit(GridUnit.fromCode(value));
+                case "distance" -> // size
+                    grid.setSize(Double.parseDouble(value));
+                case "unitdist" -> // unit of stored number
+                    grid.setSizeStoredUnit(GridUnit.fromCode(value));
+                case "unit" ->  // unit for application combobox
+                    grid.setSizeUnit(GridUnit.fromCode(value));
                 case "style" ->
                     grid.setStyle(GridStyle.fromCode(value));
                 case "multiple" ->
@@ -2638,9 +2638,9 @@ public class EagleCADIngest {
                 case "display" ->
                     grid.setDisplay(value.equalsIgnoreCase("yes"));
                 case "altdistance" ->
-                    grid.setAltDistance(Double.parseDouble(value));
+                    grid.setAltSize(Double.parseDouble(value));
                 case "altunitdist" ->
-                    grid.setAltUnitDist(GridUnit.fromCode(value));
+                    grid.setAltStoredUnit(GridUnit.fromCode(value));
                 case "altunit" ->
                     grid.setAltUnit(GridUnit.fromCode(value));
                 default ->

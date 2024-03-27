@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.misc;
@@ -40,61 +40,69 @@ import com.maehem.mangocad.model.element.enums.GridUnit;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class Grid extends _AQuantum {
+
     public static final String ELEMENT_NAME = "grid";
-    
-    private double distance;
-    private GridUnit unitDist;
-    private GridUnit unit;
+
+    public static final GridUnit DEFAULT_DIST_UNIT = GridUnit.INCH;
+    public static final double DEFAULT_DIST = 0.10;
+    public static final double DEFAULT_ALT = 0.01;
+    public static final GridUnit DEFAULT_ALT_UNIT = GridUnit.INCH;
+    public static final int DEFAULT_MULT = 1;
+    public static final boolean DEFAULT_DISPLAY = false;
+
+    private double distance = DEFAULT_DIST;  // "Size" in UI
+    private GridUnit distanceStoredUnit = DEFAULT_DIST_UNIT; // Store 'distance' as these type units.
+    private GridUnit distanceUnit = DEFAULT_DIST_UNIT;  // UI selected unit. UI ComboBox.
     private GridStyle style = GridStyle.LINES;
-    private int multiple = 1;
-    private boolean display = false;
-    private double altDistance;
-    private GridUnit altUnitDist;
-    private GridUnit altUnit;
-     
+    private int multiple = DEFAULT_MULT;
+    private boolean display = DEFAULT_DISPLAY;
+    private double altSize = DEFAULT_ALT;
+    private GridUnit altStoredUnit = DEFAULT_ALT_UNIT; // Store 'altDistance' as these type units.
+    private GridUnit altUnit = DEFAULT_ALT_UNIT;    // UI selected unit. UI ComboBox.
+
     public Grid() {
     }
 
     /**
      * @return the distance
      */
-    public double getDistance() {
+    public double getSize() {
         return distance;
     }
 
     /**
      * @param distance the distance to set
      */
-    public void setDistance(double distance) {
+    public void setSize(double distance) {
         this.distance = distance;
     }
 
     /**
-     * @return the unitDist
+     * @param distUnit the distanceStoredUnit to set
      */
-    public GridUnit getUnitDist() {
-        return unitDist;
+    public void setSizeStoredUnit(GridUnit distUnit) {
+        this.distanceStoredUnit = distUnit;
     }
 
     /**
-     * @param unitDist the unitDist to set
+     * @return the distanceStoredUnit
      */
-    public void setUnitDist(GridUnit unitDist) {
-        this.unitDist = unitDist;
+    public GridUnit getSizeStoredUnit() {
+        return distanceStoredUnit;
     }
 
     /**
-     * @return the unit
+     * @param distUnit the distanceStoredUnit to set
      */
-    public GridUnit getUnit() {
-        return unit;
+    public void setSizeUnit(GridUnit distUnit) {
+        this.distanceUnit = distUnit;
     }
 
     /**
-     * @param unit the unit to set
+     * @return the distanceUnit
      */
-    public void setUnit(GridUnit unit) {
-        this.unit = unit;
+    public GridUnit getSizeUnit() {
+        return distanceUnit;
     }
 
     /**
@@ -142,29 +150,29 @@ public class Grid extends _AQuantum {
     /**
      * @return the altDistance
      */
-    public double getAltDistance() {
-        return altDistance;
+    public double getAltSize() {
+        return altSize;
     }
 
     /**
-     * @param altDistance the altDistance to set
+     * @param altSize the altDistance to set
      */
-    public void setAltDistance(double altDistance) {
-        this.altDistance = altDistance;
+    public void setAltSize(double altSize) {
+        this.altSize = altSize;
     }
 
     /**
-     * @return the altUnitDist
+     * @return the altStoredUnit
      */
-    public GridUnit getAltUnitDist() {
-        return altUnitDist;
+    public GridUnit getAltStoredUnit() {
+        return altStoredUnit;
     }
 
     /**
-     * @param altUnitDist the altUnitDist to set
+     * @param altSizeUnit the altStoredUnit to set
      */
-    public void setAltUnitDist(GridUnit altUnitDist) {
-        this.altUnitDist = altUnitDist;
+    public void setAltStoredUnit(GridUnit altSizeUnit) {
+        this.altStoredUnit = altSizeUnit;
     }
 
     /**
@@ -184,6 +192,10 @@ public class Grid extends _AQuantum {
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    public boolean isDots() {
+        return getStyle().equals(GridStyle.DOTS);
     }
 
 }
