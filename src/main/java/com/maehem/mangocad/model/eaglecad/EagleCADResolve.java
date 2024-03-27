@@ -51,7 +51,7 @@ public class EagleCADResolve {
     static void resolveElements(Board brd) {
         for (ElementElement e : brd.getElements()) {
             e.setLibraryObj(brd.getLibrary(e.getLibrary()));
-            LOGGER.log(Level.SEVERE, "element: {0}  library: {1}", new Object[]{e.getName(), e.getLibrary()});
+            LOGGER.log(Level.FINEST, "element: {0}  library: {1}", new Object[]{e.getName(), e.getLibrary()});
         }
     }
 }
