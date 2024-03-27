@@ -21,6 +21,8 @@ import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import com.maehem.mangocad.view.controlpanel.ModuleList;
 import com.maehem.mangocad.view.controlpanel.TabArea;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,39 +51,48 @@ public class ControlPanel extends Application {
     public static final String WINDOW_SIZE_W_PROP_KEY = "Window.W";
     public static final String WINDOW_SIZE_H_PROP_KEY = "Window.H";
 
-    private final Menu fileMenu = new Menu("File");
-    private final Menu viewMenu = new Menu("View");
-    private final Menu optionsMenu = new Menu("Options");
-    private final Menu windowMenu = new Menu("Window");
-    private final Menu helpMenu = new Menu("Help");
+    private final ResourceBundle MSG; // Must be set in constructor or after.
 
     private AppProperties appProperties;// = AppProperties.getInstance();
 
     private ModuleList moduleList;
 
+    public ControlPanel() {
+        super();
+
+        Locale.setDefault(Locale.GERMANY);  // uncomment for i18n debug
+        MSG = ResourceBundle.getBundle("i18n/ControlPanel");
+        configureLogging();
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
-        configureLogging();
-        LOGGER.log(Level.SEVERE, "MangoCAD Start...");
+
+        LOGGER.log(Level.SEVERE, MSG.getString("LOG_START"));
 
         // Set the title of the Stage
-        stage.setTitle("MangoCAD");
+        stage.setTitle(MSG.getString("TITLE"));
 
         // Add icon for the app
         Image appIcon = new Image(getClass().getResourceAsStream("/icons/app-icon.png"));
         stage.getIcons().add(appIcon);
 
-
         appProperties = AppProperties.getInstance();
         // Host Services allows opening of browser links inside app.
         appProperties.setHostServices(getHostServices());
+
+        final Menu fileMenu = new Menu(MSG.getString("MENU_FILE"));
+        final Menu viewMenu = new Menu("View");
+        final Menu optionsMenu = new Menu("Options");
+        final Menu windowMenu = new Menu("Window");
+        final Menu helpMenu = new Menu("Help");
 
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(
                 fileMenu, viewMenu, optionsMenu, windowMenu, helpMenu
         );
 
-        initOptionsMenu();
+        initOptionsMenu(optionsMenu);
 
         final String os = System.getProperty("os.name");
         if (os != null && os.startsWith("Mac")) {
@@ -119,7 +130,6 @@ public class ControlPanel extends Application {
 //                + "-fx-border-radius: 5;"
 //        //               + "-fx-border-color: blue;"
 //        );
-
         root.setTop(menuBar);
         Scene scene = new Scene(root);  // Create the Scene
         //scene.getStylesheets().add("/style/dark.css");
@@ -141,13 +151,13 @@ public class ControlPanel extends Application {
         });
     }
 
-    private void initOptionsMenu() {
+    private void initOptionsMenu(Menu menu) {
         MenuItem dirs = new MenuItem("Directories...");
         dirs.setOnAction((t) -> new DirectoriesConfigDialog()); // Loving those Lamdas!
 
         MenuItem backups = new MenuItem("Backups/Locking...");
         MenuItem userIface = new MenuItem("User Interface...");
-        optionsMenu.getItems().addAll(dirs, backups, userIface);
+        menu.getItems().addAll(dirs, backups, userIface);
     }
 
     private void configureLogging() {

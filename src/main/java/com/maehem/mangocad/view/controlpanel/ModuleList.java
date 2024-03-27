@@ -55,6 +55,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TreeItem;
@@ -73,6 +74,8 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
 
     private static final Logger LOGGER = ControlPanel.LOGGER;
 
+    private static final ResourceBundle MSG = ResourceBundle.getBundle("i18n/ControlPanel");
+
     public static final String NAME_COL_WIDTH_PROP_KEY = "ModuleList.Name.W";
     public static final String DESC_COL_WIDTH_PROP_KEY = "ModuleList.Description.W";
     public static final String MODIFIED_COL_WIDTH_PROP_KEY = "ModuleList.LastModified.W";
@@ -89,10 +92,10 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
 
     private final TabArea tabArea;
 
-    private final TreeTableColumn<ControlPanelListItem, String> nameColumn = new TreeTableColumn<>("Name");
-    private final TreeTableColumn<ControlPanelListItem, String> descColumn = new TreeTableColumn<>("Description");
-    private final TreeTableColumn<ControlPanelListItem, String> modifiedColumn = new TreeTableColumn<>("Last Modified");
-    private final TreeTableColumn<ControlPanelListItem, String> useColumn = new TreeTableColumn<>("Use");
+    private final TreeTableColumn<ControlPanelListItem, String> nameColumn = new TreeTableColumn<>(MSG.getString("MODULE_LIST_NAME_COL"));
+    private final TreeTableColumn<ControlPanelListItem, String> descColumn = new TreeTableColumn<>(MSG.getString("MODULE_LIST_DESC_COL"));
+    private final TreeTableColumn<ControlPanelListItem, String> modifiedColumn = new TreeTableColumn<>(MSG.getString("MODULE_LIST_MOD_COL"));
+    private final TreeTableColumn<ControlPanelListItem, String> useColumn = new TreeTableColumn<>(MSG.getString("MODULE_LIST_USE_COL"));
 
     @SuppressWarnings("unchecked")
     private final TreeItem githubSubFolderItem = new TreeItem(new RepositorySubFolderItem("Git Hub", "Repos at GitHub.com"));
