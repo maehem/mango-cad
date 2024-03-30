@@ -21,12 +21,12 @@ import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditorDialogs;
 import java.util.Collections;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -55,8 +55,6 @@ import javafx.scene.layout.VBox;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class TocElementListView extends VBox {
-
-    private static final Logger LOGGER = Logger.getLogger("TocElementListView");
 
     private final String SAVE_EMOJI = "💾";  // Floppy Emoji --  U+1F4BE
 
