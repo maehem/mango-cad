@@ -23,7 +23,9 @@ import com.maehem.mangocad.view.LayerChooser;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import com.maehem.mangocad.view.settings.FillStyleChooser;
 import com.maehem.mangocad.view.settings.GridSettingsDialog;
+import com.maehem.mangocad.view.settings.LayerSettingsDialog;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
@@ -105,18 +107,23 @@ public class DeviceEditorPane extends BorderPane {
     private void initTopToolbar() {
         Drawing drawing = parent.getLibrary().getParentDrawing();
         topToolBar.setPrefHeight(24);
-        Button infoButton = createToolbarButton("Layers", LAYERS_IMAGE);
+        Button layersButton = createToolbarButton("Layers", LAYERS_IMAGE);
+        layersButton.setOnAction((t) -> {
+            LayerSettingsDialog layersDialog = new LayerSettingsDialog(drawing.getPalette(), drawing.getLayers());
+        });
         Button gridButton = createToolbarButton("Grid", GRID_IMAGE);
         gridButton.setOnAction((t) -> {
             GridSettingsDialog gridSettings = new GridSettingsDialog(drawing.getGrid());
         });
+
+        FillStyleChooser fillStyleChooser = new FillStyleChooser(1);
 
         ColorPalette palette = drawing.getPalette();
         LayerChooser layerChooser = new LayerChooser(drawing.getPalette(), drawing.getLayers()); // Does nothing for this editor.
         CommandFieldWidget commandField = new CommandFieldWidget();
         Rectangle spacer = new Rectangle(16, 16, Color.TRANSPARENT);
 
-        topToolBar.getItems().addAll(infoButton, gridButton, new Separator(), layerChooser, spacer, commandField);
+        topToolBar.getItems().addAll(layersButton, gridButton, new Separator(), layerChooser, fillStyleChooser, spacer, commandField);
     }
 
     private void initLeftToolbar() {
