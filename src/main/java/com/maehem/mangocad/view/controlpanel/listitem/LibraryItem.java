@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
@@ -78,19 +77,20 @@ public class LibraryItem extends ControlPanelListItem {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem1.getText()});
 
             if (stage == null) {
-                stage = new Stage();
-                LibraryEditor root = new LibraryEditor(getFile(), library);
-                stage.setTitle("Library Editor: " + getName());
-                Scene scene = new Scene(root, 1280, 960);
-                scene.getStylesheets().add(this.getClass().getResource("/style/dark.css").toExternalForm());
-                stage.setScene(scene);
-                stage.centerOnScreen();
-                stage.setOnCloseRequest((t) -> {
-                    // TODO: Popup if file edited and not saved.
-
-                    stage.close();
-                    stage = null;
-                });
+                stage = LibraryEditor.invokeWindow(library, getName(), getFile());
+//                stage = new Stage();
+//                LibraryEditor root = new LibraryEditor(getFile(), library);
+//                stage.setTitle("Library Editor: " + getName());
+//                Scene scene = new Scene(root, 1280, 960);
+//                scene.getStylesheets().add(this.getClass().getResource("/style/dark.css").toExternalForm());
+//                stage.setScene(scene);
+//                stage.centerOnScreen();
+//                stage.setOnCloseRequest((t) -> {
+//                    // TODO: Popup if file edited and not saved.
+//
+//                    stage.close();
+//                    stage = null;
+//                });
             }
             stage.toFront();
             stage.show();
