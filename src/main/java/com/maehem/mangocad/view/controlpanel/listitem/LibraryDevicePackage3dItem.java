@@ -21,7 +21,6 @@ import com.maehem.mangocad.view.library.LibraryEditor;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -57,17 +56,18 @@ public class LibraryDevicePackage3dItem extends ControlPanelListItem {
             LOGGER.log(Level.SEVERE, "{0}: {1}", new Object[]{getName(), menuItem2.getText()});
 
             if (stage == null) {
-                stage = new Stage();
-                LibraryEditor root = new LibraryEditor(getFile(), library);
-                stage.setTitle("Library Editor: " + getName());
-                stage.setScene(new Scene(root, 1280, 960));
-                stage.centerOnScreen();
-                stage.setOnCloseRequest((t) -> {
-                    // TODO: Popup if file edited and not saved.
-
-                    stage.close();
-                    stage = null;
-                });
+                stage = LibraryEditor.invokeWindow(library, getName(), getFile());
+//                stage = new Stage();
+//                LibraryEditor root = new LibraryEditor(getFile(), library);
+//                stage.setTitle("Library Editor: " + getName());
+//                stage.setScene(new Scene(root, 1280, 960));
+//                stage.centerOnScreen();
+//                stage.setOnCloseRequest((t) -> {
+//                    // TODO: Popup if file edited and not saved.
+//
+//                    stage.close();
+//                    stage = null;
+//                });
             }
             stage.toFront();
             stage.show();
