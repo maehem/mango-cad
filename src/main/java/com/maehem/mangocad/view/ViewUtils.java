@@ -104,6 +104,7 @@ public class ViewUtils {
         graphic.setFitHeight(size);
         graphic.setPreserveRatio(true);
         graphic.setEffect(getColorIconEffect(graphic, Color.LIGHTGRAY, size, size));
+        graphic.setSmooth(size < 24);
 
         return graphic;
     }
