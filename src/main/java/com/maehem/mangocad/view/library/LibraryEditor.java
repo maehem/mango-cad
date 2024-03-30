@@ -340,7 +340,12 @@ public class LibraryEditor extends VBox {
         final Stage stage = new Stage();
         LibraryEditor root = new LibraryEditor(file, library);
         stage.setTitle("Library Editor: " + name);
-        stage.setScene(new Scene(root, 1280, 960));
+        //scene.getStylesheets().add(this.getClass().getResource("/style/dark.css").toExternalForm());
+        Scene scene = new Scene(root, 1280, 960);
+        ViewUtils.applyAppStylesheet(scene.getStylesheets());
+        //scene.getStylesheets().add(LibraryEditor.class.getResource("/style/dark.css").toExternalForm());
+        stage.setScene(scene);
+        //stage.setScene(new Scene(root, 1280, 960));
         stage.centerOnScreen();
         stage.setOnCloseRequest((t) -> {
             // TODO: Popup if file edited and not saved.
