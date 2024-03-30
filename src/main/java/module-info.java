@@ -7,6 +7,7 @@ module com.maehem.mangocad {
     requires java.net.http;
 
     exports com.maehem.mangocad;
+    exports com.maehem.mangocad.model.element.misc;
     exports com.maehem.mangocad.view;
     exports com.maehem.mangocad.view.controlpanel;
     exports com.maehem.mangocad.view.controlpanel.listitem;
