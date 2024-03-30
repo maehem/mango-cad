@@ -34,9 +34,9 @@ import javafx.scene.shape.Shape;
  */
 public class FillStyle {
 
-    private static int PATTERN_SIZE = 24;
-    private static int N_DIAG_LINES = 5;
-    private static int N_HV_LINES = 5;
+    private static final int PATTERN_SIZE = 24;
+    private static final int N_DIAG_LINES = 6; // Must be even number for tiling pattern.
+    private static final int N_HV_LINES = 5;
 
     public static Paint getPaint(int fillStyle, Color c) { // TODO add scale?
         switch (fillStyle) {
@@ -193,23 +193,6 @@ public class FillStyle {
             }
         }
 
-    }
-
-    private static ImagePattern makeDiagHatchOld(int nLines, boolean dir, Color c) {
-        Pane p = patternPane();
-
-        // Diagonal  -- Four Lines, Five Gaps
-        double inc = (double) PATTERN_SIZE / nLines;
-        for (int i = 0; i < nLines * 2; i++) {
-            Line l = new Line(
-                    i * inc - (dir ? 0 : PATTERN_SIZE), 0,
-                    i * inc - (dir ? PATTERN_SIZE : 0), PATTERN_SIZE);
-            l.setStrokeWidth(0.5);
-            l.setStroke(c);
-            p.getChildren().add(l);
-        }
-
-        return snapPattern(p);
     }
 
     private static Pane patternPane() {
