@@ -192,7 +192,6 @@ public class FillStyle {
                 p.getChildren().add(cc);
             }
         }
-
     }
 
     private static Pane patternPane() {
