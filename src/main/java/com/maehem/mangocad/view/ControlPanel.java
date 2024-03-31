@@ -110,7 +110,7 @@ public class ControlPanel extends Application {
         splitPane.setDividerPosition(0, Double.parseDouble(splitX));
 
         String posX = appProperties.getProperty(getClass().getSimpleName() + "." + WINDOW_POS_X_PROP_KEY, "50");
-        String posY = appProperties.getProperty(getClass().getSimpleName() + "." + WINDOW_POS_Y_PROP_KEY, "50");
+        String posY = appProperties.getProperty(getClass().getSimpleName() + "." + WINDOW_POS_Y_PROP_KEY, "20");
         stage.setX(Double.parseDouble(posX));
         stage.setY(Double.parseDouble(posY));
 
