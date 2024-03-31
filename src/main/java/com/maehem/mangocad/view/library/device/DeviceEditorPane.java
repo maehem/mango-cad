@@ -116,7 +116,7 @@ public class DeviceEditorPane extends BorderPane {
             GridSettingsDialog gridSettings = new GridSettingsDialog(drawing.getGrid());
         });
 
-        FillStyleChooser fillStyleChooser = new FillStyleChooser(1);
+        FillStyleChooser fillStyleChooser = new FillStyleChooser(1, 16);
 
         ColorPalette palette = drawing.getPalette();
         LayerChooser layerChooser = new LayerChooser(drawing.getPalette(), drawing.getLayers()); // Does nothing for this editor.
