@@ -133,4 +133,8 @@ public enum LibraryLayers {
         return color;
     }
 
+    public boolean isActive(int layerNum) {
+        // All layers are always active
+        return true;
+    }
 }
