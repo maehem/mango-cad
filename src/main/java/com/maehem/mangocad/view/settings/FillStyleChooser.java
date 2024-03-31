@@ -17,44 +17,51 @@
 package com.maehem.mangocad.view.settings;
 
 import com.maehem.mangocad.view.FillStyle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.util.ArrayList;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class FillStyleChooser extends ComboBox {
+public class FillStyleChooser extends ComboBox<Integer> {
 
-    private final static Color COLOR = Color.DARKGREY;
-    private final static double SIZE = 32;
+    private final static Color COLOR = Color.LIGHTGRAY; // TODO use CSS stylesheet
 
-    @SuppressWarnings("unchecked")
-    public FillStyleChooser(int selected) {
+    public FillStyleChooser(int selected, double size) {
 
-        ObservableList<Shape> list = FXCollections.observableArrayList(
-                FillStyle.getSwatch(0, COLOR, SIZE),
-                FillStyle.getSwatch(1, COLOR, SIZE),
-                FillStyle.getSwatch(2, COLOR, SIZE),
-                FillStyle.getSwatch(3, COLOR, SIZE),
-                FillStyle.getSwatch(4, COLOR, SIZE),
-                FillStyle.getSwatch(5, COLOR, SIZE),
-                FillStyle.getSwatch(6, COLOR, SIZE),
-                FillStyle.getSwatch(7, COLOR, SIZE),
-                FillStyle.getSwatch(8, COLOR, SIZE),
-                FillStyle.getSwatch(9, COLOR, SIZE),
-                FillStyle.getSwatch(10, COLOR, SIZE),
-                FillStyle.getSwatch(11, COLOR, SIZE),
-                FillStyle.getSwatch(12, COLOR, SIZE),
-                FillStyle.getSwatch(13, COLOR, SIZE),
-                FillStyle.getSwatch(14, COLOR, SIZE),
-                FillStyle.getSwatch(15, COLOR, SIZE)
-        );
+        ArrayList<Integer> list = new ArrayList<>();
 
+        for (int i = 0; i < 16; i++) {
+            list.add(i);
+        }
         getItems().addAll(list);
-    }
+        getSelectionModel().select(selected);
 
+        setCellFactory((ListView<Integer> p) -> new ListCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean bln) {
+                super.updateItem(item, bln);
+                if (item != null) {
+                    setGraphic(FillStyle.getSwatch(item, COLOR, size));
+                }
+            }
+        });
+
+        setButtonCell(new ComboBoxListCell<Integer>() {
+
+            @Override
+            public void updateItem(Integer item, boolean bln) {
+                super.updateItem(item, bln);
+                if (item != null) {
+                    setGraphic(FillStyle.getSwatch(item, COLOR, size));
+                    setText(null);
+                }
+            }
+        });
+    }
 }
