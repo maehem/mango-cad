@@ -36,11 +36,11 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LayerSettingsPanel extends VBox {
+public class LayersVisibilityPanel extends VBox {
 
     private static final ResourceBundle MSG = ResourceBundle.getBundle("i18n/Editor");
 
-    public LayerSettingsPanel(ColorPalette palette, Layers layers) {
+    public LayersVisibilityPanel(ColorPalette palette, Layers layers) {
         Node filtBox = createFilterArea();
         // Layers List Panel
         LayerListView layerListView = new LayerListView(palette, layers);

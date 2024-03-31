@@ -28,14 +28,14 @@ import javafx.scene.control.Dialog;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LayerSettingsDialog extends Dialog<ButtonType> {
+public class LayersVisibilityDialog extends Dialog<ButtonType> {
 
     private final ButtonType okButtonType = ButtonType.OK;
     private final ButtonType cancelButtonType = ButtonType.CANCEL;
 
-    private final LayerSettingsPanel layerSettingsPanel;
+    private final LayersVisibilityPanel layerSettingsPanel;
 
-    public LayerSettingsDialog(ColorPalette palette, Layers layers) {
+    public LayersVisibilityDialog(ColorPalette palette, Layers layers) {
         setTitle("Layer Settings");
 
         getDialogPane().getButtonTypes().addAll(
@@ -47,7 +47,7 @@ public class LayerSettingsDialog extends Dialog<ButtonType> {
         boolean disabled = false; // computed based on content of text fields, for example
         getDialogPane().lookupButton(okButtonType).setDisable(disabled);
 
-        layerSettingsPanel = new LayerSettingsPanel(palette, layers);
+        layerSettingsPanel = new LayersVisibilityPanel(palette, layers);
         getDialogPane().setContent(layerSettingsPanel);
         ViewUtils.applyAppStylesheet(getDialogPane().getStylesheets());
         showAndWait().ifPresent(response -> {

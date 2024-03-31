@@ -25,7 +25,7 @@ import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import com.maehem.mangocad.view.settings.FillStyleChooser;
 import com.maehem.mangocad.view.settings.GridSettingsDialog;
-import com.maehem.mangocad.view.settings.LayerSettingsDialog;
+import com.maehem.mangocad.view.settings.LayersVisibilityDialog;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
@@ -109,7 +109,7 @@ public class DeviceEditorPane extends BorderPane {
         topToolBar.setPrefHeight(24);
         Button layersButton = createToolbarButton("Layers", LAYERS_IMAGE);
         layersButton.setOnAction((t) -> {
-            LayerSettingsDialog layersDialog = new LayerSettingsDialog(drawing.getPalette(), drawing.getLayers());
+            LayersVisibilityDialog layersDialog = new LayersVisibilityDialog(drawing.getPalette(), drawing.getLayers());
         });
         Button gridButton = createToolbarButton("Grid", GRID_IMAGE);
         gridButton.setOnAction((t) -> {
