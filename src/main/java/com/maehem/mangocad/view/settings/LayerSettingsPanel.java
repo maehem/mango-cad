@@ -75,6 +75,7 @@ public class LayerSettingsPanel extends VBox {
                         MSG.getString("LAYER_LIST_FILTER_UNUSED")
                 ));
         HBox filterBox = new HBox(filterComboLabel, filterCombo);
+        filterCombo.getSelectionModel().selectFirst();
 
         return filterBox;
     }
@@ -106,6 +107,7 @@ public class LayerSettingsPanel extends VBox {
                         "Bar"
                 ));
 
+        layerSetsChooser.getSelectionModel().selectFirst();
         HBox box = new HBox(layerSetsChooser, spacer, newSetButton, removeSetButton);
         box.setSpacing(8);
 
