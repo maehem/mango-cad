@@ -44,6 +44,8 @@ public class LayerElement {
     private final BooleanProperty active = new SimpleBooleanProperty(true);
     //private boolean active = true;
 
+    private final BooleanProperty allowDelete = new SimpleBooleanProperty(true);
+
     public LayerElement() {
     }
 
@@ -133,6 +135,18 @@ public class LayerElement {
      */
     public void setActive(boolean active) {
         this.active.set(active);
+    }
+
+    public boolean isAllowDelete() {
+        return allowDelete.get();
+    }
+
+    public void setAllowDelete(boolean value) {
+        allowDelete.set(value);
+    }
+
+    public BooleanProperty allowDeleteProperty() {
+        return allowDelete;
     }
 
     @Override
