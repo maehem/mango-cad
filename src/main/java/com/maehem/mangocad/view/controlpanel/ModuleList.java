@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.SchematicCache;
 import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.drawing.Schematic;
+import com.maehem.mangocad.model.element.enums.DesignType;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
@@ -227,7 +228,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
     @SuppressWarnings("unchecked")
     private void populateLibrary(File dir, TreeItem parentItem) {
         File[] libs = dir.listFiles((file) -> {    // lambda expression
-            return (file.isFile() && file.getName().endsWith(".lbr"));
+            return (file.isFile() && file.getName().endsWith("." + DesignType.Library.getFileExt()));
         });
         for (File lbrFile : libs) {
             // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
@@ -281,7 +282,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
         }
 
         File[] schs = dir.listFiles((file) -> {    // lambda expression
-            return (file.isFile() && file.getName().endsWith(".sch"));
+            return (file.isFile() && file.getName().endsWith("." + DesignType.Schematic.getFileExt()));
         });
         for (File schFile : schs) {
             // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
@@ -303,7 +304,7 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
 
         // TODO: Combine Library, Schematic and Board into one "Design" Cache.
         File[] brds = dir.listFiles((file) -> {    // lambda expression
-            return (file.isFile() && file.getName().endsWith("." + Board.FILE_EXTENSION));
+            return (file.isFile() && file.getName().endsWith("." + DesignType.Board.getFileExt()));
         });
         for (File brdFile : brds) {
             // TODO: If the eagle.dtd is missing from the library dir, loading will fail.
