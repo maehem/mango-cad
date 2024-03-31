@@ -89,6 +89,15 @@ public enum LibraryLayers {
         this.showDefault = showDefault;
     }
 
+    public static boolean contains(int layerNumber) {
+        for (LibraryLayers ll : LibraryLayers.values()) {
+            if (ll.getNumber() == layerNumber) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @return the code
      */
