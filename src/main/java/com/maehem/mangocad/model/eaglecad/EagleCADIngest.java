@@ -122,6 +122,22 @@ public class EagleCADIngest {
                     LOGGER.log(Level.SEVERE, "<drawing>:  Unknown sub-node <{0}>", subNode.getNodeName());
             }
         }
+
+        // Post-process
+        for (LayerElement le : drawing.getLayers().getElements()) {
+            switch (drawing.getDesign().getType()) {
+                case Board -> {
+                    le.setAllowDelete(!BoardLayers.contains(le.getNumber()));
+                }
+                case Schematic -> {
+                    le.setAllowDelete(!SchematicLayers.contains(le.getNumber()));
+                }
+                case Library -> {
+                    le.setAllowDelete(!LibraryLayers.contains(le.getNumber()));
+                }
+            }
+        }
+
         return drawing;
     }
 
