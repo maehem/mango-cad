@@ -19,8 +19,14 @@ package com.maehem.mangocad.view;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -29,7 +35,6 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 
 /**
  *
@@ -41,6 +46,9 @@ public class LayerListView extends TreeTableView<LayerElement> {
 
     private final Image eyeImage = ViewUtils.getImage("/icons/eye.png");
     private final ImageView eyeHeader = ViewUtils.createIcon(eyeImage, 16);
+
+    private final Image trashImage = ViewUtils.getImage("/icons/trash-can.png");
+    private final ImageView trashHeader = ViewUtils.createIcon(trashImage, 12);
 
     private final TreeTableColumn<LayerElement, Boolean> visibleColumn = new TreeTableColumn<>("EYE");
     private final TreeTableColumn<LayerElement, String> numColumn = new TreeTableColumn<>(MSG.getString("LAYER_LIST_NUM_COL"));
@@ -61,11 +69,38 @@ public class LayerListView extends TreeTableView<LayerElement> {
 
         // for each layer generate item
         for (LayerElement le : layers.getElements()) {
-            root.getChildren().add(new TreeItem<LayerElement>(le));
+            root.getChildren().add(new TreeItem<>(le));
         }
 
         setRoot(root);
         setShowRoot(false);
+
+        MenuItem showLayersItem = new MenuItem("Show Layers");
+        //entry1.setOnAction(ae -> ...);
+        showLayersItem.setOnAction((ev) -> {
+            LOGGER.log(Level.SEVERE, "Show Layers");
+        });
+        MenuItem hideLayersItem = new MenuItem("Hide layers");
+        hideLayersItem.setOnAction((ev) -> {
+            LOGGER.log(Level.SEVERE, "Hide Layers");
+        });
+        MenuItem layerPropertiesItem = new MenuItem("Properties");
+        layerPropertiesItem.setOnAction((ev) -> {
+            LOGGER.log(Level.SEVERE, "Get Props for: {0}", getSelectionModel().getSelectedItem().getValue().getName());
+        });
+//        MenuItem deleteLayerItem = new MenuItem("Delete");
+//        deleteLayerItem.setOnAction((ev) -> {
+//            LOGGER.log(Level.SEVERE, "Delete: {0}", getSelectionModel().getSelectedItem().getValue().getName());
+//        });
+
+        setContextMenu(new ContextMenu(
+                showLayersItem,
+                hideLayersItem,
+                new SeparatorMenuItem(),
+                layerPropertiesItem //,
+        //new SeparatorMenuItem(),
+        //deleteLayerItem
+        ));
 
     }
 
@@ -75,42 +110,42 @@ public class LayerListView extends TreeTableView<LayerElement> {
         visibleColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("visible"));
         visibleColumn.setMinWidth(VIS_COL_WIDTH);
         visibleColumn.setPrefWidth(VIS_COL_WIDTH);
-        visibleColumn.setCellFactory(new Callback<TreeTableColumn<LayerElement, Boolean>, TreeTableCell<LayerElement, Boolean>>() {
-            @Override
-            public TreeTableCell<LayerElement, Boolean> call(TreeTableColumn<LayerElement, Boolean> p) {
-                return new TreeTableCell<>() {
+        visibleColumn.setCellFactory((p) -> {
+            return new TreeTableCell<>() {
 
-                    ImageView imageView;
+                ImageView imageView;
 
-                    @Override
-                    protected void updateItem(Boolean active, boolean empty) {
-                        if (!empty && active != null) {
-                            //LOGGER.log(Level.SEVERE, "updateItem(" + item + ")");
+                @Override
+                protected void updateItem(Boolean visible, boolean empty) {
+                    if (!empty && visible != null) {
+                        //LOGGER.log(Level.SEVERE, "updateItem(" + item + ")");
 
-                            if (imageView == null) {
-                                imageView = ViewUtils.createIcon(eyeImage, 16);
-                                //imageView = new ImageView();
-                                //imageView.setFitHeight(16);
-                                //imageView.setPreserveRatio(true);
-                                //imageView.setSmooth(true);
-                            }
-
-                            LayerElement item = getTableRow().getItem();
-                            imageView.setImage(eyeImage);
-                            setText(null);
-                            if (!active) {
-                                imageView.setOpacity(0.5);
-                            }
-                            setGraphic(imageView);
-                            setAlignment(Pos.CENTER);
-                            //setTooltip(item.getTooltip());
-                        } else {
-                            setText(null);
-                            setGraphic(null);
+                        if (imageView == null) {
+                            imageView = ViewUtils.createIcon(eyeImage, 16);
                         }
+
+                        LayerElement item = getTableRow().getItem();
+                        imageView.setImage(eyeImage);
+                        setText(null);
+                        setOnMouseClicked((t) -> {
+                            // TODO: Put changed things into a list so that we
+                            // can apply or ignore based on whether user chooses OK or Cancel.
+
+                            item.setVisible(!item.isVisible());
+                            imageView.setOpacity(item.isVisible() ? 1.0 : 0.5);
+                        });
+                        if (!visible) {
+                            imageView.setOpacity(0.5);
+                        }
+                        setGraphic(imageView);
+                        setAlignment(Pos.CENTER);
+                    } else {
+                        setText(null);
+                        setGraphic(null);
                     }
-                };
-            }
+                }
+            };
+
         });
 
         nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
@@ -119,7 +154,6 @@ public class LayerListView extends TreeTableView<LayerElement> {
         nameColumn.setCellFactory((p) -> {
 
             return new TreeTableCell<>() {
-                //ImageView imageView;
 
                 @Override
                 protected void updateItem(String text, boolean empty) {
@@ -127,18 +161,9 @@ public class LayerListView extends TreeTableView<LayerElement> {
 
                     if (!empty && text != null) {
                         //LOGGER.log(Level.SEVERE, "updateItem(" + item + ")");
-
-//                        if (imageView == null) {
-//                            imageView = new ImageView();
-//                            imageView.setFitHeight(16);
-//                            imageView.setPreserveRatio(true);
-//                            imageView.setSmooth(true);
-//                        }
                         LayerElement item = getTableRow().getItem();
-                        //imageView.setImage(item.getImage());
                         setText(item.getName());
-                        //setGraphic(imageView);
-                        //setTooltip(item.getTooltip());
+                        //setContextMenu(initContextMenu(item));
                     } else {
                         setText(null);
                         setGraphic(null);
@@ -171,9 +196,48 @@ public class LayerListView extends TreeTableView<LayerElement> {
             };
         });
 
-        deleteColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("active"));
+        deleteColumn.setGraphic(trashHeader);
+        deleteColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("allowDelete"));
         deleteColumn.setMinWidth(DEL_COL_WIDTH);
         deleteColumn.setPrefWidth(DEL_COL_WIDTH);
+        deleteColumn.setCellFactory((p) -> {
+
+            return new TreeTableCell<>() {
+                ImageView imageView;
+
+                @Override
+                protected void updateItem(Boolean allowDelete, boolean empty) {
+                    if (!empty && allowDelete != null) {
+                        //LOGGER.log(Level.SEVERE, "updateItem(" + item + ")");
+
+                        if (imageView == null) {
+                            imageView = ViewUtils.createIcon(trashImage, 12);
+                            //imageView = new ImageView();
+                            //imageView.setFitHeight(16);
+                            //imageView.setPreserveRatio(true);
+                            //imageView.setSmooth(true);
+                        }
+
+                        LayerElement item = getTableRow().getItem();
+                        //imageView.setImage(eyeImage);
+                        setText(null);
+                        setGraphic(imageView);
+                        setAlignment(Pos.CENTER);
+                        if (!allowDelete) {
+                            imageView.setOpacity(0.4);
+                            setTooltip(null);
+                        } else {
+                            imageView.setOpacity(1.0);
+                            setTooltip(new Tooltip("Deletable Layer..."));
+                        }
+                    } else {
+                        setText(null);
+                        setGraphic(null);
+                    }
+                }
+            };
+
+        });
 
         getColumns().add(visibleColumn);
         getColumns().add(numColumn);
@@ -183,4 +247,25 @@ public class LayerListView extends TreeTableView<LayerElement> {
 
     }
 
+    private ContextMenu initContextMenu(LayerElement el) {
+        MenuItem entry1 = new MenuItem("Show Layers");
+        //entry1.setOnAction(ae -> ...);
+        entry1.setOnAction((ev) -> {
+            LOGGER.log(Level.SEVERE, "selected row: {0} ", el.getName());
+        });
+        MenuItem entry2 = new MenuItem("Hide layers");
+        //entry2.setOnAction(ae -> ...);
+        MenuItem entry3 = new MenuItem("Properties");
+        MenuItem entry4 = new MenuItem("Delete");
+
+        return new ContextMenu(
+                entry1,
+                entry2,
+                new SeparatorMenuItem(),
+                entry3,
+                new SeparatorMenuItem(),
+                entry4
+        );
+
+    }
 }
