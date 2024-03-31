@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.settings.LayerPropertiesDialog;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javafx.geometry.Pos;
@@ -87,6 +88,8 @@ public class LayerListView extends TreeTableView<LayerElement> {
         MenuItem layerPropertiesItem = new MenuItem("Properties");
         layerPropertiesItem.setOnAction((ev) -> {
             LOGGER.log(Level.SEVERE, "Get Props for: {0}", getSelectionModel().getSelectedItem().getValue().getName());
+            LayerPropertiesDialog dialog = new LayerPropertiesDialog(getSelectionModel().getSelectedItem().getValue(), palette);
+            //ButtonType result = dialog.getResult();
         });
 //        MenuItem deleteLayerItem = new MenuItem("Delete");
 //        deleteLayerItem.setOnAction((ev) -> {
