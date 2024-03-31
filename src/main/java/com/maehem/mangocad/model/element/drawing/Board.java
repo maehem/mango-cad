@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.ElementElement;
 import com.maehem.mangocad.model.element.basic.SchematicGroup;
 import com.maehem.mangocad.model.element.basic.VariantDefinition;
+import com.maehem.mangocad.model.element.enums.DesignType;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.MfgPreviewColor;
 import com.maehem.mangocad.model.element.highlevel.Signal;
@@ -64,7 +65,7 @@ import java.util.Optional;
  */
 public class Board extends _AQuantum implements DesignObject {
 
-    public static final String FILE_EXTENSION = "brd";
+    //public static final String FILE_EXTENSION = "brd";
     public static final String ELEMENT_NAME = "board";
 
     // TODO: Should be a list of localized Descriptions.
@@ -185,7 +186,7 @@ public class Board extends _AQuantum implements DesignObject {
 
     @Override
     public String getFileExtension() {
-        return FILE_EXTENSION;
+        return getType().getFileExt();
     }
 
     public List<_AQuantum> getPlain() {
@@ -318,5 +319,10 @@ public class Board extends _AQuantum implements DesignObject {
             }
         }
         return false;
+    }
+
+    @Override
+    public DesignType getType() {
+        return DesignType.Board;
     }
 }

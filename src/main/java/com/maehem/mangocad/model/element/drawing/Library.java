@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.element.enums.DesignType;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Package3d;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
  */
 public class Library extends _AQuantum implements DesignObject {
 
-    public static final String FILE_EXTENSION = "lbr";
+    //public static final String FILE_EXTENSION = "lbr";
     public static final String ELEMENT_NAME = "library";
 
     //private final ColorPalette colorPalette = new ColorPalette(ColorPalette.Style.DARK);
@@ -415,6 +416,11 @@ public class Library extends _AQuantum implements DesignObject {
 
     @Override
     public String getFileExtension() {
-        return FILE_EXTENSION;
+        return getType().getFileExt();
+    }
+
+    @Override
+    public DesignType getType() {
+        return DesignType.Library;
     }
 }
