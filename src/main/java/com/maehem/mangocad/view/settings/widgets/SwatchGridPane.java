@@ -60,7 +60,7 @@ public class SwatchGridPane extends GridPane {
             if (startColorIndex == i) {
                 toggleButton.setSelected(true);
             }
-            toggleButton.setUserData(Integer.valueOf(i));
+            toggleButton.setUserData(i);
             toggleButton.setToggleGroup(toggleGroup);
             toggleButton.setId("color-swatch-button");
             toggleButton.setTooltip(SWATCH_TIP);
