@@ -84,14 +84,6 @@ public class EditorToolbar extends ToolBar {
         });
     }
 
-//    private Node getIcon(String iconPath) {
-//        ImageView iv = new ImageView(ViewUtils.getImage(iconPath));
-//        iv.setFitHeight(TOOLBAR_ICON_SIZE);
-//        iv.setPreserveRatio(true);
-//
-//        return iv;
-//    }
-
     private FlowPane makeToolGroup() {
         FlowPane toolGroup = new FlowPane();
         toolGroup.setPrefWrapLength(TOOLBAR_ICON_SIZE * 2 + GAP * 3);
