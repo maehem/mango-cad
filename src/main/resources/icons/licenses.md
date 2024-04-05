@@ -17,6 +17,7 @@ Electronics Component Kit
                    icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/electronics-component-kit
 File               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/file
 Floppy-Disk        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/floppy-disk
+Flip Horizonal     icon by Arthur Shlain from Usefulicons  https://usefulicons.com/useful/flip-horizontal
 Folder             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/folder
 Integrated Circuit icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/integrated-circuit
 Pencil             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/pencil
@@ -30,6 +31,7 @@ Eye                icon by Arthur Shlain from Usefulicons  https://usefulicons.c
 Information        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/information
 Move               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/move
 Copy               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/copy
+Paste              icon by Arthur Shlain from Usefulicons  https://usefulicons.com/useful/paste
 Trash Can          icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/trash-can
 Wrench             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/wrench
 Paint Roller       icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/paint-roller
@@ -37,14 +39,26 @@ Tag                icon by Arthur Shlain from Usefulicons  https://usefulicons.c
 Link               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/link
 Unlink             icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/unlink
 Compass Tool       icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/compass-tool
+Rotate (undo)      icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/undo
+Undo               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/undo
+Redo               icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/redo
 
-Circuit Heart      icon by Unknown from Noun Project   https://thenounproject.com/icon/heart-3123019/
+Circuit Heart       icon by Unknown from Noun Project   https://thenounproject.com/icon/heart-3123019/
 
-Logic Gate         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
-Add Symbol         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
-Array              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
-Grid               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
-Layers             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
-Name               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
-Value              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Logic Gate          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Add Symbol          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Array               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Grid                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Layers              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Name                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Value               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Miter               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Optimize            icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin                 icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Polygon             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Rectangle           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Split               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Circle              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dimenension         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Arc                 icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 
