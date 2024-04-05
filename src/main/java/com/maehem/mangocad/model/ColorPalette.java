@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ * TODO: Store any changes user makes to palette by saving the new palette along
+ * with the path to the sch or brd associated with those changes. Otherwise, we
+ * would choose the default palette here.
+ *
+ * TODO: Move the palette values below to a resource file.
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
