@@ -21,7 +21,6 @@ import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.view.controlpanel.DirectoriesConfigDialog;
 import com.maehem.mangocad.view.controlpanel.ModuleList;
 import com.maehem.mangocad.view.controlpanel.TabArea;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -60,7 +59,7 @@ public class ControlPanel extends Application {
     public ControlPanel() {
         super();
 
-        Locale.setDefault(Locale.GERMANY);  // uncomment for i18n debug
+        //Locale.setDefault(Locale.GERMANY);  // uncomment for i18n debug
         MSG = ResourceBundle.getBundle("i18n/ControlPanel");
         configureLogging();
     }
