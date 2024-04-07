@@ -16,7 +16,11 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.element.misc.LayerElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.EditorOption;
+import com.maehem.mangocad.view.EditorOptionsBar;
+import com.maehem.mangocad.view.EditorOptionsBarListener;
 import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.EditorToolbarListener;
@@ -25,21 +29,33 @@ import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
+import javafx.event.Event;
 import javafx.geometry.Orientation;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPane extends BorderPane implements EditorToolbarListener {
+public class SymbolEditorPane extends BorderPane implements EditorOptionsBarListener, EditorToolbarListener {
 
     private final LibraryEditor parent;
+
+    private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
+            EditorOption.LAYER_SETTINGS,
+            EditorOption.GRID,
+            EditorOption.SEPARATOR,
+            EditorOption.LAYER_CHOOSER,
+            EditorOption.SEPARATOR,
+            EditorOption.GRID_MOUSE_INFO,
+            EditorOption.SEPARATOR,
+            EditorOption.COMMAND_LINE
+    ));
 
     private final ArrayList<EditorTool> tools = new ArrayList<>(Arrays.asList(
             EditorTool.INFO, EditorTool.LOOK,
@@ -67,16 +83,17 @@ public class SymbolEditorPane extends BorderPane implements EditorToolbarListene
             EditorTool.MARK, EditorTool.DIMENSION
     ));
 
-    private final ToolBar topToolbar1 = new ToolBar();
-    private final VBox topArea = new VBox(topToolbar1);
+    private final ToolBar topToolBar;
+    //private final VBox topArea = new VBox(topToolbar1);
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
 
     public SymbolEditorPane(LibraryEditor parent, String item) {
         this.parent = parent;
 
-        // top:  two tool bar rows
-        setTop(topToolbar1);
+        // top:  option toolbar row
+        topToolBar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
+        setTop(topToolBar);
 
         // left: tool bar
         leftToolBar = new EditorToolbar(tools, this);
@@ -92,9 +109,9 @@ public class SymbolEditorPane extends BorderPane implements EditorToolbarListene
         bottomArea.getChildren().add(new Text("Editing: " + item));
 
         // right: nothing.
-        topArea.setPrefHeight(24);
-        topArea.setFillWidth(true);
-        topToolbar1.setPrefHeight(24);
+//        topArea.setPrefHeight(24);
+//        topArea.setFillWidth(true);
+//        topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
 
@@ -104,7 +121,41 @@ public class SymbolEditorPane extends BorderPane implements EditorToolbarListene
 
     @Override
     public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
-        LOGGER.log(Level.SEVERE, "User changed tool: {0} ==> {1}", new Object[]{oldValue.name(), newValue.name()});
+        LOGGER.log(Level.SEVERE, "User changed tool: {0} ==> {1}", new Object[]{
+            oldValue == null ? "null" : oldValue.name(),
+            newValue == null ? "null" : newValue.name()
+        });
+    }
+
+    @Override
+    public void editorOptionBarToggleButtonChanged(EditorOption oldValue, EditorOption newValue) {
+        LOGGER.log(Level.SEVERE, "User changed option toggle: {0} ==> {1}", new Object[]{
+            oldValue == null ? "null" : oldValue.name(),
+            newValue == null ? "null" : newValue.name()
+        });
+    }
+
+    @Override
+    public void editorOptionBarWidgetAction(EditorOption option, Event event) {
+        LOGGER.log(Level.SEVERE, "User changed option widget: {0} ==> src: {1}  tgt: {2}  evtType: {3}",
+                new Object[]{
+                    option.name(),
+                    event.getSource(),
+                    event.getTarget(), // ComboBox
+                    event.getEventType().getName() // ACTION
+                });
+        Object source = event.getSource();
+        switch( option ) {
+            case LAYER_CHOOSER -> {
+                if (source instanceof ComboBox cb) {
+                    Object selectedItem = cb.getSelectionModel().getSelectedItem();
+                    if (selectedItem instanceof LayerElement le) {
+                        LOGGER.log(Level.SEVERE, "User Selected: " + le.getName());
+                        //        parent.setCurrentLayerElement( le );
+                    }
+                }
+            }
+        }
     }
 
 }

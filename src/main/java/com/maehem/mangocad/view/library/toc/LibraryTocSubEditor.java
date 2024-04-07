@@ -16,13 +16,9 @@
  */
 package com.maehem.mangocad.view.library.toc;
 
-import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import com.maehem.mangocad.view.library.LibrarySubEditor;
 import javafx.scene.control.ToolBar;
-import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -30,27 +26,28 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LibraryTocSubEditor extends BorderPane {
+public class LibraryTocSubEditor extends LibrarySubEditor {
 
-    private static final Image EDIT_IMAGE = new Image(
-            LibraryTocSubEditor.class.getResourceAsStream("/icons/pencil.png")
-    );
+//    private static final Image EDIT_IMAGE = new Image(
+//            LibraryTocSubEditor.class.getResourceAsStream("/icons/pencil.png")
+//    );
 
-    private final ToolBar leftToolBar = new ToolBar();
+//    private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
     private final ToolBar mainToolbar = new ToolBar();
     private final VBox topArea = new VBox(mainToolbar);
 
     private final LibraryTableOfContentsPane tocPane;
-    private final LibraryEditor parent;
+    //private final LibraryEditor parent;
 
-    public LibraryTocSubEditor(LibraryEditor parent) {
-        this.parent = parent;
+    public LibraryTocSubEditor(LibraryEditor parentEditor) {
+        super(parentEditor);
+        //this.parent = parent;
 
         // left: tool bar
-        setLeft(leftToolBar);
+//        setLeft(leftToolBar);
 
-        tocPane = new LibraryTableOfContentsPane(parent);
+        tocPane = new LibraryTableOfContentsPane(parentEditor);
         setCenter(tocPane);
 
         // bottom: message area
@@ -62,7 +59,7 @@ public class LibraryTocSubEditor extends BorderPane {
         bottomArea.setPrefHeight(32);
         bottomArea.setFillHeight(true);
 
-        initLeftToolbar();
+        //initLeftToolbar();
         initMainToolbar();
     }
 
@@ -82,13 +79,13 @@ public class LibraryTocSubEditor extends BorderPane {
 //        items.add(new Separator());
     }
 
-    private void initLeftToolbar() {
-        ObservableList<Node> items = leftToolBar.getItems();
-        //// File section
-        // Open  --  file.png
-        items.add(ViewUtils.createIconButton("Edit", EDIT_IMAGE));
-
-        //items.add(new Separator());
-    }
+//    private void initLeftToolbar() {
+//        ObservableList<Node> items = leftToolBar.getItems();
+//        //// File section
+//        // Open  --  file.png
+//        items.add(ViewUtils.createIconButton("Edit", EDIT_IMAGE));
+//
+//        //items.add(new Separator());
+//    }
 
 }
