@@ -17,16 +17,19 @@
 package com.maehem.mangocad.view.library.footprint;
 
 import com.maehem.mangocad.view.EditorOption;
+import com.maehem.mangocad.view.EditorOptionsBar;
 import com.maehem.mangocad.view.EditorTool;
+import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
@@ -37,9 +40,50 @@ public class LibraryFootprintSubEditor extends LibrarySubEditor {
 
     //private final LibraryEditor parent;
 
-    private final ToolBar topToolbar = new ToolBar();
-    private final VBox topArea = new VBox(topToolbar);
-    private final ToolBar leftToolBar = new ToolBar();
+    private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
+            EditorOption.LAYER_SETTINGS,
+            EditorOption.GRID,
+            EditorOption.SEPARATOR,
+            EditorOption.LAYER_CHOOSER,
+            EditorOption.SEPARATOR,
+            EditorOption.GRID_MOUSE_INFO,
+            EditorOption.SEPARATOR,
+            EditorOption.COMMAND_LINE
+    ));
+
+    private final ArrayList<EditorTool> tools = new ArrayList<>(Arrays.asList(
+            EditorTool.INFO, EditorTool.LOOK,
+            EditorTool.SELECT,
+            EditorTool.SEPARATOR,
+            EditorTool.MOVE, EditorTool.MIRROR,
+            EditorTool.ROTATE,
+            EditorTool.SEPARATOR,
+            EditorTool.COPY,
+            EditorTool.PASTE,
+            EditorTool.TRASH,
+            EditorTool.CHANGE,
+            EditorTool.SEPARATOR,
+            EditorTool.PAD_THD,
+            EditorTool.PAD_SMD,
+            EditorTool.SEPARATOR,
+            EditorTool.LINE,
+            EditorTool.TEXT,
+            EditorTool.HOLE,
+            EditorTool.SEPARATOR,
+            EditorTool.SPLIT, EditorTool.MITER,
+            EditorTool.PAINT, EditorTool.ARRAY,
+            EditorTool.LOCK,
+            EditorTool.OPTIMIZE, EditorTool.NAME,
+            EditorTool.SEPARATOR,
+            EditorTool.ARC, EditorTool.POLYGON,
+            EditorTool.CIRCLE, EditorTool.RECTANGLE,
+            EditorTool.SEPARATOR,
+            EditorTool.MARK, EditorTool.DIMENSION
+    ));
+
+    private final ToolBar topToolbar;
+//    private final VBox topArea = new VBox(topToolbar);
+    private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
 
     public LibraryFootprintSubEditor(LibraryEditor parent, String item) {
@@ -47,9 +91,11 @@ public class LibraryFootprintSubEditor extends LibrarySubEditor {
         //this.parent = parent;
 
         // top:  two tool bar rows
+        topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
         setTop(topToolbar);
 
         // left: tool bar
+        leftToolBar = new EditorToolbar(tools, this);
         setLeft(leftToolBar);
 
         SplitPane workArea = new SplitPane(new FootprintEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
@@ -62,8 +108,8 @@ public class LibraryFootprintSubEditor extends LibrarySubEditor {
         bottomArea.getChildren().add(new Text("Editing: " + item));
 
         // right: nothing.
-        topArea.setPrefHeight(24);
-        topArea.setFillWidth(true);
+//        topArea.setPrefHeight(24);
+//        topArea.setFillWidth(true);
         topToolbar.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
