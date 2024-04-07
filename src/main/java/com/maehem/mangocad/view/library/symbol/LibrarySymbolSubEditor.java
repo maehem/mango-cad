@@ -65,6 +65,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorTool.COPY,
             EditorTool.PASTE,
             EditorTool.TRASH,
+            EditorTool.CHANGE,
             EditorTool.SEPARATOR,
             EditorTool.PIN,
             EditorTool.SEPARATOR,
@@ -81,7 +82,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorTool.MARK, EditorTool.DIMENSION
     ));
 
-    private final ToolBar topToolBar;
+    private final ToolBar topToolbar;
     //private final VBox topArea = new VBox(topToolbar1);
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
@@ -91,8 +92,8 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         //this.parent = parent;
 
         // top:  option toolbar row
-        topToolBar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
-        setTop(topToolBar);
+        topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
+        setTop(topToolbar);
 
         // left: tool bar
         leftToolBar = new EditorToolbar(tools, this);
