@@ -56,6 +56,10 @@ public class LayerChooser extends HBox {
         setAlignment(Pos.CENTER);
     }
 
+    public ComboBox getChooser() {
+        return chooser;
+    }
+
     private static class ColorRectCell extends ListCell<LayerElement> {
 
         ColorPalette palette;
