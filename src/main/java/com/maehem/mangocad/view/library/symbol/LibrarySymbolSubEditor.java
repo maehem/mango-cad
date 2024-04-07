@@ -20,11 +20,10 @@ import com.maehem.mangocad.model.element.misc.LayerElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.EditorOption;
 import com.maehem.mangocad.view.EditorOptionsBar;
-import com.maehem.mangocad.view.EditorOptionsBarListener;
 import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.EditorToolbar;
-import com.maehem.mangocad.view.EditorToolbarListener;
 import com.maehem.mangocad.view.library.LibraryEditor;
+import com.maehem.mangocad.view.library.LibrarySubEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +33,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
@@ -42,9 +40,9 @@ import javafx.scene.text.Text;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPane extends BorderPane implements EditorOptionsBarListener, EditorToolbarListener {
+public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
-    private final LibraryEditor parent;
+    //private final LibraryEditor parent;
 
     private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
             EditorOption.LAYER_SETTINGS,
@@ -88,8 +86,9 @@ public class SymbolEditorPane extends BorderPane implements EditorOptionsBarList
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
 
-    public SymbolEditorPane(LibraryEditor parent, String item) {
-        this.parent = parent;
+    public LibrarySymbolSubEditor(LibraryEditor parent, String item) {
+        super(parent);
+        //this.parent = parent;
 
         // top:  option toolbar row
         topToolBar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);

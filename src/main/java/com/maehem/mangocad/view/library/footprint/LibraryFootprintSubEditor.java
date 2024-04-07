@@ -16,12 +16,15 @@
  */
 package com.maehem.mangocad.view.library.footprint;
 
+import com.maehem.mangocad.view.EditorOption;
+import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.library.LibraryEditor;
+import com.maehem.mangocad.view.library.LibrarySubEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -30,20 +33,21 @@ import javafx.scene.text.Text;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class FootprintEditorPane extends BorderPane {
+public class LibraryFootprintSubEditor extends LibrarySubEditor {
 
-    private final LibraryEditor parent;
+    //private final LibraryEditor parent;
 
-    private final ToolBar topToolbar1 = new ToolBar();
-    private final VBox topArea = new VBox(topToolbar1);
+    private final ToolBar topToolbar = new ToolBar();
+    private final VBox topArea = new VBox(topToolbar);
     private final ToolBar leftToolBar = new ToolBar();
     private final HBox bottomArea = new HBox();
 
-    public FootprintEditorPane(LibraryEditor parent, String item) {
-        this.parent = parent;
+    public LibraryFootprintSubEditor(LibraryEditor parent, String item) {
+        super(parent);
+        //this.parent = parent;
 
         // top:  two tool bar rows
-        setTop(topToolbar1);
+        setTop(topToolbar);
 
         // left: tool bar
         setLeft(leftToolBar);
@@ -60,12 +64,27 @@ public class FootprintEditorPane extends BorderPane {
         // right: nothing.
         topArea.setPrefHeight(24);
         topArea.setFillWidth(true);
-        topToolbar1.setPrefHeight(24);
+        topToolbar.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
 
         leftToolBar.setOrientation(Orientation.VERTICAL);
         leftToolBar.setPrefWidth(48);
+    }
+
+    @Override
+    public void editorOptionBarToggleButtonChanged(EditorOption oldValue, EditorOption newValue) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void editorOptionBarWidgetAction(EditorOption tool, Event event) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

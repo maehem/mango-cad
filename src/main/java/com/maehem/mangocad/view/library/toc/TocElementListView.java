@@ -184,7 +184,7 @@ public class TocElementListView extends VBox {
             if (newName != null) { // A valid new device was added, go edit it.
                 listView.getItems().add(newName);
                 doSort();
-                listener.getParentEditor().setEditor(type, newName);
+                listener.getParentEditor().setSubEditor(type, newName);
             }
         });
         HBox header = new HBox(label, gapper, sortPane, addButton);

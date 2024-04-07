@@ -186,16 +186,16 @@ public class LibraryTableOfContentsPane extends SplitPane {
     void editItem(ElementType type, String item) {
         switch (type) {
             case DEVICE -> {
-                getParentEditor().setEditor(type, item);
+                getParentEditor().setSubEditor(type, item);
             }
             case FOOTPRINT -> {
-                getParentEditor().setEditor(type, item);
+                getParentEditor().setSubEditor(type, item);
             }
             case PACKAGE3D -> {
 
             }
             case SYMBOL -> {
-                getParentEditor().setEditor(type, item);
+                getParentEditor().setSubEditor(type, item);
             }
 
         }

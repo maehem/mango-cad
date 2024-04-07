@@ -22,9 +22,9 @@ import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
-import com.maehem.mangocad.view.library.device.DeviceEditorPane;
-import com.maehem.mangocad.view.library.footprint.FootprintEditorPane;
-import com.maehem.mangocad.view.library.symbol.SymbolEditorPane;
+import com.maehem.mangocad.view.library.device.LibraryDeviceSubEditor;
+import com.maehem.mangocad.view.library.footprint.LibraryFootprintSubEditor;
+import com.maehem.mangocad.view.library.symbol.LibrarySymbolSubEditor;
 import com.maehem.mangocad.view.library.toc.LibraryTocSubEditor;
 import java.io.File;
 import java.util.ArrayList;
@@ -114,11 +114,11 @@ public class LibraryEditor extends VBox {
     private final HBox bottomArea = new HBox();
 
     // The editors.  Only one showing in the center at a time.
-    private Node currentEditor = null;
-    private LibraryTocSubEditor tocPane = null;
-    private DeviceEditorPane devicePane = null;
-    private SymbolEditorPane symbolPane = null;
-    private FootprintEditorPane footprintPane = null;
+    private LibrarySubEditor currentEditor;
+    private LibrarySubEditor tocPane = null;
+    private LibrarySubEditor devicePane = null;
+    private LibrarySubEditor symbolPane = null;
+    private LibrarySubEditor footprintPane = null;
 
     public LibraryEditor(File file, Library library) {
         this.file = file;
@@ -205,22 +205,22 @@ public class LibraryEditor extends VBox {
         String togName = (String) currentToggle.getUserData();
         switch (togName) {
             case TOC_STR -> {
-                setEditor(null, null);
+                setSubEditor(null, null);
             }
             case DEV_STR -> {
-                setEditor(ElementType.DEVICE, null);
+                setSubEditor(ElementType.DEVICE, null);
             }
             case FPT_STR -> {
-                setEditor(ElementType.FOOTPRINT, null);
+                setSubEditor(ElementType.FOOTPRINT, null);
             }
             case SYM_STR -> {
-                setEditor(ElementType.SYMBOL, null);
+                setSubEditor(ElementType.SYMBOL, null);
             }
         }
 
     }
 
-    public void setEditor(ElementType type, String item) {
+    public void setSubEditor(ElementType type, String item) {
         if (type == null) {
             currentEditor = tocPane;
             tocButton.setSelected(true);
@@ -256,7 +256,7 @@ public class LibraryEditor extends VBox {
                                 }
                             }
                         }
-                        devicePane = new DeviceEditorPane(this, item);
+                        devicePane = new LibraryDeviceSubEditor(this, item);
                     }
                     currentEditor = devicePane;
                     deviceButton.setSelected(true);
@@ -290,7 +290,7 @@ public class LibraryEditor extends VBox {
                                 }
                             }
                         }
-                        footprintPane = new FootprintEditorPane(this, item);
+                        footprintPane = new LibraryFootprintSubEditor(this, item);
                     }
                     currentEditor = footprintPane;
                     footprintButton.setSelected(true);
@@ -325,11 +325,12 @@ public class LibraryEditor extends VBox {
                                 item = newName;
                             }
                         }
-                        symbolPane = new SymbolEditorPane(this, item);
+                        symbolPane = new LibrarySymbolSubEditor(this, item);
                     }
                     currentEditor = symbolPane;
                     symbolButton.setSelected(true);
                 }
+
 
             }
         }

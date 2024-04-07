@@ -16,8 +16,11 @@
  */
 package com.maehem.mangocad.view.library.toc;
 
+import com.maehem.mangocad.view.EditorOption;
+import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
+import javafx.event.Event;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -87,5 +90,16 @@ public class LibraryTocSubEditor extends LibrarySubEditor {
 //
 //        //items.add(new Separator());
 //    }
+    @Override
+    public void editorOptionBarToggleButtonChanged(EditorOption oldValue, EditorOption newValue) {
+    }
+
+    @Override
+    public void editorOptionBarWidgetAction(EditorOption tool, Event event) {
+    }
+
+    @Override
+    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
+    }
 
 }

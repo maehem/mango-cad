@@ -16,13 +16,15 @@
  */
 package com.maehem.mangocad.view.library;
 
+import com.maehem.mangocad.view.EditorOptionsBarListener;
+import com.maehem.mangocad.view.EditorToolbarListener;
 import javafx.scene.layout.BorderPane;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public abstract class LibrarySubEditor extends BorderPane {
+public abstract class LibrarySubEditor extends BorderPane implements EditorOptionsBarListener, EditorToolbarListener {
 
     private final LibraryEditor parentEditor;
 

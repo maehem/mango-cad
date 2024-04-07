@@ -19,12 +19,11 @@ package com.maehem.mangocad.view.library.device;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.EditorOption;
 import com.maehem.mangocad.view.EditorOptionsBar;
-import com.maehem.mangocad.view.EditorOptionsBarListener;
 import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.EditorToolbar;
-import com.maehem.mangocad.view.EditorToolbarListener;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
+import com.maehem.mangocad.view.library.LibrarySubEditor;
 import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
@@ -43,7 +41,7 @@ import javafx.scene.text.Text;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class DeviceEditorPane extends BorderPane implements EditorOptionsBarListener, EditorToolbarListener {
+public class LibraryDeviceSubEditor extends LibrarySubEditor {
 
     private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
             EditorOption.LAYER_SETTINGS,
@@ -94,18 +92,19 @@ public class DeviceEditorPane extends BorderPane implements EditorOptionsBarList
 //    private static final Image LAYERS_IMAGE = ViewUtils.getImage("/icons/layers.png");
 //    private static final Image ARRAY_IMAGE = ViewUtils.getImage("/icons/array.png");
 
-    private final LibraryEditor parent;
+    //private final LibraryEditor parent;
 
     private final ToolBar topToolBar;
     //private final VBox topArea = new VBox();
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
 
-    public DeviceEditorPane(LibraryEditor parent, String item) {
-        this.parent = parent;
+    public LibraryDeviceSubEditor(LibraryEditor parentEditor, String item) {
+        super(parentEditor);
+        //this.parent = parent;
 
         // top:  option toolbar row
-        topToolBar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
+        topToolBar = new EditorOptionsBar(parentEditor.getLibrary().getParentDrawing(), options, this);
         setTop(topToolBar);
         //topArea.getChildren().add(topToolBar);
 
