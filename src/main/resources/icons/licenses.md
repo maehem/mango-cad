@@ -61,4 +61,5 @@ Split               icon by Mark J Koch for the MangoCAD project. https://github
 Circle              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Dimenension         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Arc                 icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Command             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 
