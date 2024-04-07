@@ -16,6 +16,9 @@
  */
 package com.maehem.mangocad.view;
 
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.io.InputStream;
+import java.util.logging.Level;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
@@ -114,6 +117,10 @@ public class ViewUtils {
     }
 
     public static final Image getImage(String jarPath) {
-        return new Image(ViewUtils.class.getResourceAsStream(jarPath));
+        InputStream stream = ViewUtils.class.getResourceAsStream(jarPath);
+        if (stream == null) {
+            LOGGER.log(Level.SEVERE, "Could not locate resource: {0}", jarPath);
+        }
+        return new Image(stream);
     }
 }
