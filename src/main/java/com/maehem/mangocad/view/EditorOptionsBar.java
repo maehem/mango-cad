@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.view;
 
+import com.maehem.mangocad.view.widgets.LayerChooser;
+import com.maehem.mangocad.view.widgets.CommandFieldWidget;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ArrayList;

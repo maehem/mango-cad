@@ -14,11 +14,14 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view;
+package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.view.ColorUtils;
+import com.maehem.mangocad.view.FillStyle;
+import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.settings.LayerPropertiesDialog;
 import java.util.ResourceBundle;

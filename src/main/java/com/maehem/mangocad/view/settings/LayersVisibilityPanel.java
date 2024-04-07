@@ -19,7 +19,7 @@ package com.maehem.mangocad.view.settings;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.LayerListView;
+import com.maehem.mangocad.view.widgets.LayerListView;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;

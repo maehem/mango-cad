@@ -14,11 +14,12 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view;
+package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.view.ColorUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;

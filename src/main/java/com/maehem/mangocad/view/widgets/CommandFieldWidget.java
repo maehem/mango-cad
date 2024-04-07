@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view;
+package com.maehem.mangocad.view.widgets;
 
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
