@@ -16,10 +16,10 @@
  */
 package com.maehem.mangocad.view;
 
-import com.maehem.mangocad.view.widgets.LayerChooser;
-import com.maehem.mangocad.view.widgets.CommandFieldWidget;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.widgets.CommandFieldWidget;
+import com.maehem.mangocad.view.widgets.LayerChooser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -77,7 +77,7 @@ public class EditorOptionsBar extends ToolBar {
 
                 }
                 case COMMAND_LINE -> {
-                    CommandFieldWidget commandField = new CommandFieldWidget();
+                    CommandFieldWidget commandField = new CommandFieldWidget(option.bundleMessage(), option.iconPath());
                     getItems().add(commandField);
                 }
                 default -> {

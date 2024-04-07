@@ -17,10 +17,14 @@
 package com.maehem.mangocad.view.widgets;
 
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 /**
@@ -31,11 +35,16 @@ import javafx.scene.layout.HBox;
  */
 public class CommandFieldWidget extends HBox {
 
-    private final Label label = new Label("Command:");
+    //private final Label label = new Label("Command:");
     private final TextField textField = new TextField();
 
-    public CommandFieldWidget() {
-        getChildren().addAll(label, textField);
+    public CommandFieldWidget(String labelText, String iconPath) {
+
+        Image img = ViewUtils.getImage(iconPath);
+        ImageView icon = ViewUtils.createIcon(img, 16);
+        Label iconLabel = new Label("", icon);
+        iconLabel.setTooltip(new Tooltip(labelText));
+        getChildren().addAll(iconLabel, textField);
 
         setSpacing(4);
         setAlignment(Pos.CENTER);
