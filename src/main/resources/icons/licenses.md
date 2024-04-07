@@ -25,7 +25,8 @@ Photo Album        icon by Arthur Shlain from Usefulicons  https://usefulicons.c
 Plus Circle        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/plus-circle
 Printer            icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/printer
 Transistor         icon by Arthur Shlain from Usefulicons  https://usefulicons.com/electronic-symbols/transistor-alt
-
+Padlock            icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/padlock
+Padlock Open       icon by Arthur Shlain from Usefulicons  https://usefulicons.com/glyph-16x16/padlock-open
 Selection          icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/selection
 Eye                icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/eye-alt
 Information        icon by Arthur Shlain from Usefulicons  https://usefulicons.com/pure-lines/information
@@ -62,4 +63,7 @@ Circle              icon by Mark J Koch for the MangoCAD project. https://github
 Dimenension         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Arc                 icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Command             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Hole                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pad THD             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pad SMD             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 
