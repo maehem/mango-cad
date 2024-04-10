@@ -33,6 +33,9 @@ public class Rotation {
     public static final boolean CONSTRAINED = true;
     public static final boolean UNCONSTRAINED = false;
 
+    public static final String COMMAND_SETTING = "orientation";
+    public static final String XML_SETTING = "rot";
+
     private double value = 0.0;
     private boolean constrained = false;
     private boolean spin = false;
@@ -173,4 +176,10 @@ public class Rotation {
 
         return copy;
     }
+
+    @Override
+    public String toString() {
+        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + (int) getValue();
+    }
+
 }
