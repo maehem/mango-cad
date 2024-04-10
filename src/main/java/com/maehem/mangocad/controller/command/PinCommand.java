@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.controller.command;
 
-import com.maehem.mangocad.controller.Command;
 import com.maehem.mangocad.controller.command.exception.CommandException;
 import com.maehem.mangocad.controller.command.exception.PinCommandException;
 import com.maehem.mangocad.model._AQuantum;
@@ -123,49 +122,14 @@ public class PinCommand extends Command {
         }
         List<String> argList = new ArrayList<>(Arrays.asList(tok.nextToken().split("\\s+")));
 
-        // Find 'NAME' item in list or fail. Could be anywhere.
-        ListIterator<String> argIter = argList.listIterator();
-        while (argIter.hasNext()) {
-            String arg = argIter.next();
-            if (arg.startsWith("'") && arg.endsWith("'")) {
-                this.pinName = arg.replaceAll("'", "");
-                argIter.remove();
-                break;
-            }
-        }
+        pinName = extractPinName(argList);
         if (pinName == null) {
             throw new PinCommandException("Pin Name is required!"); // Pin Name is missing from command.
         } else {
             LOGGER.log(Level.SEVERE, "Pin Name is: " + pinName);
         }
 
-        // Find any args that are coordinates ==>  (xxx ... yyy)
-        // Could be anywhere.
-        ListIterator<String> iter = argList.listIterator();
-        boolean coordHasEnd = false;
-        while (iter.hasNext()) {
-            String arg = iter.next();
-            if (coordString != null) {
-                if (arg.endsWith(")")) {
-                    coordString += " " + arg.substring(0, arg.lastIndexOf(")"));
-                    LOGGER.log(Level.SEVERE, "Found final coordinate: ({0})", coordString);
-                    iter.remove();
-                    coordHasEnd = true;
-                    break;
-                } else {
-                    coordString += " " + arg;
-                    LOGGER.log(Level.SEVERE, "Found coordinate chunk: {0}", arg);
-                    iter.remove();
-                }
-            } else if (arg.startsWith("(")) {
-                coordString = arg.substring(1);
-                LOGGER.log(Level.SEVERE, "Found start of coord: {0}", arg);
-                iter.remove();
-            } // else ignore the arg
-        }
-        if (coordString != null && !coordHasEnd) {
-            throw new PinCommandException("Coordinate had no end braces!");
-        }
+        coordString = extractCoords(argList);
 
         // Pin should only have one set of coords.
         if (!argList.isEmpty()) { // At least one more pair of options in args.
@@ -174,7 +138,7 @@ public class PinCommand extends Command {
                     argList.size()
             );
 
-            iter = argList.listIterator();
+            ListIterator<String> iter = argList.listIterator();
             while (iter.hasNext()) {
                 String value = iter.next();
                 LOGGER.log(Level.SEVERE, "Found: {0}", new Object[]{value});
