@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
@@ -69,7 +70,7 @@ public class PinCommand extends Command {
         this.symbol = symbol;
         this.args = args;
 
-        processArgs();
+        qualifyArgs();
     }
 
     @Override
@@ -102,7 +103,12 @@ public class PinCommand extends Command {
         }
     }
 
-    private void processArgs() throws CommandException {
+    /**
+     * Checks the sanity of all command args.
+     *
+     * @throws CommandException if any arg has issues.
+     */
+    private void qualifyArgs() throws CommandException {
         // Semicolon will always terminate command and ignore everything after.
         // Name could be anywhere in args list, but is always denoted by single quotes.
 
@@ -110,9 +116,14 @@ public class PinCommand extends Command {
         // PIN '1'; // Pin named 1 with default values at location 0,0
         // pin short both pas 0 'SYS_CLKOUT1' (0.000000 0.000000);
         // pin short both pas 0 'VDDS_DPLL_MPU_USBHOST' (0.000000 -2.540000);
-        List<String> argList = new ArrayList<>(Arrays.asList(args.split("\\s+")));
+        // A semicolon terminates the line. Anything after that is ignored.
+        StringTokenizer tok = new StringTokenizer(args, ";");
+        if (tok.countTokens() < 1) {
+            throw new PinCommandException("No arguments found! PIN needs at least a qualified name.");
+        }
+        List<String> argList = new ArrayList<>(Arrays.asList(tok.nextToken().split("\\s+")));
 
-        // Find 'NAME' item in list or fail.
+        // Find 'NAME' item in list or fail. Could be anywhere.
         ListIterator<String> argIter = argList.listIterator();
         while (argIter.hasNext()) {
             String arg = argIter.next();
@@ -129,6 +140,7 @@ public class PinCommand extends Command {
         }
 
         // Find any args that are coordinates ==>  (xxx ... yyy)
+        // Could be anywhere.
         ListIterator<String> iter = argList.listIterator();
         boolean coordHasEnd = false;
         while (iter.hasNext()) {
@@ -156,48 +168,68 @@ public class PinCommand extends Command {
         }
 
         // Pin should only have one set of coords.
-        if (argList.size() > 1) { // At least one more pair of options in args.
+        if (!argList.isEmpty()) { // At least one more pair of options in args.
             LOGGER.log(Level.SEVERE,
                     "There seems to be {0} more options to process.",
-                    argList.size() / 2
+                    argList.size()
             );
 
             iter = argList.listIterator();
             while (iter.hasNext()) {
-                String setting = iter.next().toLowerCase();
-                if (iter.hasNext()) {
-                    String value = iter.next();
-                    LOGGER.log(Level.SEVERE, "Found: {0} = {1}", new Object[]{setting, value});
-                    switch (setting) {
-                        case PinDirection.COMMAND_KEY -> {
-                            direction = PinDirection.fromCode(value);
-                        }
-                        case PinFunction.COMMAND_KEY -> {
-                            function = PinFunction.fromCode(value);
-                        }
-                        case PinLength.COMMAND_KEY -> { //       PinLength length = null;
-                            length = PinLength.fromCode(value);
-                        }
-                        case PinVisible.COMMAND_KEY -> { //   PinVisible visible = null;
-                            visible = PinVisible.fromCode(value);
-                        }
-                        case Rotation.COMMAND_SETTING -> { //   Rotation orientation = null;
-                            orientation = new Rotation();
-                            orientation.setValue(value);
-                        }
-                        case Pin.SWAPLEVEL_KEY -> { //   int swapLevel = -1;
-                            swapLevel = Integer.valueOf(value);
-                        }
-                    }
-                } else {
-                    throw new PinCommandException("Setting (" + setting + ") is missing value! End of line reached.");
+                String value = iter.next();
+                LOGGER.log(Level.SEVERE, "Found: {0}", new Object[]{value});
+                PinDirection pd = PinDirection.fromCode(value);
+                if (pd != null) {
+                    direction = pd;
+                    iter.remove();
+                    continue;
                 }
-
+                PinFunction pf = PinFunction.fromCode(value);
+                if (pf != null) {
+                    function = pf;
+                    iter.remove();
+                    continue;
+                }
+                PinLength pl = PinLength.fromCode(value);
+                if (pl != null) {
+                    length = pl;
+                    iter.remove();
+                    continue;
+                }
+                PinVisible pv = PinVisible.fromCode(value);
+                if (pv != null) {
+                    visible = pv;
+                    iter.remove();
+                    continue;
+                }
+                if (Pin.BASIC_ROTATIONS.contains(value)) {
+                    orientation = new Rotation();
+                    orientation.setValue(value);
+                    iter.remove();
+                    continue;
+                }
+                try {
+                    Integer intVal = Integer.valueOf(value);
+                    if (intVal >= 0 && intVal <= 255) {
+                        swapLevel = intVal;
+                        iter.remove();
+                        continue;
+                    } else {
+                        throw new PinCommandException("Swaplevel is out of range. Found: " + swapLevel + "  required 0..255");
+                    }
+                } catch (NumberFormatException ex) {
+                    // Ignore this value
+                }
             }
-            LOGGER.log(Level.SEVERE,
-                    "Pin Settings:\n     name: {0}\ndirection: {1}\n function: {2}\n   length: {3}\n  visible: {4}\n rotation: {5}\nswaplevel: {6}",
-                    new Object[]{pinName, direction, function, length, visible, orientation, swapLevel});
+            // List should be empty. Report left overs.
+            if (!argList.isEmpty()) {
+                LOGGER.log(Level.SEVERE, "Unknown arguments found. {0}", argList.toString());
+            }
 
         }
+        LOGGER.log(Level.SEVERE,
+                "Pin Settings:\n     name: {0}\ndirection: {1}\n function: {2}\n   length: {3}\n  visible: {4}\n rotation: {5}\nswaplevel: {6}\n   coords: {7}",
+                new Object[]{pinName, direction, function, length, visible, orientation, swapLevel, coordString});
+
     }
 }
