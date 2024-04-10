@@ -20,7 +20,6 @@ import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model._AQuantum;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
-import com.maehem.mangocad.model.element.misc.Description;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,102 +41,19 @@ public class Symbol extends LibraryElement {
     public static final String ELEMENT_NAME = "symbol";
     public static final int LAYER_NUMBER = 94;
 
-     // There can only be one description.
-    private final Description description = new Description();
     private final ArrayList<_AQuantum> elements = new ArrayList<>();
 
-    private String name;
-    private String urn;
-    private boolean locallyModified = false; // Only when inside BRD or SCH
-    private int libraryVersion;
-    private boolean libraryLocallyModified = false;
-
     public Symbol() {
-        //setLayer(LAYER_NUMBER);
     }
 
     public String getElementName() {
         return ELEMENT_NAME;
     }
 
-//    /**
-//     * @return the name
-//     */
-//    public String getName() {
-//        return name;
-//    }
-//
-//    /**
-//     * @param name the name to set
-//     */
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    /**
-//     * @return the urn
-//     */
-//    public String getUrn() {
-//        return urn;
-//    }
-//
-//    /**
-//     * @param urn the urn to set
-//     */
-//    public void setUrn(String urn) {
-//        this.urn = urn;
-//    }
-//
-//    /**
-//     * @return the locallyModified
-//     */
-//    public boolean isLocallyModified() {
-//        return locallyModified;
-//    }
-//
-//    /**
-//     * @param locallyModified the locallyModified to set
-//     */
-//    public void setLocallyModified(boolean locallyModified) {
-//        this.locallyModified = locallyModified;
-//    }
-//
-//    /**
-//     * @return the libraryVersion
-//     */
-//    public int getLibraryVersion() {
-//        return libraryVersion;
-//    }
-//
-//    /**
-//     * @param libraryVersion the libraryVersion to set
-//     */
-//    public void setLibraryVersion(int libraryVersion) {
-//        this.libraryVersion = libraryVersion;
-//    }
-//
-//    /**
-//     * @return the libraryLocallyModified
-//     */
-//    public boolean isLibraryLocallyModified() {
-//        return libraryLocallyModified;
-//    }
-//
-//    /**
-//     * @param libraryLocallyModified the libraryLocallyModified to set
-//     */
-//    public void setLibraryLocallyModified(boolean libraryLocallyModified) {
-//        this.libraryLocallyModified = libraryLocallyModified;
-//    }
-
     public List<_AQuantum> getElements() {
         return elements;
     }
 
-//    public Description getDescription() {
-//        return description;
-//    }
-//
     /**
      *
      * @return VALUE of pin if Supply or null if symbol is not a Supply pin.
