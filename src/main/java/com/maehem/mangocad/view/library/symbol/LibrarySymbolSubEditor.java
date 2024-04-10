@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.EditorOption;
@@ -24,7 +25,6 @@ import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
-import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -87,7 +87,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
 
-    public LibrarySymbolSubEditor(LibraryEditor parent, String item) {
+    public LibrarySymbolSubEditor(LibraryEditor parent, Symbol symbol) {
         super(parent);
         //this.parent = parent;
 
@@ -106,7 +106,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
         // bottom: message area
         setBottom(bottomArea);
-        bottomArea.getChildren().add(new Text("Editing: " + item));
+        bottomArea.getChildren().add(new Text("Editing: " + symbol.getName()));
 
         // right: nothing.
 //        topArea.setPrefHeight(24);

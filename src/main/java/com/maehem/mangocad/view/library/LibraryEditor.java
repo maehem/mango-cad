@@ -311,10 +311,13 @@ public class LibraryEditor extends VBox {
                         dialog.showAndWait(); // Present chooser
 
                         Object result = dialog.getResult();
+                        Symbol symbol;
                         if (result == null) { // User Canceled
                             return;
                         } else {
                             item = (String) result;
+                            symbol = getLibrary().getSymbol(item);
+
                         }
                         if (item.equals(CREATE_NEW_MSG)) {
                             //deviceSets.remove(CREATE_NEW_MSG);
@@ -322,16 +325,16 @@ public class LibraryEditor extends VBox {
                             if (newName == null) { // A valid new device was added, go edit it.
                                 return;
                             } else {
-                                item = newName;
+                                //item = newName;
+                                symbol = new Symbol();
+                                symbol.setName(newName);
                             }
                         }
-                        symbolPane = new LibrarySymbolSubEditor(this, item);
+                        symbolPane = new LibrarySymbolSubEditor(this, symbol);
                     }
                     currentEditor = symbolPane;
                     symbolButton.setSelected(true);
                 }
-
-
             }
         }
         mainPane.setCenter(currentEditor);
