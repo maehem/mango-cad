@@ -24,7 +24,7 @@ import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
-import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import com.maehem.mangocad.view.library.symbol.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;

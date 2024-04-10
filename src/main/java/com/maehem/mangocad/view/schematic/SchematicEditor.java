@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.schematic;
 
-import com.maehem.mangocad.view.library.SymbolEditorPropertiesTabPane;
+import com.maehem.mangocad.view.library.symbol.SymbolEditorPropertiesTabPane;
 import java.io.File;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
