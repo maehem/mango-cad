@@ -22,6 +22,8 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.util.Rotation;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <pre>
@@ -47,6 +49,7 @@ public class Pin extends _AQuantum {
     // 'layer' is not used.
 
     public static final String SWAPLEVEL_KEY = "swaplevel";
+    public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270");
 
     private String name;
     private double x;
