@@ -99,7 +99,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         leftToolBar = new EditorToolbar(tools, this);
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(this), new SymbolEditorPropertiesTabPane());
         workArea.setDividerPosition(0, 0.8);
         // center: work area
         setCenter(workArea);
