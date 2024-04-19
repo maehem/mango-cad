@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
@@ -99,26 +100,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
 
             //LOGGER.log(Level.SEVERE, "   WAX/Y: {0},{1}", new Object[]{waX, waY});
             //LOGGER.log(Level.SEVERE, " VAM X/Y: {0},{1}", new Object[]{(mX - vaW / 2.0) / scale, (mY - vaH / 2.0) / scale});
-
             // Derive the sb values after the scale.
             double sbX = 0.5 + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
             double sbY = 0.5 + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
 
-
-            //double mXoffRat = (mX / vaW - 0.5);  //  -0.5 .. +0.5
-            //double mYoffRat = (mY / vaH - 0.5);
             setHvalue(sbX);
             setVvalue(sbY);
 
             //LOGGER.log(Level.SEVERE, "SB: OLD: {0},{1}    NEW: {2},{3}", new Object[]{sbHV, sbVV, sbX, sbY});
-
-            //workArea.setLayoutX(mX);
-            //workArea.setLayoutY(mY);
-            //crossHairArea.setLayoutX(mX);
-            //crossHairArea.setLayoutY(mY);
-
-            //    setHvalue(mX / getBoundsInLocal().getWidth());
-            //    setVvalue(mY / getBoundsInLocal().getHeight());
             //LOGGER.log(Level.SEVERE, "Mouse: {0},{1}", new Object[]{mX, mY});
             event.consume();
         });
@@ -146,6 +135,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
                 shadow.setLayoutY(waY);
             }
 
+        });
+        setOnMouseEntered((t) -> {
+            getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
+        });
+        setOnMouseExited((t) -> {
+            getScene().setCursor(Cursor.DEFAULT);
         });
 
 //        addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
