@@ -42,6 +42,7 @@
                     <mainClass>com.maehem.mangocad/com.maehem.mangocad.view.ControlPanel</mainClass>
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.ScaledItemTest</mainClass-->
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.TextTester</mainClass-->
+                    <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.CommandTester</mainClass-->
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.FillPatternTester</mainClass-->
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.ColorPickerTester</mainClass-->
                     <commandlineArgs>-Xdock:name=SomeName2</commandlineArgs><!--doesn't work-->
