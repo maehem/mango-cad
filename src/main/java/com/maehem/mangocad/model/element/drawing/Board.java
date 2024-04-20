@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.ElementElement;
@@ -63,7 +63,7 @@ import java.util.Optional;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Board extends _AQuantum implements DesignObject {
+public class Board extends Element implements DesignObject {
 
     //public static final String FILE_EXTENSION = "brd";
     public static final String ELEMENT_NAME = "board";
@@ -73,7 +73,7 @@ public class Board extends _AQuantum implements DesignObject {
 
     private final ArrayList<Library> libraries = new ArrayList<>();
     private final ArrayList<Attribute> attributes = new ArrayList<>();
-    private final ArrayList<_AQuantum> plain = new ArrayList<>();
+    private final ArrayList<Element> plain = new ArrayList<>();
     private final ArrayList<VariantDefinition> variantDefs = new ArrayList<>();
     private final ArrayList<NetClass> netClasses = new ArrayList<>();
     private final ArrayList<Pass> autorouter = new ArrayList<>();
@@ -189,7 +189,7 @@ public class Board extends _AQuantum implements DesignObject {
         return getType().getFileExt();
     }
 
-    public List<_AQuantum> getPlain() {
+    public List<Element> getPlain() {
         return plain;
     }
 

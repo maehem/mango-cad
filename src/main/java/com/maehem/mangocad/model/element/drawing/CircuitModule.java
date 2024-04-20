@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  *  <module>
@@ -27,7 +27,7 @@ import com.maehem.mangocad.model._AQuantum;
 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class CircuitModule extends _AQuantum {
+public class CircuitModule extends Element {
 
     public static final String ELEMENT_NAME = "module";   
     

@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  * High level Drawing thing called 'Filter'.  No idea what it does or how to use it.
@@ -31,7 +31,7 @@ import com.maehem.mangocad.model._AQuantum;
  * </pre>
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Filter extends _AQuantum {
+public class Filter extends Element {
     
     public static final String ELEMENT_NAME = "filter";
 

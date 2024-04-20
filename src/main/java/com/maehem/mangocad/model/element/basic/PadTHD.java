@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.PadShape;
 import static com.maehem.mangocad.model.element.enums.PadShape.ROUND;
 import com.maehem.mangocad.model.util.Rotation;
@@ -26,7 +26,7 @@ import com.maehem.mangocad.model.util.Rotation;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class PadTHD extends _AQuantum {
+public class PadTHD extends Element {
     
     public static final String ELEMENT_NAME = "thd";
     public static final double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );

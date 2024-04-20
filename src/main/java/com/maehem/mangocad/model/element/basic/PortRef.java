@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  * portref EMPTY>
@@ -26,7 +26,7 @@ import com.maehem.mangocad.model._AQuantum;
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PortRef extends _AQuantum {
+public class PortRef extends Element {
     
     public static final String ELEMENT_NAME = "portref";
 

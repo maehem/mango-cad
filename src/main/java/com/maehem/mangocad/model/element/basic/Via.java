@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ViaShape;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.util.DrcDefs;
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Via extends _AQuantum {
+public class Via extends Element {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 

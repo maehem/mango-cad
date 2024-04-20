@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Pin extends _AQuantum {
+public class Pin extends Element {
 
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.

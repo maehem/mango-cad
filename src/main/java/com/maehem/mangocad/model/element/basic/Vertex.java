@@ -16,13 +16,13 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Vertex extends _AQuantum {
+public class Vertex extends Element {
     public static final String ELEMENT_NAME = "vertex";
 
     private double x;

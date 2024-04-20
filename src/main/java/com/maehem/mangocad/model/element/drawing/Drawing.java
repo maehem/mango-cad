@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.misc.Setting;
@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Drawing extends _AQuantum {
+public class Drawing extends Element {
 
     public static final String ELEMENT_NAME = "drawing";
 

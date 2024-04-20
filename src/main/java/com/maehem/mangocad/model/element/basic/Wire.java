@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import java.text.MessageFormat;
@@ -44,7 +44,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends _AQuantum {
+public class Wire extends Element {
 
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets

@@ -16,14 +16,14 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import java.util.ArrayList;
 
 /**
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Spline extends _AQuantum {
+public class Spline extends Element {
     
     public static final String ELEMENT_NAME = "spline";
     

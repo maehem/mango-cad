@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  * <pre>
@@ -25,7 +25,7 @@ import com.maehem.mangocad.model._AQuantum;
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Eagle extends _AQuantum {
+public class Eagle extends Element {
     public static final String ELEMENT_NAME = "eagle";
 
     private Drawing drawing;

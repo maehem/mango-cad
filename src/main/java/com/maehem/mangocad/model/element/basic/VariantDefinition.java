@@ -16,13 +16,13 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class VariantDefinition extends _AQuantum {
+public class VariantDefinition extends Element {
 
     public static final String ELEMENT_NAME = "variantdef";
     

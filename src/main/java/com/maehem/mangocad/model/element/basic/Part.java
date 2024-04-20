@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.highlevel.Device;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -39,7 +39,7 @@ import java.util.Optional;
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Part extends _AQuantum {
+public class Part extends Element {
     public static final String ELEMENT_NAME = "part";   
     
     private String name;
