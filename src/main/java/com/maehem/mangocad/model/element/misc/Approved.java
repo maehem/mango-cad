@@ -16,14 +16,14 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 
 /**
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Approved extends _AQuantum {
+public class Approved extends Element {
 
     public static final String ELEMENT_NAME = "approved";   
     

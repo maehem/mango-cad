@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.GridStyle;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 
@@ -39,7 +39,7 @@ import com.maehem.mangocad.model.element.enums.GridUnit;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Grid extends _AQuantum {
+public class Grid extends Element {
 
     public static final String ELEMENT_NAME = "grid";
 

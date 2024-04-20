@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.schematic;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
@@ -79,7 +79,7 @@ public class SchematicPreview extends Group {
 //        if (sheet.getPlain().isEmpty()) {
 //            LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
 //        }
-        for (_AQuantum element : sheet.getPlain()) {
+        for (Element element : sheet.getPlain()) {
             LayerElement layer = layers.get(element.getLayerNum());
             Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole

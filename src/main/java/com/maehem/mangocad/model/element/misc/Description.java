@@ -16,13 +16,13 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Description extends _AQuantum {
+public class Description extends Element {
     public static final String ELEMENT_NAME = "description";
     
     private String locale = "us_EN"; // The i18n locale code for this text. No value = en_US

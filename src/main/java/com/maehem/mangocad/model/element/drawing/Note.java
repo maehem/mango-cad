@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.Severity;
 
 /**
@@ -34,7 +34,7 @@ import com.maehem.mangocad.model.element.enums.Severity;
  * 
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Note extends _AQuantum {
+public class Note extends Element {
     public static final String ELEMENT_NAME = "note";
     
     private String version = "";

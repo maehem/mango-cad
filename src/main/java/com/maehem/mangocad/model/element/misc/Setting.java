@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.VerticalText;
 
 
@@ -31,7 +31,7 @@ import com.maehem.mangocad.model.element.enums.VerticalText;
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Setting extends _AQuantum {
+public class Setting extends Element {
 
     public static final String ELEMENT_NAME = "setting";   
     

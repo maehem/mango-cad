@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.util.DrcDefs;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class DesignRules extends _AQuantum {
+public class DesignRules extends Element {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 

@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 
 /**
@@ -28,7 +28,7 @@ import com.maehem.mangocad.model._AQuantum;
 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class NetClass extends _AQuantum {
+public class NetClass extends Element {
 
     public static final String ELEMENT_NAME = "class";   
     

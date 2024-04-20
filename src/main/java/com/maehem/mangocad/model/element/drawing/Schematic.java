@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.basic.SchematicGroup;
@@ -49,7 +49,7 @@ import java.util.Optional;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Schematic extends _AQuantum implements DesignObject {
+public class Schematic extends Element implements DesignObject {
 
     //public static final String FILE_EXTENSION = "sch";
     public static final String ELEMENT_NAME = "schematic";

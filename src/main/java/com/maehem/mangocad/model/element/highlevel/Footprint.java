@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model.LibraryElement;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.misc.Description;
@@ -50,7 +50,7 @@ public class Footprint extends LibraryElement { // class name "Package" is reser
 
      // There can only be one description.
     private final Description description = new Description();
-    private final ArrayList<_AQuantum> elements = new ArrayList<>();
+    private final ArrayList<Element> elements = new ArrayList<>();
 
     //private String name;
     //private String urn;
@@ -130,12 +130,12 @@ public class Footprint extends LibraryElement { // class name "Package" is reser
 //        return description;
 //    }
 
-    public List<_AQuantum> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 
-    public _AQuantum getPad(String padName) {
-        for (_AQuantum el : getElements()) {
+    public Element getPad(String padName) {
+        for (Element el : getElements()) {
             if (el instanceof PadTHD e) {
                 if (e.getName().equals(padName)) {
                     return e;

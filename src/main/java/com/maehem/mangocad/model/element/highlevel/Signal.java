@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +28,13 @@ import java.util.List;
  *      class         %Class;        "0"
  *      airwireshidden %Bool;        "no"
  * </pre>
+
+ Does not use Element.layerNum! Signal sub-elements (wire, polygon, etc.)
+ each define their own layer number.
  *
- * Does not use _AQuantum.layerNum! Signal sub-elements (wire, polygon, etc.)
- * each define their own layer number.
- * *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Signal extends _AQuantum {
+public class Signal extends Element {
 
     public static final String ELEMENT_NAME = "signal";
 
@@ -42,7 +42,7 @@ public class Signal extends _AQuantum {
     private int netClass = 0;
     private boolean airwiresHidden = false;
 
-    private final ArrayList<_AQuantum> elements = new ArrayList<>();
+    private final ArrayList<Element> elements = new ArrayList<>();
 
 
     @Override
@@ -95,7 +95,7 @@ public class Signal extends _AQuantum {
     /**
      * @return the element of type (contactref | polygon | wire | via)
      */
-    public List<_AQuantum> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 }

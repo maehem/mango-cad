@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.board;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.model.element.drawing.Layers;
@@ -117,7 +117,7 @@ public class BoardPreview extends Group {
         ColorPalette palette = board.getParentDrawing().getPalette();
         ObservableList<Node> chld = getChildren();
 
-        for (_AQuantum element : board.getPlain()) {
+        for (Element element : board.getPlain()) {
             int colorIndex = layers.get(element.getLayerNum()).getColorIndex();
             Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
@@ -185,7 +185,7 @@ public class BoardPreview extends Group {
         for (Signal sig : board.getSignals()) {
             LOGGER.log(Level.FINE, "Signal: {0} with netClass: {1}",
                     new Object[]{sig.getName(), sig.getNetClassNum()});
-            for (_AQuantum el : sig.getElements()) {
+            for (Element el : sig.getElements()) {
                 if (el instanceof Wire w) {
                     int colorIndex = layers.get(el.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
@@ -336,7 +336,7 @@ public class BoardPreview extends Group {
         // Draw Soldermask
         // Draw SilkScreen
         // Add Computed Dimensions
-        for (_AQuantum element : board.getPlain()) {
+        for (Element element : board.getPlain()) {
             //int colorIndex = layers[element.getLayerNum()].getColorIndex();
             //Color c = ColorUtils.getColor(palette.getHex(colorIndex));
             int l = element.getLayerNum();
@@ -598,7 +598,7 @@ public class BoardPreview extends Group {
             ArrayList<Shape> isolation = new ArrayList<>();
             ArrayList<Shape> restricts = new ArrayList<>();
 
-            for (_AQuantum el : sig.getElements()) {
+            for (Element el : sig.getElements()) {
                 if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
                     continue; // Only layer 1 for now.
                 }
@@ -631,7 +631,7 @@ public class BoardPreview extends Group {
 
             ArrayList<Shape> sigCopper = new ArrayList<>();
 
-            for (_AQuantum el : sig.getElements()) {
+            for (Element el : sig.getElements()) {
                 if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
                     continue; // Only layer 1 for now.
                 }
@@ -645,7 +645,7 @@ public class BoardPreview extends Group {
                     //LOGGER.log(Level.SEVERE, "ContactRef: {0}.{1}", new Object[]{cref.getElement(), cref.getPad()});
                     // Will generate thermals for signal polygons.
                     ElementElement elm = board.getElement(cref.getElement());
-                    _AQuantum pad = elm.getFootprintPkg().getPad(cref.getPad());
+                    Element pad = elm.getFootprintPkg().getPad(cref.getPad());
 
                     if (pad == null) { // Do nothing
                     } else if (pad instanceof PadTHD p) {

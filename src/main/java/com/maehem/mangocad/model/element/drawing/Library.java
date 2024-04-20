@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model.LibraryElement;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.DesignType;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
@@ -43,7 +43,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Library extends _AQuantum implements DesignObject {
+public class Library extends Element implements DesignObject {
 
     //public static final String FILE_EXTENSION = "lbr";
     public static final String ELEMENT_NAME = "library";
@@ -198,7 +198,7 @@ public class Library extends _AQuantum implements DesignObject {
                     return symNew;
                 }
             }
-            // TODO: Appears borked.   Should be a _AQuantum element?
+            // TODO: Appears borked.   Should be a Element element?
 //            case PACKAGE3D -> {
 //                Package3d p3dNew = new Package3d();
 //                p3dNew.setName(name);

@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model.LibraryElement;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class Symbol extends LibraryElement {
     public static final String ELEMENT_NAME = "symbol";
     public static final int LAYER_NUMBER = 94;
 
-    private final ArrayList<_AQuantum> elements = new ArrayList<>();
+    private final ArrayList<Element> elements = new ArrayList<>();
 
     public Symbol() {
     }
@@ -50,7 +50,7 @@ public class Symbol extends LibraryElement {
         return ELEMENT_NAME;
     }
 
-    public List<_AQuantum> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 
@@ -59,7 +59,7 @@ public class Symbol extends LibraryElement {
      * @return VALUE of pin if Supply or null if symbol is not a Supply pin.
      */
     public String supplyPin() {
-        List<_AQuantum> list = elements.stream().filter((el) -> ( el instanceof Pin)  ).toList();
+        List<Element> list = elements.stream().filter((el) -> ( el instanceof Pin)  ).toList();
 
         if ( list.size() == 1 ) {
             Pin pin = (Pin)(list.get(0));

@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import java.util.ArrayList;
 
 /**
@@ -25,12 +25,12 @@ import java.util.ArrayList;
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Segment extends ArrayList<_AQuantum> {
+public class Segment extends ArrayList<Element> {
 
     public static final String ELEMENT_NAME = "segment";
 
     @Override
-    public boolean add(_AQuantum e) {
+    public boolean add(Element e) {
         return switch (e.getElementName()) {
             case "pinref", "portref", "wire", "junction", "label", "probe" -> super.add(e);
             default -> false;

@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;
@@ -629,7 +629,7 @@ public class LibraryElementNode {
         // Find closest x,y on a Wire Segment and make that the anchor.
         // Calculate Probe line and square-anchor location.
         Wire closestWire = null;
-        for (_AQuantum element : seg) {
+        for (Element element : seg) {
             if (element instanceof Wire w) {
                 if (closestWire == null) {
                     closestWire = w;

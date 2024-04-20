@@ -19,7 +19,7 @@ package com.maehem.mangocad.model.element.highlevel;
 import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.basic.ModuleInst;
 import com.maehem.mangocad.model.element.misc.Description;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import java.util.ArrayList;
@@ -33,12 +33,12 @@ import java.util.Optional;
  * 
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Sheet extends _AQuantum {
+public class Sheet extends Element {
     
     public static final String ELEMENT_NAME = "sheet";   
         
     private final Description description = new Description();
-    private final ArrayList<_AQuantum> plain = new ArrayList<>();
+    private final ArrayList<Element> plain = new ArrayList<>();
     private final ArrayList<ModuleInst> moduleInsts = new ArrayList<>();
     private final ArrayList<Instance> instances = new ArrayList<>();
     private final ArrayList<Net> busses = new ArrayList<>();
@@ -55,7 +55,7 @@ public class Sheet extends _AQuantum {
         return description;
     }
     
-    public List<_AQuantum> getPlain() {
+    public List<Element> getPlain() {
         return plain;
     }
     
