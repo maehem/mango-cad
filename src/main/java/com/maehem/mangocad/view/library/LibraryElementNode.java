@@ -117,9 +117,9 @@ public class LibraryElementNode {
     //private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
     private static final double FONT_ASC_PCT = 0.47; // 53%   (0.0 - 1.0)  == 450/960 from font.
 
-    private enum PatternStyle {
-        DARK_THIN, DARK_MED, DARK_THICK, LIGHT_THIN, LIGHT_MED, LIGHT_THICK
-    }
+//    private enum PatternStyle {
+//        DARK_THIN, DARK_MED, DARK_THICK, LIGHT_THIN, LIGHT_MED, LIGHT_THICK
+//    }
 
     // Should come from a DRC object?
     private static final double MASK_W_DEFAULT = 0.1;
