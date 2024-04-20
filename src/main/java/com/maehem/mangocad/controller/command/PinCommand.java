@@ -18,7 +18,7 @@ package com.maehem.mangocad.controller.command;
 
 import com.maehem.mangocad.controller.command.exception.CommandException;
 import com.maehem.mangocad.controller.command.exception.PinCommandException;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinFunction;
@@ -98,7 +98,7 @@ public class PinCommand extends Command {
         //this.obj = memento.getState();
         // remove the pin from the list.
         if (obj != null) {
-            symbol.getElements().remove((_AQuantum) obj);
+            symbol.getElements().remove((Element) obj);
         }
     }
 
