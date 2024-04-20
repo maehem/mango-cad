@@ -21,7 +21,7 @@ package com.maehem.mangocad.model;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public abstract class _AQuantum {
+public abstract class Element {
 //    private double x;
 //    private double y;
     private int layer;
