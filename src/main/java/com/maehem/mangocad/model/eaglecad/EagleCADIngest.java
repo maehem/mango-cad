@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.eaglecad;
 
 import com.maehem.mangocad.model.LibraryElement;
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.*;
 import com.maehem.mangocad.model.element.enums.*;
@@ -525,7 +525,7 @@ public class EagleCADIngest {
             if (node.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
-            List<_AQuantum> elements = pkg.getElements();
+            List<Element> elements = pkg.getElements();
             // polygon | wire | text | dimension | circle | rectangle | frame | hole | pad | smd
             switch (node.getNodeName()) {
                 case "polygon" -> // ElementPolygon
@@ -579,7 +579,7 @@ public class EagleCADIngest {
 
     private static void ingestSymbolElements(NodeList nodes, Symbol symbol) throws EagleCADLibraryFileException {
         // TODO: Add a flag to check if description appears more than once.
-        List<_AQuantum> elements = symbol.getElements();
+        List<Element> elements = symbol.getElements();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() != Node.ELEMENT_NODE) {
@@ -718,7 +718,7 @@ public class EagleCADIngest {
      * @param node
      * @throws EagleCADLibraryFileException
      */
-    private static void ingestWire(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestWire(List<Element> list, Node node) throws EagleCADLibraryFileException {
         Wire wire = new Wire();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -755,7 +755,7 @@ public class EagleCADIngest {
         list.add(wire);
     }
 
-    private static void ingestPadSmd(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPadSmd(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         PadSMD smd = new PadSMD();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -792,7 +792,7 @@ public class EagleCADIngest {
         elements.add(smd);
     }
 
-    private static void ingestPadThd(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPadThd(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         PadTHD thd = new PadTHD();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -827,7 +827,7 @@ public class EagleCADIngest {
         elements.add(thd);
     }
 
-    private static void ingestText(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestText(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         ElementText text = new ElementText();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -863,7 +863,7 @@ public class EagleCADIngest {
         elements.add(text);
     }
 
-    private static void ingestPolygon(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPolygon(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         ElementPolygon poly = new ElementPolygon();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -909,7 +909,7 @@ public class EagleCADIngest {
         elements.add(poly);
     }
 
-    private static void ingestSignalPolygon(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestSignalPolygon(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         SignalPolygon poly = new SignalPolygon();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -949,7 +949,7 @@ public class EagleCADIngest {
         elements.add(poly);
     }
 
-    private static void ingestRectangle(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestRectangle(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         ElementRectangle rect = new ElementRectangle();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -992,7 +992,7 @@ public class EagleCADIngest {
      * @param node
      * @throws EagleCADLibraryFileException
      */
-    private static void ingestCircle(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestCircle(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         ElementCircle circ = new ElementCircle();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -1019,7 +1019,7 @@ public class EagleCADIngest {
         elements.add(circ);
     }
 
-    private static void ingestHole(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestHole(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         Hole hole = new Hole();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -1040,7 +1040,7 @@ public class EagleCADIngest {
         elements.add(hole);
     }
 
-    private static void ingestVia(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestVia(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         Via via = new Via();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -1072,7 +1072,7 @@ public class EagleCADIngest {
         elements.add(via);
     }
 
-    private static void ingestPin(List<_AQuantum> elements, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPin(List<Element> elements, Node node) throws EagleCADLibraryFileException {
         Pin pin = new Pin();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -1105,7 +1105,7 @@ public class EagleCADIngest {
         elements.add(pin);
     }
 
-    private static void ingestLabel(List<_AQuantum> elements, Node node, String lblText) throws EagleCADLibraryFileException {
+    private static void ingestLabel(List<Element> elements, Node node, String lblText) throws EagleCADLibraryFileException {
         //  label EMPTY>
         //     ATTLIST
         //          x             %Coord;        #REQUIRED
@@ -1157,7 +1157,7 @@ public class EagleCADIngest {
         elements.add(label);
     }
 
-    private static void ingestProbe(List<_AQuantum> elements, Node node, String netName) throws EagleCADLibraryFileException {
+    private static void ingestProbe(List<Element> elements, Node node, String netName) throws EagleCADLibraryFileException {
         // probe ( no sub-nodes )
         //    ATTLIST probe
         //        x             %Coord;        #REQUIRED
@@ -1212,7 +1212,7 @@ public class EagleCADIngest {
         elements.add(probe);
     }
 
-    private static void ingestFrame(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestFrame(List<Element> list, Node node) throws EagleCADLibraryFileException {
         FrameElement frame = new FrameElement();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -2021,7 +2021,7 @@ public class EagleCADIngest {
      * @param plain
      * @param node
      */
-    private static void ingestPlain(List<_AQuantum> plain, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPlain(List<Element> plain, Node node) throws EagleCADLibraryFileException {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -2173,7 +2173,7 @@ public class EagleCADIngest {
         segmentList.add(seg);
     }
 
-    private static void ingestPinref(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPinref(List<Element> list, Node node) throws EagleCADLibraryFileException {
         PinRef pinref = new PinRef();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -2201,7 +2201,7 @@ public class EagleCADIngest {
      * @param node
      * @throws EagleCADLibraryFileException
      */
-    private static void ingestPortref(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestPortref(List<Element> list, Node node) throws EagleCADLibraryFileException {
         PortRef pinref = new PortRef();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -2372,7 +2372,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      */
-    private static void ingestSpline(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestSpline(List<Element> list, Node node) throws EagleCADLibraryFileException {
         //spline (vertex)*>
         //  Four simple (non-curve) vertices define the control points of a degree-3 spline curve
         //  ATTLIST
@@ -2473,7 +2473,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      */
-    private static void ingestDimension(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestDimension(List<Element> list, Node node) throws EagleCADLibraryFileException {
         Dimension dim = new Dimension();
         NamedNodeMap att = node.getAttributes();
         for (int j = 0; j < att.getLength(); j++) {
@@ -2546,7 +2546,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      */
-    private static void ingestJunction(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestJunction(List<Element> list, Node node) throws EagleCADLibraryFileException {
         Junction junction = new Junction();
         NamedNodeMap att = node.getAttributes();
         for (int j = 0; j < att.getLength(); j++) {
@@ -3209,7 +3209,7 @@ public class EagleCADIngest {
      * @param list
      * @param node
      */
-    private static void ingestSignalElement(List<_AQuantum> list, Node item) throws EagleCADLibraryFileException {
+    private static void ingestSignalElement(List<Element> list, Node item) throws EagleCADLibraryFileException {
         switch (item.getNodeName()) {
             case "contactref" -> {
                 ingestContactRef(list, item);
@@ -3243,7 +3243,7 @@ public class EagleCADIngest {
      * @param node
      * @throws EagleCADLibraryFileException
      */
-    private static void ingestContactRef(List<_AQuantum> list, Node node) throws EagleCADLibraryFileException {
+    private static void ingestContactRef(List<Element> list, Node node) throws EagleCADLibraryFileException {
         ContactRef cRef = new ContactRef();
         NamedNodeMap att = node.getAttributes();
         for (int j = 0; j < att.getLength(); j++) {

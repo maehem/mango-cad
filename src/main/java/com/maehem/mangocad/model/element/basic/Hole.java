@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.util.DrcDefs;
 import com.maehem.mangocad.model.util.Units;
@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Hole extends _AQuantum {
+public class Hole extends Element {
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "hole";
 

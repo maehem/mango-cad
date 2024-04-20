@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
  * grouprefs IDREFS #IMPLIED > <!-- display: Only in <element> or <instance>
  * context --> <!-- constant:Only in <device> context -->
  */
-public class Attribute extends _AQuantum {
+public class Attribute extends Element {
 
     public static final String ELEMENT_NAME = "attribute";
 

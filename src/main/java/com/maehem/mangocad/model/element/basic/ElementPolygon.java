@@ -19,7 +19,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends _AQuantum {
+public class ElementPolygon extends Element {
 
     public static final String ELEMENT_NAME = "polygon";
 

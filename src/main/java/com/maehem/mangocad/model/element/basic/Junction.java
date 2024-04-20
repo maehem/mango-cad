@@ -16,14 +16,14 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import java.util.ArrayList;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Junction extends _AQuantum {
+public class Junction extends Element {
 
     public static final String ELEMENT_NAME = "junction";
     public static final int DEFAULT_LAYER = 91; // Nets

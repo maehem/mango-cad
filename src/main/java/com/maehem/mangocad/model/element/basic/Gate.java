@@ -16,13 +16,13 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Gate extends _AQuantum {
+public class Gate extends Element {
     // 'layer' is not used.
     
     private String name;

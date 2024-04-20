@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.eaglecad;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.ElementElement;
 import com.maehem.mangocad.model.element.drawing.Board;
@@ -33,7 +33,7 @@ public class EagleCADResolve {
 
     public static void resolveContactRefs(Board brd) {
         for (Signal s : brd.getSignals()) {
-            for (_AQuantum e : s.getElements()) {
+            for (Element e : s.getElements()) {
                 if (e instanceof ContactRef cr) {
                     cr.setElementO(brd.getElement(cr.getElement()));
                     brd.getContactRefs().add(cr);

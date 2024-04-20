@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * 
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class FrameElement extends _AQuantum {
+public class FrameElement extends Element {
     public static final String ELEMENT_NAME = "frame";
 
     //     frame ( no elements )

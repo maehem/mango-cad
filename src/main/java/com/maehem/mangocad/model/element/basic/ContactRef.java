@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model._AQuantum;
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ContactRoute;
 
 /**
@@ -31,7 +31,7 @@ import com.maehem.mangocad.model.element.enums.ContactRoute;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class ContactRef extends _AQuantum {
+public class ContactRef extends Element {
 
     public static final String ELEMENT_NAME = "contactref";
 
