@@ -16,6 +16,11 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.enums.PinFunction;
+import com.maehem.mangocad.model.element.enums.PinLength;
+import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.view.library.symbol.node.PinNode;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
@@ -25,6 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 
 /**
  *
@@ -32,23 +38,25 @@ import javafx.scene.text.Text;
  */
 public class SymbolEditorInteractiveArea extends ScrollPane {
 
-    private static final double SCALE_MAX = 4.0;
-    private static final double SCALE_MIN = 0.5;
-    private static final double SCALE_FACTOR = 0.001;
+    private static final double SCALE_MAX = 40.0;
+    private static final double SCALE_MIN = 5.0;
+    private static final double SCALE_FACTOR = 1.0;
     private static final int WORK_AREA = (int) (1000.0 / SCALE_MIN);
     private static final double WA2 = WORK_AREA / 2.0;
-    private static final double GRID_SIZE = 10.0;
-    private static final Color GRID_COLOR = new Color(1.0, 1.0, 1.0, 0.3);
+    private static final double GRID_SIZE = 2.54;
+    private static final Color GRID_COLOR = new Color(1.0, 1.0, 1.0, 0.1);
+    private static final double GRID_STROKE_WIDTH = 0.05;
 
-    private final Circle shadow = new Circle(10, Color.RED);
+    private final Circle shadow = new Circle(1, Color.RED);
     private final Text scaleText = new Text("x1.0");
     private final Group workArea = new Group(shadow, scaleText);
     private final Group crossHairArea = new Group();
     private final Group scrollArea = new Group(workArea, crossHairArea);
     private final LibrarySymbolSubEditor parentEditor;
-    private double scale = 1.0;
+    private double scale = 10.0;
     private Line hLine;
     private Line vLine;
+    private Scale workScale = new Scale();
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -67,6 +75,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
 
         scaleText.setLayoutX(100);
         scaleText.setLayoutY(100);
+        scaleText.setScaleX(0.1);
+        scaleText.setScaleY(0.1);
+
+        workArea.getTransforms().add(workScale);
 
         addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scaleOld = scale;
@@ -79,8 +91,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
             if (scale < SCALE_MIN) {
                 scale = SCALE_MIN;
             }
-            workArea.setScaleX(scale);
-            workArea.setScaleY(scale);
+            //workArea.setScaleX(scale);
+            //workArea.setScaleY(scale);
+            workScale.setX(scale);
+            workScale.setY(scale);
             scaleText.setText("x" + scale);
 
             double mX = event.getX();
@@ -193,6 +207,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
     }
 
     private void buildScene() {
+        //workArea.setScaleX(scale);
+        //workArea.setScaleY(scale);
+        scaleText.setText("x" + scale);
+
         double dash = 2.5;
         double space = 3.0;
         double crossW2 = (5.0 * dash + 4.0 * space) * 0.5;
@@ -203,49 +221,90 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
 
         crossHairArea.getChildren().addAll(hLine, vLine);
 
-//        Rectangle waBoundary = new Rectangle(WORK_AREA, WORK_AREA, new Color(0, 0, 1, 0.2));
-//        waBoundary.setLayoutX(-WA2);
-//        waBoundary.setLayoutY((-WA2));
-//
-//        workArea.getChildren().add(waBoundary);
+        int nGrids = (int) (WA2 / GRID_SIZE);
         // Add Grid
-        for (int y = 0; y <= WORK_AREA; y += GRID_SIZE) {
-            workArea.getChildren().add(gridLine(0, y));
+
+        workArea.getChildren().add(gridLine(0, true));
+        workArea.getChildren().add(gridLine(0, false));
+        for (int n = 1; n <= nGrids; n++) {
+            workArea.getChildren().add(gridLine(n, true));
+            workArea.getChildren().add(gridLine(-n, true));
+            workArea.getChildren().add(gridLine(n, false));
+            workArea.getChildren().add(gridLine(-n, false));
         }
-        for (int x = 0; x <= WORK_AREA; x += GRID_SIZE) {
-            workArea.getChildren().add(gridLine(x, 0));
-        }
+//        for (int x = 0; x <= WORK_AREA; x += GRID_SIZE) {
+//            workArea.getChildren().add(gridLine(x, 0));
+//        }
 
         // Add Zero point crosshair
         // Add symbol elements.
         workArea.getChildren().add(new Text("\nSymbol Editor"));
 
-        Text t1 = new Text(-200, -200, "1");
-        Text t2 = new Text(200, -200, "2");
-        Text t3 = new Text(-200, 200, "3");
-        Text t4 = new Text(200, 200, "4");
+        Text t1 = new Text(-20, -20, "1");
+        Text t2 = new Text(20, -20, "2");
+        Text t3 = new Text(-20, 20, "3");
+        Text t4 = new Text(20, 20, "4");
 
         workArea.getChildren().addAll(t1, t2, t3, t4);
+
+        Pin p1 = new Pin();
+        p1.setX(-10.16);
+        p1.setY(2.54);
+        p1.setName("A");
+        p1.setLength(PinLength.MIDDLE);
+        p1.setFunction(PinFunction.NONE);
+        p1.setVisible(PinVisible.BOTH);
+        PinNode pinNode1 = new PinNode(p1,
+                Color.RED, Color.DARKGREEN, Color.DARKGREY,
+                null, true
+        );
+
+        Pin p2 = new Pin();
+        p2.setX(-10.16);
+        p2.setY(-2.54);
+        p2.setName("B");
+        p2.setLength(PinLength.MIDDLE);
+        p2.setFunction(PinFunction.NONE);
+        p2.setVisible(PinVisible.BOTH);
+        PinNode pinNode2 = new PinNode(p2,
+                Color.RED, Color.DARKGREEN, Color.DARKGREY,
+                null, true
+        );
+
+        Pin p3 = new Pin();
+        p3.setX(10.16);
+        p3.setY(0);
+        p3.setName("Y");
+        p3.setLength(PinLength.MIDDLE);
+        p3.setFunction(PinFunction.DOT);
+        p3.setVisible(PinVisible.BOTH);
+        p3.setRot(180);
+        PinNode pinNode3 = new PinNode(p3,
+                Color.RED, Color.DARKGREEN, Color.DARKGREY,
+                null, true
+        );
+
+        workArea.getChildren().addAll(pinNode1, pinNode2, pinNode3);
+
     }
 
-    private Line gridLine(double x, double y) {
+    private Line gridLine(int n, boolean horiz) {
         double x1, x2, y1, y2;
-        double wa2 = WA2;
 
-        if (x == 0.0) { // H line
-            x1 = -wa2;
-            x2 = wa2;
-            y1 = y - wa2;
-            y2 = y - wa2;
+        if (horiz) { // H line
+            x1 = -WA2;
+            x2 = WA2;
+            y1 = n * GRID_SIZE;
+            y2 = n * GRID_SIZE;
         } else {
-            x1 = x - wa2;
-            x2 = x - wa2;
-            y1 = -wa2;
-            y2 = wa2;
+            x1 = n * GRID_SIZE;
+            x2 = n * GRID_SIZE;
+            y1 = -WA2;
+            y2 = WA2;
         }
         Line l = new Line(x1, y1, x2, y2);
         l.setStroke(GRID_COLOR);
-        l.setStrokeWidth(0.2);
+        l.setStrokeWidth(GRID_STROKE_WIDTH);
 
         return l;
     }
