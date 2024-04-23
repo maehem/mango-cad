@@ -139,6 +139,13 @@ public class Wire extends Element {
         return (y1+y2)/2.0;
     }
 
+    public double getLength() {
+        double ac = Math.abs(y2 - y1);
+        double cb = Math.abs(x2 - x1);
+
+        return Math.hypot(ac, cb);
+    }
+
     /**
      * @return the width
      */
