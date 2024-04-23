@@ -49,8 +49,8 @@ public class Pin extends Element {
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.
 
-    public static final String SWAPLEVEL_KEY = "swaplevel";
-    public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270");
+    public static final String SWAPLEVEL_KEY = "swaplevel"; // TODO Use PinField enum.
+    public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
     private String name;
     private double x;
