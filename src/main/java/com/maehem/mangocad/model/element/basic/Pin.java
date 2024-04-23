@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.PinDirection;
+import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
@@ -65,6 +66,11 @@ public class Pin extends Element {
     private String padValue = null;
 
     @Override
+    public int getLayerNum() {
+        return 94; // Same as symbol color  // TODO: get from static table.
+    }
+
+    @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
@@ -80,7 +86,9 @@ public class Pin extends Element {
      * @param name the name to set
      */
     public void setName(String name) {
+        String oldName = name;
         this.name = name;
+        notifyListeners(PinField.NAME, oldName, name);
     }
 
     /**
@@ -94,7 +102,9 @@ public class Pin extends Element {
      * @param x the x to set
      */
     public void setX(double x) {
+        double oldX = this.x;
         this.x = x;
+        notifyListeners(PinField.X, oldX, x);
     }
 
     /**
@@ -108,7 +118,9 @@ public class Pin extends Element {
      * @param y the y to set
      */
     public void setY(double y) {
+        double oldY = this.y;
         this.y = y;
+        notifyListeners(PinField.Y, oldY, y);
     }
 
     /**
@@ -122,7 +134,9 @@ public class Pin extends Element {
     }
 
     public void setPadValue(String value) {
+        String oldVal = this.padValue;
         this.padValue = value;
+        notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
     }
 
     /**
@@ -138,7 +152,9 @@ public class Pin extends Element {
      * @param visible
      */
     public void setVisible(PinVisible visible) {
+        PinVisible oldVisible = this.visible;
         this.visible = visible;
+        notifyListeners(PinField.VISIBLE, oldVisible, this.visible);
     }
 
     /**
@@ -152,7 +168,9 @@ public class Pin extends Element {
      * @param length the length to set
      */
     public void setLength(PinLength length) {
+        PinLength oldVal = this.length;
         this.length = length;
+        notifyListeners(PinField.LENGTH, oldVal, this.length);
     }
 
     /**
@@ -166,7 +184,9 @@ public class Pin extends Element {
      * @param direction the direction to set
      */
     public void setDirection(PinDirection direction) {
+        PinDirection oldVal = this.direction;
         this.direction = direction;
+        notifyListeners(PinField.DIRECTION, oldVal, this.direction);
     }
 
     /**
@@ -180,7 +200,9 @@ public class Pin extends Element {
      * @param function the function to set
      */
     public void setFunction(PinFunction function) {
+        PinFunction oldVal = this.function;
         this.function = function;
+        notifyListeners(PinField.FUNCTION, oldVal, this.function);
     }
 
     /**
@@ -194,7 +216,9 @@ public class Pin extends Element {
      * @param swapLevel the swapLevel to set
      */
     public void setSwapLevel(int swapLevel) {
+        int oldVal = this.swapLevel;
         this.swapLevel = swapLevel;
+        notifyListeners(PinField.SWAPLEVEL, oldVal, this.swapLevel);
     }
 
     public Rotation getRotation() {
@@ -212,11 +236,13 @@ public class Pin extends Element {
      * @param val the rotation to set
      */
     public void setRot(double val) {
+        double oldVal = this.getRot();
         this.rotation.setValue(val);
+        notifyListeners(PinField.ROTATION, oldVal, this.rotation.getValue());
     }
 
-    public int getLayerNum() {
-        return 94; // Same as symbol color  // TODO: get from static table.
+    public boolean isMirror() {
+        return this.rotation.isMirror();
     }
 
 }
