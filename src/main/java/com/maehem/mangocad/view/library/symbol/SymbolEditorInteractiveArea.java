@@ -17,10 +17,12 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.view.library.symbol.node.PinNode;
+import com.maehem.mangocad.view.node.WireNode;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
@@ -284,7 +286,51 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
                 null, true
         );
 
-        workArea.getChildren().addAll(pinNode1, pinNode2, pinNode3);
+        Wire w1 = new Wire();
+        w1.setX1(-5.08);
+        w1.setY1(5.08);
+        w1.setX2(-5.08);
+        w1.setY2(-5.08);
+        w1.setWidth(0.64);
+
+        Wire w2 = new Wire();
+        w2.setX1(-5.08);
+        w2.setY1(5.08);
+        w2.setX2(0.0);
+        w2.setY2(5.08);
+        w2.setWidth(0.64);
+
+        Wire w3 = new Wire();
+        w3.setX1(-5.08);
+        w3.setY1(-5.08);
+        w3.setX2(0.0);
+        w3.setY2(-5.08);
+        w3.setWidth(0.64);
+
+        Wire w4 = new Wire();
+        w4.setX1(0.0);
+        w4.setY1(-5.08);
+        w4.setX2(0.0);
+        w4.setY2(5.08);
+        w4.setWidth(0.64);
+        w4.setCurve(180.0);
+
+        WireNode wireNode1 = new WireNode(w1,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette());
+        WireNode wireNode2 = new WireNode(w2,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette());
+        WireNode wireNode3 = new WireNode(w3,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette());
+        WireNode wireNode4 = new WireNode(w4,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette());
+
+        workArea.getChildren().addAll(
+                pinNode1, pinNode2, pinNode3,
+                wireNode1, wireNode2, wireNode3, wireNode4);
 
     }
 
