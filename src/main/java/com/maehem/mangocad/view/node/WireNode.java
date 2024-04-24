@@ -106,10 +106,9 @@ public class WireNode extends Group implements ElementListener {
         // SWEEP on negative curve value.
         arcTo.setSweepFlag(curve < 0.0);
 
-        // Curve of 0 will have radius of MAX_DOUBLE
         double radius;
         if (curve == 0.0) {
-            radius = Double.MAX_VALUE;
+            radius = 10000.0; // Big number that makes it look straight.
         } else {
             radius = (SIN90 * wire.getLength() / 2.0)
                     / Math.sin(Math.toRadians(curve / 2.0));
