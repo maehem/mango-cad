@@ -62,6 +62,10 @@ public class Wire extends Element {
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
+    public Wire() {
+        setLayer(DEFAULT_LAYER);
+    }
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
