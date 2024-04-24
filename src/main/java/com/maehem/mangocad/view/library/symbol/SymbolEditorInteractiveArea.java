@@ -16,12 +16,14 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.view.library.symbol.node.PinNode;
+import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.WireNode;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -328,9 +330,34 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
                 parentEditor.getDrawing().getLayers(),
                 parentEditor.getDrawing().getPalette());
 
+        ElementCircle circle1 = new ElementCircle();
+        circle1.setX(10.16);
+        circle1.setY(20.32);
+        circle1.setRadius(10.16);
+        circle1.setWidth(0.7);
+        circle1.setLayer(94);
+
+        CircleNode circleNode1 = new CircleNode(circle1,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette()
+        );
+
+        ElementCircle circle2 = new ElementCircle();
+        circle2.setX(20.32);
+        circle2.setY(20.32);
+        circle2.setRadius(10.16);
+        circle2.setWidth(0.0);
+        circle2.setLayer(94);
+
+        CircleNode circleNode2 = new CircleNode(circle2,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette()
+        );
+
         workArea.getChildren().addAll(
                 pinNode1, pinNode2, pinNode3,
-                wireNode1, wireNode2, wireNode3, wireNode4);
+                wireNode1, wireNode2, wireNode3, wireNode4,
+                circleNode1, circleNode2);
 
     }
 
