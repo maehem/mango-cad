@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
@@ -53,7 +54,7 @@ public class ElementText extends Element {
     private double size;
 
     private TextFont font = TextFont.PROPORTIONAL;
-    private int ratio = 8; // Eagle called it ratio
+    private int ratio = 8;
     private final Rotation rotation = new Rotation();
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private int distance = 50;  // Line to line distance
@@ -83,7 +84,9 @@ public class ElementText extends Element {
      * @param x the x to set
      */
     public void setX(double x) {
+        double oldValue = this.x;
         this.x = x;
+        notifyListeners(ElementTextField.X, oldValue, this.x);
     }
 
     /**
@@ -97,7 +100,9 @@ public class ElementText extends Element {
      * @param y the y to set
      */
     public void setY(double y) {
+        double oldValue = this.y;
         this.y = y;
+        notifyListeners(ElementTextField.Y, oldValue, this.y);
     }
 
     /**
@@ -111,7 +116,9 @@ public class ElementText extends Element {
      * @param size the size to set
      */
     public void setSize(double size) {
+        double oldValue = this.size;
         this.size = size;
+        notifyListeners(ElementTextField.SIZE, oldValue, this.size);
     }
 
     /**
@@ -125,7 +132,9 @@ public class ElementText extends Element {
      * @param distance the distance to set
      */
     public void setDistance(int distance) {
+        double oldValue = this.distance;
         this.distance = distance;
+        notifyListeners(ElementTextField.DISTANCE, oldValue, this.distance);
     }
 
     /**
@@ -139,12 +148,14 @@ public class ElementText extends Element {
      * @param ratio the ratio to set
      */
     public void setRatio(int ratio) {
+        double oldValue = this.ratio;
         this.ratio = ratio;
+        notifyListeners(ElementTextField.RATIO, oldValue, this.ratio);
     }
 
     public double getDerivedStroke() {
         //return getRatio() * 0.01 * getSize() * 0.5;
-        return getRatio() * 0.01 * getSize();
+        return getRatio() * 0.01 * getSize(); // From a percentange Integer value (0..100) --> (0.0..1.0)
     }
 
     /**
@@ -160,7 +171,9 @@ public class ElementText extends Element {
      * @param rotation
      */
     public void setRotation(Rotation r) {
+        //Rotation oldValue = this.getRotation();
         Rotation.copyValues(r, this.getRotation());
+        notifyListeners(ElementTextField.ROTATION, null, this.getRotation());
     }
 
     public double getRot() {
@@ -168,7 +181,9 @@ public class ElementText extends Element {
     }
 
     public void setRot(double rot) {
+        double oldValue = this.getRot();
         getRotation().setValue(rot);
+        notifyListeners(ElementTextField.ROTATION, oldValue, this.getRot());
     }
 
     /**
@@ -182,17 +197,22 @@ public class ElementText extends Element {
      * @param align the align to set
      */
     public void setAlign(TextAlign align) {
+        TextAlign oldValue = this.align;
         if (align != null) {
             this.align = align;
         }
+        notifyListeners(ElementTextField.ALIGN, oldValue, this.align);
     }
 
     public void setAlign(String val) {
+        TextAlign oldValue = this.align;
         TextAlign ta = TextAlign.fromCode(val);
-        setAlign(ta);
         if (ta == null) {
             LOGGER.log(Level.SEVERE, "TextAlign: tried to set an alignment called \"{0}\"", val);
+        } else {
+            setAlign(ta);
         }
+        notifyListeners(ElementTextField.ALIGN, oldValue, this.align);
     }
 
     /**
@@ -206,7 +226,9 @@ public class ElementText extends Element {
      * @param value the value to set
      */
     public void setValue(String value) {
+        String oldValue = this.value;
         this.value = value;
+        notifyListeners(ElementTextField.VALUE, oldValue, this.value);
     }
 
     /**
@@ -220,7 +242,9 @@ public class ElementText extends Element {
      * @param font the font to set
      */
     public void setFont(TextFont font) {
+        TextFont oldValue = this.font;
         this.font = font;
+        notifyListeners(ElementTextField.FONT, oldValue, this.font);
     }
 
     /**
