@@ -77,6 +77,11 @@ public class CircleNode extends Circle implements ElementListener {
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
 
         setStroke(c);
+        if ( circle.getWidth() > 0.0 ) {
+            setFill(Color.TRANSPARENT);
+        } else {
+            setFill(c);
+        }
     }
 
     @Override
