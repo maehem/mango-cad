@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -117,6 +118,10 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
         leftToolBar.setOrientation(Orientation.VERTICAL);
         leftToolBar.setPrefWidth(48);
+    }
+
+    protected Drawing getDrawing() {
+        return getParentEditor().getLibrary().getParentDrawing();
     }
 
     @Override
