@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
+import static com.maehem.mangocad.model.element.enums.ElementTextField.VALUE;
 import static com.maehem.mangocad.model.element.enums.TextAlign.BOTTOM_CENTER;
 import static com.maehem.mangocad.model.element.enums.TextAlign.BOTTOM_LEFT;
 import static com.maehem.mangocad.model.element.enums.TextAlign.BOTTOM_RIGHT;
@@ -34,11 +35,9 @@ import static com.maehem.mangocad.model.element.enums.TextAlign.TOP_RIGHT;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
-import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ViewUtils.FONT_SCALE;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
@@ -591,16 +590,33 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        LOGGER.log(Level.SEVERE,
-                "Pin properties have changed!{0}: {1} => {2}",
-                new Object[]{field, oldVal.toString(), newVal.toString()});
+//        LOGGER.log(Level.SEVERE,
+//                "Pin properties have changed!{0}: {1} => {2}",
+//                new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch ((ElementTextField) field) {
+            case VALUE -> {
+                updateValue();
+            }
+            case LAYER -> {
+                updateLayer();
+            }
             case ElementTextField.X, ElementTextField.Y -> {
                 updateLocation();
             }
-            case VALUE -> {
-                updateValue();
+            case ROTATION -> {
+                updateLocation();
+                updateRotation();
+                updateAlign();
+            }
+            case ALIGN -> {
+                updateAlign();
+            }
+            case RATIO -> {
+                updateRatio();
+            }
+            case SIZE, FONT -> {
+                updateFont();
             }
         }
     }
