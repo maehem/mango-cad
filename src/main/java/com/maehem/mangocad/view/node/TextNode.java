@@ -109,7 +109,11 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         add(ch);
         add(cv);
 
+        debugBox.setStroke(Color.MAGENTA);
+        debugBox.setStrokeWidth(0.1);
+        debugBox.setFill(null);
         debugBox.getTransforms().add(debugRotate);
+
         ch.setStroke(Color.WHITE);
         ch.setStrokeWidth(CROSS_WIDTH);
         cv.setStroke(Color.WHITE);
@@ -136,6 +140,8 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         updateAlign();
         updateDistance();
 
+        updateDebugBox();
+
         Platform.runLater(() -> {
             textElement.addListener(this);
         });
@@ -155,6 +161,18 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         text.setText(textString);
     }
 
+    private void updateDebugBox() {
+        double size = textElement.getSize();
+        double lineSpace = size * (textElement.getDistance() * 0.01);
+        long lineCount = text.getText().lines().count();
+
+        double stackHeight = (lineCount * size) + (lineCount - 1) * lineSpace;
+        double textWidth = text.getBoundsInLocal().getWidth();
+
+        debugBox.setWidth(textWidth);
+        debugBox.setHeight(stackHeight);
+    }
+
     private void updateLocation() {
         text.setLayoutX(textElement.getX());
         text.setLayoutY(textElement.getY());
@@ -163,9 +181,6 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         ch.setLayoutY(textElement.getY());
         cv.setLayoutX(textElement.getX());
         cv.setLayoutY(textElement.getY());
-
-        debugBox.setLayoutX(textElement.getX());
-        debugBox.setLayoutY(textElement.getY());
 
         border.setLayoutX(textElement.getX());
         border.setLayoutY(textElement.getY());
@@ -344,7 +359,7 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 
     private void updateAlign() {
         double x = textElement.getX();
-        double y = textElement.getY();
+        double y = -textElement.getY();
 
         long lineCount = text.getText().lines().count();
         double size = textElement.getSize();
