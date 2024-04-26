@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.PinFunction;
@@ -24,6 +25,7 @@ import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.view.library.symbol.node.PinNode;
 import com.maehem.mangocad.view.node.CircleNode;
+import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.WireNode;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -33,6 +35,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
@@ -354,11 +357,26 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
                 parentEditor.getDrawing().getPalette()
         );
 
+        ElementText text1 = new ElementText();
+        text1.setX(-12.70);
+        text1.setY(-5.08);
+        text1.setValue(">NAME");
+        text1.setSize(5.0);
+        text1.setLayer(96);
+
         workArea.getChildren().addAll(
                 pinNode1, pinNode2, pinNode3,
                 wireNode1, wireNode2, wireNode3, wireNode4,
                 circleNode1, circleNode2);
 
+        TextNode textNode1 = new TextNode(text1, null,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette(),
+                null, true);
+
+        for (Shape s : textNode1) {
+            workArea.getChildren().add(s);
+        }
     }
 
     private Line gridLine(int n, boolean horiz) {
