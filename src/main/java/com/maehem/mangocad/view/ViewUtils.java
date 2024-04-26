@@ -32,6 +32,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 /**
  *
@@ -43,6 +44,10 @@ public class ViewUtils {
     public static final int HDR_IMG_SIZE = 16;
     public static final double DIALOG_GRAPHIC_SIZE = 48;
     public static final String CSS_FILE = "/style/dark.css";
+    public static final String FONT_PATH = "/fonts/mango-classic.ttf";
+    //public static final double FONT_SCALE = 1.055; // Font height can vary depending on Family.
+    public static final double FONT_SCALE = 1.000; // Mango Custom. Font height can vary depending on Family.
+    public static double FONT_SIZE_MULT = 1.666; // JavaFX pixel units to font size ratio. Found experimentally.
 
     public static Button createIconButton(String name, Image img) {
         return (Button) createIconButton(name, img, ICON_IMG_SIZE, false);
@@ -122,5 +127,13 @@ public class ViewUtils {
             LOGGER.log(Level.SEVERE, "Could not locate resource: {0}", jarPath);
         }
         return new Image(stream);
+    }
+
+    public static final Font getDefaultFont(double size) {
+        Font font = Font.loadFont(
+                ViewUtils.class.getResourceAsStream(FONT_PATH),
+                size);
+
+        return font;
     }
 }
