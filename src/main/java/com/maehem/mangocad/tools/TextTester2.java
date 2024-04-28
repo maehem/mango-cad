@@ -123,7 +123,7 @@ public class TextTester2 extends Application implements ElementListener {
         et.setY(0);
         et.setValue(textValue);
         et.setSize(1.0);
-        et.setRatio(8);
+        et.setRatio(20);
         et.setLayer(96);
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
@@ -149,6 +149,7 @@ public class TextTester2 extends Application implements ElementListener {
 
         initBackground();
         contentArea.getChildren().addAll(textNode);
+
         initMarker();
     }
 
@@ -179,6 +180,12 @@ public class TextTester2 extends Application implements ElementListener {
         // GRID
         for (int i = 0; i < 11; i++) {
             Line ghLine = new Line(-7, i - 5, 7, i - 5);
+            ghLine.setStroke(new Color(1.0, 1.0, 1.0, 0.2));
+            ghLine.setStrokeWidth(0.01);
+            ghLine.setStrokeType(StrokeType.CENTERED);
+            contentArea.getChildren().add(ghLine);
+
+            ghLine = new Line(-7, (i + 0.5) - 5, 7, (i + 0.5) - 5);
             ghLine.setStroke(new Color(1.0, 1.0, 1.0, 0.2));
             ghLine.setStrokeWidth(0.01);
             ghLine.setStrokeType(StrokeType.CENTERED);
