@@ -110,6 +110,8 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         debugBox.getTransforms().add(debugRotate);
         debugBox.getTransforms().add(debugScale);
         debugBox.getTransforms().add(debugTranslate);
+        debugRotate.setPivotX(0);
+        debugRotate.setPivotY(0);
 
         ch.setStroke(Color.WHITE);
         ch.setStrokeWidth(CROSS_WIDTH);
@@ -419,21 +421,21 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 
         switch (textElement.getAlign()) {
             case BOTTOM_LEFT -> {
-                transX = 0;
+                transX = mir ? -textWidth + stroke : 0;
                 transY = 0;
 
-                pivotX = -s2;
+                pivotX = mir ? textWidth - s2 : -s2;
                 pivotY = -baselineToBottom + s2;
 
                 ratioTX = s2;
                 ratioTY = -s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(0);
                 debugTranslate.setY(-stackHeight);
@@ -448,50 +450,51 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 ratioTX = 0;
                 ratioTY = -s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(-tw2);
                 debugTranslate.setY(-stackHeight);
             }
             case BOTTOM_RIGHT -> {
-                transX = -textWidth + stroke;
+                transX = mir ? 0 : -textWidth + stroke;
                 transY = 0;
 
                 ratioTX = -s2;
                 ratioTY = -s2;
 
-                pivotX = textWidth - s2;
+                pivotX = mir ? -s2 : textWidth - s2;
                 pivotY = -baselineToBottom + s2;
 
-                debugScale.setX(1.0);
-                debugScale.setX(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setX(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(-textWidth);
                 debugTranslate.setY(-stackHeight);
             }
             case CENTER_LEFT -> {
+                transX = mir ? -textWidth + stroke : 0;
                 transY = sh2 - s2;
 
                 ratioTX = s2;
                 ratioTY = 0;
 
-                pivotX = -s2;// + sFudge;
+                pivotX = mir ? textWidth - s2 : -s2;
                 pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
 
                 debugScale.setX(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(0);
                 debugTranslate.setY(-sh2);
@@ -506,52 +509,52 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 pivotX = tw2 - 1.0 * s2;
                 pivotY = -0.5 * size - 0.5 * baselineToBottom + 1.0 * s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(-tw2);
                 debugTranslate.setY(-sh2);
             }
             case CENTER_RIGHT -> {
-                transX = -textWidth + stroke;
+                transX = mir ? 0 : -textWidth + stroke;
                 transY = sh2 - s2;
 
                 ratioTX = -s2;
                 ratioTY = 0;
 
-                pivotX = textWidth - 1.0 * s2;
+                pivotX = mir ? -s2 : textWidth - s2;
                 pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(-textWidth);
                 debugTranslate.setY(-sh2);
             }
             case TOP_LEFT -> {
-                transX = 0;
+                transX = mir ? -textWidth + stroke : 0;
                 transY = stackHeight - s2;
 
                 ratioTX = s2;
                 ratioTY = 0;
 
-                pivotX = -s2;
+                pivotX = mir ? textWidth - s2 : -s2;
                 pivotY = -size + s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(0);
                 debugTranslate.setY(0);
@@ -566,12 +569,12 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 pivotX = tw2 - s2;
                 pivotY = -size + s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(-tw2);
                 debugTranslate.setY(0);
@@ -579,21 +582,21 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
             case TOP_RIGHT -> { // MIR works
 //                transX = -textWidth + 0.70 * s2;
 //                transY = size - stroke;
-                transX = -textWidth + stroke;
+                transX = mir ? 0 : -textWidth + stroke;
                 transY = stackHeight - s2;
 
                 ratioTX = -s2;
                 ratioTY = 0;
 
-                pivotX = textWidth - s2;
+                pivotX = mir ? -s2 : textWidth - s2;
                 pivotY = -size + s2;
 
-                debugScale.setX(1.0);
-                debugScale.setY(1.0);
+                //debugScale.setX(1.0);
+                //debugScale.setY(1.0);
 
-                debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0);
-                debugRotate.setPivotY(0);
+                //debugRotate.setAngle(-rot);
+                //debugRotate.setPivotX(0);
+                //debugRotate.setPivotY(0);
 
                 debugTranslate.setX(-textWidth);
                 debugTranslate.setY(0);
@@ -605,7 +608,10 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         ratioTranslate.setX(ratioTX);
         ratioTranslate.setY(ratioTY);
 
+        debugScale.setX(mir ? -1.0 : 1.0);
+
         double rotG = mir ? rot : -rot;
+        debugRotate.setAngle(rotG);
         rTTG.setAngle(rotG);
         rTTG.setPivotX(pivotX);
         rTTG.setPivotY(pivotY);
