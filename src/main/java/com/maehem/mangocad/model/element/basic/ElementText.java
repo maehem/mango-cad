@@ -146,8 +146,13 @@ public class ElementText extends Element {
 
     /**
      * @param ratio the ratio to set
+     *
+     * Maximum value is 31.
      */
     public void setRatio(int ratio) {
+        if (ratio > 31) {
+            ratio = 31;
+        }
         double oldValue = this.ratio;
         this.ratio = ratio;
         notifyListeners(ElementTextField.RATIO, oldValue, this.ratio);
