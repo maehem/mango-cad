@@ -34,6 +34,7 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
     TextTester2 parent;
 
     private final TextWidget textWidget = new TextWidget("Text", "Hello There.", this);
+    private final SliderWidget ratioWidget = new SliderWidget("Ratio", 1, 100, 15, this);
     private final SliderWidget posXWidget = new SliderWidget("X", -5, 5, 0, this);
     private final SliderWidget posYWidget = new SliderWidget("Y", -5, 5, 0, this);
     private final SliderWidget rotWidget = new SliderWidget("Rotate", 0, 360, 0, this);
@@ -43,9 +44,15 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
         this.parent = parent;
         this.et = et;
 
+        //ratioWidget.getSlider().setBlockIncrement(25);
+        ratioWidget.getSlider().setMajorTickUnit(25);
+        ratioWidget.getSlider().setMinorTickCount(0);
+        ratioWidget.getSlider().setShowTickLabels(true);
+        ratioWidget.getSlider().setSnapToTicks(false);
 
         setMinWidth(TextTester.WIDGET_WIDTH);
         getChildren().add(textWidget);
+        getChildren().add(ratioWidget);
         getChildren().add(posXWidget);
         getChildren().add(posYWidget);
         getChildren().add(rotWidget);
@@ -56,6 +63,7 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
 
     private void updateWidget() {
         textWidget.setText(et.getValue());
+        ratioWidget.getSlider().setValue((double) et.getRatio());
         posXWidget.getSlider().setValue(et.getX());
         posYWidget.getSlider().setValue(et.getY());
         rotWidget.getSlider().setValue(et.getRot());
@@ -72,6 +80,10 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
             case "Y" -> {
                 SliderWidget s = (SliderWidget) widget;
                 et.setY(s.getSlider().getValue());
+            }
+            case "Ratio" -> {
+                SliderWidget s = (SliderWidget) widget;
+                et.setRatio((int) s.getSlider().getValue());
             }
             case "Rotate" -> {
                 SliderWidget s = (SliderWidget) widget;
