@@ -152,6 +152,10 @@ public class Rotation {
         this.allowSpin = allowSpin;
     }
 
+    public boolean isSpun() {
+        return !spin && (value > 90.0 && value <= 270.0);
+    }
+
     /**
      * @return the allowMirror
      */
