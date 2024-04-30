@@ -276,4 +276,8 @@ public class ElementText extends Element {
         return copy;
     }
 
+    public boolean isSpun() {
+        return rotation.isSpun();
+    }
+
 }
