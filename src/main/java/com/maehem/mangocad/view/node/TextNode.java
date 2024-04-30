@@ -73,6 +73,7 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
     private final Translate textAlignTransform = new Translate();
     private final Translate textTranslate = new Translate();
     private final Translate parentMirrorTranslate = new Translate();
+    private final Translate ratioTranslate = new Translate();
 
     private final Scale mirrorTransform = new Scale(1.0, 1.0);
     private final Rotate rTTG = new Rotate(); // Text rotate
@@ -125,10 +126,11 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         text.setStrokeLineJoin(StrokeLineJoin.ROUND);
         text.setTextOrigin(VPos.BASELINE);
         text.getTransforms().addAll(
-                tR,
                 textAlignTransform,
                 textTranslate,
+                ratioTranslate,
                 rTTG,
+                tR,
                 parentMirrorTranslate
         );
 
@@ -170,7 +172,17 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
             barOver = false;
         }
 
-        text.setText(textString);
+        // JavaFX can't to font character spacing. So we do this ugly hack.
+        StringBuilder spaceStr = new StringBuilder();
+        for (int i = 18; i < textElement.getRatio(); i += 18) {
+            spaceStr.append(" ");
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : textString.toCharArray()) {
+            sb.append(c).append(spaceStr.toString());
+        }
+
+        text.setText(sb.toString());
     }
 
     private void updateDebugBox() {
@@ -190,9 +202,9 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
     }
 
     private void updateLocation() {
-        double stroke = textElement.getDerivedStroke();
-        text.setLayoutX(textElement.getX() + stroke * 0.15);
-        text.setLayoutY(textElement.getY() + stroke * 0.5);
+        //double stroke = textElement.getDerivedStroke();
+        text.setLayoutX(textElement.getX());
+        text.setLayoutY(textElement.getY());
 
         ch.setLayoutX(textElement.getX());
         ch.setLayoutY(textElement.getY());
@@ -247,11 +259,12 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         boolean spin = rotation.isSpin();
 
         double stroke = textElement.getDerivedStroke();
-        double sFudge = stroke * 0.099; // Nudge by 1%
+        //double sFudge = stroke * 0.099; // Nudge by 1%
         double s2 = stroke / 2.0;
+        double s4 = stroke / 4.0;
         double textWidth = getTextWidth();
         long lineCount = text.getText().lines().count();
-        double size = textElement.getSize() - s2;
+        double size = textElement.getSize();
         double lineSpace = size * (textElement.getDistance() * 0.01);
         double stackHeight = (lineCount * size) + (lineCount - 1) * lineSpace;
         double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
@@ -267,89 +280,92 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         mirrorTransform.setX(mir ? -1.0 : 1.0);
 
         // TODO: Merge these into AlignRotate's switch
-        if (!spin && (rot > 90 && rot <= 270)) {
-            //LOGGER.log(Level.SEVERE, "Align: {0}  rot:{1}  align:{2}", new Object[]{spin ? "spin" : "no spin", rot, textElement.getAlign()});
-//            Rotate tR = new Rotate(180,
-//                    textWidth / 2.0 + sFudge, // + s2,
-//                    lineCount > 1 ? (sh2 - size) : -size / 2.0
-//            );
-
+        if (textElement.isSpun()) {
             // Spin the text
             tR.setAngle(180);
-            tR.setPivotX(tw2);
-            tR.setPivotY(lineCount > 1 ? (sh2 - size) : -size / 2 - 0.75 * stroke);
+            tR.setPivotX(tw2 - s2);
+            tR.setPivotY(lineCount > 1 ? (sh2 - size) : -size / 2 + s2);
 
-            switch (textElement.getAlign()) {
-                case BOTTOM_LEFT -> {
-                    transX = s2;
-                    transY = -stroke;
-                    pivotX = textWidth - 0.85 * s2;
-                    pivotY = -size;
-                }
-                case BOTTOM_CENTER -> {
-                    transX = mir ? -transX + 0.8 * stroke : tw2 + s2;
-                    transY = -stroke;
-                    pivotX = tw2 - 0.9 * s2;
-                    pivotY = -size;
-                }
-                case BOTTOM_RIGHT -> {
-                    transX = textWidth + s2;
-                    transY = -stroke;
-                    pivotX = -0.85 * s2;
-                    pivotY = -size;
-                }
-                case CENTER_LEFT -> {
-                    transX = 1.2 * s2;
-                    transY = -stackHeight / 2.0 - 1.25 * stroke;
-                    pivotX = textWidth - 0.9 * s2;
-                    pivotY = -size / 2 + 0.5 * s2;
-                }
-                case CENTER -> {
-                    transX = tw2 + s2;
-                    transY = -stackHeight / 2.0 - 1.25 * stroke;
-                    pivotX = tw2 - 0.9 * s2;
-                    pivotY = -size / 2 + 0.25 * s2;
-                }
-                case CENTER_RIGHT -> {
-                    transX = textWidth + 0.75 * s2;
-                    transY = -stackHeight / 2.0 - 1.25 * stroke;
-                    pivotX = -0.75 * s2;
-                    pivotY = -size / 2 + 1.25 * s2;
-                }
-                case TOP_LEFT -> {
-                    pivotX = textWidth - s2 / 2.0;
-                    pivotY = -baselineToBottom + s2;
-                    transX = 1.1 * s2;
-                    transY = -stackHeight - stroke - s2;
-                }
-                case TOP_CENTER -> {  // Works already.
-                    transX = tw2 + s2;
-                    transY = -stackHeight - stroke - s2;
-                    pivotX = tw2;
-                    pivotY = -baselineToBottom + s2;
-                }
-                case TOP_RIGHT -> {
-                    pivotX = -3.5 * sFudge;
-                    pivotY = -baselineToBottom + s2;
-                    transX = textWidth + 1.1 * s2;
-                    transY = -stackHeight - stroke - s2;
-                }
-            }
-            textTranslate.setX(transX);
-            textTranslate.setY(transY);
+//            LOGGER.log(Level.SEVERE, "piv: x:{0}  y: {1}   textW: {2}  bounds: {3} , {4}",
+//                    new Object[]{
+//                        tw2 - 0.34 * s2, -size / 2 - 0.72 * stroke, textWidth,
+//                        text.getBoundsInLocal().getWidth() / 2.0,
+//                        text.getBoundsInLocal().getHeight() / 2.0
+//                    }
+//            );
 
-            double rotG = mir ? -rot : -rot;
-            rTTG.setAngle(rotG); // Fix me. Always -rot ?
+//            switch (textElement.getAlign()) {
+//                case BOTTOM_LEFT -> {
+//                    transX = -s4;
+//                    transY = -s2;
+//                    //pivotX = textWidth - 0.85 * s2;
+//                    //pivotY = -size;
+//                }
+//                case BOTTOM_CENTER -> {
+//                    transX = mir ? -transX + 0.8 * stroke : tw2;//+ s2;
+//                    transY = 0;//-stroke;
+//                    pivotX = tw2 - 0.9 * s2;
+//                    pivotY = -size;
+//                }
+//                case BOTTOM_RIGHT -> {
+//                    transX = textWidth;// + s2;
+//                    transY = 0;//-stroke;
+//                    pivotX = 0;//-0.85 * s2;
+//                    pivotY = -size;
+//                }
+//                case CENTER_LEFT -> {
+//                    transX = textWidth + s4;//1.2 * s2;
+//                    transY = -stackHeight / 2.0 + s4;// - 1.25 * stroke;
+//                    pivotX = textWidth - 0.9 * s2;
+//                    pivotY = -size / 2 + 0.5 * s2;
+//                }
+//                case CENTER -> {
+//                    transX = tw2 + s4;// + s2;
+//                    transY = -stackHeight / 2.0 + s4;// - 1.25 * stroke;
+//                    //transX = tw2 - 0.7 * s2;
+//                    //transY = -0.5 * size + stroke;
+//                    //pivotX = tw2 - 0.8 * s2;
+//                    //pivotY = -size / 2 + 0.50 * s2;
+//                }
+//                case CENTER_RIGHT -> {
+//                    transX = 0 - s4;// + 0.75 * s2;
+//                    transY = -stackHeight / 2.0 + s4;// - 1.25 * stroke;
+//                    pivotX = -0.7 * s2;
+//                    pivotY = -size / 2 + 0.5 * s2;
+//                }
+//                case TOP_LEFT -> {
+//                    transX = 0;//1.1 * s2;
+//                    transY = -stackHeight - stroke - s2;
+//                    transY = -stackHeight;
+//                    pivotX = textWidth - 0.55 * s2;
+//                    pivotY = -baselineToBottom + 0.9 * s2;
+//                }
+//                case TOP_CENTER -> {  // Works already.
+//                    transX = tw2;//+ s2;
+//                    transY = -stackHeight;// - stroke - s2;
+//                    pivotX = tw2;
+//                    pivotY = -baselineToBottom + s2;
+//                }
+//                case TOP_RIGHT -> {
+//                    transX = textWidth;// + 1.1 * s2;
+//                    transY = -stackHeight;// - stroke - s2;
+//                    pivotX = 0;
+//                    pivotY = -baselineToBottom + s2;
+//                }
+//            }
+            //textTranslate.setX(transX);
+            //textTranslate.setY(transY);
 
-            rTTG.setPivotX(pivotX);
-            rTTG.setPivotY(pivotY);
+            //double rotG = mir ? -rot : -rot;
+            //rTTG.setAngle(rotG); // Fix me. Always -rot ?
+
+            //rTTG.setPivotX(pivotX);
+            //rTTG.setPivotY(pivotY);
         } else {
             tR.setAngle(0); // No Spin
             tR.setPivotX(0);
             tR.setPivotY(0);
         }
-
-        // TODO: Debug box
     }
 
     private void updateAlignRotation() {
@@ -366,7 +382,6 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 
         double textWidth = getTextWidth();
 
-        double sFudge = stroke * 0.099; // Nudge by 1%
         double rot = textElement.getRot();
         boolean mir = textElement.getRotation().isMirror();
 
@@ -398,13 +413,19 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
             textAlignTransform.setY(0);
         }
 
+        double ratioTX = 0;
+        double ratioTY = 0;
+
         switch (textElement.getAlign()) {
             case BOTTOM_LEFT -> {
-                transX = 0.7 * s2;
-                transY = -stroke;
+                transX = 0;
+                transY = 0;
 
-                pivotX = -s2 + sFudge;
+                pivotX = -s2;
                 pivotY = -baselineToBottom + s2;
+
+                ratioTX = s2;
+                ratioTY = -s2;
 
                 debugBox.setLayoutX(x); // BL
                 debugBox.setLayoutY(-y - stackHeight);  // BL
@@ -416,11 +437,14 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 
             }
             case BOTTOM_CENTER -> {
-                transX = -tw2 + 0.7 * s2;
-                transY = -stroke;
+                transX = -tw2 + s2;
+                transY = 0;
 
                 pivotX = tw2 - s2;
                 pivotY = -baselineToBottom + s2;
+
+                ratioTX = 0;
+                ratioTY = -s2;
 
                 debugBox.setLayoutX(mir ? x + tw2 : x - tw2); // BC
                 debugBox.setLayoutY(-y - stackHeight);  // BC
@@ -431,8 +455,11 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 debugRotate.setPivotY(stackHeight);
             }
             case BOTTOM_RIGHT -> {
-                transX = -textWidth + 0.7 * s2;
-                transY = -stroke;
+                transX = -textWidth + stroke;
+                transY = 0;
+
+                ratioTX = -s2;
+                ratioTY = -s2;
 
                 pivotX = textWidth - s2;
                 pivotY = -baselineToBottom + s2;
@@ -446,26 +473,31 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 debugRotate.setPivotY(stackHeight);
             }
             case CENTER_LEFT -> {
-                transX = 0.7 * s2;
-                transY = 0.5 * stackHeight - stroke;
+                transY = sh2 - s2;
 
-                pivotX = -s2 + sFudge;
+                ratioTX = s2;
+                ratioTY = 0;
+
+                pivotX = -s2;// + sFudge;
                 pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
 
                 debugBox.setLayoutX(x); // CL
                 debugBox.setLayoutY(-y - sh2);  // CL
                 debugScale.setX(1.0);
-                //dr = new Rotate(-rot, 0, sh2); // CL
+
                 debugRotate.setAngle(-rot);
                 debugRotate.setPivotX(0);
                 debugRotate.setPivotY(sh2);
             }
             case CENTER -> {
-                transX = -tw2 + 0.7 * s2;
-                transY = 0.5 * size - stroke;
+                transX = -tw2 + s2;
+                transY = sh2 - s2;
 
-                pivotX = -transX;
-                pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
+                ratioTX = 0;
+                ratioTY = 0;
+
+                pivotX = tw2 - 1.0 * s2;
+                pivotY = -0.5 * size - 0.5 * baselineToBottom + 1.0 * s2;
 
                 debugBox.setLayoutX(mir ? x + tw2 : x - tw2); // CC
                 debugBox.setLayoutY(-y - sh2);  // CC
@@ -476,10 +508,13 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 debugRotate.setPivotY(sh2);
             }
             case CENTER_RIGHT -> {
-                transX = -textWidth + 0.7 * s2;
-                transY = 0.5 * stackHeight - stroke;
+                transX = -textWidth + stroke;
+                transY = sh2 - s2;
 
-                pivotX = -transX;
+                ratioTX = -s2;
+                ratioTY = 0;
+
+                pivotX = textWidth - 1.0 * s2;
                 pivotY = -0.5 * size - 0.5 * baselineToBottom + s2;
 
                 debugBox.setLayoutX(x); // CR
@@ -487,15 +522,18 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 debugScale.setX(-1.0);
 
                 debugRotate.setAngle(-rot);
-                debugRotate.setPivotX(0.3 * s2);
+                debugRotate.setPivotX(0);
                 debugRotate.setPivotY(sh2);
             }
             case TOP_LEFT -> {
-                transX = 0.70 * s2;
-                transY = size - stroke;
+                transX = 0;
+                transY = stackHeight - s2;
 
-                pivotX = -transX;
-                pivotY = -transY;
+                ratioTX = s2;
+                ratioTY = 0;
+
+                pivotX = -s2;
+                pivotY = -size + s2;
 
                 debugBox.setLayoutX(x); // TL
                 debugBox.setLayoutY(-y);  // TL
@@ -506,11 +544,14 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 debugRotate.setPivotY(0);
             }
             case TOP_CENTER -> {
-                transX = -tw2 + 0.70 * s2;
-                transY = size - stroke;
+                transX = -tw2 + s2;
+                transY = stackHeight - s2;
 
-                pivotX = -transX;
-                pivotY = -transY;
+                ratioTX = 0;
+                ratioTY = 0;
+
+                pivotX = tw2 - s2;
+                pivotY = -size + s2;
 
                 debugBox.setLayoutX(mir ? x + tw2 : x - tw2); // BC
                 debugBox.setLayoutY(-y);  // BC
@@ -521,11 +562,16 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
                 debugRotate.setPivotY(0);
             }
             case TOP_RIGHT -> { // MIR works
-                transX = -textWidth + 0.70 * s2;
-                transY = size - stroke;
+//                transX = -textWidth + 0.70 * s2;
+//                transY = size - stroke;
+                transX = -textWidth + stroke;
+                transY = stackHeight - s2;
 
-                pivotX = -transX - 0.66 * s2;
-                pivotY = -transY;
+                ratioTX = -s2;
+                ratioTY = 0;
+
+                pivotX = textWidth - s2;
+                pivotY = -size + s2;
 
                 debugBox.setLayoutX(x); // TR
                 debugBox.setLayoutY(-y);  // TR
@@ -539,6 +585,8 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 
         textTranslate.setX(transX);
         textTranslate.setY(transY);
+        ratioTranslate.setX(ratioTX);
+        ratioTranslate.setY(ratioTY);
 
         double rotG = mir ? rot : -rot;
         rTTG.setAngle(rotG);
@@ -581,6 +629,7 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         switch ((ElementTextField) field) {
             case VALUE -> {
                 updateValue();
+                updateDebugBox();
             }
             case LAYER -> {
                 updateLayer();
@@ -598,9 +647,15 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
             }
             case RATIO -> {
                 updateRatio();
+                updateValue();
+                updateFont();
+                updateAlignRotation();
+                updateSpin();
+                updateDebugBox();
             }
             case SIZE, FONT -> {
                 updateFont();
+                updateDebugBox();
             }
         }
     }
