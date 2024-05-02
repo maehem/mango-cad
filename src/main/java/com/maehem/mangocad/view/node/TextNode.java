@@ -27,15 +27,15 @@ import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
+import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ViewUtils.FONT_SCALE;
-import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.geometry.VPos;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
@@ -48,7 +48,7 @@ import javafx.scene.transform.Translate;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextNode extends ArrayList<Shape> implements ElementListener {
+public class TextNode extends ViewNode implements ElementListener {
 
     private final double CROSS_SIZE = 0.5; // Crosshairs size
     private final double CROSS_WIDTH = 0.01;
@@ -87,9 +87,10 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
     private final Layers layers;
     private final ColorPalette palette;
     private final Rotation parentRotation;
-    private boolean showCrosshair;
+    private boolean showCrosshair;  // TODO Implement!
 
-    public TextNode(ElementText et, String altText, Layers layers, ColorPalette palette, Rotation parentRotation, boolean showCrossHair) {
+    public TextNode(ElementText et, String altText, Layers layers, ColorPalette palette, Rotation parentRotation, boolean showCrossHair, PickListener pickListener) {
+        super(et, pickListener);
         this.textElement = et;
         this.altText = altText;
         this.layers = layers;
@@ -141,6 +142,19 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
         updateDistance();
 
         updateDebugBox();
+
+        text.addEventFilter(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            if (listener != null) {
+                getPickListener().nodePicked(this, me);
+            }
+        });
+        text.addEventFilter(MouseEvent.MOUSE_RELEASED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            if (listener != null) {
+                getPickListener().nodePicked(this, me);
+            }
+        });
 
         Platform.runLater(() -> {
             textElement.addListener(this);
@@ -280,7 +294,6 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
 //        double pivotY = 0;
 //        double transX = 0;
 //        double transY = 0;
-
         mirrorTransform.setX(mir ? -1.0 : 1.0);
 
         // TODO: Merge these into AlignRotate's switch
@@ -546,4 +559,10 @@ public class TextNode extends ArrayList<Shape> implements ElementListener {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "TextNode: " + textElement.getValue();
+    }
+
 }
