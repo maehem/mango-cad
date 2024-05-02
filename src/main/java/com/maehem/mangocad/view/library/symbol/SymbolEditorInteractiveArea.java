@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -23,9 +24,11 @@ import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.library.symbol.node.PinNode;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.TextNode;
+import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -43,7 +46,7 @@ import javafx.scene.transform.Scale;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorInteractiveArea extends ScrollPane {
+public class SymbolEditorInteractiveArea extends ScrollPane implements PickListener {
 
     private static final double SCALE_MAX = 40.0;
     private static final double SCALE_MIN = 5.0;
@@ -64,6 +67,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
     private Line hLine;
     private Line vLine;
     private Scale workScale = new Scale();
+    private final double PICK_SIZE = 1.0;
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -372,7 +376,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
         TextNode textNode1 = new TextNode(text1, null,
                 parentEditor.getDrawing().getLayers(),
                 parentEditor.getDrawing().getPalette(),
-                null, true);
+                null, true, this);
 
         for (Shape s : textNode1) {
             workArea.getChildren().add(s);
@@ -398,5 +402,39 @@ public class SymbolEditorInteractiveArea extends ScrollPane {
         l.setStrokeWidth(GRID_STROKE_WIDTH);
 
         return l;
+    }
+
+    @Override
+    public void nodePicked(ViewNode node, MouseEvent me) {
+        double x = me.getX();
+        double y = me.getY();
+
+        if (me.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            if (!node.isDragging()) {
+
+                // Pick
+                if (PICK_SIZE > Math.abs(x) && PICK_SIZE > Math.abs(y)) {
+                    node.setDragging(true);
+                    me.consume();
+                }
+            } else {
+                if (node.getElement() instanceof ElementXY n) {
+                    double SNAP = 2.54;
+                    int xx = (int) (x / SNAP);
+                    int yy = (int) (y / SNAP);
+
+                    if (xx != 0) {
+                        n.setX(n.getX() + xx * SNAP);
+                    }
+                    if (yy != 0) {
+                        n.setY(n.getY() + yy * SNAP);
+                    }
+                    me.consume();
+                }
+            }
+        } else if (me.getEventType() == MouseEvent.MOUSE_RELEASED) {
+            node.setDragging(false);
+            me.consume();
+        }
     }
 }
