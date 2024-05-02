@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
@@ -43,7 +44,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element {
+public class ElementText extends Element implements ElementXY {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -76,6 +77,7 @@ public class ElementText extends Element {
     /**
      * @return the x
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -83,6 +85,7 @@ public class ElementText extends Element {
     /**
      * @param x the x to set
      */
+    @Override
     public void setX(double x) {
         double oldValue = this.x;
         this.x = x;
@@ -92,6 +95,7 @@ public class ElementText extends Element {
     /**
      * @return the y
      */
+    @Override
     public double getY() {
         return y;
     }
@@ -99,6 +103,7 @@ public class ElementText extends Element {
     /**
      * @param y the y to set
      */
+    @Override
     public void setY(double y) {
         double oldValue = this.y;
         this.y = y;
