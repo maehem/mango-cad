@@ -26,8 +26,10 @@ import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
 import com.maehem.mangocad.view.node.TextNode;
+import com.maehem.mangocad.view.node.ViewNode;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import javafx.application.Application;
@@ -38,6 +40,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -49,7 +52,7 @@ import javafx.stage.Stage;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextTester2 extends Application implements ElementListener {
+public class TextTester2 extends Application implements ElementListener, PickListener {
 
     public static final int WIDGET_WIDTH = 300;
     private final Menu fileMenu = new Menu("File");
@@ -62,7 +65,7 @@ public class TextTester2 extends Application implements ElementListener {
     private final Layers layers = new Layers();
 
     //private final String textValue = "HridH\nXXXXX\nHHHHH";
-    private final String textValue = "!HridH";
+    private final String textValue = "HridH\nHELLO";
     private Line hLine;
     private Line vLine;
 
@@ -144,7 +147,7 @@ public class TextTester2 extends Application implements ElementListener {
 
         TextNode textNode = new TextNode(et, null,
                 layers, palette,
-                null, true
+                null, true, this
         );
 
         initBackground();
@@ -232,5 +235,10 @@ public class TextTester2 extends Application implements ElementListener {
                 vLine.setEndX(et.getX());
             }
         }
+    }
+
+    @Override
+    public void nodePicked(ViewNode node, MouseEvent me) {
+        LOGGER.log(Level.SEVERE, "Node picked: " + node.toString());
     }
 }
