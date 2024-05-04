@@ -29,4 +29,5 @@ public interface ElementXY {
     public void setX(double x);
 
     public void setY(double y);
+
 }
