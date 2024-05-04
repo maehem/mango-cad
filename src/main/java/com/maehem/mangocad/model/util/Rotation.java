@@ -80,8 +80,9 @@ public class Rotation {
      * @param value the value to set
      */
     public void setValue(double value) {
-        // Range checking. Round to nearest 90 degree angle.
-        if (constrained) {
+        value %= 360.0;// Over-range limiting.
+
+        if (constrained) {  // Round to nearest 90 degree angle.
             if (value >= 45.0 && value < 135.0) {
                 this.value = 90;
             } else if (value >= 135.0 && value < 225.0) {
