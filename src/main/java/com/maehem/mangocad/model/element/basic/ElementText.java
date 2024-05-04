@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
@@ -44,7 +45,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element implements ElementXY {
+public class ElementText extends Element implements ElementXY, ElementRotation {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -171,6 +172,7 @@ public class ElementText extends Element implements ElementXY {
     /**
      * @return the rotation
      */
+    @Override
     public Rotation getRotation() {
         return rotation;
     }
@@ -186,10 +188,12 @@ public class ElementText extends Element implements ElementXY {
         notifyListeners(ElementTextField.ROTATION, null, this.getRotation());
     }
 
+    @Override
     public double getRot() {
         return rotation.getValue();
     }
 
+    @Override
     public void setRot(double rot) {
         double oldValue = this.getRot();
         getRotation().setValue(rot);
@@ -286,6 +290,7 @@ public class ElementText extends Element implements ElementXY {
         return copy;
     }
 
+    @Override
     public boolean isSpun() {
         return rotation.isSpun();
     }
