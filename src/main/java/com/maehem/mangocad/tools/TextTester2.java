@@ -65,7 +65,7 @@ public class TextTester2 extends Application implements ElementListener, PickLis
     private final Layers layers = new Layers();
 
     //private final String textValue = "HridH\nXXXXX\nHHHHH";
-    private final String textValue = "HridH\nHELLO";
+    private final String textValue = ">NAME";
     private Line hLine;
     private Line vLine;
 
@@ -130,6 +130,8 @@ public class TextTester2 extends Application implements ElementListener, PickLis
         et.setLayer(96);
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
+        et.setAllowMirror(true);
+        et.setAllowSpin(true);
         et.getRotation().setMirror(false);
         et.getRotation().setSpin(false);
 
