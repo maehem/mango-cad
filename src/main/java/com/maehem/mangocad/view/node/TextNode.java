@@ -143,13 +143,15 @@ public class TextNode extends ViewNode implements ElementListener {
 
         updateDebugBox();
 
-        text.addEventFilter(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
+        // TODO:  Not DRAG!  Click to move with mouse
+        // click to place.
+        text.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
             PickListener listener = getPickListener();
             if (listener != null) {
                 getPickListener().nodePicked(this, me);
             }
         });
-        text.addEventFilter(MouseEvent.MOUSE_RELEASED, (MouseEvent me) -> {
+        text.addEventFilter(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
             PickListener listener = getPickListener();
             if (listener != null) {
                 getPickListener().nodePicked(this, me);
