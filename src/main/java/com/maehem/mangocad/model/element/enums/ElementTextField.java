@@ -27,6 +27,11 @@ public enum ElementTextField {
     FONT("font", String.class),
     RATIO("ratio", Integer.class),
     ROTATION("rotation", String.class),
+    SPIN("spin", Boolean.class),
+    CONSTRAINED("constrained", Boolean.class),
+    ALLOW_SPIN("allowSpin", Boolean.class),
+    MIRROR("mirror", Boolean.class),
+    ALLOW_MIRROR("allowMirror", Boolean.class),
     ALIGN("align", TextAlign.class),
     DISTANCE("distance", Integer.class),
     VALUE("value", String.class);
