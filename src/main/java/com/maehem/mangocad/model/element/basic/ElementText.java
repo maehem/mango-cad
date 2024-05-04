@@ -295,4 +295,64 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
         return rotation.isSpun();
     }
 
+    @Override
+    public void setSpin(boolean spin) {
+        boolean oldValue = isSpin();
+        rotation.setSpin(spin);
+        notifyListeners(ElementTextField.SPIN, oldValue, this.isSpin());
+    }
+
+    @Override
+    public boolean isSpin() {
+        return rotation.isSpin();
+    }
+
+    @Override
+    public void setAllowSpin(boolean allowSpin) {
+        boolean oldValue = isSpinAllowed();
+        rotation.setAllowSpin(allowSpin);
+        notifyListeners(ElementTextField.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+    }
+
+    @Override
+    public boolean isSpinAllowed() {
+        return rotation.isAllowSpin();
+    }
+
+    @Override
+    public boolean isConstrained() {
+        return getRotation().isConstrained();
+    }
+
+    @Override
+    public void setConstrained(boolean value) {
+        boolean oldValue = this.isConstrained();
+        rotation.setConstrained(value);
+        notifyListeners(ElementTextField.CONSTRAINED, oldValue, this.isConstrained());
+    }
+
+    @Override
+    public void setMirror(boolean value) {
+        boolean oldValue = this.isMirrored();
+        rotation.setMirror(value);
+        notifyListeners(ElementTextField.MIRROR, oldValue, this.isMirrored());
+    }
+
+    @Override
+    public boolean isMirrored() {
+        return getRotation().isMirror();
+    }
+
+    @Override
+    public boolean isMirrorAllowed() {
+        return getRotation().isAllowMirror();
+    }
+
+    @Override
+    public void setAllowMirror(boolean value) {
+        boolean oldValue = this.isMirrorAllowed();
+        rotation.setAllowMirror(value);
+        notifyListeners(ElementTextField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+    }
+
 }
