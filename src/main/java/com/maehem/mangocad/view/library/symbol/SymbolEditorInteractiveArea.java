@@ -192,8 +192,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         case MIDDLE -> { // Mirror
                             if (movingNode.getElement() instanceof ElementRotation er) {
                                 Rotation rotation = er.getRotation();
-                                if (rotation.isAllowMirror()) {
-                                    rotation.setMirror(!rotation.isMirror());
+                                if (er.isMirrorAllowed()) {
+                                    er.setMirror(!er.isMirrored());
                                     t.consume();
                                 } else {
                                     LOGGER.log(Level.SEVERE, "Mirror not allowed!");
@@ -366,6 +366,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         text1.setSize(5.0);
         text1.setLayer(96);
         text1.getRotation().setConstrained(true);
+        text1.setAllowMirror(true);
+        text1.setAllowSpin(true);
 
         workArea.getChildren().addAll(
                 pinNode1, pinNode2, pinNode3,
