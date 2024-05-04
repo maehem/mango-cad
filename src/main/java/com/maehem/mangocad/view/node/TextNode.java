@@ -22,6 +22,9 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
+import static com.maehem.mangocad.model.element.enums.ElementTextField.MIRROR;
+import static com.maehem.mangocad.model.element.enums.ElementTextField.RATIO;
+import static com.maehem.mangocad.model.element.enums.ElementTextField.SPIN;
 import static com.maehem.mangocad.model.element.enums.ElementTextField.VALUE;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
@@ -526,7 +529,7 @@ public class TextNode extends ViewNode implements ElementListener {
 //                new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch ((ElementTextField) field) {
-            case VALUE -> {
+            case VALUE, DISTANCE -> {
                 updateValue();
                 updateDistance();
                 updateDebugBox();
@@ -544,6 +547,13 @@ public class TextNode extends ViewNode implements ElementListener {
             }
             case ALIGN -> {
                 updateAlignRotation();
+            }
+            case MIRROR, SPIN -> {
+                updateLocation();
+                updateDistance();
+                updateAlignRotation();
+                updateSpin();
+                updateDebugBox();
             }
             case RATIO -> {
                 updateRatio();
