@@ -23,6 +23,7 @@ import com.maehem.mangocad.tools.widgets.TextWidget;
 import com.maehem.mangocad.tools.widgets.ToggleWidget;
 import com.maehem.mangocad.tools.widgets.Widget;
 import com.maehem.mangocad.tools.widgets.WidgetListener;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 
 /**
@@ -39,6 +40,7 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
     private final SliderWidget posXWidget = new SliderWidget("X", -5, 5, 0, this);
     private final SliderWidget posYWidget = new SliderWidget("Y", -5, 5, 0, this);
     private final SliderWidget rotWidget = new SliderWidget("Rotate", 0, 360, 0, this);
+    private final ToggleWidget constrainWidget = new ToggleWidget("Constrained", this);
     private final ListSelectWidget alignWidget = new ListSelectWidget("Alignment", this);
     private final ToggleWidget spinWidget = new ToggleWidget("Spin", this);
     private final ToggleWidget mirrorWidget = new ToggleWidget("Mirror", this);
@@ -61,6 +63,7 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
         getChildren().add(spinWidget);
         getChildren().add(mirrorWidget);
         getChildren().add(rotWidget);
+        getChildren().add(constrainWidget);
         getChildren().add(alignWidget);
 
         updateWidget();
@@ -95,6 +98,21 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
             case "Rotate" -> {
                 SliderWidget s = (SliderWidget) widget;
                 et.setRot(s.getSlider().getValue());
+            }
+            case "Constrained" -> {
+                ToggleWidget s = (ToggleWidget) widget;
+                et.setConstrained(s.getValue());
+                if (s.getValue()) {
+                    Slider slider = rotWidget.getSlider();
+                    slider.setSnapToTicks(true);
+                    slider.setMajorTickUnit(90.0);
+                    slider.setMinorTickCount(0);
+                    slider.setBlockIncrement(90.0);
+                } else {
+                    Slider slider = rotWidget.getSlider();
+                    slider.setSnapToTicks(true);
+                    slider.setMajorTickUnit(0.1);
+                }
             }
             case "Alignment" -> {
                 ListSelectWidget s = (ListSelectWidget) widget;
