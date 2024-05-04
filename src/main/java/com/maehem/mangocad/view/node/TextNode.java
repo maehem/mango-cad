@@ -277,32 +277,28 @@ public class TextNode extends ViewNode implements ElementListener {
 
     private void updateSpin() {
         Rotation rotation = textElement.getRotation();
-        //double rot = rotation.getValue();
+        double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
         //boolean spin = rotation.isSpin();
 
         double stroke = textElement.getDerivedStroke();
-        //double sFudge = stroke * 0.099; // Nudge by 1%
         double s2 = stroke / 2.0;
         double textWidth = getTextWidth();
         long lineCount = text.getText().lines().count();
         double size = textElement.getSize();
-        //double lineSpace = size * (textElement.getDistance() * 0.01);
-        //double stackHeight = (lineCount * size) + (lineCount - 1) * lineSpace;
         double stackHeight = getStackHeight();
-        //double baselineToBottom = (lineCount - 1) * -(size + lineSpace);
 
         double tw2 = textWidth / 2.0;
         double sh2 = stackHeight / 2.0;
 
-//        double pivotX = 0;
-//        double pivotY = 0;
-//        double transX = 0;
-//        double transY = 0;
+        boolean spinIt = textElement.isSpun()
+                || (mir && (rot >= 90 && rot < 180))
+                || (mir && (rot >= 270 && rot < 360));
+
         mirrorTransform.setX(mir ? -1.0 : 1.0);
 
         // TODO: Merge these into AlignRotate's switch
-        if (textElement.isSpun()) {
+        if (spinIt) {
             // Spin the text
             tR.setAngle(180);
             tR.setPivotX(tw2 - s2);
@@ -362,7 +358,7 @@ public class TextNode extends ViewNode implements ElementListener {
 
         switch (textElement.getAlign()) {
             case BOTTOM_LEFT -> {
-                transX = mir ? -textWidth + stroke : 0;
+                transX = mir ? -textWidth : 0;
                 transY = 0;
 
                 pivotX = mir ? textWidth - s2 : -s2;
@@ -388,7 +384,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 debugTranslate.setY(-stackHeight);
             }
             case BOTTOM_RIGHT -> {
-                transX = mir ? 0 : -textWidth + stroke;
+                transX = mir ? stroke : -textWidth + stroke;
                 transY = 0;
 
                 ratioTX = -s2;
@@ -401,7 +397,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 debugTranslate.setY(-stackHeight);
             }
             case CENTER_LEFT -> {
-                transX = mir ? -textWidth + stroke : 0;
+                transX = mir ? -textWidth : 0;
                 transY = sh2 - s2;
 
                 ratioTX = s2;
@@ -427,7 +423,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 debugTranslate.setY(-sh2);
             }
             case CENTER_RIGHT -> {
-                transX = mir ? 0 : -textWidth + stroke;
+                transX = mir ? stroke : -textWidth + stroke;
                 transY = sh2 - s2;
 
                 ratioTX = -s2;
@@ -440,7 +436,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 debugTranslate.setY(-sh2);
             }
             case TOP_LEFT -> {
-                transX = mir ? -textWidth + stroke : 0;
+                transX = mir ? -textWidth : 0;
                 //transY = stackHeight - s2;
                 transY = size - s2;
 
@@ -467,7 +463,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 debugTranslate.setY(0);
             }
             case TOP_RIGHT -> { // MIR works
-                transX = mir ? 0 : -textWidth + stroke;
+                transX = mir ? stroke : -textWidth + stroke;
                 transY = size - s2;
 
                 ratioTX = -s2;
