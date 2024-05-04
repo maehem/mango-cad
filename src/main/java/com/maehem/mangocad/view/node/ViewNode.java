@@ -29,7 +29,7 @@ public abstract class ViewNode extends ArrayList<Shape> {
 
     private final Element element;
     private PickListener listener;
-    private boolean dragging = false;
+    private boolean moving = false;
 
     public ViewNode(Element e, PickListener l) {
         element = e;
@@ -48,12 +48,12 @@ public abstract class ViewNode extends ArrayList<Shape> {
         return listener;
     }
 
-    public boolean isDragging() {
-        return dragging;
+    public boolean isMoving() {
+        return moving;
     }
 
-    public void setDragging(boolean value) {
-        dragging = value;
+    public void setMoving(boolean value) {
+        moving = value;
     }
 
     @Override
