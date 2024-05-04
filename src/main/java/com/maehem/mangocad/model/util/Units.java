@@ -26,8 +26,8 @@ import java.util.List;
 public enum Units {
     MIL("mil", 39.3701), MM("mm", 1.0), INCH("inch", 0.0393701), MIC("mic", 1000.0);
 
-    private final String code;
-    private double mult;
+    public final String code;
+    public final double mult;
 
     private Units(String code, double mult) {
         this.code = code;
