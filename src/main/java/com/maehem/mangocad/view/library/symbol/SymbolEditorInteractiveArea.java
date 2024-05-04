@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementText;
@@ -30,6 +32,8 @@ import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
@@ -47,6 +51,8 @@ import javafx.scene.transform.Scale;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class SymbolEditorInteractiveArea extends ScrollPane implements PickListener {
+
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     private static final double SCALE_MAX = 40.0;
     private static final double SCALE_MIN = 5.0;
@@ -68,6 +74,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private Line vLine;
     private Scale workScale = new Scale();
     private final double PICK_SIZE = 1.0;
+    private ViewNode movingNode = null;
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -84,17 +91,18 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         setHvalue(0.5);
         buildScene();
 
-        scaleText.setLayoutX(100);
-        scaleText.setLayoutY(100);
-        scaleText.setScaleX(0.1);
-        scaleText.setScaleY(0.1);
+        shadow.setVisible(false);
+
+        scaleText.setLayoutX(10);
+        scaleText.setLayoutY(10);
+        scaleText.setScaleX(0.5);
+        scaleText.setScaleY(0.5);
 
         workArea.getTransforms().add(workScale);
 
         addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scaleOld = scale;
             double scrollAmt = event.getDeltaY();
-            //LOGGER.log(Level.SEVERE, "Scroll Delta: {0},{1}", new Object[]{evt.getDeltaX(), evt.getDeltaY()});
             scale += scrollAmt * SCALE_FACTOR;
             if (scale > SCALE_MAX) {
                 scale = SCALE_MAX;
@@ -102,11 +110,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             if (scale < SCALE_MIN) {
                 scale = SCALE_MIN;
             }
-            //workArea.setScaleX(scale);
-            //workArea.setScaleY(scale);
             workScale.setX(scale);
             workScale.setY(scale);
-            scaleText.setText("x" + scale);
+            scaleText.setText("x" + String.format("%.2f", scale));
 
             double mX = event.getX();
             double mY = event.getY();
@@ -123,8 +129,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             double waY = (mY - (vaH * sbVV)) / scaleOld;
             waY += (sbVV * 2 - 1) * (WA2);
 
-            //LOGGER.log(Level.SEVERE, "   WAX/Y: {0},{1}", new Object[]{waX, waY});
-            //LOGGER.log(Level.SEVERE, " VAM X/Y: {0},{1}", new Object[]{(mX - vaW / 2.0) / scale, (mY - vaH / 2.0) / scale});
             // Derive the sb values after the scale.
             double sbX = 0.5 + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
             double sbY = 0.5 + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
@@ -132,8 +136,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             setHvalue(sbX);
             setVvalue(sbY);
 
-            //LOGGER.log(Level.SEVERE, "SB: OLD: {0},{1}    NEW: {2},{3}", new Object[]{sbHV, sbVV, sbX, sbY});
-            //LOGGER.log(Level.SEVERE, "Mouse: {0},{1}", new Object[]{mX, mY});
             event.consume();
         });
         addEventFilter(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
@@ -160,6 +162,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 shadow.setLayoutY(waY);
             }
 
+            // Move any selected node.
+            if (movingNode != null && movingNode.getElement() instanceof ElementXY n) {
+                // TODO: Is 'option' key held down? then use altGrid.
+                double snap = parentEditor.getDrawing().getGrid().getSizeMM();
+                double xxx = (int) (waX / snap) * snap; // Snap to grid
+                double yyy = (int) (waY / snap) * snap; // Snap to grid
+
+                n.setX(xxx);
+                n.setY(yyy);
+            }
+
         });
         setOnMouseEntered((t) -> {
             getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
@@ -167,54 +180,30 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         setOnMouseExited((t) -> {
             getScene().setCursor(Cursor.DEFAULT);
         });
-
-//        addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-//            // Add a circle where we clicked.
-//            LOGGER.log(Level.SEVERE, "sBar: {0},{1}  mouse: {2},{3}   window: {4},{5}",
-//                    new Object[]{
-//                        getHvalue(), getVvalue(),
-//                        me.getX(), me.getY(),
-//                        getBoundsInLocal().getWidth(), getBoundsInLocal().getHeight()
-//                    }
-//            );
-//            double mX = me.getX();
-//            double mY = me.getY();
-//
-//            double vaW = getBoundsInLocal().getWidth();
-//            double vaH = getBoundsInLocal().getHeight();
-//            double sbHV = getHvalue();
-//            double sbVV = getVvalue();
-//
-//            LOGGER.log(Level.SEVERE, "SB: {0},{1} VA: {2}x{3}  M: {4},{5}", new Object[]{sbHV, sbVV, vaW, vaH, mX, mY});
-//            //double waX = me.getX() * (1 + getHvalue() * getBoundsInLocal().getWidth());
-//            //double waY = me.getX() * (1 + getVvalue() * getBoundsInLocal().getHeight());
-//            //double waX = mX * -(sbHV - 1) - vaW / 2;
-//            //double waX = mX - vaW / 2;
-//            double waX = (sbHV * 2 - 1) * (WA2) - vaW * sbHV + mX;
-//            LOGGER.log(Level.SEVERE, "waX = {0} * {1} - {2} + {3}", new Object[]{sbHV * 2 - 1, WORK_AREA / 2.0, vaW * sbHV, mX});
-//
-//            waX /= scale;
-//            //waX *= waScaleX;
-//
-//            //double waY = mY * -(sbVV - 1) - vaH / 2;
-//            //double waY = mY - vaH / 2;
-//            double waY = (sbVV * 2 - 1) * (WA2) - vaH * sbVV + mY;
-//            LOGGER.log(Level.SEVERE, "waY = {0} * {1} - {2} + {3}", new Object[]{sbVV * 2 - 1, WORK_AREA / 2.0, vaW * sbVV, mY});
-//
-//            waY /= scale;
-//            //waY *= waScaleY;
-//
-//            Circle c = new Circle(5, Color.ALICEBLUE);
-//            c.setLayoutX(waX);
-//            c.setLayoutY(waY);
-//            if (waX > -WA2 && waX < WA2 && waY > -WA2 && waY < WA2) {
-//                workArea.getChildren().add(c);
-//                LOGGER.log(Level.SEVERE, "Circle at: {0},{1}", new Object[]{waX, waY});
-//            } else {
-//                LOGGER.log(Level.SEVERE, "Click was outside WORK_AREA!");
-//            }
-//
-//        });
+        setOnMouseClicked((t) -> {
+            LOGGER.log(Level.SEVERE, "Editor Clicked.");
+            if (movingNode != null) {
+                if (null != t.getButton()) {
+                    switch (t.getButton()) {
+                        case PRIMARY -> {
+                            movingNode = null; // End move of node.
+                            t.consume();
+                        }
+                        case MIDDLE -> { // Mirror
+                        }
+                        case SECONDARY -> {
+                            // Rotate  add 90 (actually "angle" from top of viewport)
+                            Element element = movingNode.getElement();
+                            if (element instanceof ElementRotation er) {
+                                er.setRot(er.getRot() + 90);
+                            }
+                        }
+                        default -> {
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void buildScene() {
@@ -367,6 +356,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         text1.setValue(">NAME");
         text1.setSize(5.0);
         text1.setLayer(96);
+        text1.getRotation().setConstrained(true);
 
         workArea.getChildren().addAll(
                 pinNode1, pinNode2, pinNode3,
@@ -406,35 +396,16 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     @Override
     public void nodePicked(ViewNode node, MouseEvent me) {
-        double x = me.getX();
-        double y = me.getY();
 
-        if (me.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-            if (!node.isDragging()) {
-
+        //LOGGER.log(Level.SEVERE, "Event: " + me.getEventType().getName());
+        if (me.getEventType() == MouseEvent.MOUSE_CLICKED) {
+            if (movingNode == null) {
                 // Pick
-                if (PICK_SIZE > Math.abs(x) && PICK_SIZE > Math.abs(y)) {
-                    node.setDragging(true);
-                    me.consume();
-                }
-            } else {
-                if (node.getElement() instanceof ElementXY n) {
-                    double SNAP = 2.54;
-                    int xx = (int) (x / SNAP);
-                    int yy = (int) (y / SNAP);
-
-                    if (xx != 0) {
-                        n.setX(n.getX() + xx * SNAP);
-                    }
-                    if (yy != 0) {
-                        n.setY(n.getY() + yy * SNAP);
-                    }
+                if (PICK_SIZE > Math.abs(me.getX()) && PICK_SIZE > Math.abs(me.getY())) {
+                    movingNode = node;
                     me.consume();
                 }
             }
-        } else if (me.getEventType() == MouseEvent.MOUSE_RELEASED) {
-            node.setDragging(false);
-            me.consume();
         }
     }
 }
