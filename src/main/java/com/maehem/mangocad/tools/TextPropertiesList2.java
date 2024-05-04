@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.tools.widgets.ListSelectWidget;
 import com.maehem.mangocad.tools.widgets.SliderWidget;
 import com.maehem.mangocad.tools.widgets.TextWidget;
+import com.maehem.mangocad.tools.widgets.ToggleWidget;
 import com.maehem.mangocad.tools.widgets.Widget;
 import com.maehem.mangocad.tools.widgets.WidgetListener;
 import javafx.scene.layout.VBox;
@@ -39,6 +40,8 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
     private final SliderWidget posYWidget = new SliderWidget("Y", -5, 5, 0, this);
     private final SliderWidget rotWidget = new SliderWidget("Rotate", 0, 360, 0, this);
     private final ListSelectWidget alignWidget = new ListSelectWidget("Alignment", this);
+    private final ToggleWidget spinWidget = new ToggleWidget("Spin", this);
+    private final ToggleWidget mirrorWidget = new ToggleWidget("Mirror", this);
 
     public TextPropertiesList2(TextTester2 parent, ElementText et) {
         this.parent = parent;
@@ -55,6 +58,8 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
         getChildren().add(ratioWidget);
         getChildren().add(posXWidget);
         getChildren().add(posYWidget);
+        getChildren().add(spinWidget);
+        getChildren().add(mirrorWidget);
         getChildren().add(rotWidget);
         getChildren().add(alignWidget);
 
@@ -67,6 +72,8 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
         posXWidget.getSlider().setValue(et.getX());
         posYWidget.getSlider().setValue(et.getY());
         rotWidget.getSlider().setValue(et.getRot());
+        spinWidget.getCheckBox().setSelected(et.isSpin());
+        mirrorWidget.getCheckBox().setSelected(et.isMirrored());
 
     }
 
@@ -93,9 +100,16 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
                 ListSelectWidget s = (ListSelectWidget) widget;
                 et.setAlign(s.getValue());
             }
+            case "Spin" -> {
+                ToggleWidget s = (ToggleWidget) widget;
+                et.setSpin(s.getValue());
+            }
+            case "Mirror" -> {
+                ToggleWidget s = (ToggleWidget) widget;
+                et.setMirror(s.getValue());
+            }
         }
 
-        //parent.updateContent();
     }
 
 }
