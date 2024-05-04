@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
@@ -26,6 +25,7 @@ import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.library.symbol.node.PinNode;
 import com.maehem.mangocad.view.node.CircleNode;
@@ -181,7 +181,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             getScene().setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked((t) -> {
-            LOGGER.log(Level.SEVERE, "Editor Clicked.");
+            LOGGER.log(Level.SEVERE, "Editor Clicked: " + t.getButton().name());
             if (movingNode != null) {
                 if (null != t.getButton()) {
                     switch (t.getButton()) {
@@ -190,12 +190,21 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             t.consume();
                         }
                         case MIDDLE -> { // Mirror
+                            if (movingNode.getElement() instanceof ElementRotation er) {
+                                Rotation rotation = er.getRotation();
+                                if (rotation.isAllowMirror()) {
+                                    rotation.setMirror(!rotation.isMirror());
+                                    t.consume();
+                                } else {
+                                    LOGGER.log(Level.SEVERE, "Mirror not allowed!");
+                                }
+                            }
                         }
                         case SECONDARY -> {
                             // Rotate  add 90 (actually "angle" from top of viewport)
-                            Element element = movingNode.getElement();
-                            if (element instanceof ElementRotation er) {
+                            if (movingNode.getElement() instanceof ElementRotation er) {
                                 er.setRot(er.getRot() + 90);
+                                //t.consume();
                             }
                         }
                         default -> {
