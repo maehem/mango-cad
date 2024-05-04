@@ -510,13 +510,7 @@ public class TextNode extends ViewNode implements ElementListener {
     }
 
     private void updateDistance() {
-//        Text exLine = new Text("EXAMPLE");
-//        exLine.setFont(font);
-//        double lineHeight = exLine.getBoundsInLocal().getHeight();
-
-        //double size = text.getFont().getSize();
         double size = textElement.getSize();
-        //double lineSpace = size * (textElement.getDistance() * 0.01);
         double distFactor = 0.82 - textElement.getRatio() * 0.01 * ViewUtils.FONT_SIZE_MULT * 1.1;
         double lineSpaceFx = size * (textElement.getDistance() * 0.01 - distFactor);
         text.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
@@ -525,7 +519,7 @@ public class TextNode extends ViewNode implements ElementListener {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
 //        LOGGER.log(Level.SEVERE,
-//                "Pin properties have changed!{0}: {1} => {2}",
+//                "Text properties have changed!{0}: {1} => {2}",
 //                new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch ((ElementTextField) field) {
@@ -537,7 +531,7 @@ public class TextNode extends ViewNode implements ElementListener {
             case LAYER -> {
                 updateLayer();
             }
-            case ElementTextField.X, ElementTextField.Y -> {
+            case X, Y -> {
                 updateLocation();
             }
             case ROTATION -> {
