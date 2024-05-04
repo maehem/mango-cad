@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.misc;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.GridStyle;
 import com.maehem.mangocad.model.element.enums.GridUnit;
+import com.maehem.mangocad.model.util.Units;
 
 /**
  * <pre>
@@ -67,6 +68,30 @@ public class Grid extends Element {
      * @return the distance
      */
     public double getSize() {
+        return distance;
+    }
+
+    /**
+     * Get the raw size and convert to mm if needed.
+     *
+     * @return
+     */
+    public double getSizeMM() {
+        switch (distanceStoredUnit) {
+            case INCH -> {
+                // Convert to mm
+                return distance / Units.INCH.mult;
+            }
+            case MIC -> {
+                // Convert to mm.
+                return distance / Units.MIC.mult;
+            }
+            case MIL -> {
+                // Convert to mm.
+                return distance / Units.MIL.mult;
+            }
+
+        }
         return distance;
     }
 
