@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.view.PickListener;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import javafx.scene.shape.Shape;
 
 /**
@@ -26,6 +27,8 @@ import javafx.scene.shape.Shape;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public abstract class ViewNode extends ArrayList<Shape> {
+
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     private final Element element;
     private PickListener listener;
