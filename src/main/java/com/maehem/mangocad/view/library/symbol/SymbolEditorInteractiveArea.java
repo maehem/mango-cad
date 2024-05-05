@@ -27,7 +27,7 @@ import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.PickListener;
-import com.maehem.mangocad.view.library.symbol.node.PinNode;
+import com.maehem.mangocad.view.node.PinNode;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
