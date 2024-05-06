@@ -229,8 +229,8 @@ public class TextTester2 extends Application implements ElementListener, PickLis
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         switch ((ElementTextField) field) {
             case Y -> {
-                hLine.setStartY(et.getY());
-                hLine.setEndY(et.getY());
+                hLine.setStartY(-et.getY());
+                hLine.setEndY(-et.getY());
             }
             case X -> {
                 vLine.setStartX(et.getX());

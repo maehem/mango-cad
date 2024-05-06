@@ -169,7 +169,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 double yyy = (int) (waY / snap) * snap; // Snap to grid
 
                 n.setX(xxx);
-                n.setY(yyy);
+                n.setY(-yyy);
             }
 
         });
@@ -360,7 +360,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         ElementText text1 = new ElementText();
         text1.setX(-12.70);
-        text1.setY(-5.08);
+        text1.setY(5.08);
         text1.setValue(">NAME");
         text1.setSize(5.0);
         text1.setLayer(96);
@@ -421,6 +421,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 // Pick
                 if (PICK_SIZE > Math.abs(me.getX()) && PICK_SIZE > Math.abs(me.getY())) {
                     movingNode = node;
+                    LOGGER.log(Level.SEVERE, "Moving Node: {0}", movingNode.getElement().getElementName());
                     me.consume();
                 }
             }
