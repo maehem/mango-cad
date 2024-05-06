@@ -153,12 +153,12 @@ public class TextNode extends ViewNode implements ElementListener {
                 getPickListener().nodePicked(this, me);
             }
         });
-        text.addEventFilter(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
-            PickListener listener = getPickListener();
-            if (listener != null) {
-                getPickListener().nodePicked(this, me);
-            }
-        });
+//        text.addEventFilter(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
+//            PickListener listener = getPickListener();
+//            if (listener != null) {
+//                getPickListener().nodePicked(this, me);
+//            }
+//        });
 
         Platform.runLater(() -> {
             textElement.addListener(this);
@@ -223,18 +223,18 @@ public class TextNode extends ViewNode implements ElementListener {
     private void updateLocation() {
         //double stroke = textElement.getDerivedStroke();
         text.setLayoutX(textElement.getX());
-        text.setLayoutY(textElement.getY());
+        text.setLayoutY(-textElement.getY());
 
         ch.setLayoutX(textElement.getX());
-        ch.setLayoutY(textElement.getY());
+        ch.setLayoutY(-textElement.getY());
         cv.setLayoutX(textElement.getX());
-        cv.setLayoutY(textElement.getY());
+        cv.setLayoutY(-textElement.getY());
 
         border.setLayoutX(textElement.getX());
-        border.setLayoutY(textElement.getY());
+        border.setLayoutY(-textElement.getY());
 
         debugBox.setLayoutX(textElement.getX());
-        debugBox.setLayoutY(textElement.getY());
+        debugBox.setLayoutY(-textElement.getY());
     }
 
     private void updateLayer() {
@@ -517,48 +517,54 @@ public class TextNode extends ViewNode implements ElementListener {
 //                "Text properties have changed!{0}: {1} => {2}",
 //                new Object[]{field, oldVal.toString(), newVal.toString()});
 
-        switch ((ElementTextField) field) {
-            case VALUE, DISTANCE -> {
-                updateValue();
-                updateDistance();
-                updateDebugBox();
-            }
-            case LAYER -> {
-                updateLayer();
-            }
-            case X, Y -> {
-                updateLocation();
-            }
-            case ROTATION -> {
-                updateLocation();
-                updateAlignRotation();
-                updateSpin();
-            }
-            case ALIGN -> {
-                updateAlignRotation();
-            }
-            case RATIO -> {
-                updateRatio();
-                updateValue();
-                updateFont();
-                updateDistance();
-                updateAlignRotation();
-                updateSpin();
-                updateDebugBox();
-            }
-            case SIZE, FONT -> {
-                updateFont();
-                updateDistance();
-                updateDebugBox();
+        if (field instanceof ElementTextField etf) {
+            switch (etf) {
+                case VALUE, DISTANCE -> {
+                    updateValue();
+                    updateDistance();
+                    updateDebugBox();
+                }
+                case LAYER -> {
+                    updateLayer();
+                }
+                case X, Y -> {
+                    updateLocation();
+                }
+                case ROTATION -> {
+                    updateLocation();
+                    updateAlignRotation();
+                    updateSpin();
+                }
+                case ALIGN -> {
+                    updateAlignRotation();
+                }
+                case RATIO -> {
+                    updateRatio();
+                    updateValue();
+                    updateFont();
+                    updateDistance();
+                    updateAlignRotation();
+                    updateSpin();
+                    updateDebugBox();
+                }
+                case SIZE, FONT -> {
+                    updateFont();
+                    updateDistance();
+                    updateDebugBox();
+                }
             }
         }
-        switch ((RotationField) field) {
-            case MIRROR, SPIN -> {
-                updateLocation();
-                updateDistance();
-                updateAlignRotation();
-                updateSpin();
-                updateDebugBox();
+        if (field instanceof RotationField rf) {
+            switch (rf) {
+                case MIRROR, SPIN -> {
+                    updateLocation();
+                    updateDistance();
+                    updateAlignRotation();
+                    updateSpin();
+                    updateDebugBox();
+                }
+                default -> {
+                }
             }
         }
 
