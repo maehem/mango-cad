@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
@@ -45,7 +46,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Pin extends Element implements ElementXY {
+public class Pin extends Element implements ElementXY, ElementRotation {
 
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.
@@ -91,7 +92,7 @@ public class Pin extends Element implements ElementXY {
      * @param name the name to set
      */
     public void setName(String name) {
-        String oldName = name;
+        String oldName = this.name;
         this.name = name;
         notifyListeners(PinField.NAME, oldName, name);
     }
@@ -148,9 +149,6 @@ public class Pin extends Element implements ElementXY {
         notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
     }
 
-    public boolean isMirror() {
-        return getRot() == 180.0;
-    }
     /**
      *
      * @return code for visible
@@ -233,13 +231,15 @@ public class Pin extends Element implements ElementXY {
         notifyListeners(PinField.SWAPLEVEL, oldVal, this.swapLevel);
     }
 
-    public Rotation getRotation() {
+    @Override
+    public final Rotation getRotation() {
         return rotation;
     }
 
     /**
      * @return the rotation
      */
+    @Override
     public double getRot() {
         return rotation.getValue();
     }
@@ -247,10 +247,66 @@ public class Pin extends Element implements ElementXY {
     /**
      * @param val the rotation to set
      */
+    @Override
     public void setRot(double val) {
         double oldVal = this.getRot();
         this.rotation.setValue(val);
         notifyListeners(PinField.ROTATION, oldVal, this.rotation.getValue());
+    }
+
+    @Override
+    public boolean isSpun() {
+        return false;
+    }
+
+    @Override
+    public void setSpin(boolean value) {
+        // Not applicable
+    }
+
+    @Override
+    public boolean isSpin() {
+        return false;
+    }
+
+    @Override
+    public boolean isSpinAllowed() {
+        return false;
+    }
+
+    @Override
+    public void setAllowSpin(boolean value) {
+        // Not applicable.
+    }
+
+    @Override
+    public void setMirror(boolean value) {
+        setRot(getRot() + 180);
+    }
+
+    @Override
+    public boolean isMirrored() {
+        return getRot() == 180 || getRot() == 270;
+    }
+
+    @Override
+    public boolean isMirrorAllowed() {
+        return false;
+    }
+
+    @Override
+    public void setAllowMirror(boolean value) {
+        // Not applicable.
+    }
+
+    @Override
+    public boolean isConstrained() {
+        return true;
+    }
+
+    @Override
+    public void setConstrained(boolean value) {
+        // Only true allowed.
     }
 
 }
