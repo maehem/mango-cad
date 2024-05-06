@@ -22,10 +22,9 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
-import static com.maehem.mangocad.model.element.enums.ElementTextField.MIRROR;
-import static com.maehem.mangocad.model.element.enums.ElementTextField.RATIO;
-import static com.maehem.mangocad.model.element.enums.ElementTextField.SPIN;
-import static com.maehem.mangocad.model.element.enums.ElementTextField.VALUE;
+import static com.maehem.mangocad.model.element.enums.ElementTextField.*;
+import com.maehem.mangocad.model.element.enums.RotationField;
+import static com.maehem.mangocad.model.element.enums.RotationField.*;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.util.Rotation;
@@ -538,13 +537,6 @@ public class TextNode extends ViewNode implements ElementListener {
             case ALIGN -> {
                 updateAlignRotation();
             }
-            case MIRROR, SPIN -> {
-                updateLocation();
-                updateDistance();
-                updateAlignRotation();
-                updateSpin();
-                updateDebugBox();
-            }
             case RATIO -> {
                 updateRatio();
                 updateValue();
@@ -560,6 +552,16 @@ public class TextNode extends ViewNode implements ElementListener {
                 updateDebugBox();
             }
         }
+        switch ((RotationField) field) {
+            case MIRROR, SPIN -> {
+                updateLocation();
+                updateDistance();
+                updateAlignRotation();
+                updateSpin();
+                updateDebugBox();
+            }
+        }
+
     }
 
     @Override
