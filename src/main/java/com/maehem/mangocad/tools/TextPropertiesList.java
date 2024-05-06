@@ -17,6 +17,7 @@
 package com.maehem.mangocad.tools;
 
 import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.tools.widgets.ListSelectWidget;
 import com.maehem.mangocad.tools.widgets.SliderWidget;
 import com.maehem.mangocad.tools.widgets.TextWidget;
@@ -37,7 +38,7 @@ public class TextPropertiesList extends VBox implements WidgetListener {
     private final SliderWidget posXWidget = new SliderWidget("X", -5, 5, 0, this);
     private final SliderWidget posYWidget = new SliderWidget("Y", -5, 5, 0, this);
     private final SliderWidget rotWidget = new SliderWidget("Rotate", 0, 360, 0, this);
-    private final ListSelectWidget alignWidget = new ListSelectWidget("Alignment", this);
+    private final ListSelectWidget alignWidget = new ListSelectWidget("Alignment", TextAlign.asStringList(), this);
 
     public TextPropertiesList(TextTester parent, ElementText et) {
         this.parent = parent;

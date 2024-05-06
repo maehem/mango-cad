@@ -17,6 +17,7 @@
 package com.maehem.mangocad.tools.widgets;
 
 import com.maehem.mangocad.model.element.enums.TextAlign;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
@@ -32,12 +33,12 @@ public class ListSelectWidget extends Widget {
 
     ComboBox<String> alignSelector;
 
-    public ListSelectWidget(String title, WidgetListener listener) {
+    public ListSelectWidget(String title, List<String> items, WidgetListener listener) {
         super(title);
 
         this.listener = listener;
 
-        alignSelector = new ComboBox<String>(FXCollections.observableArrayList(TextAlign.asStringList()));
+        alignSelector = new ComboBox<String>(FXCollections.observableArrayList(items));
         alignSelector.getSelectionModel().selectFirst();
 
         VBox.setMargin(alignSelector, new Insets(1, 4, 1, 40));
