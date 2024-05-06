@@ -16,6 +16,9 @@
  */
 package com.maehem.mangocad.model.element.enums;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * PinLength         point | short | middle | long
 *
@@ -50,4 +53,12 @@ public enum PinLength {
         return null;
     }
 
+    public static List<String> asStringList() {
+        ArrayList<String> list = new ArrayList<>();
+        for (PinLength a : values()) {
+            list.add(a.code());
+        }
+
+        return list;
+    }
 }
