@@ -49,7 +49,6 @@ public class SliderWidget extends Widget {
 //                new BorderWidths(1),
 //                Insets.EMPTY
 //        )));
-
         slider = new Slider(min, max, val);
         slider.setId(title);
         slider.setShowTickMarks(true);
@@ -59,7 +58,7 @@ public class SliderWidget extends Widget {
         } else {
             slider.setMajorTickUnit(((int) max - min) / 4);
         }
-        slider.setBlockIncrement(0.1f);
+        slider.setBlockIncrement(0.254f);
         //slider.setPrefWidth(WIDGET_WIDTH - 100);
         HBox.setHgrow(slider, Priority.ALWAYS);
         HBox.setMargin(slider, new Insets(1, 4, 1, 8));
@@ -67,7 +66,6 @@ public class SliderWidget extends Widget {
 //        Text titleText = new Text(title);
 //        titleText.setFont(Font.font(20.0));
 //        titleText.setFill(Color.GREY);
-
         valueText.setFont(Font.font(12.0));
         valueText.setFill(Color.GREY);
         HBox.setMargin(valueText, new Insets(1, 8, 1, 12));
@@ -87,6 +85,17 @@ public class SliderWidget extends Widget {
 
     public Slider getSlider() {
         return slider;
+    }
+
+    public void setSnap(double val) {
+        if (val > 0) {
+            slider.setMajorTickUnit(val);
+            slider.setMinorTickCount(1);
+            slider.setSnapToTicks(true);
+        } else {
+            slider.setMajorTickUnit((slider.getMax() - slider.getMin()) / 2.0);
+            slider.setSnapToTicks(false);
+        }
     }
 
     @Override
