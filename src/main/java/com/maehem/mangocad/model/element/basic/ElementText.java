@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
+import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.util.Rotation;
@@ -299,7 +300,7 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     public void setSpin(boolean spin) {
         boolean oldValue = isSpin();
         rotation.setSpin(spin);
-        notifyListeners(ElementTextField.SPIN, oldValue, this.isSpin());
+        notifyListeners(RotationField.SPIN, oldValue, this.isSpin());
     }
 
     @Override
@@ -311,7 +312,7 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     public void setAllowSpin(boolean allowSpin) {
         boolean oldValue = isSpinAllowed();
         rotation.setAllowSpin(allowSpin);
-        notifyListeners(ElementTextField.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+        notifyListeners(RotationField.ALLOW_SPIN, oldValue, this.isSpinAllowed());
     }
 
     @Override
@@ -328,14 +329,14 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     public void setConstrained(boolean value) {
         boolean oldValue = this.isConstrained();
         rotation.setConstrained(value);
-        notifyListeners(ElementTextField.CONSTRAINED, oldValue, this.isConstrained());
+        notifyListeners(RotationField.CONSTRAINED, oldValue, this.isConstrained());
     }
 
     @Override
     public void setMirror(boolean value) {
         boolean oldValue = this.isMirrored();
         rotation.setMirror(value);
-        notifyListeners(ElementTextField.MIRROR, oldValue, this.isMirrored());
+        notifyListeners(RotationField.MIRROR, oldValue, this.isMirrored());
     }
 
     @Override
@@ -352,7 +353,7 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     public void setAllowMirror(boolean value) {
         boolean oldValue = this.isMirrorAllowed();
         rotation.setAllowMirror(value);
-        notifyListeners(ElementTextField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+        notifyListeners(RotationField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
     }
 
 }
