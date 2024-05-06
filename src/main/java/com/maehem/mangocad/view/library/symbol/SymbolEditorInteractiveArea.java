@@ -27,8 +27,8 @@ import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.PickListener;
-import com.maehem.mangocad.view.node.PinNode;
 import com.maehem.mangocad.view.node.CircleNode;
+import com.maehem.mangocad.view.node.PinNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
@@ -42,7 +42,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
@@ -247,14 +246,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         // Add Zero point crosshair
         // Add symbol elements.
-        workArea.getChildren().add(new Text("\nSymbol Editor"));
+//        workArea.getChildren().add(new Text("\nSymbol Editor"));
 
-        Text t1 = new Text(-20, -20, "1");
-        Text t2 = new Text(20, -20, "2");
-        Text t3 = new Text(-20, 20, "3");
-        Text t4 = new Text(20, 20, "4");
-
-        workArea.getChildren().addAll(t1, t2, t3, t4);
+//        Text t1 = new Text(-20, -20, "1");
+//        Text t2 = new Text(20, -20, "2");
+//        Text t3 = new Text(-20, 20, "3");
+//        Text t4 = new Text(20, 20, "4");
+//
+//        workArea.getChildren().addAll(t1, t2, t3, t4);
 
         Pin p1 = new Pin();
         p1.setX(-10.16);
@@ -265,7 +264,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         p1.setVisible(PinVisible.BOTH);
         PinNode pinNode1 = new PinNode(p1,
                 Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                null, true
+                null, true, this
         );
 
         Pin p2 = new Pin();
@@ -277,7 +276,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         p2.setVisible(PinVisible.BOTH);
         PinNode pinNode2 = new PinNode(p2,
                 Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                null, true
+                null, true, this
         );
 
         Pin p3 = new Pin();
@@ -290,7 +289,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         p3.setRot(180);
         PinNode pinNode3 = new PinNode(p3,
                 Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                null, true
+                null, true, this
         );
 
         Wire w1 = new Wire();
@@ -369,8 +368,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         text1.setAllowMirror(true);
         text1.setAllowSpin(true);
 
+        pinNode1.addTo(workArea);
+        pinNode2.addTo(workArea);
+        pinNode3.addTo(workArea);
+
+//        wireNode1.addTo(workArea);
+//        wireNode2.addTo(workArea);
+//        wireNode3.addTo(workArea);
+//        wireNode4.addTo(workArea);
         workArea.getChildren().addAll(
-                pinNode1, pinNode2, pinNode3,
                 wireNode1, wireNode2, wireNode3, wireNode4,
                 circleNode1, circleNode2);
 
@@ -379,9 +385,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.getDrawing().getPalette(),
                 null, true, this);
 
-        for (Shape s : textNode1) {
-            workArea.getChildren().add(s);
-        }
+        textNode1.addTo(workArea);
+//        for (Shape s : textNode1) {
+//            workArea.getChildren().add(s);
+//        }
     }
 
     private Line gridLine(int n, boolean horiz) {
