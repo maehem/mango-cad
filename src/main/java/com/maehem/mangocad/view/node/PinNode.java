@@ -21,18 +21,21 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
+import com.maehem.mangocad.model.element.enums.PinLength;
 import static com.maehem.mangocad.model.element.enums.PinVisible.*;
 import com.maehem.mangocad.model.util.Rotation;
-import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.PickListener;
+import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryElementNode;
 import static com.maehem.mangocad.view.library.LibraryElementNode.FONT_PATH;
 import java.util.logging.Level;
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
@@ -43,26 +46,22 @@ import javafx.scene.transform.Translate;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PinNode extends Group implements ElementListener {
+public class PinNode extends ViewNode implements ElementListener {
 
-    //private final Color ORIGIN_CIRCLE_COLOR = new Color(1.0, 1.0, 1.0, 0.2);
     private final double ORIGIN_CIRCLE_RADIUS = 0.635;
     private final double ORIGIN_CIRCLE_LINE_WIDTH = 0.07;
 
-    //private final Color PAD_NAME_COLOR = new Color(0.8, 0.8, 0.2, 0.8);
-    //private final Color PAD_COLOR_GHOST = new Color(0.8, 0.8, 0.2, 0.2);
-    private final double PAD_TEXT_ASCEND = 0.4;
+    private final double XY_OFFSET = ORIGIN_CIRCLE_RADIUS * 0.71;
 
-    private final double PIN_NAME_MARGIN = 1.8;
+    private final double PAD_TEXT_ASCEND = 0.5;
+
     private final double PIN_STROKE_WIDTH = 0.1524; // 6 mil
-    private final double PIN_FONT_SIZE = 2.4;
-    //private final Color PIN_NAME_COLOR = new Color(0.8, 0.8, 0.8, 0.8);
-    //private final Color PIN_COLOR_GHOST = new Color(0.9, 0.9, 0.9, 0.1);
-    //private final Color PIN_DIR_SWAP_COLOR = new Color(0.3, 1.0, 0.3, 0.2);
-
-    private final double DOT_CIRCLE_RADIUS = 0.7;
+    private final double DOT_CIRCLE_RADIUS = 1.0;
     private final double DOT_CIRCLE_LINE_WIDTH = PIN_STROKE_WIDTH * 1.7;
-    private final double CLK_SIZE = DOT_CIRCLE_RADIUS * 2.0;
+    private final double CLK_SIZE = DOT_CIRCLE_RADIUS * 1.7;
+
+    private final double PIN_NAME_MARGIN = CLK_SIZE + 0.6;
+    private final double PIN_FONT_SIZE = 2.4;
 
     private final double PAD_FONT_SIZE = PIN_FONT_SIZE * 0.8;
     private final double DS_FONT_SIZE = PIN_FONT_SIZE * 0.6;
@@ -82,15 +81,25 @@ public class PinNode extends Group implements ElementListener {
     private final Line clkLine2 = new Line();
     private final Text pinName = new Text();
     private final Text padName = new Text();
-    private final Text dirSwap = new Text();
+    private final Text dirSwap = new Text("DIR-SWAP");
     private final Circle originCirc = new Circle(ORIGIN_CIRCLE_RADIUS, Color.TRANSPARENT);
 
     private final Translate translate = new Translate();
     private final Rotate rotTransform = new Rotate();
 
+    private final Rotate pinNameSpin = new Rotate();
+    private final Translate pinNameTranslate = new Translate();
 
-    public PinNode(Pin p, Color symbolColor, Color pinColor, Color nameColor, Rotation parentRotation, boolean showDetails) {
+    private final Rotate padNameSpin = new Rotate();
+    private final Translate padNameTranslate = new Translate();
+
+    private final Rotate dirSwapSpin = new Rotate();
+    private final Translate dirSwapTranslate = new Translate();
+
+    public PinNode(Pin p, Color symbolColor, Color pinColor, Color nameColor, Rotation parentRotation, boolean showDetails, PickListener pickListener) {
+        super(p, pickListener);
         this.pin = p;
+
         setSymbolColor(symbolColor);
         setPinColor(pinColor);
         setNameColor(nameColor);
@@ -104,6 +113,8 @@ public class PinNode extends Group implements ElementListener {
         pinName.setFont(font);
         pinName.setStrokeWidth(PIN_FONT_SIZE * 0.08);
         pinName.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        pinNameSpin.setPivotY(-PIN_FONT_SIZE / ViewUtils.FONT_SIZE_MULT / 2);
+        pinNameTranslate.setY(PIN_FONT_SIZE / ViewUtils.FONT_SIZE_MULT / 2);
 
         Font padFont = Font.loadFont(
                 PinNode.class.getResourceAsStream(FONT_PATH),
@@ -112,22 +123,33 @@ public class PinNode extends Group implements ElementListener {
         padName.setFont(padFont);
         padName.setStrokeLineJoin(StrokeLineJoin.ROUND);
         padName.setStrokeWidth(PAD_FONT_SIZE * 0.08);
-
+        padNameSpin.setPivotY(-PAD_FONT_SIZE / ViewUtils.FONT_SIZE_MULT / 2);
+        padNameTranslate.setY(PAD_TEXT_ASCEND);
 
         dirSwap.setStrokeWidth(DS_FONT_SIZE * 0.08);
         Font dirSwapFont = Font.loadFont(
                 LibraryElementNode.class.getResourceAsStream(FONT_PATH),
                 DS_FONT_SIZE
         );
+
         dirSwap.setFont(dirSwapFont);
+        dirSwapSpin.setPivotY(0);
 
-        getChildren().addAll(pinLine,
-                dotC, clkLine1, clkLine2,
-                pinName, padName,
-                originCirc, dirSwap
-        );
+        add(pinLine);
+        add(dotC);
+        add(clkLine1);
+        add(clkLine2);
+        add(pinName);
+        add(padName);
+        add(originCirc);
+        add(dirSwap);
 
-        getTransforms().addAll(rotTransform, translate);
+        for (Shape s : this) {
+            s.getTransforms().addAll(translate, rotTransform);
+        }
+        pinName.getTransforms().addAll(pinNameTranslate, pinNameSpin);
+        padName.getTransforms().addAll(padNameTranslate, padNameSpin);
+        dirSwap.getTransforms().addAll(dirSwapTranslate, dirSwapSpin);
 
         pinLine.setStartX(0);
         pinLine.setStartY(0);
@@ -135,8 +157,10 @@ public class PinNode extends Group implements ElementListener {
         pinLine.setStrokeWidth(PIN_STROKE_WIDTH);
 
         dotC.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
+        dotC.setStrokeType(StrokeType.INSIDE);
         dotC.setFill(Color.TRANSPARENT);
-        dotC.setLayoutY(0);
+        dotC.setCenterY(0);
+
         clkLine1.setStrokeLineCap(StrokeLineCap.ROUND);
         clkLine1.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
         clkLine2.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -154,27 +178,24 @@ public class PinNode extends Group implements ElementListener {
         updateRotation();
 
         p.addListener(this);
-}
+    }
 
     private void updateLine() {
         double rawPinLen = pin.getLength().lenMM();
         double pinLen = rawPinLen - getDotRadius() * 2.0;
 
-        //LOGGER.log(Level.SEVERE, "PinLen: raw:{0}   act:{1}    dotRad:{2}", new Object[]{rawPinLen, pinLen, getDotRadius()});
         // Pin Wire
-        pinLine.setEndX((pin.isMirror() ? -pinLen : pinLen));
+        pinLine.setEndX((pinLen));
         pinLine.setEndY(0);
         pinLine.setStroke(symbolColor);
 
         // Dot Circle - Transparent if not visible.
-        //double symbX = pin.getX() + (pin.isMirror() ? -rawPinLen : rawPinLen); // Symbol Outline X
-        dotC.setLayoutX(getSymbolX() + (pin.isMirror() ? getDotRadius() : -getDotRadius()));
+        dotC.setCenterX(pinLen + getDotRadius());
         if (getDotRadius() > 0.0) {
             dotC.setStroke(symbolColor);
         } else {
             dotC.setStroke(Color.TRANSPARENT);
         }
-
     }
 
     private void updateClockLines() {
@@ -207,25 +228,29 @@ public class PinNode extends Group implements ElementListener {
         dirSwap.setText(pin.getDirection().code() + "  " + pin.getSwapLevel());
         dirSwap.setStroke(showDetails ? pinColor : Color.TRANSPARENT);
         dirSwap.setFill(pinColor);
-        double dsWidth = dirSwap.getBoundsInLocal().getWidth() - DS_FONT_SIZE * 0.4;
-        //double dsHeight = dirSwap.getBoundsInLocal().getHeight();
-        double xyOffset = ORIGIN_CIRCLE_RADIUS * 0.71;
-        dirSwap.setLayoutX(-(pin.isMirror() ? 0.0 : dsWidth) + (pin.isMirror() ? xyOffset : -xyOffset));
-        double dsX = (pin.isMirror() ? xyOffset : (-xyOffset - dsWidth));
-        dirSwap.setLayoutX(dsX);
-        dirSwap.setLayoutY(-xyOffset);
-        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
-            //if (vizPinRot > 90.0) { // Flip Text
-            Rotate r = new Rotate(180, dsWidth / 2.0, xyOffset);
-            dirSwap.getTransforms().add(r);
-        }
-        if (pin.isMirror() ^ parentMir) {
-            Scale sc = new Scale(-1.0, 1.0, dsWidth / 2.0, 0.0);
-            dirSwap.getTransforms().add(sc);
+
+        dirSwapSpin.setPivotX(getDsWidth() / 2.0);
+
+        if (parentMir) { // TODO ???
+            //Scale sc = new Scale(-1.0, 1.0, dsWidth / 2.0, 0.0);
+            //dirSwap.getTransforms().add(sc);
         }
 
         // Pin Origin Circle
         originCirc.setStroke(showDetails ? pinColor : Color.TRANSPARENT);
+        pinNameSpin.setPivotX(getPinNameWidth() / 2.0);
+    }
+
+    private double getDsWidth() {
+        return dirSwap.getBoundsInLocal().getWidth() - 1.0;
+    }
+
+    private double getPadWidth() {
+        return padName.getBoundsInLocal().getWidth() - 1.0;
+    }
+
+    private double getPinNameWidth() {
+        return pinName.getBoundsInLocal().getWidth() - 1.0;
     }
 
     private void updatePadPinVisible() {
@@ -253,6 +278,7 @@ public class PinNode extends Group implements ElementListener {
         Color pinNameColor = nameColor;
         Color padColor = nameColor;
         double vizPinRot = (pin.getRot() + getParentRot()) % 360;
+        //double rawPinLen = pin.getLength().lenMM();
 
         updatePadPinVisible();
 
@@ -261,16 +287,7 @@ public class PinNode extends Group implements ElementListener {
         pinName.setFill(pinNameColor);
         pinName.setStroke(pinNameColor);
         double pinNameTextWidth = pinName.getBoundsInLocal().getWidth();
-        double pinNameTextHeight = pinName.getBoundsInLocal().getHeight();
 
-        // TODO: Re-test this.
-        //pinName.setLayoutX(getSymbolX() + (pin.isMirror() ? -PIN_NAME_MARGIN : PIN_NAME_MARGIN) + (pin.isMirror() ? -pinNameTextWidth : 0.0));
-        pinName.setLayoutX(getSymbolX() + (pin.isMirror() ? -PIN_NAME_MARGIN : PIN_NAME_MARGIN));
-        pinName.setLayoutY(pinNameTextHeight * 0.25);
-        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
-            Rotate r = new Rotate(180, pinNameTextWidth / 2.0, -pinNameTextHeight * 0.3);
-            pinName.getTransforms().add(r);
-        }
         if (pin.isMirror() ^ parentMir) {
             Scale sc = new Scale(-1.0, 1.0, pinNameTextWidth / 2.0, 0.0);
             pinName.getTransforms().add(sc);
@@ -292,11 +309,7 @@ public class PinNode extends Group implements ElementListener {
         padName.setFill(padColor);
         padName.setStroke(padColor);
         double padWidth = padName.getBoundsInLocal().getWidth() - PAD_FONT_SIZE * 0.47;
-        //double padHeight = padName.getBoundsInLocal().getHeight();
 
-        padName.setLayoutX(-(pin.isMirror() ? padWidth : 0.0));
-
-        padName.setLayoutY(-PAD_TEXT_ASCEND);
         if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
             Rotate r = new Rotate(180, padWidth / 2.0, PAD_TEXT_ASCEND);
             padName.getTransforms().add(r);
@@ -305,17 +318,35 @@ public class PinNode extends Group implements ElementListener {
             Scale sc = new Scale(-1.0, 1.0, padWidth / 2.0, 0.0);
             padName.getTransforms().add(sc);
         }
-
     }
 
     private void updateRotation() {
-        rotTransform.setPivotX(pin.getX());
-        rotTransform.setPivotY(-pin.getY());
-        //if (pin.getRot() != 0) {
-        //Rotate r = new Rotate(-pin.getRot(), pin.getX(), pin.getY());
+        double vizPinRot = (pin.getRot() + getParentRot()) % 360;
         rotTransform.setAngle(-pin.getRot());
-        //getTransforms().add(r);
-        //}
+
+        double rawPinLen = pin.getLength().lenMM();
+        pinNameTranslate.setX(rawPinLen + PIN_NAME_MARGIN);
+        dirSwapTranslate.setX(-XY_OFFSET - getDsWidth());
+
+        if (vizPinRot == 0 || vizPinRot == 90) {
+            pinNameSpin.setAngle(0);
+
+            dirSwapSpin.setAngle(0);
+            dirSwapTranslate.setY(-XY_OFFSET);
+
+            padNameSpin.setAngle(0);
+            padNameTranslate.setX(0);
+            padNameTranslate.setY(-PAD_TEXT_ASCEND);
+        } else if (vizPinRot == 180 || vizPinRot == 270) { // Flip Text
+            pinNameSpin.setAngle(180);
+
+            dirSwapSpin.setAngle(180);
+            dirSwapTranslate.setY(XY_OFFSET);
+
+            padNameSpin.setAngle(180);
+            padNameTranslate.setX(getPadWidth());
+            padNameTranslate.setY(PAD_TEXT_ASCEND + PAD_FONT_SIZE / ViewUtils.FONT_SIZE_MULT);
+        }
     }
 
     private void updatePosition() {
@@ -328,178 +359,13 @@ public class PinNode extends Group implements ElementListener {
     }
 
     private double getDotRadius() {
-        if (pin.getFunction() == PinFunction.DOT || pin.getFunction() == PinFunction.DOTCLK) {
+        if (pin.getLength() != PinLength.POINT
+                && (pin.getFunction() == PinFunction.DOT || pin.getFunction() == PinFunction.DOTCLK)) {
             return DOT_CIRCLE_RADIUS;
         }
         return 0.0;
     }
 
-//    private void generateNode() {
-//        getChildren().clear();
-//
-//        double pX = pin.getX();
-//        double pY = -pin.getY();
-//        boolean pinMirror = pin.getRotation().isMirror();
-//        double rawPinLen = pin.getLength().lenMM();
-//        double symbX = pX + (pinMirror ? -rawPinLen : rawPinLen); // Symbol Outline X
-//
-//        // There might be a dot on pin.
-//        double dotRadius = 0;
-//        if (pin.getFunction() == PinFunction.DOT || pin.getFunction() == PinFunction.DOTCLK) {
-//            dotRadius = DOT_CIRCLE_RADIUS;
-//        }
-//        double pinLen = rawPinLen - dotRadius * 2.0;
-//
-//        double vizPinRot = (pin.getRot() + getParentRot()) % 360;
-//
-//        // Draw pin wire
-//        pinLine.setStroke(symbolColor);
-//        pinLine.setStrokeLineCap(StrokeLineCap.BUTT);
-//        pinLine.setStrokeWidth(PIN_STROKE_WIDTH);
-//        getChildren().add(pinLine);
-//
-//        // Pin Origin Circle
-//        if (showDetails) {
-//            Circle originCirc = new Circle(
-//                    pX, pY, ORIGIN_CIRCLE_RADIUS, Color.TRANSPARENT
-//            );
-//            originCirc.setStroke(pinColor);
-//            originCirc.setStrokeWidth(ORIGIN_CIRCLE_LINE_WIDTH);
-//            getChildren().add(originCirc);
-//        }
-//
-//        // Dot Function
-//        if (dotRadius > 0.0) {
-//            Circle dotC = new Circle(dotRadius, Color.TRANSPARENT);
-//            dotC.setLayoutX(symbX + (pinMirror ? dotRadius : -dotRadius));
-//            dotC.setLayoutY(pY);
-//            dotC.setStroke(symbolColor);
-//            dotC.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
-//            getChildren().add(dotC);
-//        }
-    // Clock Function
-//        if (pin.getFunction() == PinFunction.CLK || pin.getFunction() == PinFunction.DOTCLK) {
-//            Line line1 = new Line(symbX, pY - CLK_SIZE / 2.0, symbX + (pinMirror ? -CLK_SIZE : CLK_SIZE), pY);
-//            line1.setStroke(symbolColor);
-//            line1.setStrokeLineCap(StrokeLineCap.ROUND);
-//            line1.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
-//
-//            Line line2 = new Line(symbX, pY + CLK_SIZE / 2.0, symbX + (pinMirror ? -CLK_SIZE : CLK_SIZE), pY);
-//            line2.setStroke(symbolColor);
-//            line2.setStrokeLineCap(StrokeLineCap.ROUND);
-//            line2.setStrokeWidth(DOT_CIRCLE_LINE_WIDTH);
-//
-//            getChildren().addAll(line1, line2);
-//        }
-//        Color pinNameColor = nameColor;
-//        Color padColor = nameColor;
-//
-//        switch (pin.getVisible()) {
-//            case BOTH -> {
-//            }
-//            case PAD -> {
-//                pinNameColor = showDetails ? pinGhostColor : Color.TRANSPARENT;
-//            }
-//            case PIN -> {
-//                padColor = showDetails ? nameGhostColor : Color.TRANSPARENT;
-//            }
-//            case OFF -> {
-//                pinNameColor = showDetails ? pinGhostColor : Color.TRANSPARENT;
-//                padColor = showDetails ? nameGhostColor : Color.TRANSPARENT;
-//            }
-//        }
-//        // Pin Name (inside component, pin function name)
-//        pinName = new Text(pin.getName());
-//
-//        Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), PIN_FONT_SIZE);
-//        pinName.setFont(font);
-//        pinName.setFill(pinNameColor);
-//        pinName.setStroke(pinNameColor);
-//        pinName.setStrokeWidth(PIN_FONT_SIZE * 0.08);
-//        pinName.setStrokeLineJoin(StrokeLineJoin.ROUND);
-//        double pinNameTextWidth = pinName.getBoundsInLocal().getWidth();
-//        double pinNameTextHeight = pinName.getBoundsInLocal().getHeight();
-//        pinName.setLayoutX(symbX + (pinMirror ? -PIN_NAME_MARGIN : PIN_NAME_MARGIN) + (pinMirror ? -pinNameTextWidth : 0.0));
-//        pinName.setLayoutY(pY + pinNameTextHeight * 0.3);
-//        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
-//            Rotate r = new Rotate(180, pinNameTextWidth / 2.0, -pinNameTextHeight * 0.3);
-//            pinName.getTransforms().add(r);
-//        }
-//        if (pinMirror ^ parentMir) {
-//            Scale sc = new Scale(-1.0, 1.0, pinNameTextWidth / 2.0, 0.0);
-//            pinName.getTransforms().add(sc);
-//        }
-//        getChildren().add(pinName);
-//        // Pad Name (outside component, usually a number)
-//        // Use the padValue from DeviceSet if it exists.
-//        String padValue;
-//        if (pin.getPadValue() != null) {
-//            padValue = pin.getPadValue();
-//        } else { // Fill padValue with string that matches pinLength
-//            padValue = "9";
-//            for (int i = 1; i < pin.getLength().ordinal(); i++) {
-//                padValue += "9";
-//            }
-//        }
-//        Text padName = new Text(padValue);
-//        double padFontSize = PIN_FONT_SIZE * 0.8;
-//        Font padFont = Font.loadFont(
-//                LibraryElementNode.class.getResourceAsStream(FONT_PATH),
-//                padFontSize
-//        );
-//        padName.setFont(padFont);
-//        padName.setFill(padColor);
-//        padName.setStroke(padColor);
-//        padName.setStrokeLineJoin(StrokeLineJoin.ROUND);
-//        padName.setStrokeWidth(padFontSize * 0.08);
-//        double padWidth = padName.getBoundsInLocal().getWidth();
-//        //double padHeight = padName.getBoundsInLocal().getHeight();
-//        padName.setLayoutX(pX - (pinMirror ? padWidth : 0.0));
-//        padName.setLayoutY(pY - PAD_TEXT_ASCEND);
-//        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
-//            Rotate r = new Rotate(180, padWidth / 2.0, PAD_TEXT_ASCEND);
-//            padName.getTransforms().add(r);
-//        }
-//        if (pinMirror ^ parentMir) {
-//            Scale sc = new Scale(-1.0, 1.0, padWidth / 2.0, 0.0);
-//            padName.getTransforms().add(sc);
-//        }
-//        getChildren().add(padName);
-//
-//        // Direction and Swap-Level  ( ex.   io 0  )
-//        if (showDetails) {
-//            Text dirSwap = new Text(pin.getDirection().code() + "  " + pin.getSwapLevel());
-//            double dirSwapFontSize = PIN_FONT_SIZE * 0.6;
-//            Font dirSwapFont = Font.loadFont(
-//                    LibraryElementNode.class.getResourceAsStream(FONT_PATH),
-//                    dirSwapFontSize
-//            );
-//            dirSwap.setStroke(pinColor);
-//            dirSwap.setStrokeWidth(dirSwapFontSize * 0.08);
-//            dirSwap.setFont(dirSwapFont);
-//            dirSwap.setFill(pinColor);
-//            double dsWidth = dirSwap.getBoundsInLocal().getWidth();
-//            //double dsHeight = dirSwap.getBoundsInLocal().getHeight();
-//            double xyOffset = ORIGIN_CIRCLE_RADIUS * 0.71;
-//            dirSwap.setLayoutX(pX - (pinMirror ? 0.0 : dsWidth) + (pinMirror ? xyOffset : -xyOffset));
-//            dirSwap.setLayoutY(pY - xyOffset);
-//            if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
-//                //if (vizPinRot > 90.0) { // Flip Text
-//                Rotate r = new Rotate(180, dsWidth / 2.0, xyOffset);
-//                dirSwap.getTransforms().add(r);
-//            }
-//            if (pinMirror ^ parentMir) {
-//                Scale sc = new Scale(-1.0, 1.0, dsWidth / 2.0, 0.0);
-//                dirSwap.getTransforms().add(sc);
-//            }
-//            getChildren().add(dirSwap);
-//        }
-//        if (pin.getRot() != 0) {
-//            Rotate r = new Rotate(-pin.getRot(), pX, pY);
-//            getTransforms().add(r);
-//        }
-//
-//    }
     /**
      * @return the parentRot
      */
@@ -550,13 +416,12 @@ public class PinNode extends Group implements ElementListener {
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        PinField f = (PinField) field;
 
         LOGGER.log(Level.SEVERE,
                 "Pin properties have changed!{0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
-        switch (f) {
+        switch ((PinField) field) {
             case PinField.NAME, PinField.PAD_VALUE -> {
                 updatePadPin();
             }
@@ -575,7 +440,10 @@ public class PinNode extends Group implements ElementListener {
                 updateLine();
             }
             case PinField.LENGTH -> {
+                updateRotation();
                 updateLine();
+                updateClockLines();
+                updatePadPin();
             }
             case PinField.ROTATION -> {
                 // Adjust Rotation Transform
@@ -583,6 +451,15 @@ public class PinNode extends Group implements ElementListener {
             }
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "PinNode: " + pin.getName()
+                + " pad:" + pin.getPadValue()
+                + " dir:" + pin.getDirection().name()
+                + " func:" + pin.getFunction().name()
+                + " len:" + pin.getLength().name();
     }
 
 }
