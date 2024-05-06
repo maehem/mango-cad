@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.view.PickListener;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import javafx.scene.Group;
 import javafx.scene.shape.Shape;
 
 /**
@@ -57,6 +58,12 @@ public abstract class ViewNode extends ArrayList<Shape> {
 
     public void setMoving(boolean value) {
         moving = value;
+    }
+
+    public void addTo(Group node) {
+        for (Shape s : this) {
+            node.getChildren().add(s);
+        }
     }
 
     @Override
