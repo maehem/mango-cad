@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
@@ -44,7 +45,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Pin extends Element {
+public class Pin extends Element implements ElementXY {
 
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.
@@ -64,6 +65,10 @@ public class Pin extends Element {
 
     // Lookup
     private String padValue = null;
+
+    public Pin() {
+        getRotation().setConstrained(true);
+    }
 
     @Override
     public int getLayerNum() {
@@ -94,6 +99,7 @@ public class Pin extends Element {
     /**
      * @return the x
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -101,6 +107,7 @@ public class Pin extends Element {
     /**
      * @param x the x to set
      */
+    @Override
     public void setX(double x) {
         double oldX = this.x;
         this.x = x;
@@ -110,6 +117,7 @@ public class Pin extends Element {
     /**
      * @return the y
      */
+    @Override
     public double getY() {
         return y;
     }
@@ -117,6 +125,7 @@ public class Pin extends Element {
     /**
      * @param y the y to set
      */
+    @Override
     public void setY(double y) {
         double oldY = this.y;
         this.y = y;
@@ -139,6 +148,9 @@ public class Pin extends Element {
         notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
     }
 
+    public boolean isMirror() {
+        return getRot() == 180.0;
+    }
     /**
      *
      * @return code for visible
@@ -239,10 +251,6 @@ public class Pin extends Element {
         double oldVal = this.getRot();
         this.rotation.setValue(val);
         notifyListeners(PinField.ROTATION, oldVal, this.rotation.getValue());
-    }
-
-    public boolean isMirror() {
-        return this.rotation.isMirror();
     }
 
 }
