@@ -16,6 +16,9 @@
  */
 package com.maehem.mangocad.model.element.enums;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * PinFunction       none | dot | clk | dotclk
  *
@@ -47,4 +50,12 @@ public enum PinFunction {
         return null;
     }
 
+    public static List<String> asStringList() {
+        ArrayList<String> list = new ArrayList<>();
+        for (PinFunction a : values()) {
+            list.add(a.code());
+        }
+
+        return list;
+    }
 }
