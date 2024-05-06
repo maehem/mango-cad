@@ -29,6 +29,8 @@ import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryElementNode;
 import static com.maehem.mangocad.view.library.LibraryElementNode.FONT_PATH;
 import java.util.logging.Level;
+import javafx.application.Platform;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -177,7 +179,18 @@ public class PinNode extends ViewNode implements ElementListener {
         updatePosition();
         updateRotation();
 
-        p.addListener(this);
+        originCirc.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            LOGGER.log(Level.SEVERE, "Pin Picked..");
+            if (listener != null) {
+                LOGGER.log(Level.SEVERE, "Notify Pin pick listener.");
+                getPickListener().nodePicked(this, me);
+            }
+        });
+
+        Platform.runLater(() -> {
+            pin.addListener(this);
+        });
     }
 
     private void updateLine() {
@@ -203,14 +216,14 @@ public class PinNode extends ViewNode implements ElementListener {
             double symbX = getSymbolX();
             clkLine1.setStartX(symbX);
             clkLine1.setStartY(-CLK_SIZE / 2.0);
-            clkLine1.setEndX(symbX + (pin.isMirror() ? -CLK_SIZE : CLK_SIZE));
+            clkLine1.setEndX(symbX + CLK_SIZE);
             clkLine1.setEndY(0);
 
             clkLine1.setStroke(symbolColor);
 
             clkLine2.setStartX(symbX);
             clkLine2.setStartY(CLK_SIZE / 2.0);
-            clkLine2.setEndX(symbX + (pin.isMirror() ? -CLK_SIZE : CLK_SIZE));
+            clkLine2.setEndX(symbX + CLK_SIZE);
             clkLine2.setEndY(0);
 
             clkLine2.setStroke(symbolColor);
@@ -288,7 +301,7 @@ public class PinNode extends ViewNode implements ElementListener {
         pinName.setStroke(pinNameColor);
         double pinNameTextWidth = pinName.getBoundsInLocal().getWidth();
 
-        if (pin.isMirror() ^ parentMir) {
+        if (parentMir) {
             Scale sc = new Scale(-1.0, 1.0, pinNameTextWidth / 2.0, 0.0);
             pinName.getTransforms().add(sc);
         }
@@ -314,7 +327,7 @@ public class PinNode extends ViewNode implements ElementListener {
             Rotate r = new Rotate(180, padWidth / 2.0, PAD_TEXT_ASCEND);
             padName.getTransforms().add(r);
         }
-        if (pin.isMirror() ^ parentMir) {
+        if (parentMir) {
             Scale sc = new Scale(-1.0, 1.0, padWidth / 2.0, 0.0);
             padName.getTransforms().add(sc);
         }
@@ -355,7 +368,7 @@ public class PinNode extends ViewNode implements ElementListener {
     }
 
     private double getSymbolX() {
-        return pin.isMirror() ? -pin.getLength().lenMM() : pin.getLength().lenMM(); // Symbol Outline X
+        return pin.getLength().lenMM(); // Symbol Outline X
     }
 
     private double getDotRadius() {
