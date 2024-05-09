@@ -17,7 +17,9 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementDualXY;
 import com.maehem.mangocad.model.element.enums.WireCap;
+import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import java.text.MessageFormat;
@@ -45,7 +47,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element {
+public class Wire extends Element implements ElementDualXY {
 
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
@@ -54,6 +56,7 @@ public class Wire extends Element {
     private double y1;
     private double x2;
     private double y2;
+    private WireEnd selectedEnd = WireEnd.NONE;
     private double width;
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
@@ -74,6 +77,7 @@ public class Wire extends Element {
     /**
      * @return the x1
      */
+    @Override
     public double getX1() {
         return x1;
     }
@@ -81,6 +85,7 @@ public class Wire extends Element {
     /**
      * @param x1 the x1 to set
      */
+    @Override
     public void setX1(double x1) {
         double oldVal = this.x1;
         this.x1 = x1;
@@ -90,6 +95,7 @@ public class Wire extends Element {
     /**
      * @return the y1
      */
+    @Override
     public double getY1() {
         return y1;
     }
@@ -97,6 +103,7 @@ public class Wire extends Element {
     /**
      * @param y1 the y1 to set
      */
+    @Override
     public void setY1(double y1) {
         double oldVal = this.y1;
         this.y1 = y1;
@@ -106,6 +113,7 @@ public class Wire extends Element {
     /**
      * @return the x2
      */
+    @Override
     public double getX2() {
         return x2;
     }
@@ -113,6 +121,7 @@ public class Wire extends Element {
     /**
      * @param x2 the x2 to set
      */
+    @Override
     public void setX2(double x2) {
         double oldVal = this.x2;
         this.x2 = x2;
@@ -122,6 +131,7 @@ public class Wire extends Element {
     /**
      * @return the y2
      */
+    @Override
     public double getY2() {
         return y2;
     }
@@ -129,6 +139,7 @@ public class Wire extends Element {
     /**
      * @param y2 the y2 to set
      */
+    @Override
     public void setY2(double y2) {
         double oldVal = this.y2;
         this.y2 = y2;
@@ -247,4 +258,15 @@ public class Wire extends Element {
             getLayerNum()};
         return mf.format(o);
     }
+
+    @Override
+    public void setSelectedEnd(WireEnd end) {
+        this.selectedEnd = end;
+    }
+
+    @Override
+    public WireEnd getSelectedEnd() {
+        return selectedEnd;
+    }
+
 }
