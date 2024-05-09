@@ -21,14 +21,16 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.drawing.Layers;
+import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
-import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.PickListener;
+import static com.maehem.mangocad.view.node.ViewNode.LOGGER;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
-import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.MoveTo;
@@ -39,7 +41,7 @@ import javafx.scene.shape.StrokeLineCap;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class WireNode extends Group implements ElementListener {
+public class WireNode extends ViewNode implements ElementListener {
 
     private static final double SIN90 = Math.sin(Math.toRadians(90.0));
 
@@ -53,12 +55,14 @@ public class WireNode extends Group implements ElementListener {
     private final Layers layers;
     private final ColorPalette palette;
 
-    public WireNode(Wire w, Layers layers, ColorPalette palette) {
+    public WireNode(Wire w, Layers layers, ColorPalette palette, PickListener pickListener) {
+        super(w, pickListener);
+
         this.wire = w;
         this.layers = layers;
         this.palette = palette;
 
-        getChildren().addAll(wireCurve);
+        add(wireCurve);
 
         wireCurve.setSmooth(true);
 
@@ -68,9 +72,63 @@ public class WireNode extends Group implements ElementListener {
         updateCurve();
         updateLayer(); // Color
 
+        wireCurve.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            LOGGER.log(Level.SEVERE, "Pin Picked..");
+            if (listener != null) {
+                LOGGER.log(Level.SEVERE, "Notify Pin pick listener.");
+
+                // Set the picked end.
+                switch (closestEnd(me)) {
+                    case ONE -> {
+                        LOGGER.log(Level.SEVERE, "Closest End: " + WireEnd.ONE.name());
+                    }
+                    case TWO -> {
+                        LOGGER.log(Level.SEVERE, "Closest End: " + WireEnd.TWO.name());
+                    }
+                }
+
+                getPickListener().nodePicked(this, me);
+            }
+        });
         Platform.runLater(() -> {
             this.wire.addListener(this);
         });
+    }
+
+    private WireEnd closestEnd(MouseEvent me) {
+        // me Distance to start.
+        // me Distance to end.
+        LOGGER.log(Level.SEVERE, "Closest to end: m:{0},{1}  1:{2},{3}  2:{4},{5}",
+                new Object[]{me.getX(), me.getY(),
+                    wire.getX1(), wire.getY1(),
+                    wire.getX2(), wire.getY2()
+                });
+
+        double r = 1.27;
+        double xM = me.getX();
+        double yM = -me.getY();
+        double x1 = wire.getX1();
+        double y1 = wire.getY1();
+        double x2 = wire.getX2();
+        double y2 = wire.getY2();
+
+        double diffX1 = Math.abs(xM - x1);
+        double diffY1 = Math.abs(xM - y1);
+        double diffX2 = Math.abs(xM - x2);
+        double diffY2 = Math.abs(xM - y2);
+        LOGGER.log(Level.SEVERE,
+                "Diffs: 1:{0},{1}  2:{2},{3}",
+                new Object[]{diffX1, diffY1, diffX2, diffY2});
+
+        if (Math.abs(xM - x1) < r && Math.abs(yM - y1) < r) {
+            return WireEnd.ONE;
+        }
+        if (Math.abs(xM - x2) < r && Math.abs(yM - y2) < r) {
+            return WireEnd.TWO;
+        }
+
+        return WireEnd.NONE;
     }
 
     private void updateLine() {
@@ -161,6 +219,16 @@ public class WireNode extends Group implements ElementListener {
                 updateWidth();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "WireNode: "
+                + " start:" + wire.getX1() + "," + wire.getY1()
+                + "   end:" + wire.getX2() + "," + wire.getY2()
+                + "   len:" + wire.getLength()
+                + " style:" + wire.getStyle().name()
+                + " width:" + wire.getWidth();
     }
 
 }
