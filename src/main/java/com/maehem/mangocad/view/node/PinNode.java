@@ -321,16 +321,16 @@ public class PinNode extends ViewNode implements ElementListener {
         padName.setText(padValue);
         padName.setFill(padColor);
         padName.setStroke(padColor);
-        double padWidth = padName.getBoundsInLocal().getWidth() - PAD_FONT_SIZE * 0.47;
+//        double padWidth = padName.getBoundsInLocal().getWidth() - PAD_FONT_SIZE * 0.47;
 
-        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
-            Rotate r = new Rotate(180, padWidth / 2.0, PAD_TEXT_ASCEND);
-            padName.getTransforms().add(r);
-        }
-        if (parentMir) {
-            Scale sc = new Scale(-1.0, 1.0, padWidth / 2.0, 0.0);
-            padName.getTransforms().add(sc);
-        }
+//        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
+//            //Rotate r = new Rotate(180, padWidth / 2.0, PAD_TEXT_ASCEND);
+//            //padName.getTransforms().add(r);
+//        }
+//        if (parentMir) {
+//            //Scale sc = new Scale(-1.0, 1.0, padWidth / 2.0, 0.0);
+//            //padName.getTransforms().add(sc);
+//        }
     }
 
     private void updateRotation() {
