@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementCircleField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
-import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.PickListener;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
@@ -34,18 +34,21 @@ import javafx.scene.shape.Circle;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class CircleNode extends Circle implements ElementListener {
+public class CircleNode extends ViewNode implements ElementListener {
 
     private final ElementCircle circle;
     private final Layers layers;
     private final ColorPalette palette;
+    private final Circle circleShape = new Circle();
 
-    public CircleNode(ElementCircle ec, Layers layers, ColorPalette palette) {
-        super();
+    public CircleNode(ElementCircle ec, Layers layers, ColorPalette palette, PickListener pickListener) {
+        super(ec, pickListener);
 
         this.circle = ec;
         this.layers = layers;
         this.palette = palette;
+
+        add(circleShape);
 
         updateLocation();
         updateWidth();
@@ -58,36 +61,36 @@ public class CircleNode extends Circle implements ElementListener {
     }
 
     private void updateLocation() {
-        setLayoutX(circle.getX());
-        setLayoutY(-circle.getY());
+        circleShape.setLayoutX(circle.getX());
+        circleShape.setLayoutY(-circle.getY());
     }
 
     private void updateWidth() {
         double strokeWidth = circle.getWidth();
 
-        setStrokeWidth(strokeWidth);
+        circleShape.setStrokeWidth(strokeWidth);
     }
 
     private void updateRadius() {
-        setRadius(circle.getRadius());
+        circleShape.setRadius(circle.getRadius());
     }
 
     private void updateLayer() {
         LayerElement layer = layers.get(circle.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
 
-        setStroke(c);
+        circleShape.setStroke(c);
         if ( circle.getWidth() > 0.0 ) {
-            setFill(Color.TRANSPARENT);
+            circleShape.setFill(Color.TRANSPARENT);
         } else {
-            setFill(c);
+            circleShape.setFill(c);
         }
     }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         LOGGER.log(Level.SEVERE,
-                "Pin properties have changed!{0}: {1} => {2}",
+                "Circle properties have changed!{0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch ((ElementCircleField) field) {
@@ -101,6 +104,11 @@ public class CircleNode extends Circle implements ElementListener {
                 updateWidth();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CircleNode: radius:" + circle.getRadius() + " @ " + circle.getX() + "," + circle.getY();
     }
 
 }
