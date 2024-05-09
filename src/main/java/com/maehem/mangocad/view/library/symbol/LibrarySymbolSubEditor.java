@@ -87,10 +87,11 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
     //private final VBox topArea = new VBox(topToolbar1);
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
+    private final Symbol symbol;
 
     public LibrarySymbolSubEditor(LibraryEditor parent, Symbol symbol) {
         super(parent);
-        //this.parent = parent;
+        this.symbol = symbol;
 
         // top:  option toolbar row
         topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
@@ -122,6 +123,10 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
     protected Drawing getDrawing() {
         return getParentEditor().getLibrary().getParentDrawing();
+    }
+
+    protected Symbol getSymbol() {
+        return symbol;
     }
 
     @Override
