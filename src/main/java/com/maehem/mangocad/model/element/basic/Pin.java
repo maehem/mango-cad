@@ -110,9 +110,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      */
     @Override
     public void setX(double x) {
-        double oldX = this.x;
-        this.x = x;
-        notifyListeners(PinField.X, oldX, x);
+        if (this.x != x) {
+            double oldX = this.x;
+            this.x = x;
+            notifyListeners(PinField.X, oldX, x);
+        }
     }
 
     /**
@@ -128,9 +130,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      */
     @Override
     public void setY(double y) {
-        double oldY = this.y;
-        this.y = y;
-        notifyListeners(PinField.Y, oldY, y);
+        if (this.y != y) {
+            double oldY = this.y;
+            this.y = y;
+            notifyListeners(PinField.Y, oldY, y);
+        }
     }
 
     /**
@@ -159,6 +163,7 @@ public class Pin extends Element implements ElementXY, ElementRotation {
 
     /**
      * Set pin/pad visibility
+     *
      * @param visible
      */
     public void setVisible(PinVisible visible) {
