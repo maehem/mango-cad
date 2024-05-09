@@ -16,27 +16,32 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementDualXY;
 import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
-import com.maehem.mangocad.model.element.enums.PinFunction;
-import com.maehem.mangocad.model.element.enums.PinLength;
-import com.maehem.mangocad.model.element.enums.PinVisible;
-import com.maehem.mangocad.model.util.Rotation;
+import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
+import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
+import static javafx.scene.input.MouseButton.MIDDLE;
+import static javafx.scene.input.MouseButton.PRIMARY;
+import static javafx.scene.input.MouseButton.SECONDARY;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
@@ -61,6 +66,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private static final double GRID_SIZE = 2.54;
     private static final Color GRID_COLOR = new Color(1.0, 1.0, 1.0, 0.1);
     private static final double GRID_STROKE_WIDTH = 0.05;
+    private static final double PICK_SIZE = 1.2;
 
     private final Circle shadow = new Circle(1, Color.RED);
     private final Text scaleText = new Text("x1.0");
@@ -72,8 +78,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private Line hLine;
     private Line vLine;
     private Scale workScale = new Scale();
-    private final double PICK_SIZE = 1.0;
-    private ViewNode movingNode = null;
+    private final ArrayList<Element> movingNodes = new ArrayList<>();
+    private final ArrayList<ViewNode> nodes = new ArrayList<>();
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -162,16 +168,55 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
 
             // Move any selected node.
-            if (movingNode != null && movingNode.getElement() instanceof ElementXY n) {
+            if (!movingNodes.isEmpty()) {
+                LOGGER.log(Level.SEVERE, "Moving the things around.");
                 // TODO: Is 'option' key held down? then use altGrid.
                 double snap = parentEditor.getDrawing().getGrid().getSizeMM();
                 double xxx = (int) (waX / snap) * snap; // Snap to grid
                 double yyy = (int) (waY / snap) * snap; // Snap to grid
 
-                n.setX(xxx);
-                n.setY(-yyy);
+                for (Element e : movingNodes) {
+                    if (e instanceof ElementXY ee) {
+                        ee.setX(xxx);
+                        ee.setY(-yyy);
+                    } else if (e instanceof ElementDualXY ee) {
+                        switch (ee.getSelectedEnd()) {
+                            case ONE -> {
+                                ee.setX1(xxx);
+                                ee.setY1(-yyy);
+                            }
+                            case TWO -> {
+                                ee.setX2(xxx);
+                                ee.setY2(-yyy);
+                            }
+                            default -> {
+                            }
+                        }
+                    }
+                }
             }
 
+//            // FIX ME!!!!
+//            // Wire (two ends)
+//            if (movingNodes != null && movingNodes.getElement() instanceof ElementDualXY n) {
+//                // TODO: Is 'option' key held down? then use altGrid.
+//                double snap = parentEditor.getDrawing().getGrid().getSizeMM();
+//                double xxx = (int) (waX / snap) * snap; // Snap to grid
+//                double yyy = (int) (waY / snap) * snap; // Snap to grid
+//
+//                switch (n.getSelectedEnd()) {
+//                    case ONE -> {
+//                        n.setX1(xxx);
+//                        n.setY1(-yyy);
+//                    }
+//                    case TWO -> {
+//                        n.setX2(xxx);
+//                        n.setY2(-yyy);
+//                    }
+//                    default -> {
+//                    }
+//                }
+//            }
         });
         setOnMouseEntered((t) -> {
             getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
@@ -179,31 +224,92 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         setOnMouseExited((t) -> {
             getScene().setCursor(Cursor.DEFAULT);
         });
-        setOnMouseClicked((t) -> {
-            LOGGER.log(Level.SEVERE, "Editor Clicked: " + t.getButton().name());
-            if (movingNode != null) {
-                if (null != t.getButton()) {
-                    switch (t.getButton()) {
+
+        workArea.setOnMouseClicked((me) -> {
+            LOGGER.log(Level.SEVERE, "Editor Work Area Clicked: " + me.getButton().name());
+            //LOGGER.log(Level.SEVERE, "Mouse: {0},{1}  scene: {2},{3}", new Object[]{me.getX(), -me.getY(), me.getSceneX(), -me.getSceneY()});
+            ArrayList<Element> picks = new ArrayList<>();
+            parentEditor.getSymbol().getElements().forEach((e) -> {
+                if (e instanceof ElementXY ee) {
+                    if (Math.abs(me.getX() - ee.getX()) < PICK_SIZE
+                            && Math.abs(-me.getY() - ee.getY()) < PICK_SIZE) {
+                        picks.add(e);
+                    }
+                } else if (e instanceof ElementDualXY ee) {
+                    if (Math.abs(me.getX() - ee.getX1()) < PICK_SIZE
+                            && Math.abs(-me.getY() - ee.getY1()) < PICK_SIZE) {
+                        picks.add(e);
+                        ((ElementDualXY) e).setSelectedEnd(ONE);
+                    } else if (Math.abs(me.getX() - ee.getX2()) < PICK_SIZE
+                            && Math.abs(-me.getY() - ee.getY2()) < PICK_SIZE) {
+                        picks.add(e);
+                        ((ElementDualXY) e).setSelectedEnd(TWO);
+                    }
+                }
+            });
+            LOGGER.log(Level.SEVERE, "Pick count: " + picks.size());
+
+            if (picks.isEmpty()) {
+                return;
+            }
+
+            // If one pick, pick it.
+            if (movingNodes.isEmpty() && picks.size() == 1) {
+                movingNodes.add(picks.getFirst());
+                LOGGER.log(Level.SEVERE, "Moving a thing.");
+                me.consume();
+                return;
+            }
+
+            // If more than one pick,
+            // If all are wires, select them.
+            if (movingNodes.isEmpty() && isOnlyWires(picks)) { // Wires converge and nothing else there.
+                // Add all picks to moving list.
+                for (Element e : picks) {
+                    movingNodes.add(e);
+                }
+                LOGGER.log(Level.SEVERE, "Moving some wires.");
+                me.consume();
+                return;
+            } else {
+                // otherwise,  highlight first (grey out rest) and wait for either
+                // another click or right-click to highlight next item.
+                LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
+                me.consume();
+            }
+        });
+        setOnMouseClicked((me) -> {
+            LOGGER.log(Level.SEVERE, "Editor Window Area Clicked: " + me.getButton().name());
+            if (!movingNodes.isEmpty()) {
+                if (null != me.getButton()) {
+                    switch (me.getButton()) {
                         case PRIMARY -> {
-                            movingNode = null; // End move of node.
-                            t.consume();
+                            movingNodes.clear(); // End move of node.
+                            LOGGER.log(Level.SEVERE, "End of move.");
+                            me.consume();
                         }
                         case MIDDLE -> { // Mirror
-                            if (movingNode.getElement() instanceof ElementRotation er) {
-                                Rotation rotation = er.getRotation();
-                                if (er.isMirrorAllowed()) {
-                                    er.setMirror(!er.isMirrored());
-                                    t.consume();
-                                } else {
-                                    LOGGER.log(Level.SEVERE, "Mirror not allowed!");
-                                }
+                            // All Nodes should be Rotatable. break if not.
+                            if (elementsCanRotate(movingNodes)) {
+                                for (Element e : movingNodes) {
+                                    if (e instanceof ElementRotation er) {
+                                        er.setMirror(!er.isMirrored());
+                                    }
+                                }                                //Rotation rotation = er.getRotation();
+                                LOGGER.log(Level.SEVERE, "Mirror/180 Operation.");
+                                me.consume();
                             }
                         }
                         case SECONDARY -> {
                             // Rotate  add 90 (actually "angle" from top of viewport)
-                            if (movingNode.getElement() instanceof ElementRotation er) {
-                                er.setRot(er.getRot() + 90);
-                                //t.consume();
+                            if (elementsCanRotate(movingNodes)) {
+                                for (Element e : movingNodes) {
+                                    if (e instanceof ElementRotation er) {
+                                        er.setRot(er.getRot() + 90);
+                                    }
+                                }
+                                LOGGER.log(Level.SEVERE, "Rotate 90 Operation.");
+                                me.consume();
                             }
                         }
                         default -> {
@@ -212,6 +318,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 }
             }
         });
+
     }
 
     private void buildScene() {
@@ -240,155 +347,75 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             workArea.getChildren().add(gridLine(n, false));
             workArea.getChildren().add(gridLine(-n, false));
         }
-//        for (int x = 0; x <= WORK_AREA; x += GRID_SIZE) {
-//            workArea.getChildren().add(gridLine(x, 0));
-//        }
 
-        // Add Zero point crosshair
-        // Add symbol elements.
-//        workArea.getChildren().add(new Text("\nSymbol Editor"));
+        Symbol symbol = parentEditor.getSymbol();
 
-//        Text t1 = new Text(-20, -20, "1");
-//        Text t2 = new Text(20, -20, "2");
-//        Text t3 = new Text(-20, 20, "3");
-//        Text t4 = new Text(20, 20, "4");
-//
-//        workArea.getChildren().addAll(t1, t2, t3, t4);
+        symbol.getElements().forEach((element) -> {
+            if (element instanceof Pin p) {
+                PinNode pinNode = new PinNode(p,
+                        Color.RED, Color.DARKGREEN, Color.DARKGREY,
+                        null, true, this
+                );
+                nodes.add(pinNode);
+                pinNode.addTo(workArea);
+            } else if (element instanceof Wire w) {
+                WireNode wireNode = new WireNode(w,
+                        parentEditor.getDrawing().getLayers(),
+                        parentEditor.getDrawing().getPalette(),
+                        this);
+                nodes.add(wireNode);
+                wireNode.addTo(workArea);
+            } else if (element instanceof ElementText t) {
+                TextNode textNode = new TextNode(t, null,
+                        parentEditor.getDrawing().getLayers(),
+                        parentEditor.getDrawing().getPalette(),
+                        null, true,
+                        this);
+                nodes.add(textNode);
+                textNode.addTo(workArea);
+            } else if (element instanceof ElementCircle c) {
+                CircleNode circleNode = new CircleNode(c,
+                        parentEditor.getDrawing().getLayers(),
+                        parentEditor.getDrawing().getPalette(),
+                        this
+                );
+                nodes.add(circleNode);
+                circleNode.addTo(workArea);
+            }
+        });
+    }
 
-        Pin p1 = new Pin();
-        p1.setX(-10.16);
-        p1.setY(2.54);
-        p1.setName("A");
-        p1.setLength(PinLength.MIDDLE);
-        p1.setFunction(PinFunction.NONE);
-        p1.setVisible(PinVisible.BOTH);
-        PinNode pinNode1 = new PinNode(p1,
-                Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                null, true, this
-        );
+    private boolean elementsCanRotate(ArrayList<Element> elements) {
+        // All Nodes should be Rotatable. break if not.
+        boolean canRotate = false;
+        for (Element e : elements) {
+            if (e instanceof ElementRotation) {
+                canRotate = true;
+            } else {
+                canRotate = false;
+                break;
+            }
+        }
 
-        Pin p2 = new Pin();
-        p2.setX(-10.16);
-        p2.setY(-2.54);
-        p2.setName("B");
-        p2.setLength(PinLength.MIDDLE);
-        p2.setFunction(PinFunction.NONE);
-        p2.setVisible(PinVisible.BOTH);
-        PinNode pinNode2 = new PinNode(p2,
-                Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                null, true, this
-        );
+        return canRotate;
+    }
 
-        Pin p3 = new Pin();
-        p3.setX(10.16);
-        p3.setY(0);
-        p3.setName("Y");
-        p3.setLength(PinLength.MIDDLE);
-        p3.setFunction(PinFunction.DOT);
-        p3.setVisible(PinVisible.BOTH);
-        p3.setRot(180);
-        PinNode pinNode3 = new PinNode(p3,
-                Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                null, true, this
-        );
+    private ViewNode findElement(Element e) {
+        for (ViewNode vn : nodes) {
+            if (vn.getElement().equals(e)) {
+                return vn;
+            }
+        }
+        return null;
+    }
 
-        Wire w1 = new Wire();
-        w1.setX1(-5.08);
-        w1.setY1(5.08);
-        w1.setX2(-5.08);
-        w1.setY2(-5.08);
-        w1.setWidth(0.64);
-
-        Wire w2 = new Wire();
-        w2.setX1(-5.08);
-        w2.setY1(5.08);
-        w2.setX2(0.0);
-        w2.setY2(5.08);
-        w2.setWidth(0.64);
-
-        Wire w3 = new Wire();
-        w3.setX1(-5.08);
-        w3.setY1(-5.08);
-        w3.setX2(0.0);
-        w3.setY2(-5.08);
-        w3.setWidth(0.64);
-
-        Wire w4 = new Wire();
-        w4.setX1(0.0);
-        w4.setY1(-5.08);
-        w4.setX2(0.0);
-        w4.setY2(5.08);
-        w4.setWidth(0.64);
-        w4.setCurve(180.0);
-
-        WireNode wireNode1 = new WireNode(w1,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette());
-        WireNode wireNode2 = new WireNode(w2,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette());
-        WireNode wireNode3 = new WireNode(w3,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette());
-        WireNode wireNode4 = new WireNode(w4,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette());
-
-        ElementCircle circle1 = new ElementCircle();
-        circle1.setX(10.16);
-        circle1.setY(20.32);
-        circle1.setRadius(10.16);
-        circle1.setWidth(0.7);
-        circle1.setLayer(94);
-
-        CircleNode circleNode1 = new CircleNode(circle1,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette()
-        );
-
-        ElementCircle circle2 = new ElementCircle();
-        circle2.setX(20.32);
-        circle2.setY(20.32);
-        circle2.setRadius(10.16);
-        circle2.setWidth(0.0);
-        circle2.setLayer(94);
-
-        CircleNode circleNode2 = new CircleNode(circle2,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette()
-        );
-
-        ElementText text1 = new ElementText();
-        text1.setX(-12.70);
-        text1.setY(5.08);
-        text1.setValue(">NAME");
-        text1.setSize(5.0);
-        text1.setLayer(96);
-        text1.getRotation().setConstrained(true);
-        text1.setAllowMirror(true);
-        text1.setAllowSpin(true);
-
-        pinNode1.addTo(workArea);
-        pinNode2.addTo(workArea);
-        pinNode3.addTo(workArea);
-
-//        wireNode1.addTo(workArea);
-//        wireNode2.addTo(workArea);
-//        wireNode3.addTo(workArea);
-//        wireNode4.addTo(workArea);
-        workArea.getChildren().addAll(
-                wireNode1, wireNode2, wireNode3, wireNode4,
-                circleNode1, circleNode2);
-
-        TextNode textNode1 = new TextNode(text1, null,
-                parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette(),
-                null, true, this);
-
-        textNode1.addTo(workArea);
-//        for (Shape s : textNode1) {
-//            workArea.getChildren().add(s);
-//        }
+    private boolean isOnlyWires(ArrayList<Element> picks) {
+        for (Element e : picks) {
+            if (!(e instanceof Wire)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Line gridLine(int n, boolean horiz) {
@@ -415,16 +442,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     @Override
     public void nodePicked(ViewNode node, MouseEvent me) {
 
-        //LOGGER.log(Level.SEVERE, "Event: " + me.getEventType().getName());
-        if (me.getEventType() == MouseEvent.MOUSE_CLICKED) {
-            if (movingNode == null) {
-                // Pick
-                if (PICK_SIZE > Math.abs(me.getX()) && PICK_SIZE > Math.abs(me.getY())) {
-                    movingNode = node;
-                    LOGGER.log(Level.SEVERE, "Moving Node: {0}", movingNode.getElement().getElementName());
-                    me.consume();
-                }
-            }
-        }
+        // TODO:  No more node picking.
+//        //LOGGER.log(Level.SEVERE, "Event: " + me.getEventType().getName());
+//        if (me.getEventType() == MouseEvent.MOUSE_CLICKED) {
+//            if (movingNodes == null) {
+//                // Pick
+//                if (PICK_SIZE > Math.abs(me.getX()) && PICK_SIZE > Math.abs(me.getY())) {
+//                    movingNodes = node;
+//                    LOGGER.log(Level.SEVERE, "Moving Node: {0}", movingNodes.getElement().getElementName());
+//                    me.consume();
+//                }
+//            }
+//        }
     }
 }
