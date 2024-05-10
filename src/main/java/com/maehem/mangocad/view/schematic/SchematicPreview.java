@@ -166,8 +166,12 @@ public class SchematicPreview extends Group {
                 //LOGGER.log(Level.SEVERE, "Draw Seg");
 
                 seg.forEach((element) -> {
-                    int colorIndex = layers.get(element.getLayerNum()).getColorIndex();
-                    Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+                    int layerNum = element.getLayerNum();
+                    Color c = Color.DARKGRAY;
+                    if (layerNum != 0) {
+                        int colorIndex = layers.get(layerNum).getColorIndex();
+                        c = ColorUtils.getColor(palette.getHex(colorIndex));
+                    }
                     if (element instanceof PinRef e) {
                         // Might not have any visual element.
                         //        LOGGER.log(Level.SEVERE, "TODO: Draw PinRef Node");
