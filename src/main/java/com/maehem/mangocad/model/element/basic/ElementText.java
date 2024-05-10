@@ -55,6 +55,7 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     private double x;
     private double y;
     private double size;
+    private double[] snapshot = {0, 0};
 
     private TextFont font = TextFont.PROPORTIONAL;
     private int ratio = 8;
@@ -354,6 +355,17 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
         boolean oldValue = this.isMirrorAllowed();
         rotation.setAllowMirror(value);
         notifyListeners(RotationField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+    }
+
+    @Override
+    public void createSnapshot() {
+        snapshot[0] = getX();
+        snapshot[1] = getY();
+    }
+
+    @Override
+    public double[] getSnapshot() {
+        return snapshot;
     }
 
 }

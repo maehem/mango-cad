@@ -57,6 +57,8 @@ public class Pin extends Element implements ElementXY, ElementRotation {
     private String name;
     private double x;
     private double y;
+    private double[] snapshot = {0, 0};
+
     private PinVisible visible = PinVisible.BOTH;
     private PinLength length = PinLength.LONG;
     private PinDirection direction = PinDirection.IO;
@@ -314,4 +316,14 @@ public class Pin extends Element implements ElementXY, ElementRotation {
         // Only true allowed.
     }
 
+    @Override
+    public void createSnapshot() {
+        snapshot[0] = getX();
+        snapshot[1] = getY();
+    }
+
+    @Override
+    public double[] getSnapshot() {
+        return snapshot;
+    }
 }

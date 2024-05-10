@@ -30,4 +30,7 @@ public interface ElementXY {
 
     public void setY(double y);
 
+    public void createSnapshot();
+
+    public double[] getSnapshot();
 }
