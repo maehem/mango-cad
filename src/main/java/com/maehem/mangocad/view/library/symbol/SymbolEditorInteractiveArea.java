@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
+import static javafx.scene.input.KeyCode.ESCAPE;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
 import static javafx.scene.input.MouseButton.SECONDARY;
@@ -161,9 +162,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //
 //            double waY = (mY - (vaH * sbVV)) / scale;
 //            waY += (sbVV * 2 - 1) * (WA2);
-
 //            LOGGER.log(Level.SEVERE, "Main Area: mXY: {0}{1}   waXY: {2},{3}", new Object[]{mX, mY, waX, waY});
-
 //            if (waX > -WA2 && waX < WA2) {
 //                shadow.setLayoutX(waX);
 //
@@ -171,7 +170,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //            if (waY > -WA2 && waY < WA2) {
 //                shadow.setLayoutY(waY);
 //            }
-
 //            // Move any selected node.
 //            if (!movingNodes.isEmpty()) {
 //                LOGGER.log(Level.SEVERE, "Moving the things around.");
@@ -209,6 +207,20 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //            }
         });
 
+        setOnKeyPressed((ke) -> {
+            if (!movingNodes.isEmpty() && ke.getCode() == ESCAPE) {
+                for (Element e : movingNodes) {
+                    if (e instanceof ElementXY exy) {
+                        exy.restoreSnapshot();
+                    } else if (e instanceof ElementDualXY exy) {
+                        exy.restoreSnapshot();
+                    }
+                }
+                movingNodes.clear(); // End move of node.
+                LOGGER.log(Level.SEVERE, "Abandon move.");
+                ke.consume();
+            }
+        });
         workArea.setOnMouseMoved((me) -> {
             // Move any selected node.
             if (!movingNodes.isEmpty()) {
