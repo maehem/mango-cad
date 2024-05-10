@@ -47,6 +47,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
@@ -79,6 +80,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private Line vLine;
     private Scale workScale = new Scale();
     private final ArrayList<Element> movingNodes = new ArrayList<>();
+    private double movingOriginX = 0;
+    private double movingOriginY = 0;
     private final ArrayList<ViewNode> nodes = new ArrayList<>();
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
@@ -144,50 +147,104 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             event.consume();
         });
         addEventFilter(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
-            double mX = me.getX();
-            double mY = me.getY();
+//            double mX = me.getX();
+//            double mY = me.getY();
+//
+//            double vaW = getBoundsInLocal().getWidth();
+//            double vaH = getBoundsInLocal().getHeight();
+//
+//            double sbHV = getHvalue();
+//            double sbVV = getVvalue();
 
-            double vaW = getBoundsInLocal().getWidth();
-            double vaH = getBoundsInLocal().getHeight();
+//            double waX = (mX - (vaW * sbHV)) / scale;
+//            waX += (sbHV * 2 - 1) * (WA2);
+//
+//            double waY = (mY - (vaH * sbVV)) / scale;
+//            waY += (sbVV * 2 - 1) * (WA2);
 
-            double sbHV = getHvalue();
-            double sbVV = getVvalue();
+//            LOGGER.log(Level.SEVERE, "Main Area: mXY: {0}{1}   waXY: {2},{3}", new Object[]{mX, mY, waX, waY});
 
-            double waX = (mX - (vaW * sbHV)) / scale;
-            waX += (sbHV * 2 - 1) * (WA2);
+//            if (waX > -WA2 && waX < WA2) {
+//                shadow.setLayoutX(waX);
+//
+//            }
+//            if (waY > -WA2 && waY < WA2) {
+//                shadow.setLayoutY(waY);
+//            }
 
-            double waY = (mY - (vaH * sbVV)) / scale;
-            waY += (sbVV * 2 - 1) * (WA2);
+//            // Move any selected node.
+//            if (!movingNodes.isEmpty()) {
+//                LOGGER.log(Level.SEVERE, "Moving the things around.");
+//                // TODO: Is 'option' key held down? then use altGrid.
+//                double snap = parentEditor.getDrawing().getGrid().getSizeMM();
+//                //double xGrids = (int) ((movingOriginX - waX) / snap);
+//                //double yGrids = (int) ((movingOriginY - waY) / snap);
+//
+//                double xxx = (int) (waX / snap) * snap; // Snap to grid
+//                double yyy = (int) (waY / snap) * snap; // Snap to grid
+//
+//                LOGGER.log(Level.SEVERE, " moving: {0},{1}", new Object[]{movingOriginX, movingOriginY});
+//                LOGGER.log(Level.SEVERE, "xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
+//
+//
+//                for (Element e : movingNodes) {
+//                    if (e instanceof ElementXY ee) {
+//                        ee.setX(movingOriginX + xxx);
+//                        ee.setY(-(movingOriginY + yyy));
+//                    } else if (e instanceof ElementDualXY ee) {
+//                        switch (ee.getSelectedEnd()) {
+//                            case ONE -> {
+//                                ee.setX1(movingOriginX + xxx);
+//                                ee.setY1(-(movingOriginY + yyy));
+//                            }
+//                            case TWO -> {
+//                                ee.setX2(movingOriginX + xxx);
+//                                ee.setY2(-(movingOriginY + yyy));
+//                            }
+//                            default -> {
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+        });
 
-            if (waX > -WA2 && waX < WA2) {
-                shadow.setLayoutX(waX);
-
-            }
-            if (waY > -WA2 && waY < WA2) {
-                shadow.setLayoutY(waY);
-            }
-
+        workArea.setOnMouseMoved((me) -> {
             // Move any selected node.
             if (!movingNodes.isEmpty()) {
-                LOGGER.log(Level.SEVERE, "Moving the things around.");
+                LOGGER.log(Level.SEVERE, "Work Area: mXY: {0},{1}", new Object[]{me.getX(), me.getY()});
+                //LOGGER.log(Level.SEVERE, "Moving the things around.");
                 // TODO: Is 'option' key held down? then use altGrid.
                 double snap = parentEditor.getDrawing().getGrid().getSizeMM();
-                double xxx = (int) (waX / snap) * snap; // Snap to grid
-                double yyy = (int) (waY / snap) * snap; // Snap to grid
+                //double xGrids = (int) ((movingOriginX - waX) / snap);
+                //double yGrids = (int) ((movingOriginY - waY) / snap);
+
+                double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
+                double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
+                double partialX = (movingOriginX / snap) * snap;
+                double partialY = (movingOriginY / snap) * snap;
+
+                double gridsX = (int) ((movingOriginX - me.getX()) / snap) * snap;
+                double gridsY = (int) ((movingOriginY - me.getY()) / snap) * snap;
+
+                LOGGER.log(Level.SEVERE, "     moving: {0},{1}", new Object[]{movingOriginX, movingOriginY});
+                LOGGER.log(Level.SEVERE, "    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
 
                 for (Element e : movingNodes) {
                     if (e instanceof ElementXY ee) {
-                        ee.setX(xxx);
-                        ee.setY(-yyy);
+                        double[] snapshot = ee.getSnapshot();
+                        ee.setX(xxx + snapshot[0] % snap);
+                        ee.setY(-(yyy + snapshot[1] % snap));
                     } else if (e instanceof ElementDualXY ee) {
+                        double[] snapshot = ee.getSnapshot();
                         switch (ee.getSelectedEnd()) {
                             case ONE -> {
-                                ee.setX1(xxx);
-                                ee.setY1(-yyy);
+                                ee.setX1(xxx + snapshot[0] % snap);
+                                ee.setY1(-(yyy + snapshot[1] % snap));
                             }
                             case TWO -> {
-                                ee.setX2(xxx);
-                                ee.setY2(-yyy);
+                                ee.setX2(xxx + snapshot[2] % snap);
+                                ee.setY2(-(yyy + snapshot[3] % snap));
                             }
                             default -> {
                             }
@@ -195,29 +252,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     }
                 }
             }
-
-//            // FIX ME!!!!
-//            // Wire (two ends)
-//            if (movingNodes != null && movingNodes.getElement() instanceof ElementDualXY n) {
-//                // TODO: Is 'option' key held down? then use altGrid.
-//                double snap = parentEditor.getDrawing().getGrid().getSizeMM();
-//                double xxx = (int) (waX / snap) * snap; // Snap to grid
-//                double yyy = (int) (waY / snap) * snap; // Snap to grid
-//
-//                switch (n.getSelectedEnd()) {
-//                    case ONE -> {
-//                        n.setX1(xxx);
-//                        n.setY1(-yyy);
-//                    }
-//                    case TWO -> {
-//                        n.setX2(xxx);
-//                        n.setY2(-yyy);
-//                    }
-//                    default -> {
-//                    }
-//                }
-//            }
         });
+
+        // Toggle CrossHair
         setOnMouseEntered((t) -> {
             getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
         });
@@ -226,6 +263,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         });
 
         workArea.setOnMouseClicked((me) -> {
+            if (!movingNodes.isEmpty()) {
+                return;
+            }
+
             LOGGER.log(Level.SEVERE, "Editor Work Area Clicked: " + me.getButton().name());
             //LOGGER.log(Level.SEVERE, "Mouse: {0},{1}  scene: {2},{3}", new Object[]{me.getX(), -me.getY(), me.getSceneX(), -me.getSceneY()});
             ArrayList<Element> picks = new ArrayList<>();
@@ -253,9 +294,19 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 return;
             }
 
+            // Remember where we started.
+            movingOriginX = me.getX();
+            movingOriginY = me.getY();
+            LOGGER.log(Level.SEVERE, "Changed movingOrigin.");
+
             // If one pick, pick it.
             if (movingNodes.isEmpty() && picks.size() == 1) {
-                movingNodes.add(picks.getFirst());
+                Element pick = picks.getFirst();
+                movingNodes.add(pick);
+                if (pick instanceof ElementXY exy) {
+                    exy.createSnapshot();
+                }
+
                 LOGGER.log(Level.SEVERE, "Moving a thing.");
                 me.consume();
                 return;
@@ -267,10 +318,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 // Add all picks to moving list.
                 for (Element e : picks) {
                     movingNodes.add(e);
+                    if (e instanceof ElementDualXY exy) {
+                        exy.createSnapshot();
+                    }
                 }
                 LOGGER.log(Level.SEVERE, "Moving some wires.");
                 me.consume();
-                return;
             } else {
                 // otherwise,  highlight first (grey out rest) and wait for either
                 // another click or right-click to highlight next item.
@@ -336,9 +389,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         crossHairArea.getChildren().addAll(hLine, vLine);
 
-        int nGrids = (int) (WA2 / GRID_SIZE);
-        // Add Grid
+        Rectangle background = new Rectangle(-WA2, -WA2, WORK_AREA, WORK_AREA);
+        // TODO: Get color from control panel settings.
+        background.setFill(new Color(0.2, 0.2, 0.2, 1.0));
+        workArea.getChildren().add(background);
 
+        int nGrids = (int) (WA2 / GRID_SIZE);
+
+        // Add Grid
         workArea.getChildren().add(gridLine(0, true));
         workArea.getChildren().add(gridLine(0, false));
         for (int n = 1; n <= nGrids; n++) {
