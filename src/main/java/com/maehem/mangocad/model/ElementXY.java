@@ -32,5 +32,7 @@ public interface ElementXY {
 
     public void createSnapshot();
 
+    public void restoreSnapshot();
+
     public double[] getSnapshot();
 }

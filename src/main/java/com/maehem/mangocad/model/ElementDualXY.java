@@ -46,6 +46,8 @@ public interface ElementDualXY {
 
     public void createSnapshot();
 
+    public void restoreSnapshot();
+
     public double[] getSnapshot();
 
 

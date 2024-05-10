@@ -323,6 +323,12 @@ public class Pin extends Element implements ElementXY, ElementRotation {
     }
 
     @Override
+    public void restoreSnapshot() {
+        setX(snapshot[0]);
+        setY(snapshot[1]);
+    }
+
+    @Override
     public double[] getSnapshot() {
         return snapshot;
     }
