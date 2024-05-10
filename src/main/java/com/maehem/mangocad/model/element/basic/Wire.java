@@ -62,6 +62,7 @@ public class Wire extends Element implements ElementDualXY {
     private WireStyle style = WireStyle.CONTINUOUS;
     private double curve = 0.0;
     private WireCap cap = WireCap.ROUND;
+    private double[] snapshot = {0, 0, 0, 0};
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -267,6 +268,19 @@ public class Wire extends Element implements ElementDualXY {
     @Override
     public WireEnd getSelectedEnd() {
         return selectedEnd;
+    }
+
+    @Override
+    public void createSnapshot() {
+        snapshot[0] = getX1();
+        snapshot[1] = getY1();
+        snapshot[2] = getX2();
+        snapshot[3] = getY2();
+    }
+
+    @Override
+    public double[] getSnapshot() {
+        return snapshot;
     }
 
 }
