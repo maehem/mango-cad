@@ -114,9 +114,9 @@ public class WireNode extends ViewNode implements ElementListener {
         double y2 = wire.getY2();
 
         double diffX1 = Math.abs(xM - x1);
-        double diffY1 = Math.abs(xM - y1);
+        double diffY1 = Math.abs(yM - y1);
         double diffX2 = Math.abs(xM - x2);
-        double diffY2 = Math.abs(xM - y2);
+        double diffY2 = Math.abs(yM - y2);
         LOGGER.log(Level.SEVERE,
                 "Diffs: 1:{0},{1}  2:{2},{3}",
                 new Object[]{diffX1, diffY1, diffX2, diffY2});
