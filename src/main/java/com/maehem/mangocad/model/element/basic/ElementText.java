@@ -90,9 +90,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      */
     @Override
     public void setX(double x) {
-        double oldValue = this.x;
-        this.x = x;
-        notifyListeners(ElementTextField.X, oldValue, this.x);
+        if (this.x != x) {
+            double oldValue = this.x;
+            this.x = x;
+            notifyListeners(ElementTextField.X, oldValue, this.x);
+        }
     }
 
     /**
@@ -108,9 +110,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      */
     @Override
     public void setY(double y) {
-        double oldValue = this.y;
-        this.y = y;
-        notifyListeners(ElementTextField.Y, oldValue, this.y);
+        if (this.y != y) {
+            double oldValue = this.y;
+            this.y = y;
+            notifyListeners(ElementTextField.Y, oldValue, this.y);
+        }
     }
 
     /**
@@ -361,6 +365,12 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     public void createSnapshot() {
         snapshot[0] = getX();
         snapshot[1] = getY();
+    }
+
+    @Override
+    public void restoreSnapshot() {
+        setX(snapshot[0]);
+        setY(snapshot[1]);
     }
 
     @Override

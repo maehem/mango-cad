@@ -88,9 +88,11 @@ public class Wire extends Element implements ElementDualXY {
      */
     @Override
     public void setX1(double x1) {
-        double oldVal = this.x1;
-        this.x1 = x1;
-        notifyListeners(WireField.X1, oldVal, this.x1);
+        if (this.x1 != x1) {
+            double oldVal = this.x1;
+            this.x1 = x1;
+            notifyListeners(WireField.X1, oldVal, this.x1);
+        }
     }
 
     /**
@@ -106,9 +108,11 @@ public class Wire extends Element implements ElementDualXY {
      */
     @Override
     public void setY1(double y1) {
-        double oldVal = this.y1;
-        this.y1 = y1;
-        notifyListeners(WireField.Y1, oldVal, this.y1);
+        if (this.y1 != y1) {
+            double oldVal = this.y1;
+            this.y1 = y1;
+            notifyListeners(WireField.Y1, oldVal, this.y1);
+        }
     }
 
     /**
@@ -124,9 +128,11 @@ public class Wire extends Element implements ElementDualXY {
      */
     @Override
     public void setX2(double x2) {
-        double oldVal = this.x2;
-        this.x2 = x2;
-        notifyListeners(WireField.X2, oldVal, this.x2);
+        if (this.x2 != x2) {
+            double oldVal = this.x2;
+            this.x2 = x2;
+            notifyListeners(WireField.X2, oldVal, this.x2);
+        }
     }
 
     /**
@@ -142,17 +148,19 @@ public class Wire extends Element implements ElementDualXY {
      */
     @Override
     public void setY2(double y2) {
-        double oldVal = this.y2;
-        this.y2 = y2;
-        notifyListeners(WireField.Y2, oldVal, this.y2);
+        if (this.y2 != y2) {
+            double oldVal = this.y2;
+            this.y2 = y2;
+            notifyListeners(WireField.Y2, oldVal, this.y2);
+        }
     }
 
     public double getAverageX() {
-        return (x1+x2)/2.0;
+        return (x1 + x2) / 2.0;
     }
 
     public double getAverageY() {
-        return (y1+y2)/2.0;
+        return (y1 + y2) / 2.0;
     }
 
     public double getLength() {
@@ -209,7 +217,6 @@ public class Wire extends Element implements ElementDualXY {
         this.cap = cap;
         notifyListeners(WireField.CAP, oldVal, this.cap);
     }
-
 
     /**
      * @return the extent
@@ -276,6 +283,14 @@ public class Wire extends Element implements ElementDualXY {
         snapshot[1] = getY1();
         snapshot[2] = getX2();
         snapshot[3] = getY2();
+    }
+
+    @Override
+    public void restoreSnapshot() {
+        setX1(snapshot[0]);
+        setY1(snapshot[1]);
+        setX2(snapshot[2]);
+        setY2(snapshot[3]);
     }
 
     @Override
