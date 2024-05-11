@@ -300,34 +300,38 @@ public class LibraryEditor extends VBox {
                 }
                 case SYMBOL -> {
                     if (symbolPane == null) {
-                        ArrayList<String> list = new ArrayList<>();
-                        for (Symbol element : getLibrary().getSymbols()) {
-                            list.add(element.getName());
-                        }
-                        Collections.sort(list);
-                        list.add(0, CREATE_NEW_MSG);
-
-                        ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
-                        dialog.showAndWait(); // Present chooser
-
-                        Object result = dialog.getResult();
                         Symbol symbol;
-                        if (result == null) { // User Canceled
-                            return;
-                        } else {
-                            item = (String) result;
+                        if (item != null) {
                             symbol = getLibrary().getSymbol(item);
+                        } else {
+                            ArrayList<String> list = new ArrayList<>();
+                            for (Symbol element : getLibrary().getSymbols()) {
+                                list.add(element.getName());
+                            }
+                            Collections.sort(list);
+                            list.add(0, CREATE_NEW_MSG);
 
-                        }
-                        if (item.equals(CREATE_NEW_MSG)) {
-                            //deviceSets.remove(CREATE_NEW_MSG);
-                            String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(getLibrary(), type, null);
-                            if (newName == null) { // A valid new device was added, go edit it.
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
+                            dialog.showAndWait(); // Present chooser
+
+                            Object result = dialog.getResult();
+                            if (result == null) { // User Canceled
                                 return;
                             } else {
-                                //item = newName;
-                                symbol = new Symbol();
-                                symbol.setName(newName);
+                                item = (String) result;
+                                symbol = getLibrary().getSymbol(item);
+
+                            }
+                            if (item.equals(CREATE_NEW_MSG)) {
+                                //deviceSets.remove(CREATE_NEW_MSG);
+                                String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(getLibrary(), type, null);
+                                if (newName == null) { // A valid new device was added, go edit it.
+                                    return;
+                                } else {
+                                    //item = newName;
+                                    symbol = new Symbol();
+                                    symbol.setName(newName);
+                                }
                             }
                         }
                         symbolPane = new LibrarySymbolSubEditor(this, symbol);
