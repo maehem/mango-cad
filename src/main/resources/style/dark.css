@@ -121,6 +121,11 @@
     -fx-background-color: derive(-fx-focus-color, -40%);
 }
 
+#editor-options-message-text {
+    -fx-font-weight: bold;
+    -fx-font-size: 120%;    
+}
+
 #button-icon{
     -fx-padding: 2;
     -fx-border-width: 2;
