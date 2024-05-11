@@ -19,6 +19,7 @@ package com.maehem.mangocad.view;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.widgets.CommandFieldWidget;
+import com.maehem.mangocad.view.widgets.ContextMessageWidget;
 import com.maehem.mangocad.view.widgets.LayerChooser;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class EditorOptionsBar extends ToolBar {
     private final ArrayList<EditorOptionsBarListener> listeners = new ArrayList<>();
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private EditorOption currentOption;
+    ContextMessageWidget editMessage = new ContextMessageWidget("Foo", null);
 
     public EditorOptionsBar(Drawing drawing, List<EditorOption> options, EditorOptionsBarListener listener) {
         this.options = options;
@@ -80,6 +82,9 @@ public class EditorOptionsBar extends ToolBar {
                     CommandFieldWidget commandField = new CommandFieldWidget(option.bundleMessage(), option.iconPath());
                     getItems().add(commandField);
                 }
+                case CONTEXT_MESSAGE -> {
+                    getItems().add(editMessage);
+                }
                 default -> {
                     LOGGER.log(Level.SEVERE, "Unknown EditorOption in List: " + option.name());
                 }
@@ -112,5 +117,9 @@ public class EditorOptionsBar extends ToolBar {
         b.setId("toolbar-button");
 
         return b;
+    }
+
+    public void setMessage(String message) {
+        editMessage.setText(message);
     }
 }
