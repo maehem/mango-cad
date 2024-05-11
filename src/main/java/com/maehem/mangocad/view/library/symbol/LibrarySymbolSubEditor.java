@@ -35,7 +35,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -53,7 +52,9 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorOption.SEPARATOR,
             EditorOption.GRID_MOUSE_INFO,
             EditorOption.SEPARATOR,
-            EditorOption.COMMAND_LINE
+            EditorOption.COMMAND_LINE,
+            EditorOption.SEPARATOR,
+            EditorOption.CONTEXT_MESSAGE
     ));
 
     private final ArrayList<EditorTool> tools = new ArrayList<>(Arrays.asList(
@@ -83,7 +84,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorTool.MARK, EditorTool.DIMENSION
     ));
 
-    private final ToolBar topToolbar;
+    private final EditorOptionsBar topToolbar;
     //private final VBox topArea = new VBox(topToolbar1);
     private final ToolBar leftToolBar;
     private final HBox bottomArea = new HBox();
@@ -96,6 +97,8 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         // top:  option toolbar row
         topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
         setTop(topToolbar);
+        // TODO i18n bundle
+        topToolbar.setMessage("Editing Symbol:   " + symbol.getName());
 
         // left: tool bar
         leftToolBar = new EditorToolbar(tools, this);
@@ -108,7 +111,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
         // bottom: message area
         setBottom(bottomArea);
-        bottomArea.getChildren().add(new Text("Editing: " + symbol.getName()));
+        //bottomArea.getChildren().add(new Text("Editing: " + symbol.getName()));
 
         // right: nothing.
 //        topArea.setPrefHeight(24);
