@@ -263,7 +263,9 @@ public class LibraryEditor extends VBox {
                 }
                 case FOOTPRINT -> {
                     if (footprintPane == null) {
-                        if (item == null) {
+                        if (item != null) {
+
+                        } else {
                             ArrayList<String> list = new ArrayList<>();
                             for (Footprint element : getLibrary().getPackages()) {
                                 list.add(element.getName());
