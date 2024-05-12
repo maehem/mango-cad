@@ -62,7 +62,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     private static final double SCALE_MAX = 40.0;
     private static final double SCALE_MIN = 5.0;
-    private static final double SCALE_FACTOR = 1.0;
+    private static final double SCALE_FACTOR = 0.5;
     private static final int WORK_AREA = (int) (1000.0 / SCALE_MIN);
     private static final double WA2 = WORK_AREA / 2.0;
     private static final double GRID_SIZE = 2.54;
@@ -110,7 +110,46 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         workArea.getTransforms().add(workScale);
 
-        addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
+//        addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
+//            double scaleOld = scale;
+//            double scrollAmt = event.getDeltaY();
+//            scale += scrollAmt * SCALE_FACTOR;
+//            if (scale > SCALE_MAX) {
+//                scale = SCALE_MAX;
+//            }
+//            if (scale < SCALE_MIN) {
+//                scale = SCALE_MIN;
+//            }
+//            workScale.setX(scale);
+//            workScale.setY(scale);
+//            scaleText.setText("x" + String.format("%.2f", scale));
+//
+//            double mX = event.getX();
+//            double mY = event.getY();
+//
+//            double vaW = getBoundsInLocal().getWidth();
+//            double vaH = getBoundsInLocal().getHeight();
+//
+//            double sbHV = getHvalue();
+//            double sbVV = getVvalue();
+//
+//            double waX = (mX - (vaW * sbHV)) / scaleOld;
+//            waX += (sbHV * 2 - 1) * (WA2);
+//
+//            double waY = (mY - (vaH * sbVV)) / scaleOld;
+//            waY += (sbVV * 2 - 1) * (WA2);
+//
+//            // Derive the sb values after the scale.
+//            double sbX = 0.5 + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
+//            double sbY = 0.5 + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
+//
+//            setHvalue(sbX);
+//            setVvalue(sbY);
+//
+//            event.consume();
+//        });
+
+        workArea.addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scaleOld = scale;
             double scrollAmt = event.getDeltaY();
             scale += scrollAmt * SCALE_FACTOR;
@@ -127,21 +166,21 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             double mX = event.getX();
             double mY = event.getY();
 
-            double vaW = getBoundsInLocal().getWidth();
-            double vaH = getBoundsInLocal().getHeight();
+            //double vaW = getBoundsInLocal().getWidth();
+            //double vaH = getBoundsInLocal().getHeight();
+//
+//            double sbHV = getHvalue();
+//            double sbVV = getVvalue();
 
-            double sbHV = getHvalue();
-            double sbVV = getVvalue();
+            //double waX = mX;
+            //waX += (sbHV * 2 - 1) * (WA2);
 
-            double waX = (mX - (vaW * sbHV)) / scaleOld;
-            waX += (sbHV * 2 - 1) * (WA2);
-
-            double waY = (mY - (vaH * sbVV)) / scaleOld;
-            waY += (sbVV * 2 - 1) * (WA2);
+            //double waY = mY;
+            //waY += (sbVV * 2 - 1) * (WA2);
 
             // Derive the sb values after the scale.
-            double sbX = 0.5 + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
-            double sbY = 0.5 + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
+            double sbX = 0.5 + mX / WA2 / scale;// + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
+            double sbY = 0.5 + mY / WA2 / scale;// + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
 
             setHvalue(sbX);
             setVvalue(sbY);
