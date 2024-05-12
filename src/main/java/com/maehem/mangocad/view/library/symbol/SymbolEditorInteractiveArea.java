@@ -38,10 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SeparatorMenuItem;
 import static javafx.scene.input.KeyCode.ESCAPE;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
@@ -78,20 +75,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private final Group workArea = new Group(shadow, scaleText);
     private final Group crossHairArea = new Group();
     private final Group scrollArea = new Group(workArea, crossHairArea);
-    private final ContextMenu contextMenu = new ContextMenu();
-    private final MenuItem nextItem = new MenuItem("Next");
-    private final MenuItem nextSeparatorItem = new SeparatorMenuItem();
-    private final MenuItem copyItem = new MenuItem("Copy");
-    private final MenuItem deleteItem = new MenuItem("Delete");
-    private final MenuItem mirrorItem = new MenuItem("Mirror");
-    private final MenuItem moveItem = new MenuItem("Move");
-    private final MenuItem nameItem = new MenuItem("Name");
-    private final MenuItem rotateItem = new MenuItem("Rotate");
-    private final MenuItem showItem = new MenuItem("Show");
-    private final MenuItem sep1Item = new SeparatorMenuItem();
-    private final MenuItem moveGroupItem = new MenuItem("Move Group");
-    private final MenuItem sep2Item = new SeparatorMenuItem();
-    private final MenuItem propertiesItem = new MenuItem("Properties");
+    private final SymbolEditorContextMenu contextMenu = new SymbolEditorContextMenu();
     private final LibrarySymbolSubEditor parentEditor;
     private double scale = 10.0;
     private Line hLine;
@@ -105,13 +89,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
 
-        contextMenu.getItems().addAll(
-                nextItem, nextSeparatorItem,
-                copyItem, deleteItem, mirrorItem,
-                moveItem, nameItem, rotateItem,
-                showItem, sep1Item, moveGroupItem,
-                sep2Item, propertiesItem
-        );
         // Things put into scrollArea will keep a constant size (0,0 crosshair)
         // Things put into workArea will scale with mouse scroll.
         setFitToWidth(true);
@@ -376,28 +353,28 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     });
 
                     // TODO: Things in Group list?
-                    moveGroupItem.setDisable(true);
+                    contextMenu.MOVE_GROUP.setDisable(true);
 
                     // Always there.
-                    moveGroupItem.setVisible(true);
+                    contextMenu.MOVE_GROUP.setVisible(true);
 
                     if (!picks.isEmpty()) {
-                        copyItem.setVisible(true);
-                        deleteItem.setVisible(true);
-                        mirrorItem.setVisible(true);
-                        moveItem.setVisible(true);
-                        nameItem.setVisible(true);
-                        rotateItem.setVisible(true);
-                        showItem.setVisible(true);
-                        sep1Item.setVisible(true);
-                        sep2Item.setVisible(true);
-                        propertiesItem.setVisible(true);
+                        contextMenu.COPY.setVisible(true);
+                        contextMenu.DELETE.setVisible(true);
+                        contextMenu.MIRROR.setVisible(true);
+                        contextMenu.MOVE.setVisible(true);
+                        contextMenu.NAME.setVisible(true);
+                        contextMenu.ROTATE.setVisible(true);
+                        contextMenu.SHOW.setVisible(true);
+                        contextMenu.SEP1.setVisible(true);
+                        contextMenu.SEP2.setVisible(true);
+                        contextMenu.PROPERTIES.setVisible(true);
                     }
 
                     if (picks.size() > 1) {
                         // TODO: Highlight first item and present options menu with "next" option at top.
-                        nextItem.setVisible(true);
-                        nextSeparatorItem.setVisible(true);
+                        contextMenu.NEXT.setVisible(true);
+                        contextMenu.NEXT_SEPARATOR.setVisible(true);
                     }
 
                     contextMenu.show(workArea, me.getScreenX(), me.getScreenY());
