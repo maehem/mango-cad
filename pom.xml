@@ -41,6 +41,7 @@
                 <configuration>
                     <mainClass>com.maehem.mangocad/com.maehem.mangocad.view.ControlPanel</mainClass>
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.ScaledItemTest</mainClass-->
+                    <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.PinTester</mainClass-->
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.TextTester</mainClass-->
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.TextTester2</mainClass-->
                     <!--mainClass>com.maehem.mangocad/com.maehem.mangocad.tools.CommandTester</mainClass-->
