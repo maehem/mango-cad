@@ -38,7 +38,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import static javafx.scene.input.KeyCode.ESCAPE;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
@@ -68,26 +71,47 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private static final double GRID_SIZE = 2.54;
     private static final Color GRID_COLOR = new Color(1.0, 1.0, 1.0, 0.1);
     private static final double GRID_STROKE_WIDTH = 0.05;
-    private static final double PICK_SIZE = 1.2;
+    private static final double PICK_SIZE = 1.0;
 
     private final Circle shadow = new Circle(1, Color.RED);
     private final Text scaleText = new Text("x1.0");
     private final Group workArea = new Group(shadow, scaleText);
     private final Group crossHairArea = new Group();
     private final Group scrollArea = new Group(workArea, crossHairArea);
+    private final ContextMenu contextMenu = new ContextMenu();
+    private final MenuItem nextItem = new MenuItem("Next");
+    private final MenuItem nextSeparatorItem = new SeparatorMenuItem();
+    private final MenuItem copyItem = new MenuItem("Copy");
+    private final MenuItem deleteItem = new MenuItem("Delete");
+    private final MenuItem mirrorItem = new MenuItem("Mirror");
+    private final MenuItem moveItem = new MenuItem("Move");
+    private final MenuItem nameItem = new MenuItem("Name");
+    private final MenuItem rotateItem = new MenuItem("Rotate");
+    private final MenuItem showItem = new MenuItem("Show");
+    private final MenuItem sep1Item = new SeparatorMenuItem();
+    private final MenuItem moveGroupItem = new MenuItem("Move Group");
+    private final MenuItem sep2Item = new SeparatorMenuItem();
+    private final MenuItem propertiesItem = new MenuItem("Properties");
     private final LibrarySymbolSubEditor parentEditor;
     private double scale = 10.0;
     private Line hLine;
     private Line vLine;
     private Scale workScale = new Scale();
     private final ArrayList<Element> movingNodes = new ArrayList<>();
-    private double movingOriginX = 0;
-    private double movingOriginY = 0;
+//    private double movingOriginX = 0;
+//    private double movingOriginY = 0;
     private final ArrayList<ViewNode> nodes = new ArrayList<>();
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
 
+        contextMenu.getItems().addAll(
+                nextItem, nextSeparatorItem,
+                copyItem, deleteItem, mirrorItem,
+                moveItem, nameItem, rotateItem,
+                showItem, sep1Item, moveGroupItem,
+                sep2Item, propertiesItem
+        );
         // Things put into scrollArea will keep a constant size (0,0 crosshair)
         // Things put into workArea will scale with mouse scroll.
         setFitToWidth(true);
@@ -233,13 +257,13 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
                 double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
                 double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
-                double partialX = (movingOriginX / snap) * snap;
-                double partialY = (movingOriginY / snap) * snap;
+//                double partialX = (movingOriginX / snap) * snap;
+//                double partialY = (movingOriginY / snap) * snap;
+//
+//                double gridsX = (int) ((movingOriginX - me.getX()) / snap) * snap;
+//                double gridsY = (int) ((movingOriginY - me.getY()) / snap) * snap;
 
-                double gridsX = (int) ((movingOriginX - me.getX()) / snap) * snap;
-                double gridsY = (int) ((movingOriginY - me.getY()) / snap) * snap;
-
-                LOGGER.log(Level.SEVERE, "     moving: {0},{1}", new Object[]{movingOriginX, movingOriginY});
+//                LOGGER.log(Level.SEVERE, "     moving: {0},{1}", new Object[]{movingOriginX, movingOriginY});
                 LOGGER.log(Level.SEVERE, "    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
 
                 for (Element e : movingNodes) {
@@ -302,45 +326,82 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             });
             LOGGER.log(Level.SEVERE, "Pick count: " + picks.size());
 
-            if (picks.isEmpty()) {
-                return;
-            }
-
+//            if (picks.isEmpty()) {
+//                contextMenu.hide();
+//                return;
+//            }
             // Remember where we started.
-            movingOriginX = me.getX();
-            movingOriginY = me.getY();
-            LOGGER.log(Level.SEVERE, "Changed movingOrigin.");
+//            movingOriginX = me.getX();
+//            movingOriginY = me.getY();
+//            LOGGER.log(Level.SEVERE, "Changed movingOrigin.");
+            switch (me.getButton()) {
+                case PRIMARY -> { // Move or choose what to move.
+                    // If one pick, pick it.
+                    if (picks.isEmpty()) {
+                        contextMenu.hide();
+                        me.consume();
+                        return;
+                    } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
+                        Element pick = picks.getFirst();
+                        movingNodes.add(pick);
+                        if (pick instanceof ElementXY exy) {
+                            exy.createSnapshot();
+                        }
 
-            // If one pick, pick it.
-            if (movingNodes.isEmpty() && picks.size() == 1) {
-                Element pick = picks.getFirst();
-                movingNodes.add(pick);
-                if (pick instanceof ElementXY exy) {
-                    exy.createSnapshot();
-                }
-
-                LOGGER.log(Level.SEVERE, "Moving a thing.");
-                me.consume();
-                return;
-            }
-
-            // If more than one pick,
-            // If all are wires, select them.
-            if (movingNodes.isEmpty() && isOnlyWires(picks)) { // Wires converge and nothing else there.
-                // Add all picks to moving list.
-                for (Element e : picks) {
-                    movingNodes.add(e);
-                    if (e instanceof ElementDualXY exy) {
-                        exy.createSnapshot();
+                        LOGGER.log(Level.SEVERE, "Moving a thing.");
+                        me.consume();
+                        return;
+                    } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
+                        // If more than one pick,
+                        // If all are wires, select them.
+                        // Add all picks to moving list.
+                        for (Element e : picks) {
+                            movingNodes.add(e);
+                            if (e instanceof ElementDualXY exy) {
+                                exy.createSnapshot();
+                            }
+                        }
+                        LOGGER.log(Level.SEVERE, "Moving some wires.");
+                        me.consume();
+                    } else {
+                        // otherwise,  highlight first (grey out rest) and wait for either
+                        // another click or right-click to highlight next item.
+                        LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
+                        me.consume();
                     }
                 }
-                LOGGER.log(Level.SEVERE, "Moving some wires.");
-                me.consume();
-            } else {
-                // otherwise,  highlight first (grey out rest) and wait for either
-                // another click or right-click to highlight next item.
-                LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
-                me.consume();
+                case SECONDARY -> { // Present pop-up menu.
+                    contextMenu.getItems().forEach((menuItem) -> {
+                        menuItem.setVisible(false);
+                    });
+
+                    // TODO: Things in Group list?
+                    moveGroupItem.setDisable(true);
+
+                    // Always there.
+                    moveGroupItem.setVisible(true);
+
+                    if (!picks.isEmpty()) {
+                        copyItem.setVisible(true);
+                        deleteItem.setVisible(true);
+                        mirrorItem.setVisible(true);
+                        moveItem.setVisible(true);
+                        nameItem.setVisible(true);
+                        rotateItem.setVisible(true);
+                        showItem.setVisible(true);
+                        sep1Item.setVisible(true);
+                        sep2Item.setVisible(true);
+                        propertiesItem.setVisible(true);
+                    }
+
+                    if (picks.size() > 1) {
+                        // TODO: Highlight first item and present options menu with "next" option at top.
+                        nextItem.setVisible(true);
+                        nextSeparatorItem.setVisible(true);
+                    }
+
+                    contextMenu.show(workArea, me.getScreenX(), me.getScreenY());
+                }
             }
         });
         setOnMouseClicked((me) -> {
