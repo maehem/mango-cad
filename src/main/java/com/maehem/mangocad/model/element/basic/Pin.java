@@ -153,7 +153,7 @@ public class Pin extends Element implements ElementXY, ElementRotation {
     }
 
     public void setPadValue(String value) {
-        if (this.padValue != value) {
+        if (!this.padValue.equals(value)) {
             String oldVal = this.padValue;
             this.padValue = value;
             notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
