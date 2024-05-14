@@ -57,7 +57,8 @@ public class Pin extends Element implements ElementXY, ElementRotation {
     private String name;
     private double x;
     private double y;
-    private double[] snapshot = {0, 0};
+    private boolean selected = false;
+    private final double[] snapshot = {0, 0};
 
     private PinVisible visible = PinVisible.BOTH;
     private PinLength length = PinLength.LONG;
@@ -94,9 +95,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      * @param name the name to set
      */
     public void setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        notifyListeners(PinField.NAME, oldName, name);
+        if (this.name == null || !this.name.equals(name)) {
+            String oldName = this.name;
+            this.name = name;
+            notifyListeners(PinField.NAME, oldName, name);
+        }
     }
 
     /**
@@ -150,9 +153,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
     }
 
     public void setPadValue(String value) {
-        String oldVal = this.padValue;
-        this.padValue = value;
-        notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
+        if (this.padValue != value) {
+            String oldVal = this.padValue;
+            this.padValue = value;
+            notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
+        }
     }
 
     /**
@@ -169,9 +174,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      * @param visible
      */
     public void setVisible(PinVisible visible) {
-        PinVisible oldVisible = this.visible;
-        this.visible = visible;
-        notifyListeners(PinField.VISIBLE, oldVisible, this.visible);
+        if (this.visible != visible) {
+            PinVisible oldVisible = this.visible;
+            this.visible = visible;
+            notifyListeners(PinField.VISIBLE, oldVisible, this.visible);
+        }
     }
 
     /**
@@ -185,9 +192,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      * @param length the length to set
      */
     public void setLength(PinLength length) {
-        PinLength oldVal = this.length;
-        this.length = length;
-        notifyListeners(PinField.LENGTH, oldVal, this.length);
+        if (this.length != length) {
+            PinLength oldVal = this.length;
+            this.length = length;
+            notifyListeners(PinField.LENGTH, oldVal, this.length);
+        }
     }
 
     /**
@@ -201,9 +210,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      * @param direction the direction to set
      */
     public void setDirection(PinDirection direction) {
-        PinDirection oldVal = this.direction;
-        this.direction = direction;
-        notifyListeners(PinField.DIRECTION, oldVal, this.direction);
+        if (this.direction != direction) {
+            PinDirection oldVal = this.direction;
+            this.direction = direction;
+            notifyListeners(PinField.DIRECTION, oldVal, this.direction);
+        }
     }
 
     /**
@@ -217,9 +228,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      * @param function the function to set
      */
     public void setFunction(PinFunction function) {
-        PinFunction oldVal = this.function;
-        this.function = function;
-        notifyListeners(PinField.FUNCTION, oldVal, this.function);
+        if (this.function != function) {
+            PinFunction oldVal = this.function;
+            this.function = function;
+            notifyListeners(PinField.FUNCTION, oldVal, this.function);
+        }
     }
 
     /**
@@ -233,9 +246,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      * @param swapLevel the swapLevel to set
      */
     public void setSwapLevel(int swapLevel) {
-        int oldVal = this.swapLevel;
-        this.swapLevel = swapLevel;
-        notifyListeners(PinField.SWAPLEVEL, oldVal, this.swapLevel);
+        if (this.swapLevel != swapLevel) {
+            int oldVal = this.swapLevel;
+            this.swapLevel = swapLevel;
+            notifyListeners(PinField.SWAPLEVEL, oldVal, this.swapLevel);
+        }
     }
 
     @Override
@@ -256,9 +271,11 @@ public class Pin extends Element implements ElementXY, ElementRotation {
      */
     @Override
     public void setRot(double val) {
-        double oldVal = this.getRot();
-        this.rotation.setValue(val);
-        notifyListeners(PinField.ROTATION, oldVal, this.rotation.getValue());
+        if (this.rotation.getValue() != val) {
+            double oldVal = this.getRot();
+            this.rotation.setValue(val);
+            notifyListeners(PinField.ROTATION, oldVal, this.rotation.getValue());
+        }
     }
 
     @Override
@@ -331,5 +348,19 @@ public class Pin extends Element implements ElementXY, ElementRotation {
     @Override
     public double[] getSnapshot() {
         return snapshot;
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        if (this.selected != selected) {
+            boolean oldValue = this.selected;
+            this.selected = selected;
+            notifyListeners(PinField.SELECTED, oldValue, this.selected);
+        }
     }
 }
