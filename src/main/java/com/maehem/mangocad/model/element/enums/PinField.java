@@ -23,6 +23,7 @@ package com.maehem.mangocad.model.element.enums;
 public enum PinField {
     NAME("name", String.class),
     X("x", Double.class), Y("y", Double.class),
+    SELECTED("selected", Boolean.class),
     VISIBLE("visible", PinVisible.class),
     LENGTH("length", PinLength.class),
     DIRECTION("direction", PinDirection.class),
