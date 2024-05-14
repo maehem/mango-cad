@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * PinDirection nc | in | out | io | oc | pwr | pas | hiz | sup)
+ * WireEnd - indicates none, one, two or both ends of a wire.
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public enum WireEnd {
-    NONE("none"), ONE("one"), TWO("two");
+    NONE("none"), ONE("one"), TWO("two"), BOTH("both");
 
     private final String code;
 
