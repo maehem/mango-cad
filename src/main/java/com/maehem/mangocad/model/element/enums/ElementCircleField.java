@@ -22,6 +22,7 @@ package com.maehem.mangocad.model.element.enums;
  */
 public enum ElementCircleField {
     X("x", Double.class), Y("y", Double.class),
+    SELECTED("selected", Boolean.class),
     RADIUS("raduis", Double.class),
     WIDTH("width", Double.class);
 
