@@ -22,6 +22,7 @@ package com.maehem.mangocad.model.element.enums;
  */
 public enum ElementTextField {
     X("x", Double.class), Y("y", Double.class),
+    SELECTED("selected", Boolean.class),
     SIZE("size", Double.class),
     LAYER("layer", Integer.class),
     FONT("font", String.class),
