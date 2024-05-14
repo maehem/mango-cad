@@ -24,6 +24,7 @@ import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.model.element.enums.WireEnd;
 import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
@@ -36,6 +37,7 @@ import com.maehem.mangocad.view.node.WireNode;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
@@ -49,6 +51,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
@@ -81,10 +84,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private Line hLine;
     private Line vLine;
     private Scale workScale = new Scale();
-    private final ArrayList<Element> movingNodes = new ArrayList<>();
-//    private double movingOriginX = 0;
-//    private double movingOriginY = 0;
+    private final ArrayList<Element> selectedElements = new ArrayList<>();
+    private final ArrayList<Element> movingElements = new ArrayList<>();
     private final ArrayList<ViewNode> nodes = new ArrayList<>();
+    private final Rectangle selectionRectangle = new Rectangle();
+    private double mouseDownX;
+    private double mouseDownY;
+
+    // TODO get from control panel settings.
+    private final Color selectionRectangleColor = new Color(1.0, 1.0, 1.0, 0.5);
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -101,12 +109,23 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         setHvalue(0.5);
         buildScene();
 
+        workScale.setX(scale);
+        workScale.setY(scale);
+
         shadow.setVisible(false);
 
         scaleText.setLayoutX(10);
         scaleText.setLayoutY(10);
         scaleText.setScaleX(0.5);
         scaleText.setScaleY(0.5);
+
+        selectionRectangle.setFill(null);
+        selectionRectangle.setStroke(selectionRectangleColor);
+        selectionRectangle.setStrokeType(StrokeType.CENTERED);
+        selectionRectangle.setStrokeWidth(0.05);
+        ObservableList<Double> strokeDashArray = selectionRectangle.getStrokeDashArray();
+        strokeDashArray.addAll(0.5, 0.5);
+        workArea.getChildren().add(selectionRectangle);
 
         workArea.getTransforms().add(workScale);
 
@@ -148,7 +167,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //
 //            event.consume();
 //        });
-
         workArea.addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scaleOld = scale;
             double scrollAmt = event.getDeltaY();
@@ -171,16 +189,13 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //
 //            double sbHV = getHvalue();
 //            double sbVV = getVvalue();
-
             //double waX = mX;
             //waX += (sbHV * 2 - 1) * (WA2);
-
             //double waY = mY;
             //waY += (sbVV * 2 - 1) * (WA2);
-
             // Derive the sb values after the scale.
-            double sbX = 0.5 + mX / WA2 / scale;// + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
-            double sbY = 0.5 + mY / WA2 / scale;// + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
+            double sbX = 0.5 + mX / WA2 / scale / 2;// + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
+            double sbY = 0.5 + mY / WA2 / scale / 2;// + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
 
             setHvalue(sbX);
             setVvalue(sbY);
@@ -189,41 +204,34 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         });
 
         setOnKeyPressed((ke) -> {
-            if (!movingNodes.isEmpty() && ke.getCode() == ESCAPE) {
-                for (Element e : movingNodes) {
+            if (!movingElements.isEmpty() && ke.getCode() == ESCAPE) {
+                for (Element e : movingElements) {
                     if (e instanceof ElementXY exy) {
                         exy.restoreSnapshot();
                     } else if (e instanceof ElementDualXY exy) {
                         exy.restoreSnapshot();
                     }
                 }
-                movingNodes.clear(); // End move of node.
+                movingElements.clear(); // End move of node.
                 LOGGER.log(Level.SEVERE, "Abandon move.");
                 ke.consume();
             }
         });
         workArea.setOnMouseMoved((me) -> {
             // Move any selected node.
-            if (!movingNodes.isEmpty()) {
-                LOGGER.log(Level.SEVERE, "Work Area: mXY: {0},{1}", new Object[]{me.getX(), me.getY()});
+            if (!movingElements.isEmpty()) {
+                //LOGGER.log(Level.SEVERE, "Work Area: mXY: {0},{1}", new Object[]{me.getX(), me.getY()});
                 //LOGGER.log(Level.SEVERE, "Moving the things around.");
                 // TODO: Is 'option' key held down? then use altGrid.
                 double snap = parentEditor.getDrawing().getGrid().getSizeMM();
-                //double xGrids = (int) ((movingOriginX - waX) / snap);
-                //double yGrids = (int) ((movingOriginY - waY) / snap);
 
                 double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
                 double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
-//                double partialX = (movingOriginX / snap) * snap;
-//                double partialY = (movingOriginY / snap) * snap;
-//
-//                double gridsX = (int) ((movingOriginX - me.getX()) / snap) * snap;
-//                double gridsY = (int) ((movingOriginY - me.getY()) / snap) * snap;
 
 //                LOGGER.log(Level.SEVERE, "     moving: {0},{1}", new Object[]{movingOriginX, movingOriginY});
-                LOGGER.log(Level.SEVERE, "    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
+                //LOGGER.log(Level.SEVERE, "    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
 
-                for (Element e : movingNodes) {
+                for (Element e : movingElements) {
                     switch (e) {
                         case ElementXY ee -> {
                             double[] snapshot = ee.getSnapshot();
@@ -261,7 +269,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         });
 
         workArea.setOnMouseClicked((me) -> {
-            if (!movingNodes.isEmpty()) {
+            if (!movingElements.isEmpty()) {
                 return;
             }
 
@@ -310,7 +318,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         return;
                     } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
                         Element pick = picks.getFirst();
-                        movingNodes.add(pick);
+                        movingElements.add(pick);
                         if (pick instanceof ElementXY exy) {
                             exy.createSnapshot();
                         }
@@ -323,7 +331,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         // If all are wires, select them.
                         // Add all picks to moving list.
                         for (Element e : picks) {
-                            movingNodes.add(e);
+                            movingElements.add(e);
                             if (e instanceof ElementDualXY exy) {
                                 exy.createSnapshot();
                             }
@@ -374,18 +382,18 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         });
         setOnMouseClicked((me) -> {
             LOGGER.log(Level.SEVERE, "Editor Window Area Clicked: " + me.getButton().name());
-            if (!movingNodes.isEmpty()) {
+            if (!movingElements.isEmpty()) {
                 if (null != me.getButton()) {
                     switch (me.getButton()) {
                         case PRIMARY -> {
-                            movingNodes.clear(); // End move of node.
+                            movingElements.clear(); // End move of node.
                             LOGGER.log(Level.SEVERE, "End of move.");
                             me.consume();
                         }
                         case MIDDLE -> { // Mirror
                             // All Nodes should be Rotatable. break if not.
-                            if (elementsCanRotate(movingNodes)) {
-                                for (Element e : movingNodes) {
+                            if (elementsCanRotate(movingElements)) {
+                                for (Element e : movingElements) {
                                     if (e instanceof ElementRotation er) {
                                         er.setMirror(!er.isMirrored());
                                     }
@@ -396,8 +404,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         }
                         case SECONDARY -> {
                             // Rotate  add 90 (actually "angle" from top of viewport)
-                            if (elementsCanRotate(movingNodes)) {
-                                for (Element e : movingNodes) {
+                            if (elementsCanRotate(movingElements)) {
+                                for (Element e : movingElements) {
                                     if (e instanceof ElementRotation er) {
                                         er.setRot(er.getRot() + 90);
                                     }
@@ -412,7 +420,94 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 }
             }
         });
+        workArea.setOnMousePressed(e -> {
+            LOGGER.log(Level.SEVERE, "Begin Selection.");
+            mouseDownX = e.getX();
+            mouseDownY = e.getY();
+            selectionRectangle.setVisible(true);
+            selectionRectangle.setX(mouseDownX);
+            selectionRectangle.setY(mouseDownY);
+            selectionRectangle.setWidth(0);
+            selectionRectangle.setHeight(0);
+        });
 
+        workArea.setOnMouseDragged(e -> {
+            selectionRectangle.setX(Math.min(e.getX(), mouseDownX));
+            selectionRectangle.setWidth(Math.abs(e.getX() - mouseDownX));
+            selectionRectangle.setY(Math.min(e.getY(), mouseDownY));
+            selectionRectangle.setHeight(Math.abs(e.getY() - mouseDownY));
+        });
+        workArea.setOnMouseReleased((e) -> {
+
+            // clear selection list
+            selectedElements.clear();
+            e.consume();
+
+//            LOGGER.log(Level.SEVERE, "Selection Rectangle: {0},{1}  ({2}x{3})",
+//                    new Object[]{
+//                        selectionRectangle.getX(), selectionRectangle.getY(),
+//                        selectionRectangle.getWidth(), selectionRectangle.getHeight()
+//                    });
+            // Place things inside recangle into selection list.
+            parentEditor.getSymbol().getElements().forEach((element) -> {
+                switch (element) {
+                    case ElementXY exy -> {
+                        if (isInsideSelection(exy.getX(), -exy.getY())) {
+                            selectedElements.add(element);
+                            exy.setSelected(true);
+                            //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1}", new Object[]{exy.getX(), exy.getY()});
+                        } else {
+                            exy.setSelected(false);
+                            //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1} not in rect area.", new Object[]{exy.getX(), exy.getY()});
+                        }
+                    }
+                    case ElementDualXY exy -> {
+                        boolean p1 = isInsideSelection(exy.getX1(), -exy.getY1());
+                        boolean p2 = isInsideSelection(exy.getX2(), -exy.getY2());
+
+                        if (p1 && p2) {
+                            //LOGGER.log(Level.SEVERE, "ElementDualXY BOTH");
+                            exy.setSelectedEnd(WireEnd.BOTH);
+                        } else if (p1) {
+                            //LOGGER.log(Level.SEVERE, "ElementDualXY ONE");
+                            exy.setSelectedEnd(WireEnd.ONE);
+                        } else if (p2) {
+                            exy.setSelectedEnd(WireEnd.TWO);
+                            //LOGGER.log(Level.SEVERE, "ElementDualXY TWO");
+                        } else {
+                            exy.setSelectedEnd(WireEnd.NONE);
+                            //LOGGER.log(Level.SEVERE, "ElementDualXY NONE");
+                        }
+
+                        if (exy.getSelectedEnd() != WireEnd.NONE) {
+                            selectedElements.add(element);
+                        }
+                    }
+                    default -> {
+                        LOGGER.log(Level.SEVERE, "Element not evaluated: " + element.getElementName());
+                    }
+                }
+            });
+            selectionRectangle.setVisible(false);
+            LOGGER.log(Level.SEVERE, "Selected {0} elements.", selectedElements.size());
+        });
+    }
+
+    private boolean isInsideSelection(double x, double y) {
+        double sX = selectionRectangle.getX();
+        double sY = selectionRectangle.getY();
+        double sW = selectionRectangle.getWidth();
+        double sH = selectionRectangle.getHeight();
+
+        //LOGGER.log(Level.SEVERE, "     X Range: {0} .. {1}   <=== x: {2}", new Object[]{sX, sX + sW, x});
+        //LOGGER.log(Level.SEVERE, "     Y Range: {0} .. {1}   <=== y: {2}", new Object[]{sY, sY + sH, y});
+
+        if (selectionRectangle.isVisible()) {
+            if ((x > sX && y > sY) && (x < (sX + sW) && y < (sY + sH))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void buildScene() {
@@ -499,7 +594,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         return canRotate;
     }
 
-    private ViewNode findElement(Element e) {
+    private ViewNode findViewNode(Element e) {
         for (ViewNode vn : nodes) {
             if (vn.getElement().equals(e)) {
                 return vn;
