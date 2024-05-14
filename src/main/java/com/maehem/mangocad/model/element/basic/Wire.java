@@ -181,9 +181,11 @@ public class Wire extends Element implements ElementDualXY {
      * @param width the width to set
      */
     public void setWidth(double width) {
-        double oldVal = this.width;
-        this.width = width;
-        notifyListeners(WireField.WIDTH, oldVal, this.width);
+        if (getWidth() != width) {
+            double oldVal = this.width;
+            this.width = width;
+            notifyListeners(WireField.WIDTH, oldVal, this.width);
+        }
     }
 
     /**
@@ -197,9 +199,11 @@ public class Wire extends Element implements ElementDualXY {
      * @param curve the curve to set
      */
     public void setCurve(double curve) {
-        double oldVal = this.curve;
-        this.curve = curve;
-        notifyListeners(WireField.CURVE, oldVal, this.curve);
+        if (getCurve() != curve) {
+            double oldVal = this.curve;
+            this.curve = curve;
+            notifyListeners(WireField.CURVE, oldVal, this.curve);
+        }
     }
 
     /**
@@ -213,9 +217,11 @@ public class Wire extends Element implements ElementDualXY {
      * @param cap the cap to set
      */
     public void setCap(WireCap cap) {
-        WireCap oldVal = this.cap;
-        this.cap = cap;
-        notifyListeners(WireField.CAP, oldVal, this.cap);
+        if (getCap() != cap) {
+            WireCap oldVal = this.cap;
+            this.cap = cap;
+            notifyListeners(WireField.CAP, oldVal, this.cap);
+        }
     }
 
     /**
@@ -229,9 +235,11 @@ public class Wire extends Element implements ElementDualXY {
      * @param extent the extent to set
      */
     public void setExtent(String extent) {
-        String oldVal = this.extent;
-        this.extent = extent;
-        notifyListeners(WireField.EXTENT, oldVal, this.extent);
+        if (!getExtent().equals(extent)) {
+            String oldVal = this.extent;
+            this.extent = extent;
+            notifyListeners(WireField.EXTENT, oldVal, this.extent);
+        }
     }
 
     /**
@@ -245,9 +253,11 @@ public class Wire extends Element implements ElementDualXY {
      * @param style the style to set
      */
     public void setStyle(WireStyle style) {
-        WireStyle oldVal = this.style;
-        this.style = style;
-        notifyListeners(WireField.STYLE, oldVal, this.style);
+        if (!getStyle().equals(style)) {
+            WireStyle oldVal = this.style;
+            this.style = style;
+            notifyListeners(WireField.STYLE, oldVal, this.style);
+        }
     }
 
     /**
@@ -269,7 +279,11 @@ public class Wire extends Element implements ElementDualXY {
 
     @Override
     public void setSelectedEnd(WireEnd end) {
-        this.selectedEnd = end;
+        if (!getSelectedEnd().equals(end)) {
+            WireEnd oldVal = this.getSelectedEnd();
+            this.selectedEnd = end;
+            notifyListeners(WireField.END, oldVal, this.selectedEnd);
+        }
     }
 
     @Override
