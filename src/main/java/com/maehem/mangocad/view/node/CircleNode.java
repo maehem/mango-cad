@@ -79,23 +79,26 @@ public class CircleNode extends ViewNode implements ElementListener {
         LayerElement layer = layers.get(circle.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
 
-        circleShape.setStroke(c);
+        circleShape.setStroke(circle.isSelected() ? c.brighter().brighter() : c);
         if ( circle.getWidth() > 0.0 ) {
             circleShape.setFill(Color.TRANSPARENT);
         } else {
-            circleShape.setFill(c);
+            circleShape.setFill(circle.isSelected() ? c.brighter().brighter() : c);
         }
     }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         LOGGER.log(Level.SEVERE,
-                "Circle properties have changed!{0}: {1} => {2}",
+                "Circle properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch ((ElementCircleField) field) {
             case ElementCircleField.X, ElementCircleField.Y -> {
                 updateLocation();
+            }
+            case ElementCircleField.SELECTED -> {
+                updateLayer();
             }
             case ElementCircleField.RADIUS -> {
                 updateRadius();
