@@ -34,6 +34,7 @@ public abstract class ViewNode extends ArrayList<Shape> {
     private final Element element;
     private PickListener listener;
     private boolean moving = false;
+    private boolean selected = false;
 
     public ViewNode(Element e, PickListener l) {
         element = e;
@@ -64,6 +65,14 @@ public abstract class ViewNode extends ArrayList<Shape> {
         for (Shape s : this) {
             node.getChildren().add(s);
         }
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     @Override
