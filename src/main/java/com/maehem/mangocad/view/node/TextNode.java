@@ -32,6 +32,7 @@ import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ViewUtils.FONT_SCALE;
+import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.geometry.VPos;
 import javafx.scene.input.MouseEvent;
@@ -241,8 +242,8 @@ public class TextNode extends ViewNode implements ElementListener {
         LayerElement layer = layers.get(textElement.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
         // Get new Color based on layer.
-        text.setStroke(c);
-        text.setFill(c);
+        text.setStroke(textElement.isSelected() ? c.brighter().brighter() : c);
+        text.setFill(textElement.isSelected() ? c.brighter().brighter() : c);
     }
 
     private void updateFont() {
@@ -511,11 +512,12 @@ public class TextNode extends ViewNode implements ElementListener {
         text.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
     }
 
+
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-//        LOGGER.log(Level.SEVERE,
-//                "Text properties have changed!{0}: {1} => {2}",
-//                new Object[]{field, oldVal.toString(), newVal.toString()});
+        LOGGER.log(Level.SEVERE,
+                "Text properties have changed! {0}: {1} => {2}",
+                new Object[]{field, oldVal.toString(), newVal.toString()});
 
         if (field instanceof ElementTextField etf) {
             switch (etf) {
@@ -529,6 +531,9 @@ public class TextNode extends ViewNode implements ElementListener {
                 }
                 case X, Y -> {
                     updateLocation();
+                }
+                case SELECTED -> {
+                    updateLayer();
                 }
                 case ROTATION -> {
                     updateLocation();
