@@ -196,7 +196,7 @@ public class WireNode extends ViewNode implements ElementListener {
         WireField f = (WireField) field;
 
         LOGGER.log(Level.SEVERE,
-                "Pin properties have changed!{0}: {1} => {2}",
+                "Wire properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (f) {
