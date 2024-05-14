@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.ElementCircleField;
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element {
+public class ElementCircle extends Element implements ElementXY {
     public static final String ELEMENT_NAME = "circle";
 
     private double x;
@@ -32,6 +33,9 @@ public class ElementCircle extends Element {
     private double radius;
     private double width;
     private final ArrayList<String> grouprefs = new ArrayList<>();
+
+    private boolean selected = false;
+    private final double[] snapshot = {0, 0};
 
     @Override
     public String getElementName() {
@@ -107,6 +111,37 @@ public class ElementCircle extends Element {
      */
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
+    }
+
+    @Override
+    public void createSnapshot() {
+        snapshot[0] = getX();
+        snapshot[1] = getY();
+    }
+
+    @Override
+    public void restoreSnapshot() {
+        setX(snapshot[0]);
+        setY(snapshot[1]);
+    }
+
+    @Override
+    public double[] getSnapshot() {
+        return snapshot;
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        if (this.selected != selected) {
+            boolean oldValue = this.selected;
+            this.selected = selected;
+            notifyListeners(ElementCircleField.SELECTED, oldValue, this.selected);
+        }
     }
 
 }
