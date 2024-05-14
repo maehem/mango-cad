@@ -35,4 +35,8 @@ public interface ElementXY {
     public void restoreSnapshot();
 
     public double[] getSnapshot();
+
+    public boolean isSelected();
+
+    public void setSelected(boolean selected);
 }
