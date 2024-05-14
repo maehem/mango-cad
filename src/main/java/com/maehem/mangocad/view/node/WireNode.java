@@ -72,25 +72,25 @@ public class WireNode extends ViewNode implements ElementListener {
         updateCurve();
         updateLayer(); // Color
 
-        wireCurve.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-            PickListener listener = getPickListener();
-            LOGGER.log(Level.SEVERE, "Pin Picked..");
-            if (listener != null) {
-                LOGGER.log(Level.SEVERE, "Notify Pin pick listener.");
-
-                // Set the picked end.
-                switch (closestEnd(me)) {
-                    case ONE -> {
-                        LOGGER.log(Level.SEVERE, "Closest End: " + WireEnd.ONE.name());
-                    }
-                    case TWO -> {
-                        LOGGER.log(Level.SEVERE, "Closest End: " + WireEnd.TWO.name());
-                    }
-                }
-
-                getPickListener().nodePicked(this, me);
-            }
-        });
+//        wireCurve.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+//            PickListener listener = getPickListener();
+//            LOGGER.log(Level.SEVERE, "Pin Picked..");
+//            if (listener != null) {
+//                LOGGER.log(Level.SEVERE, "Notify Pin pick listener.");
+//
+//                // Set the picked end.
+//                switch (closestEnd(me)) {
+//                    case ONE -> {
+//                        LOGGER.log(Level.SEVERE, "Closest End: " + WireEnd.ONE.name());
+//                    }
+//                    case TWO -> {
+//                        LOGGER.log(Level.SEVERE, "Closest End: " + WireEnd.TWO.name());
+//                    }
+//                }
+//
+//                getPickListener().nodePicked(this, me);
+//            }
+//        });
         Platform.runLater(() -> {
             this.wire.addListener(this);
         });
@@ -179,7 +179,7 @@ public class WireNode extends ViewNode implements ElementListener {
         LayerElement layer = layers.get(wire.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
         // Get new Color based on layer.
-        wireCurve.setStroke(c);
+        wireCurve.setStroke(wire.getSelectedEnd() != WireEnd.NONE ? c.brighter().brighter() : c);
     }
 
     private void updateStyle() {
@@ -202,6 +202,9 @@ public class WireNode extends ViewNode implements ElementListener {
         switch (f) {
             case WireField.X1, WireField.Y1, WireField.X2, WireField.Y2 -> {
                 updateLine();
+            }
+            case END -> {
+                updateLayer();
             }
             case WireField.CAP -> {
                 updateCap();
