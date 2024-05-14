@@ -55,7 +55,8 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     private double x;
     private double y;
     private double size;
-    private double[] snapshot = {0, 0};
+    private boolean selected = false;
+    private final double[] snapshot = {0, 0};
 
     private TextFont font = TextFont.PROPORTIONAL;
     private int ratio = 8;
@@ -128,9 +129,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      * @param size the size to set
      */
     public void setSize(double size) {
-        double oldValue = this.size;
-        this.size = size;
-        notifyListeners(ElementTextField.SIZE, oldValue, this.size);
+        if (getSize() != size) {
+            double oldValue = this.size;
+            this.size = size;
+            notifyListeners(ElementTextField.SIZE, oldValue, this.size);
+        }
     }
 
     /**
@@ -144,9 +147,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      * @param distance the distance to set
      */
     public void setDistance(int distance) {
-        double oldValue = this.distance;
-        this.distance = distance;
-        notifyListeners(ElementTextField.DISTANCE, oldValue, this.distance);
+        if (getDistance() != distance) {
+            double oldValue = this.distance;
+            this.distance = distance;
+            notifyListeners(ElementTextField.DISTANCE, oldValue, this.distance);
+        }
     }
 
     /**
@@ -162,12 +167,14 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      * Maximum value is 31.
      */
     public void setRatio(int ratio) {
-        if (ratio > 31) {
-            ratio = 31;
+        if (getRatio() != ratio) {
+            if (ratio > 31) {
+                ratio = 31;
+            }
+            double oldValue = this.ratio;
+            this.ratio = ratio;
+            notifyListeners(ElementTextField.RATIO, oldValue, this.ratio);
         }
-        double oldValue = this.ratio;
-        this.ratio = ratio;
-        notifyListeners(ElementTextField.RATIO, oldValue, this.ratio);
     }
 
     public double getDerivedStroke() {
@@ -201,9 +208,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
 
     @Override
     public void setRot(double rot) {
-        double oldValue = this.getRot();
-        getRotation().setValue(rot);
-        notifyListeners(ElementTextField.ROTATION, oldValue, this.getRot());
+        if (getRot() != rot) {
+            double oldValue = this.getRot();
+            getRotation().setValue(rot);
+            notifyListeners(ElementTextField.ROTATION, oldValue, this.getRot());
+        }
     }
 
     /**
@@ -217,22 +226,23 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      * @param align the align to set
      */
     public void setAlign(TextAlign align) {
-        TextAlign oldValue = this.align;
-        if (align != null) {
-            this.align = align;
+        if (!this.align.equals(align)) {
+            TextAlign oldValue = this.align;
+            if (align != null) {
+                this.align = align;
+            }
+            notifyListeners(ElementTextField.ALIGN, oldValue, this.align);
         }
-        notifyListeners(ElementTextField.ALIGN, oldValue, this.align);
     }
 
     public void setAlign(String val) {
-        TextAlign oldValue = this.align;
         TextAlign ta = TextAlign.fromCode(val);
+        TextAlign oldValue = this.align;
         if (ta == null) {
             LOGGER.log(Level.SEVERE, "TextAlign: tried to set an alignment called \"{0}\"", val);
         } else {
             setAlign(ta);
         }
-        notifyListeners(ElementTextField.ALIGN, oldValue, this.align);
     }
 
     /**
@@ -262,9 +272,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
      * @param font the font to set
      */
     public void setFont(TextFont font) {
-        TextFont oldValue = this.font;
-        this.font = font;
-        notifyListeners(ElementTextField.FONT, oldValue, this.font);
+        if (!this.font.equals(font)) {
+            TextFont oldValue = this.font;
+            this.font = font;
+            notifyListeners(ElementTextField.FONT, oldValue, this.font);
+        }
     }
 
     /**
@@ -303,9 +315,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
 
     @Override
     public void setSpin(boolean spin) {
-        boolean oldValue = isSpin();
-        rotation.setSpin(spin);
-        notifyListeners(RotationField.SPIN, oldValue, this.isSpin());
+        if (this.isSpin() != spin) {
+            boolean oldValue = isSpin();
+            rotation.setSpin(spin);
+            notifyListeners(RotationField.SPIN, oldValue, this.isSpin());
+        }
     }
 
     @Override
@@ -315,9 +329,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
 
     @Override
     public void setAllowSpin(boolean allowSpin) {
-        boolean oldValue = isSpinAllowed();
-        rotation.setAllowSpin(allowSpin);
-        notifyListeners(RotationField.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+        if (this.isSpinAllowed() != allowSpin) {
+            boolean oldValue = isSpinAllowed();
+            rotation.setAllowSpin(allowSpin);
+            notifyListeners(RotationField.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+        }
     }
 
     @Override
@@ -332,16 +348,20 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
 
     @Override
     public void setConstrained(boolean value) {
-        boolean oldValue = this.isConstrained();
-        rotation.setConstrained(value);
-        notifyListeners(RotationField.CONSTRAINED, oldValue, this.isConstrained());
+        if (this.isConstrained() != value) {
+            boolean oldValue = this.isConstrained();
+            rotation.setConstrained(value);
+            notifyListeners(RotationField.CONSTRAINED, oldValue, this.isConstrained());
+        }
     }
 
     @Override
     public void setMirror(boolean value) {
-        boolean oldValue = this.isMirrored();
-        rotation.setMirror(value);
-        notifyListeners(RotationField.MIRROR, oldValue, this.isMirrored());
+        if (this.isMirrored() != value) {
+            boolean oldValue = this.isMirrored();
+            rotation.setMirror(value);
+            notifyListeners(RotationField.MIRROR, oldValue, this.isMirrored());
+        }
     }
 
     @Override
@@ -356,9 +376,11 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
 
     @Override
     public void setAllowMirror(boolean value) {
-        boolean oldValue = this.isMirrorAllowed();
-        rotation.setAllowMirror(value);
-        notifyListeners(RotationField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+        if (this.isMirrorAllowed() != value) {
+            boolean oldValue = this.isMirrorAllowed();
+            rotation.setAllowMirror(value);
+            notifyListeners(RotationField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+        }
     }
 
     @Override
@@ -376,6 +398,20 @@ public class ElementText extends Element implements ElementXY, ElementRotation {
     @Override
     public double[] getSnapshot() {
         return snapshot;
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        if (this.selected != selected) {
+            boolean oldValue = this.selected;
+            this.selected = selected;
+            notifyListeners(ElementTextField.SELECTED, oldValue, this.selected);
+        }
     }
 
 }
