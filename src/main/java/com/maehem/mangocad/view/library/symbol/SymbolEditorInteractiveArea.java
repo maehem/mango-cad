@@ -19,8 +19,10 @@ package com.maehem.mangocad.view.library.symbol;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementDualXY;
 import com.maehem.mangocad.model.ElementRotation;
+import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
@@ -31,6 +33,7 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
+import com.maehem.mangocad.view.node.RectangleNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
@@ -206,9 +209,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         setOnKeyPressed((ke) -> {
             if (!movingElements.isEmpty() && ke.getCode() == ESCAPE) {
                 for (Element e : movingElements) {
-                    if (e instanceof ElementXY exy) {
-                        exy.restoreSnapshot();
-                    } else if (e instanceof ElementDualXY exy) {
+                    if (e instanceof ElementSelectable exy) {
                         exy.restoreSnapshot();
                     }
                 }
@@ -230,31 +231,54 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
 //                LOGGER.log(Level.SEVERE, "     moving: {0},{1}", new Object[]{movingOriginX, movingOriginY});
                 //LOGGER.log(Level.SEVERE, "    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
-
                 for (Element e : movingElements) {
-                    switch (e) {
-                        case ElementXY ee -> {
-                            double[] snapshot = ee.getSnapshot();
-                            ee.setX(xxx + snapshot[0] % snap);
-                            ee.setY(-(yyy + snapshot[1] % snap));
-                        }
-                        case ElementDualXY ee -> {
-                            double[] snapshot = ee.getSnapshot();
-                            switch (ee.getSelectedEnd()) {
-                                case ONE -> {
-                                    ee.setX1(xxx + snapshot[0] % snap);
-                                    ee.setY1(-(yyy + snapshot[1] % snap));
-                                }
-                                case TWO -> {
-                                    ee.setX2(xxx + snapshot[2] % snap);
-                                    ee.setY2(-(yyy + snapshot[3] % snap));
-                                }
-                                default -> {
+                    if (e instanceof ElementSelectable es) {
+                        switch (es) {
+                            case ElementXY exy -> {
+                                double[] snapshot = es.getSnapshot();
+                                exy.setX(xxx + snapshot[0] % snap);
+                                exy.setY(-(yyy + snapshot[1] % snap));
+                            }
+                            case ElementDualXY exy -> {
+                                double[] snapshot = es.getSnapshot();
+                                switch (exy.getSelectedEnd()) {
+                                    case ONE -> {
+                                        exy.setX1(xxx + snapshot[0] % snap);
+                                        exy.setY1(-(yyy + snapshot[1] % snap));
+                                    }
+                                    case TWO -> {
+                                        exy.setX2(xxx + snapshot[2] % snap);
+                                        exy.setY2(-(yyy + snapshot[3] % snap));
+                                    }
+                                    default -> {
+                                    }
                                 }
                             }
+                            default -> {
+                            }
                         }
-                        default -> {
-                        }
+//                        case ElementXY ee -> {
+//                            double[] snapshot = ee.getSnapshot();
+//                            ee.setX(xxx + snapshot[0] % snap);
+//                            ee.setY(-(yyy + snapshot[1] % snap));
+//                        }
+//                        case ElementDualXY ee -> {
+//                            double[] snapshot = ee.getSnapshot();
+//                            switch (ee.getSelectedEnd()) {
+//                                case ONE -> {
+//                                    ee.setX1(xxx + snapshot[0] % snap);
+//                                    ee.setY1(-(yyy + snapshot[1] % snap));
+//                                }
+//                                case TWO -> {
+//                                    ee.setX2(xxx + snapshot[2] % snap);
+//                                    ee.setY2(-(yyy + snapshot[3] % snap));
+//                                }
+//                                default -> {
+//                                }
+//                            }
+//                        }
+//                        default -> {
+//                        }
                     }
                 }
             }
@@ -319,8 +343,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
                         Element pick = picks.getFirst();
                         movingElements.add(pick);
-                        if (pick instanceof ElementXY exy) {
-                            exy.createSnapshot();
+                        if (pick instanceof ElementSelectable es) {
+                            es.createSnapshot();
                         }
 
                         LOGGER.log(Level.SEVERE, "Moving a thing.");
@@ -332,8 +356,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         // Add all picks to moving list.
                         for (Element e : picks) {
                             movingElements.add(e);
-                            if (e instanceof ElementDualXY exy) {
-                                exy.createSnapshot();
+                            if (e instanceof ElementSelectable es) {
+                                es.createSnapshot();
                             }
                         }
                         LOGGER.log(Level.SEVERE, "Moving some wires.");
@@ -450,41 +474,57 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //                    });
             // Place things inside recangle into selection list.
             parentEditor.getSymbol().getElements().forEach((element) -> {
-                switch (element) {
-                    case ElementXY exy -> {
-                        if (isInsideSelection(exy.getX(), -exy.getY())) {
-                            selectedElements.add(element);
-                            exy.setSelected(true);
-                            //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1}", new Object[]{exy.getX(), exy.getY()});
-                        } else {
-                            exy.setSelected(false);
-                            //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1} not in rect area.", new Object[]{exy.getX(), exy.getY()});
+                if (element instanceof ElementSelectable es) {
+                    switch (es) {
+                        case ElementXY exy -> {
+                            if (isInsideSelection(exy.getX(), -exy.getY())) {
+                                selectedElements.add(element);
+                                es.setSelected(true);
+                                //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1}", new Object[]{exy.getX(), exy.getY()});
+                            } else {
+                                es.setSelected(false);
+                                //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1} not in rect area.", new Object[]{exy.getX(), exy.getY()});
+                            }
                         }
-                    }
-                    case ElementDualXY exy -> {
-                        boolean p1 = isInsideSelection(exy.getX1(), -exy.getY1());
-                        boolean p2 = isInsideSelection(exy.getX2(), -exy.getY2());
+                        case ElementDualXY exy -> {
+                            boolean p1 = isInsideSelection(exy.getX1(), -exy.getY1());
+                            boolean p2 = isInsideSelection(exy.getX2(), -exy.getY2());
 
-                        if (p1 && p2) {
-                            //LOGGER.log(Level.SEVERE, "ElementDualXY BOTH");
-                            exy.setSelectedEnd(WireEnd.BOTH);
-                        } else if (p1) {
-                            //LOGGER.log(Level.SEVERE, "ElementDualXY ONE");
-                            exy.setSelectedEnd(WireEnd.ONE);
-                        } else if (p2) {
-                            exy.setSelectedEnd(WireEnd.TWO);
-                            //LOGGER.log(Level.SEVERE, "ElementDualXY TWO");
-                        } else {
-                            exy.setSelectedEnd(WireEnd.NONE);
-                            //LOGGER.log(Level.SEVERE, "ElementDualXY NONE");
-                        }
+                            if (p1 && p2) {
+                                //LOGGER.log(Level.SEVERE, "ElementDualXY BOTH");
+                                exy.setSelectedEnd(WireEnd.BOTH);
+                            } else if (p1) {
+                                //LOGGER.log(Level.SEVERE, "ElementDualXY ONE");
+                                exy.setSelectedEnd(WireEnd.ONE);
+                            } else if (p2) {
+                                exy.setSelectedEnd(WireEnd.TWO);
+                                //LOGGER.log(Level.SEVERE, "ElementDualXY TWO");
+                            } else {
+                                exy.setSelectedEnd(WireEnd.NONE);
+                                //LOGGER.log(Level.SEVERE, "ElementDualXY NONE");
+                            }
 
-                        if (exy.getSelectedEnd() != WireEnd.NONE) {
-                            selectedElements.add(element);
+                            if (exy.getSelectedEnd() != WireEnd.NONE) {
+                                selectedElements.add(element);
+                            }
                         }
-                    }
-                    default -> {
-                        LOGGER.log(Level.SEVERE, "Element not evaluated: " + element.getElementName());
+                        case ElementRectangle er -> {
+                            // Check that at least one set of XY points are in selection.
+                            double[] p = er.getPoints();
+                            if (isInsideSelection(p[0], -p[1])
+                                    || isInsideSelection(p[2], -p[3])
+                                    || isInsideSelection(p[4], -p[5])
+                                    || isInsideSelection(p[6], -p[7])) {
+                                es.setSelected(true);
+                                selectedElements.add(element);
+                                LOGGER.log(Level.SEVERE, "Rectangle selection true.");
+                            } else {
+                                es.setSelected(false);
+                            }
+                        }
+                        default -> {
+                            LOGGER.log(Level.SEVERE, "Element not evaluated: " + element.getElementName());
+                        }
                     }
                 }
             });
@@ -501,7 +541,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         //LOGGER.log(Level.SEVERE, "     X Range: {0} .. {1}   <=== x: {2}", new Object[]{sX, sX + sW, x});
         //LOGGER.log(Level.SEVERE, "     Y Range: {0} .. {1}   <=== y: {2}", new Object[]{sY, sY + sH, y});
-
         if (selectionRectangle.isVisible()) {
             if ((x > sX && y > sY) && (x < (sX + sW) && y < (sY + sH))) {
                 return true;
@@ -575,6 +614,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 );
                 nodes.add(circleNode);
                 circleNode.addTo(workArea);
+            } else if (element instanceof ElementRectangle c) {
+                RectangleNode rectNode = new RectangleNode(c,
+                        parentEditor.getDrawing().getLayers(),
+                        parentEditor.getDrawing().getPalette(),
+                        this
+                );
+                nodes.add(rectNode);
+                rectNode.addTo(workArea);
             }
         });
     }
