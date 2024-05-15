@@ -30,7 +30,6 @@ import com.maehem.mangocad.view.library.LibraryElementNode;
 import static com.maehem.mangocad.view.library.LibraryElementNode.FONT_PATH;
 import java.util.logging.Level;
 import javafx.application.Platform;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -73,7 +72,7 @@ public class PinNode extends ViewNode implements ElementListener {
     private boolean parentMir;
     private boolean showDetails;
     private Color symbolColor; // Pin Wire color
-    private Color pinColor; // Pin IO Text color
+    private Color dirSwapColor; // Pin IO Text color
     private Color pinGhostColor; // if show details but pintext wouldn't be shown
     private Color nameColor; // Pin name text color
     private Color nameGhostColor;
@@ -103,7 +102,7 @@ public class PinNode extends ViewNode implements ElementListener {
         this.pin = p;
 
         setSymbolColor(symbolColor);
-        setPinColor(pinColor);
+        setDirSwapColor(pinColor);
         setNameColor(nameColor);
         setParentRot(parentRotation);
 
@@ -178,15 +177,16 @@ public class PinNode extends ViewNode implements ElementListener {
         updatePinData(); // I/O indicator and Origin indicator
         updatePosition();
         updateRotation();
+        updateColors();
 
-        originCirc.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-            PickListener listener = getPickListener();
-            LOGGER.log(Level.SEVERE, "Pin Picked..");
-            if (listener != null) {
-                LOGGER.log(Level.SEVERE, "Notify Pin pick listener.");
-                getPickListener().nodePicked(this, me);
-            }
-        });
+//        originCirc.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+//            PickListener listener = getPickListener();
+//            LOGGER.log(Level.SEVERE, "Pin Picked..");
+//            if (listener != null) {
+//                LOGGER.log(Level.SEVERE, "Notify Pin pick listener.");
+//                getPickListener().nodePicked(this, me);
+//            }
+//        });
 
         Platform.runLater(() -> {
             pin.addListener(this);
@@ -200,15 +200,9 @@ public class PinNode extends ViewNode implements ElementListener {
         // Pin Wire
         pinLine.setEndX((pinLen));
         pinLine.setEndY(0);
-        pinLine.setStroke(symbolColor);
 
         // Dot Circle - Transparent if not visible.
         dotC.setCenterX(pinLen + getDotRadius());
-        if (getDotRadius() > 0.0) {
-            dotC.setStroke(getActiveColor(symbolColor));
-        } else {
-            dotC.setStroke(Color.TRANSPARENT);
-        }
     }
 
     private void updateClockLines() {
@@ -219,18 +213,15 @@ public class PinNode extends ViewNode implements ElementListener {
             clkLine1.setEndX(symbX + CLK_SIZE);
             clkLine1.setEndY(0);
 
-            clkLine1.setStroke(getActiveColor(symbolColor));
+            //clkLine1.setStroke(getActiveColor(symbolColor));
 
             clkLine2.setStartX(symbX);
             clkLine2.setStartY(CLK_SIZE / 2.0);
             clkLine2.setEndX(symbX + CLK_SIZE);
             clkLine2.setEndY(0);
 
-            clkLine2.setStroke(getActiveColor(symbolColor));
+            //clkLine2.setStroke(getActiveColor(symbolColor));
 
-        } else {
-            clkLine1.setStroke(Color.TRANSPARENT);
-            clkLine2.setStroke(Color.TRANSPARENT);
         }
     }
 
@@ -239,8 +230,6 @@ public class PinNode extends ViewNode implements ElementListener {
 
         // Direction and Swap-Level  ( ex.   io 0  )
         dirSwap.setText(pin.getDirection().code() + "  " + pin.getSwapLevel());
-        dirSwap.setStroke(showDetails ? getActiveColor(pinColor) : Color.TRANSPARENT);
-        dirSwap.setFill(getActiveColor(pinColor));
 
         dirSwapSpin.setPivotX(getDsWidth() / 2.0);
 
@@ -249,8 +238,6 @@ public class PinNode extends ViewNode implements ElementListener {
             //dirSwap.getTransforms().add(sc);
         }
 
-        // Pin Origin Circle
-        originCirc.setStroke(showDetails ? getActiveColor(pinColor) : Color.TRANSPARENT);
         pinNameSpin.setPivotX(getPinNameWidth() / 2.0);
     }
 
@@ -267,38 +254,18 @@ public class PinNode extends ViewNode implements ElementListener {
     }
 
     private void updatePadPinVisible() {
-        switch (pin.getVisible()) {
-            case BOTH -> {
-                pinName.setFill(getActiveColor(nameColor));
-                padName.setFill(getActiveColor(pinColor));
-            }
-            case PAD -> {
-                pinName.setFill(showDetails ? getActiveColor(pinGhostColor) : Color.TRANSPARENT);
-                padName.setFill(getActiveColor(pinColor));
-            }
-            case PIN -> {
-                pinName.setFill(getActiveColor(nameColor));
-                padName.setFill(showDetails ? getActiveColor(nameGhostColor) : Color.TRANSPARENT);
-            }
-            case OFF -> {
-                pinName.setFill(showDetails ? getActiveColor(pinGhostColor) : Color.TRANSPARENT);
-                padName.setFill(showDetails ? getActiveColor(nameGhostColor) : Color.TRANSPARENT);
-            }
-        }
     }
 
     private void updatePadPin() {
-        Color pinNameColor = nameColor;
-        Color padColor = nameColor;
-        double vizPinRot = (pin.getRot() + getParentRot()) % 360;
+        //Color pinNameColor = nameColor;
+        //Color padColor = nameColor;
+        //double vizPinRot = (pin.getRot() + getParentRot()) % 360;
         //double rawPinLen = pin.getLength().lenMM();
 
         updatePadPinVisible();
 
         // Pin Name (inside component, pin function name)
         pinName.setText(pin.getName());
-        pinName.setFill(getActiveColor(pinNameColor));
-        pinName.setStroke(pinNameColor);
         double pinNameTextWidth = pinName.getBoundsInLocal().getWidth();
 
         if (parentMir) {
@@ -319,8 +286,8 @@ public class PinNode extends ViewNode implements ElementListener {
         }
 
         padName.setText(padValue);
-        padName.setFill(getActiveColor(padColor));
-        padName.setStroke(padColor);
+        //padName.setFill(getActiveColor(padColor));
+        //padName.setStroke(padColor);
 //        double padWidth = padName.getBoundsInLocal().getWidth() - PAD_FONT_SIZE * 0.47;
 
 //        if ((vizPinRot == 180) || (vizPinRot == 270 && !parentMir) || (vizPinRot == 90 && parentMir)) { // Flip Text
@@ -367,11 +334,54 @@ public class PinNode extends ViewNode implements ElementListener {
         translate.setY(-pin.getY());
     }
 
-    private void updateSelectedState() {
-        updateLine();
-        updateClockLines();
-        updatePinData();
-        updatePadPinVisible(); // Pin and Pad Name texts
+    private void updateColors() {
+        Color activeSymbolColor = pin.isSelected() ? symbolColor.brighter().brighter() : symbolColor;
+
+        pinLine.setStroke(activeSymbolColor);
+        if (getDotRadius() > 0.0) {
+            dotC.setStroke(activeSymbolColor);
+        } else {
+            dotC.setStroke(Color.TRANSPARENT);
+        }
+        boolean showClk = pin.getFunction() == PinFunction.CLK || pin.getFunction() == PinFunction.DOTCLK;
+
+        clkLine1.setStroke(showClk ? activeSymbolColor : Color.TRANSPARENT);
+        clkLine2.setStroke(showClk ? activeSymbolColor : Color.TRANSPARENT);
+
+        // Direction and Swap level text + origin circle.
+        Color activeDirSwapColor = pin.isSelected() ? dirSwapColor.brighter().brighter() : dirSwapColor;
+        dirSwap.setStroke(showDetails ? activeDirSwapColor : Color.TRANSPARENT);
+        dirSwap.setFill(activeDirSwapColor);
+
+        Color activePinPadColor = pin.isSelected() ? nameColor.brighter().brighter() : nameColor;
+        switch (pin.getVisible()) {
+            case BOTH -> {
+                pinName.setFill(activePinPadColor);
+                pinName.setStroke(activePinPadColor);
+                padName.setFill(activePinPadColor);
+                padName.setStroke(activePinPadColor);
+            }
+            case PAD -> {
+                pinName.setFill(showDetails ? pinGhostColor : Color.TRANSPARENT);
+                pinName.setStroke(showDetails ? pinGhostColor : Color.TRANSPARENT);
+                padName.setFill(activePinPadColor);
+                padName.setStroke(activePinPadColor);
+            }
+            case PIN -> {
+                pinName.setFill(activePinPadColor);
+                pinName.setStroke(activePinPadColor);
+                padName.setFill(showDetails ? nameGhostColor : Color.TRANSPARENT);
+                padName.setStroke(showDetails ? pinGhostColor : Color.TRANSPARENT);
+            }
+            case OFF -> {
+                pinName.setFill(showDetails ? pinGhostColor : Color.TRANSPARENT);
+                pinName.setStroke(showDetails ? pinGhostColor : Color.TRANSPARENT);
+                padName.setFill(showDetails ? nameGhostColor : Color.TRANSPARENT);
+                padName.setStroke(showDetails ? pinGhostColor : Color.TRANSPARENT);
+            }
+        }
+        // Pin Origin Circle
+        originCirc.setStroke(showDetails ? activeDirSwapColor : Color.TRANSPARENT);
     }
 
     private double getSymbolX() {
@@ -413,14 +423,15 @@ public class PinNode extends ViewNode implements ElementListener {
      */
     public final void setSymbolColor(Color symbolColor) {
         this.symbolColor = symbolColor;
+        updateColors();
     }
 
     /**
-     * @param pinColor the pinColor to set
+     * @param dirSwapColor the dirSwapColor to set
      */
-    public final void setPinColor(Color pinColor) {
-        this.pinColor = pinColor;
-        this.pinGhostColor = new Color(pinColor.getRed(), pinColor.getGreen(), pinColor.getBlue(), 0.2);
+    public final void setDirSwapColor(Color dirSwapColor) {
+        this.dirSwapColor = dirSwapColor;
+        updateColors();
     }
 
     /**
@@ -429,18 +440,20 @@ public class PinNode extends ViewNode implements ElementListener {
     public final void setNameColor(Color nameColor) {
         this.nameColor = nameColor;
         this.nameGhostColor = new Color(nameColor.getRed(), nameColor.getGreen(), nameColor.getBlue(), 0.2);
+        this.pinGhostColor = new Color(nameColor.getRed(), nameColor.getGreen(), nameColor.getBlue(), 0.2);
 
-        pinName.setFill(getActiveColor(nameColor));
-        pinName.setStroke(getActiveColor(nameColor));
+        //pinName.setFill(getActiveColor(nameColor));
+        //pinName.setStroke(getActiveColor(nameColor));
+        updateColors();
     }
 
-    private final Color getActiveColor(Color baseColor) {
-        if (pin.isSelected()) {
-            return baseColor.brighter();
-        } else {
-            return baseColor;
-        }
-    }
+//    private final Color getActiveColor(Color baseColor) {
+//        if (pin.isSelected()) {
+//            return baseColor.brighter();
+//        } else {
+//            return baseColor;
+//        }
+//    }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
@@ -458,7 +471,7 @@ public class PinNode extends ViewNode implements ElementListener {
                 updatePosition();
             }
             case SELECTED -> {
-                updateSelectedState();
+                updateColors();
             }
             case PinField.DIRECTION -> {
                 updatePinData();
@@ -469,12 +482,14 @@ public class PinNode extends ViewNode implements ElementListener {
             case PinField.FUNCTION -> {
                 updateClockLines();
                 updateLine();
+                updateColors();
             }
             case PinField.LENGTH -> {
                 updateRotation();
                 updateLine();
                 updateClockLines();
                 updatePadPin();
+                updateColors();
             }
             case PinField.ROTATION -> {
                 // Adjust Rotation Transform
