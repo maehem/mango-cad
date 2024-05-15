@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.enums.ElementCircleField;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements ElementXY {
+public class ElementCircle extends Element implements ElementXY, ElementSelectable {
     public static final String ELEMENT_NAME = "circle";
 
     private double x;

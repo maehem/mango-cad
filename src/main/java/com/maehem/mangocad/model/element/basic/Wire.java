@@ -18,12 +18,15 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementDualXY;
+import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <pre>
@@ -47,7 +50,9 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements ElementDualXY {
+public class Wire extends Element implements ElementDualXY, ElementSelectable {
+
+    public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
@@ -310,6 +315,16 @@ public class Wire extends Element implements ElementDualXY {
     @Override
     public double[] getSnapshot() {
         return snapshot;
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selectedEnd != WireEnd.NONE;
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        LOGGER.log(Level.SEVERE, "Wire.setSelected() mis-used.  Use setSelectedEnd() instead!");
     }
 
 }
