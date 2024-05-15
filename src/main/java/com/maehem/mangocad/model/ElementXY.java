@@ -30,13 +30,4 @@ public interface ElementXY {
 
     public void setY(double y);
 
-    public void createSnapshot();
-
-    public void restoreSnapshot();
-
-    public double[] getSnapshot();
-
-    public boolean isSelected();
-
-    public void setSelected(boolean selected);
 }

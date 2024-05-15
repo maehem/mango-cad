@@ -44,11 +44,4 @@ public interface ElementDualXY {
 
     public WireEnd getSelectedEnd();
 
-    public void createSnapshot();
-
-    public void restoreSnapshot();
-
-    public double[] getSnapshot();
-
-
 }
