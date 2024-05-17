@@ -23,6 +23,7 @@ package com.maehem.mangocad.model.element.enums;
 public enum ElementRectangleField {
     X1("x1", Double.class), Y1("y1", Double.class),
     X2("x2", Double.class), Y2("y2", Double.class),
+    ALL_XY("allXY", null),
     SELECTED("selected", Boolean.class);
 
     private final String fName;
