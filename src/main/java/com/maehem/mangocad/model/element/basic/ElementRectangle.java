@@ -21,6 +21,8 @@ import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.util.Rotation;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.util.logging.Level;
 
 /**
  *
@@ -36,7 +38,8 @@ public class ElementRectangle extends Element implements ElementSelectable {
     private final Rotation rotation = new Rotation();
 
     private boolean selected = false;
-    private final double[] snapshot = {0, 0};
+    private int selectedCorner = 0;
+    private final double[] snapshot = {0, 0, 0, 0};
 
     @Override
     public String getElementName() {
@@ -126,6 +129,15 @@ public class ElementRectangle extends Element implements ElementSelectable {
         return rotation.getValue();
     }
 
+    public void setAllXY(double x1, double y1, double x2, double y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+
+        notifyListeners(ElementRectangleField.ALL_XY, null, null);
+    }
+
     /**
      * Furnish a list of the polygon points with consideration for the current
      * rotation/mirror of the shape.
@@ -191,9 +203,29 @@ public class ElementRectangle extends Element implements ElementSelectable {
                 points[7] = getY2();
             }
         }
+        LOGGER.log(Level.SEVERE, "Points[{8}]: {0},{1}  {2},{3}  {4},{5}  {6},{7}",
+                new Object[]{
+                    points[0], points[1],
+                    points[2], points[3],
+                    points[4], points[5],
+                    points[6], points[7],
+                    getLayerNum()
+                }
+        );
         return points;
     }
 
+    public int getSelectedCorner() {
+        return selectedCorner;
+    }
+
+    public void setSelectedCorner(int corner) {
+        if (corner < 0 || corner > 3) {
+            selectedCorner = 0;
+        } else {
+            selectedCorner = corner;
+        }
+    }
     /**
      * @param value the rotation to set
      */
@@ -215,10 +247,7 @@ public class ElementRectangle extends Element implements ElementSelectable {
 
     @Override
     public void restoreSnapshot() {
-        setX1(snapshot[0]);
-        setY1(snapshot[1]);
-        setX2(snapshot[2]);
-        setY2(snapshot[3]);
+        setAllXY(snapshot[0], snapshot[1], snapshot[2], snapshot[3]);
     }
 
     @Override
