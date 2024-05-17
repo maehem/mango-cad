@@ -54,7 +54,7 @@ public class RectangleNode extends ViewNode implements ElementRotation, ElementL
         this.palette = palette;
 
         // TODO:  Maybe this is a polygon shape?
-        rectangleShape.setStrokeWidth(0);
+        rectangleShape.setStrokeWidth(1);
 
         //add(rectangleShape);
         add(rectShape);
@@ -101,11 +101,11 @@ public class RectangleNode extends ViewNode implements ElementRotation, ElementL
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         LOGGER.log(Level.SEVERE,
                 "Rectangle properties have changed! {0}: {1} => {2}",
-                new Object[]{field, oldVal.toString(), newVal.toString()});
+                new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
 
         if (field instanceof ElementRectangleField erf) {
             switch (erf) {
-                case ElementRectangleField.X1, ElementRectangleField.Y1, ElementRectangleField.X2, ElementRectangleField.Y2 -> {
+                case ElementRectangleField.X1, ElementRectangleField.Y1, ElementRectangleField.X2, ElementRectangleField.Y2, ElementRectangleField.ALL_XY -> {
                     updatePoints();
                 }
                 case ElementRectangleField.SELECTED -> {
