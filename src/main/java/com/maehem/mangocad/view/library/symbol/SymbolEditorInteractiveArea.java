@@ -172,7 +172,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //            event.consume();
 //        });
         workArea.addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
-            double scaleOld = scale;
             double scrollAmt = event.getDeltaY();
             scale += scrollAmt * SCALE_FACTOR;
             if (scale > SCALE_MAX) {
@@ -409,14 +408,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             er.setSelected(false);
                         }
                         if (er.isSelected()) {
-                            LOGGER.log(Level.SEVERE, "Selected Corner: " + er.getSelectedCorner());
+                            LOGGER.log(Level.SEVERE, "Selected Corner: {0}", er.getSelectedCorner());
                         }
                     }
                     default -> {
                     }
                 }
             });
-            LOGGER.log(Level.SEVERE, "Pick count: " + picks.size());
+            LOGGER.log(Level.SEVERE, "Pick count: {0}", picks.size());
 
 //            if (picks.isEmpty()) {
 //                contextMenu.hide();
@@ -634,7 +633,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 }
                             }
                             default -> {
-                                LOGGER.log(Level.SEVERE, "Element not evaluated: " + element.getElementName());
+                                LOGGER.log(Level.SEVERE, "Element not evaluated: {0}", element.getElementName());
                             }
                         }
                     }
@@ -645,24 +644,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 LOGGER.log(Level.SEVERE, "Selected {0} elements.", selectedElements.size());
             }
         });
-    }
-
-    private double modulo(double value, double divisor) {
-        //divisor -= 0.0001;
-        int top = (int) (value / (divisor * 0.999));
-        double ret = value - (top * divisor);
-        if (divisor == ret) {
-            ret = 0;
-            top++;
-        }
-        LOGGER.log(Level.SEVERE, "Modulo Returns: val: {0} div:{1} top:{2}  ret:{3}",
-                new Object[]{
-                    String.format("%.3f", value),
-                    String.format("%.3f", divisor),
-                    top,
-                    String.format("%.3f", ret)
-                });
-        return ret;
     }
 
     private boolean isInsideSelection(double x, double y) {
@@ -773,14 +754,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         return canRotate;
     }
 
-    private ViewNode findViewNode(Element e) {
-        for (ViewNode vn : nodes) {
-            if (vn.getElement().equals(e)) {
-                return vn;
-            }
-        }
-        return null;
-    }
+//    private ViewNode findViewNode(Element e) {
+//        for (ViewNode vn : nodes) {
+//            if (vn.getElement().equals(e)) {
+//                return vn;
+//            }
+//        }
+//        return null;
+//    }
 
     private boolean isOnlyWires(ArrayList<Element> picks) {
         for (Element e : picks) {
