@@ -24,7 +24,7 @@ import java.util.List;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public enum Units {
-    MIL("mil", 39.3701), MM("mm", 1.0), INCH("inch", 0.0393701), MIC("mic", 1000.0);
+    MIL("mil", 39.3700787), MM("mm", 1.0), INCH("inch", 0.0393700787), MIC("mic", 1000.0);
 
     public final String code;
     public final double mult;
