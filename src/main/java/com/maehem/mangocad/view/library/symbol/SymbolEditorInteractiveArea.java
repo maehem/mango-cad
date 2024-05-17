@@ -218,7 +218,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 ke.consume();
             }
         });
-        workArea.setOnMouseMoved((me) -> {
+        workArea.setOnMouseMoved((MouseEvent me) -> {
             // Move any selected node.
             if (!movingElements.isEmpty()) {
                 //LOGGER.log(Level.SEVERE, "Work Area: mXY: {0},{1}", new Object[]{me.getX(), me.getY()});
@@ -697,44 +697,52 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         Symbol symbol = parentEditor.getSymbol();
 
         symbol.getElements().forEach((element) -> {
-            if (element instanceof Pin p) {
-                PinNode pinNode = new PinNode(p,
-                        Color.RED, Color.DARKGREEN, Color.DARKGREY,
-                        null, true, this
-                );
-                nodes.add(pinNode);
-                pinNode.addTo(workArea);
-            } else if (element instanceof Wire w) {
-                WireNode wireNode = new WireNode(w,
-                        parentEditor.getDrawing().getLayers(),
-                        parentEditor.getDrawing().getPalette(),
-                        this);
-                nodes.add(wireNode);
-                wireNode.addTo(workArea);
-            } else if (element instanceof ElementText t) {
-                TextNode textNode = new TextNode(t, null,
-                        parentEditor.getDrawing().getLayers(),
-                        parentEditor.getDrawing().getPalette(),
-                        null, true,
-                        this);
-                nodes.add(textNode);
-                textNode.addTo(workArea);
-            } else if (element instanceof ElementCircle c) {
-                CircleNode circleNode = new CircleNode(c,
-                        parentEditor.getDrawing().getLayers(),
-                        parentEditor.getDrawing().getPalette(),
-                        this
-                );
-                nodes.add(circleNode);
-                circleNode.addTo(workArea);
-            } else if (element instanceof ElementRectangle c) {
-                RectangleNode rectNode = new RectangleNode(c,
-                        parentEditor.getDrawing().getLayers(),
-                        parentEditor.getDrawing().getPalette(),
-                        this
-                );
-                nodes.add(rectNode);
-                rectNode.addTo(workArea);
+            switch (element) {
+                case Pin p -> {
+                    PinNode pinNode = new PinNode(p,
+                            Color.RED, Color.DARKGREEN, Color.DARKGREY,
+                            null, true, this
+                    );
+                    nodes.add(pinNode);
+                    pinNode.addTo(workArea);
+                }
+                case Wire w -> {
+                    WireNode wireNode = new WireNode(w,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            this);
+                    nodes.add(wireNode);
+                    wireNode.addTo(workArea);
+                }
+                case ElementText t -> {
+                    TextNode textNode = new TextNode(t, null,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            null, true,
+                            this);
+                    nodes.add(textNode);
+                    textNode.addTo(workArea);
+                }
+                case ElementCircle c -> {
+                    CircleNode circleNode = new CircleNode(c,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            this
+                    );
+                    nodes.add(circleNode);
+                    circleNode.addTo(workArea);
+                }
+                case ElementRectangle c -> {
+                    RectangleNode rectNode = new RectangleNode(c,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            this
+                    );
+                    nodes.add(rectNode);
+                    rectNode.addTo(workArea);
+                }
+                default -> {
+                }
             }
         });
     }
