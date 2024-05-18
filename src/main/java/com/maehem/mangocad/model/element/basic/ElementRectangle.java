@@ -151,17 +151,17 @@ public class ElementRectangle extends Element implements ElementSelectable {
 
         switch ((int) getRot()) {
             case 90 -> {
-                points[0] = getX1() + w / 2 - h / 2;
-                points[1] = getY1() + h / 2 + w / 2;
+                points[0] = getX1() + w / 2 + h / 2;
+                points[1] = getY1() + h / 2 - w / 2;
 
-                points[2] = points[0];
-                points[3] = points[1] - w;
+                points[2] = getX2() - w / 2 + h / 2;
+                points[3] = getY1() + h / 2 + w / 2;
 
-                points[4] = points[0] + h;
-                points[5] = points[1] - w;
+                points[4] = getX2() - w / 2 - h / 2;
+                points[5] = getY2() - h / 2 + w / 2;
 
-                points[6] = points[0] + h;
-                points[7] = points[1];
+                points[6] = getX1() + w / 2 - h / 2;
+                points[7] = getY2() - h / 2 - w / 2;
             }
             case 180 -> {
                 points[0] = getX2();
@@ -177,17 +177,17 @@ public class ElementRectangle extends Element implements ElementSelectable {
                 points[7] = getY1();
             }
             case 270 -> {
-                points[0] = getX1() + w / 2 + h / 2;
-                points[1] = getY1() + h / 2 - w / 2;
+                points[0] = getX1() + w / 2 - h / 2;
+                points[1] = getY1() + h / 2 + w / 2;
 
-                points[2] = points[0];
-                points[3] = points[1] + w;
+                points[2] = getX2() - w / 2 - h / 2;
+                points[3] = getY1() + h / 2 - w / 2;
 
-                points[4] = points[0] + h;
-                points[5] = points[1] + w;
+                points[4] = getX2() - w / 2 + h / 2;
+                points[5] = getY2() - h / 2 - w / 2;
 
-                points[6] = points[0] + h;
-                points[7] = points[1];
+                points[6] = getX1() + w / 2 + h / 2;
+                points[7] = getY2() - h / 2 + w / 2;
             }
             default -> { // zero
                 points[0] = getX1();
