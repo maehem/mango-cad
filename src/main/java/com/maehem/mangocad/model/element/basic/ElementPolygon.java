@@ -38,7 +38,7 @@ public class ElementPolygon extends Element {
     //private boolean orphans = false;
     //private boolean thermals = true;
     //private int rank = 1;
-    private List<Vertex> vertices = new ArrayList<>();
+    private final List<Vertex> vertices = new ArrayList<>();
 
     @Override
     public String getElementName() {
@@ -161,7 +161,52 @@ public class ElementPolygon extends Element {
      * @param vertices the vertices to set
      */
     public void setVertices(List<Vertex> vertices) {
-        this.vertices = vertices;
+        this.vertices.clear();
+        for (Vertex v : vertices) {
+            this.vertices.add(v);
+        }
     }
 
+    public int selectVerticesIn(double x, double y, double range) {
+        int vCount = 0;
+        for (Vertex v : vertices) {
+            if ((Math.abs(x - v.getX()) < range && Math.abs(y - v.getY()) < range)) {
+                v.setSelected(true);
+                vCount++;
+            } else {
+                v.setSelected(false);
+            }
+        }
+        return vCount;
+    }
+
+    public boolean hasSelections() {
+        for (Vertex v : vertices) {
+            if (v.isSelected()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return a list of vertices that are selected.     * given X/Y.
+     *
+     * @param x
+     * @param y
+     * @param hitBox
+     * @return list of found vertices
+     */
+    public Vertex[] getSelectedVertices() {
+        ArrayList<Vertex> found = new ArrayList<>();
+
+        for (Vertex v : getVertices()) {
+            if (v.isSelected()) {
+                found.add(v);
+            }
+        }
+
+        return found.toArray(new Vertex[]{});
+    }
 }
