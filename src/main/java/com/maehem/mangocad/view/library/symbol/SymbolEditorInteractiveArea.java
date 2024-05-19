@@ -22,9 +22,11 @@ import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
@@ -33,6 +35,7 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
+import com.maehem.mangocad.view.node.PolygonNode;
 import com.maehem.mangocad.view.node.RectangleNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
@@ -173,6 +176,22 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 ke.consume();
             }
         });
+
+        // Toggle CrossHair
+        setOnMouseEntered((t) -> {
+            getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
+        });
+        setOnMouseExited((t) -> {
+            getScene().setCursor(Cursor.DEFAULT);
+        });
+
+        initMouseMoved();
+        initMouseClicked();
+        initMouseDragged();
+        initMouseReleased();
+    }
+
+    private void initMouseMoved() {
         workArea.setOnMouseMoved((MouseEvent me) -> {
             // Move any selected node.
             if (!movingElements.isEmpty()) {
@@ -181,8 +200,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 // TODO: Is 'option' key held down? then use altGrid.
                 double snap = parentEditor.getDrawing().getGrid().getSizeMM();
 
-                double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
-                double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
+//                double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
+//                double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
                 //LOGGER.log(Level.SEVERE, "Mouse Moved:    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
                 double moveDistX = me.getX() - movingMouseStartX;
                 double moveDistY = -(me.getY() - movingMouseStartY);
@@ -195,8 +214,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         switch (es) {
                             case ElementXY exy -> {
                                 double[] snapshot = es.getSnapshot();
-                                //exy.setX(xxx + snapshot[0] % snap);
-                                //exy.setY(-(yyy + snapshot[1] % snap));
                                 exy.setX(snapshot[0] + moveDistSnappedX);
                                 exy.setY(snapshot[1] + moveDistSnappedY);
                             }
@@ -204,14 +221,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 double[] snapshot = es.getSnapshot();
                                 switch (exy.getSelectedEnd()) {
                                     case ONE -> {
-                                        //exy.setX1(xxx + snapshot[0] % snap);
-                                        //exy.setY1(-(yyy + snapshot[1] % snap));
                                         exy.setX1(snapshot[0] + moveDistSnappedX);
                                         exy.setY1(snapshot[1] + moveDistSnappedY);
                                     }
                                     case TWO -> {
-                                        //exy.setX2(xxx + snapshot[2] % snap);
-                                        //exy.setY2(-(yyy + snapshot[3] % snap));
                                         exy.setX2(snapshot[2] + moveDistSnappedX);
                                         exy.setY2(snapshot[3] + moveDistSnappedY);
                                     }
@@ -223,123 +236,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 // Determine which anchor was clicked and adjust
                                 // X1/Y1 and X2/Y2 accordingly.
                                 double[] snapshot = er.getSnapshot();
-                                //double w = Math.abs(er.getX1() - er.getX2());
-                                //double h = Math.abs(er.getY1() - er.getY2());
-//                                double w = Math.abs(snapshot[0] - snapshot[2]);
-//                                double h = Math.abs(snapshot[1] - snapshot[3]);
-
                                 er.setAllXY(
                                         snapshot[0] + moveDistSnappedX,
                                         snapshot[1] + moveDistSnappedY,
                                         snapshot[2] + moveDistSnappedX,
                                         snapshot[3] + moveDistSnappedY
                                 );
-                                // TODO:  Consider rotation for setting new XY values.
-                                //
-                                //
-//                                double rot = er.getRot();
-//                                int corner = er.getSelectedCorner();
-//                                if (rot == 180) {
-//                                    corner += 2;
-//                                    corner %= 4;
-//                                } else if (rot == 90) {
-//                                    corner += 1;
-//                                    corner %= 4;
-//                                }
-//                                switch (corner) {
-//                                    case 3 -> {
-//                                        double newX = xxx + snapshot[0] % snap;
-//                                        double newY = -(yyy + snapshot[3] % snap);
-//                                        if (rot == 0 || rot == 180) {
-//                                            er.setAllXY(
-//                                                    newX,
-//                                                    newY - h,
-//                                                    newX + w,
-//                                                    newY
-//                                            );
-//                                        } else {
-//                                            LOGGER.log(Level.SEVERE, "A");
-//                                            er.setAllXY(
-//                                                    newX,
-//                                                    newY - w,
-//                                                    newX + h,
-//                                                    newY
-//                                            );
-//
-//                                        }
-//                                    }
-//                                    case 2 -> {
-//                                        double newX = xxx + snapshot[2] % snap;
-//                                        double newY = -(yyy + snapshot[3] % snap);
-//                                        if (rot == 0 || rot == 180) {
-//                                            er.setAllXY(
-//                                                    newX - w,
-//                                                    newY - h,
-//                                                    newX,
-//                                                    newY
-//                                            );
-//                                        } else {
-//                                            LOGGER.log(Level.SEVERE, "B");
-//                                            er.setAllXY(
-//                                                    newX - h,
-//                                                    newY - w,
-//                                                    newX,
-//                                                    newY
-//                                            );
-//                                        }
-//                                    }
-//                                    case 1 -> {
-//                                            er.setAllXY(
-//                                                    snapshot[0] + moveDistSnappedX,
-//                                                    snapshot[1] + moveDistSnappedY,
-//                                                    snapshot[2] + moveDistSnappedX,
-//                                                    snapshot[3] + moveDistSnappedY
-//                                            );
-////                                        if (rot == 0 || rot == 180) {
-////                                            double newX = xxx + snapshot[2] % snap;
-////                                            double newY = -(yyy + snapshot[1] % snap);
-////                                            er.setAllXY(
-////                                                    newX - w,
-////                                                    newY,
-////                                                    newX,
-////                                                    newY + h
-////                                            );
-////                                        } else {
-////                                            LOGGER.log(Level.SEVERE, "C"); //RED
-////                                            double newX = xxx - snapshot[1] % snap;
-////                                            double newY = -(yyy - snapshot[2] % snap);
-////                                            er.setAllXY(
-////                                                    snapshot[0] + moveDistSnappedX,
-////                                                    snapshot[1] + moveDistSnappedY,
-////                                                    snapshot[2] + moveDistSnappedX,
-////                                                    snapshot[3] + moveDistSnappedY
-////                                            );
-////                                        }
-//                                    }
-//                                    default -> { // Lower left
-//                                        if (rot == 0 || rot == 180) {
-//                                            LOGGER.log(Level.SEVERE, "one");
-//                                            double newX = xxx + snapshot[0] % snap;
-//                                            double newY = -(yyy + snapshot[1] % snap);
-//                                            er.setAllXY(
-//                                                    newX,
-//                                                    newY,
-//                                                    newX + w,
-//                                                    newY + h
-//                                            );
-//                                        } else {
-//                                            LOGGER.log(Level.SEVERE, "D");
-//                                            double newX = xxx - snapshot[0] % snap - snap;
-//                                            double newY = -(yyy - snapshot[1] % snap);
-//                                            er.setAllXY( // Flip XY when rotated 90 or 270
-//                                                    newX,
-//                                                    newY,
-//                                                    newX + w,
-//                                                    newY + h
-//                                            );
-//                                        }
-//                                    }
-//                                }
                             }
                             default -> {
                                 // Non-movable thing.
@@ -349,15 +251,34 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 }
             }
         });
+    }
 
-        // Toggle CrossHair
-        setOnMouseEntered((t) -> {
-            getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
+    private void initMouseDragged() {
+        workArea.setOnMouseDragged(e -> {
+            if (!movingElements.isEmpty()) {
+                e.consume();
+                return;
+            }
+            if (!selectionRectangle.isVisible()) { // Begin selection.
+                LOGGER.log(Level.SEVERE, "Begin Selection.");
+                mouseDownX = e.getX();
+                mouseDownY = e.getY();
+                selectionRectangle.setVisible(true);
+                selectionRectangle.setX(mouseDownX);
+                selectionRectangle.setY(mouseDownY);
+                selectionRectangle.setWidth(0);
+                selectionRectangle.setHeight(0);
+            } else {
+                selectionRectangle.setX(Math.min(e.getX(), mouseDownX));
+                selectionRectangle.setWidth(Math.abs(e.getX() - mouseDownX));
+                selectionRectangle.setY(Math.min(e.getY(), mouseDownY));
+                selectionRectangle.setHeight(Math.abs(e.getY() - mouseDownY));
+            }
+            e.consume();
         });
-        setOnMouseExited((t) -> {
-            getScene().setCursor(Cursor.DEFAULT);
-        });
+    }
 
+    private void initMouseClicked() {
         workArea.setOnMouseClicked((me) -> {
             if (!movingElements.isEmpty()) {
                 if (null != me.getButton()) {
@@ -396,163 +317,153 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     }
                 }
                 return;
-            }
+            } else {  // Nothing currently happening pick things and do something.
 
-            LOGGER.log(Level.SEVERE, "Editor Work Area Clicked: {0}", me.getButton().name());
-            //LOGGER.log(Level.SEVERE, "Mouse: {0},{1}  scene: {2},{3}", new Object[]{me.getX(), -me.getY(), me.getSceneX(), -me.getSceneY()});
-            ArrayList<Element> picks = new ArrayList<>();
-            parentEditor.getSymbol().getElements().forEach((e) -> {
-                switch (e) {
-                    case ElementXY ee -> {
-                        if (Math.abs(me.getX() - ee.getX()) < PICK_SIZE
-                                && Math.abs(-me.getY() - ee.getY()) < PICK_SIZE) {
-                            picks.add(e);
-                        }
-                    }
-                    case ElementDualXY ee -> {
-                        if (Math.abs(me.getX() - ee.getX1()) < PICK_SIZE
-                                && Math.abs(-me.getY() - ee.getY1()) < PICK_SIZE) {
-                            picks.add(e);
-                            ((ElementDualXY) e).setSelectedEnd(ONE);
-                        } else if (Math.abs(me.getX() - ee.getX2()) < PICK_SIZE
-                                && Math.abs(-me.getY() - ee.getY2()) < PICK_SIZE) {
-                            picks.add(e);
-                            ((ElementDualXY) e).setSelectedEnd(TWO);
-                        }
-                    }
-                    case ElementRectangle er -> {
-                        double[] p = er.getPoints();
-
-                        if ((Math.abs(me.getX() - p[0]) < PICK_SIZE && Math.abs(-me.getY() - p[1]) < PICK_SIZE)) {
-                            er.setSelectedCorner(0); // Lower left. Y is inverted
-                            picks.add(e);
-                            er.setSelected(true);
-                            LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[0], p[1]});
-                        } else if ((Math.abs(me.getX() - p[2]) < PICK_SIZE && Math.abs(-me.getY() - p[3]) < PICK_SIZE)) {
-                            er.setSelectedCorner(1);
-                            picks.add(e);
-                            er.setSelected(true);
-                            LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[2], p[3]});
-                        } else if ((Math.abs(me.getX() - p[4]) < PICK_SIZE && Math.abs(-me.getY() - p[5]) < PICK_SIZE)) {
-                            er.setSelectedCorner(2);
-                            picks.add(e);
-                            er.setSelected(true);
-                            LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[4], p[5]});
-                        } else if ((Math.abs(me.getX() - p[6]) < PICK_SIZE && Math.abs(-me.getY() - p[7]) < PICK_SIZE)) {
-                            er.setSelectedCorner(3);
-                            picks.add(e);
-                            er.setSelected(true);
-                            LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[6], p[7]});
-                        } else {
-                            er.setSelected(false);
-                        }
-                        if (er.isSelected()) {
-                            LOGGER.log(Level.SEVERE, "Selected Corner: {0}", er.getSelectedCorner());
-                        }
-                    }
-                    default -> {
-                    }
-                }
-            });
-            LOGGER.log(Level.SEVERE, "Pick count: {0}", picks.size());
-
-            switch (me.getButton()) {
-                case PRIMARY -> { // Move or choose what to move.
-                    // If one pick, pick it.
-                    if (picks.isEmpty()) {
-                        contextMenu.hide();
-                        me.consume();
-                        return;
-                    } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
-                        movingMouseStartX = me.getX();
-                        movingMouseStartY = me.getY();
-                        Element pick = picks.getFirst();
-                        movingElements.add(pick);
-                        if (pick instanceof ElementSelectable es) {
-                            es.createSnapshot();
-                        }
-
-                        LOGGER.log(Level.SEVERE, "Moving a thing.");
-                        me.consume();
-                        return;
-                    } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
-                        // If more than one pick,
-                        // If all are wires, select them.
-                        // Add all picks to moving list.
-                        for (Element e : picks) {
-                            movingElements.add(e);
-                            if (e instanceof ElementSelectable es) {
-                                es.createSnapshot();
+                //LOGGER.log(Level.SEVERE, "Editor Work Area Clicked: {0}", me.getButton().name());
+                ArrayList<Element> picks = new ArrayList<>();
+                parentEditor.getSymbol().getElements().forEach((e) -> {
+                    switch (e) {
+                        case ElementXY ee -> {
+                            if (Math.abs(me.getX() - ee.getX()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - ee.getY()) < PICK_SIZE) {
+                                picks.add(e);
                             }
                         }
-                        LOGGER.log(Level.SEVERE, "Moving some wires.");
-                        me.consume();
-                    } else {
-                        // otherwise,  highlight first (grey out rest) and wait for either
-                        // another click or right-click to highlight next item.
-                        LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
+                        case ElementDualXY ee -> {
+                            if (Math.abs(me.getX() - ee.getX1()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - ee.getY1()) < PICK_SIZE) {
+                                picks.add(e);
+                                ((ElementDualXY) e).setSelectedEnd(ONE);
+                            } else if (Math.abs(me.getX() - ee.getX2()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - ee.getY2()) < PICK_SIZE) {
+                                picks.add(e);
+                                ((ElementDualXY) e).setSelectedEnd(TWO);
+                            }
+                        }
+                        case ElementRectangle er -> {
+                            double[] p = er.getPoints();
+
+                            if ((Math.abs(me.getX() - p[0]) < PICK_SIZE && Math.abs(-me.getY() - p[1]) < PICK_SIZE)) {
+                                er.setSelectedCorner(0); // Lower left. Y is inverted
+                                picks.add(e);
+                                er.setSelected(true);
+                                //LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[0], p[1]});
+                            } else if ((Math.abs(me.getX() - p[2]) < PICK_SIZE && Math.abs(-me.getY() - p[3]) < PICK_SIZE)) {
+                                er.setSelectedCorner(1);
+                                picks.add(e);
+                                er.setSelected(true);
+                                //LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[2], p[3]});
+                            } else if ((Math.abs(me.getX() - p[4]) < PICK_SIZE && Math.abs(-me.getY() - p[5]) < PICK_SIZE)) {
+                                er.setSelectedCorner(2);
+                                picks.add(e);
+                                er.setSelected(true);
+                                //LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[4], p[5]});
+                            } else if ((Math.abs(me.getX() - p[6]) < PICK_SIZE && Math.abs(-me.getY() - p[7]) < PICK_SIZE)) {
+                                er.setSelectedCorner(3);
+                                picks.add(e);
+                                er.setSelected(true);
+                                //LOGGER.log(Level.SEVERE, "Chose point at: {0},{1}", new Object[]{p[6], p[7]});
+                            } else {
+                                er.setSelected(false);
+                            }
+                            if (er.isSelected()) {
+                                //LOGGER.log(Level.SEVERE, "Selected Corner: {0}", er.getSelectedCorner());
+                            }
+                        }
+                        case ElementPolygon ep -> {
+                            // Which vertex was selected?
+                            // ep.setSelectedVertex.
+                            ep.selectVerticesIn(me.getX(), -me.getY(), PICK_SIZE);
+
+                            if (ep.hasSelections()) {
+                                for (Vertex v : ep.getSelectedVertices()) {
+                                    picks.add(v);
+                                }
+                            }
+                        }
+                        default -> {
+                        }
+                    }
+                });
+                LOGGER.log(Level.SEVERE, "Pick count: {0}", picks.size());
+
+                switch (me.getButton()) {
+                    case PRIMARY -> { // Move or choose what to move.
+                        // If one pick, pick it.
+                        if (picks.isEmpty()) {
+                            contextMenu.hide();
+                            me.consume();
+                            return;
+                        } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
+                            movingMouseStartX = me.getX();
+                            movingMouseStartY = me.getY();
+                            Element pick = picks.getFirst();
+                            movingElements.add(pick);
+                            if (pick instanceof ElementSelectable es) {
+                                es.createSnapshot();
+                            }
+
+                            LOGGER.log(Level.SEVERE, "Moving a thing.");
+                            me.consume();
+                            return;
+                        } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
+                            // If more than one pick,
+                            // If all are wires, select them.
+                            // Add all picks to moving list.
+                            for (Element e : picks) {
+                                movingElements.add(e);
+                                if (e instanceof ElementSelectable es) {
+                                    es.createSnapshot();
+                                }
+                            }
+                            LOGGER.log(Level.SEVERE, "Moving some wires.");
+                            me.consume();
+                        } else {
+                            // otherwise,  highlight first (grey out rest) and wait for either
+                            // another click or right-click to highlight next item.
+                            LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
+                            me.consume();
+                        }
+                    }
+                    case SECONDARY -> { // Present pop-up menu.
+                        contextMenu.getItems().forEach((menuItem) -> {
+                            menuItem.setVisible(false);
+                        });
+
+                        // TODO: Things in Group list?
+                        contextMenu.MOVE_GROUP.setDisable(true);
+
+                        // Always there.
+                        contextMenu.MOVE_GROUP.setVisible(true);
+
+                        if (!picks.isEmpty()) {
+                            contextMenu.COPY.setVisible(true);
+                            contextMenu.DELETE.setVisible(true);
+                            contextMenu.MIRROR.setVisible(true);
+                            contextMenu.MOVE.setVisible(true);
+                            contextMenu.NAME.setVisible(true);
+                            contextMenu.ROTATE.setVisible(true);
+                            contextMenu.SHOW.setVisible(true);
+                            contextMenu.SEP1.setVisible(true);
+                            contextMenu.SEP2.setVisible(true);
+                            contextMenu.PROPERTIES.setVisible(true);
+                        }
+
+                        if (picks.size() > 1) {
+                            // TODO: Highlight first item and present options menu with "next" option at top.
+                            contextMenu.NEXT.setVisible(true);
+                            contextMenu.NEXT_SEPARATOR.setVisible(true);
+                        }
+
+                        contextMenu.show(workArea, me.getScreenX(), me.getScreenY());
                         me.consume();
                     }
                 }
-                case SECONDARY -> { // Present pop-up menu.
-                    contextMenu.getItems().forEach((menuItem) -> {
-                        menuItem.setVisible(false);
-                    });
-
-                    // TODO: Things in Group list?
-                    contextMenu.MOVE_GROUP.setDisable(true);
-
-                    // Always there.
-                    contextMenu.MOVE_GROUP.setVisible(true);
-
-                    if (!picks.isEmpty()) {
-                        contextMenu.COPY.setVisible(true);
-                        contextMenu.DELETE.setVisible(true);
-                        contextMenu.MIRROR.setVisible(true);
-                        contextMenu.MOVE.setVisible(true);
-                        contextMenu.NAME.setVisible(true);
-                        contextMenu.ROTATE.setVisible(true);
-                        contextMenu.SHOW.setVisible(true);
-                        contextMenu.SEP1.setVisible(true);
-                        contextMenu.SEP2.setVisible(true);
-                        contextMenu.PROPERTIES.setVisible(true);
-                    }
-
-                    if (picks.size() > 1) {
-                        // TODO: Highlight first item and present options menu with "next" option at top.
-                        contextMenu.NEXT.setVisible(true);
-                        contextMenu.NEXT_SEPARATOR.setVisible(true);
-                    }
-
-                    contextMenu.show(workArea, me.getScreenX(), me.getScreenY());
-                    me.consume();
-                }
             }
         });
+    }
 
-        workArea.setOnMouseDragged(e -> {
-            if (!movingElements.isEmpty()) {
-                e.consume();
-                return;
-            }
-            if (!selectionRectangle.isVisible()) { // Begin selection.
-                LOGGER.log(Level.SEVERE, "Begin Selection.");
-                mouseDownX = e.getX();
-                mouseDownY = e.getY();
-                selectionRectangle.setVisible(true);
-                selectionRectangle.setX(mouseDownX);
-                selectionRectangle.setY(mouseDownY);
-                selectionRectangle.setWidth(0);
-                selectionRectangle.setHeight(0);
-            } else {
-                selectionRectangle.setX(Math.min(e.getX(), mouseDownX));
-                selectionRectangle.setWidth(Math.abs(e.getX() - mouseDownX));
-                selectionRectangle.setY(Math.min(e.getY(), mouseDownY));
-                selectionRectangle.setHeight(Math.abs(e.getY() - mouseDownY));
-            }
-            e.consume();
-        });
-
+    private void initMouseReleased() {
         workArea.setOnMouseReleased((e) -> {
 
             if (selectionRectangle.isVisible()) {
@@ -714,6 +625,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     );
                     nodes.add(rectNode);
                     rectNode.addTo(workArea);
+                }
+                case ElementPolygon p -> {
+                    PolygonNode polyNode = new PolygonNode(p,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            this);
+                    nodes.add(polyNode);
+                    polyNode.addTo(workArea);
                 }
                 default -> {
                 }
