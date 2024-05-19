@@ -16,8 +16,8 @@
  */
 package com.maehem.mangocad.model.eaglecad;
 
-import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.*;
 import com.maehem.mangocad.model.element.enums.*;
