@@ -33,12 +33,7 @@ public class Vertex extends Element implements ElementXY, ElementSelectable {
     private double y;
     private double curve = 0;
     private boolean selected = false;
-    private final Object parent;
     private final double[] snapshot = {0, 0};
-
-    public Vertex(Object parent) {
-        this.parent = parent;
-    }
 
     @Override
     public String getElementName() {
