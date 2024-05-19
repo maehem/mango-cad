@@ -93,6 +93,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private final Rectangle selectionRectangle = new Rectangle();
     private double mouseDownX = Double.MIN_VALUE;
     private double mouseDownY = Double.MIN_VALUE;
+    private double movingMouseStartX;
+    private double movingMouseStartY;
 
     // TODO get from control panel settings.
     private final Color selectionRectangleColor = new Color(1.0, 1.0, 1.0, 0.5);
@@ -133,44 +135,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         workArea.getTransforms().add(workScale);
 
-//        addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
-//            double scaleOld = scale;
-//            double scrollAmt = event.getDeltaY();
-//            scale += scrollAmt * SCALE_FACTOR;
-//            if (scale > SCALE_MAX) {
-//                scale = SCALE_MAX;
-//            }
-//            if (scale < SCALE_MIN) {
-//                scale = SCALE_MIN;
-//            }
-//            workScale.setX(scale);
-//            workScale.setY(scale);
-//            scaleText.setText("x" + String.format("%.2f", scale));
-//
-//            double mX = event.getX();
-//            double mY = event.getY();
-//
-//            double vaW = getBoundsInLocal().getWidth();
-//            double vaH = getBoundsInLocal().getHeight();
-//
-//            double sbHV = getHvalue();
-//            double sbVV = getVvalue();
-//
-//            double waX = (mX - (vaW * sbHV)) / scaleOld;
-//            waX += (sbHV * 2 - 1) * (WA2);
-//
-//            double waY = (mY - (vaH * sbVV)) / scaleOld;
-//            waY += (sbVV * 2 - 1) * (WA2);
-//
-//            // Derive the sb values after the scale.
-//            double sbX = 0.5 + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
-//            double sbY = 0.5 + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
-//
-//            setHvalue(sbX);
-//            setVvalue(sbY);
-//
-//            event.consume();
-//        });
         workArea.addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scrollAmt = event.getDeltaY();
             scale += scrollAmt * SCALE_FACTOR;
@@ -187,15 +151,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             double mX = event.getX();
             double mY = event.getY();
 
-            //double vaW = getBoundsInLocal().getWidth();
-            //double vaH = getBoundsInLocal().getHeight();
-//
-//            double sbHV = getHvalue();
-//            double sbVV = getVvalue();
-            //double waX = mX;
-            //waX += (sbHV * 2 - 1) * (WA2);
-            //double waY = mY;
-            //waY += (sbVV * 2 - 1) * (WA2);
             // Derive the sb values after the scale.
             double sbX = 0.5 + mX / WA2 / scale / 2;// + (waX + (mX - vaW / 2.0) / scale) / WORK_AREA;
             double sbY = 0.5 + mY / WA2 / scale / 2;// + (waY + (mY - vaH / 2.0) / scale) / WORK_AREA;
@@ -229,25 +184,36 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
                 double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
                 //LOGGER.log(Level.SEVERE, "Mouse Moved:    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
+                double moveDistX = me.getX() - movingMouseStartX;
+                double moveDistY = -(me.getY() - movingMouseStartY);
+
+                double moveDistSnappedX = (int) (moveDistX / snap) * snap;
+                double moveDistSnappedY = (int) (moveDistY / snap) * snap;
 
                 for (Element e : movingElements) {
                     if (e instanceof ElementSelectable es) {
                         switch (es) {
                             case ElementXY exy -> {
                                 double[] snapshot = es.getSnapshot();
-                                exy.setX(xxx + snapshot[0] % snap);
-                                exy.setY(-(yyy + snapshot[1] % snap));
+                                //exy.setX(xxx + snapshot[0] % snap);
+                                //exy.setY(-(yyy + snapshot[1] % snap));
+                                exy.setX(snapshot[0] + moveDistSnappedX);
+                                exy.setY(snapshot[1] + moveDistSnappedY);
                             }
                             case ElementDualXY exy -> {
                                 double[] snapshot = es.getSnapshot();
                                 switch (exy.getSelectedEnd()) {
                                     case ONE -> {
-                                        exy.setX1(xxx + snapshot[0] % snap);
-                                        exy.setY1(-(yyy + snapshot[1] % snap));
+                                        //exy.setX1(xxx + snapshot[0] % snap);
+                                        //exy.setY1(-(yyy + snapshot[1] % snap));
+                                        exy.setX1(snapshot[0] + moveDistSnappedX);
+                                        exy.setY1(snapshot[1] + moveDistSnappedY);
                                     }
                                     case TWO -> {
-                                        exy.setX2(xxx + snapshot[2] % snap);
-                                        exy.setY2(-(yyy + snapshot[3] % snap));
+                                        //exy.setX2(xxx + snapshot[2] % snap);
+                                        //exy.setY2(-(yyy + snapshot[3] % snap));
+                                        exy.setX2(snapshot[2] + moveDistSnappedX);
+                                        exy.setY2(snapshot[3] + moveDistSnappedY);
                                     }
                                     default -> {
                                     }
@@ -257,51 +223,123 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 // Determine which anchor was clicked and adjust
                                 // X1/Y1 and X2/Y2 accordingly.
                                 double[] snapshot = er.getSnapshot();
-                                double w = Math.abs(er.getX1() - er.getX2());
-                                double h = Math.abs(er.getY1() - er.getY2());
+                                //double w = Math.abs(er.getX1() - er.getX2());
+                                //double h = Math.abs(er.getY1() - er.getY2());
+//                                double w = Math.abs(snapshot[0] - snapshot[2]);
+//                                double h = Math.abs(snapshot[1] - snapshot[3]);
 
-                                switch (er.getSelectedCorner()) {
-                                    case 3 -> {
-                                        double newX = xxx + snapshot[0] % snap;
-                                        double newY = -(yyy + snapshot[3] % snap);
-                                        er.setAllXY(
-                                                newX,
-                                                newY - h,
-                                                newX + w,
-                                                newY
-                                        );
-                                    }
-                                    case 2 -> {
-                                        double newX = xxx + snapshot[2] % snap;
-                                        double newY = -(yyy + snapshot[3] % snap);
-                                        er.setAllXY(
-                                                newX - w,
-                                                newY - h,
-                                                newX,
-                                                newY
-                                        );
-                                    }
-                                    case 1 -> {
-                                        double newX = xxx + snapshot[2] % snap;
-                                        double newY1 = -(yyy + snapshot[1] % snap);
-                                        er.setAllXY(
-                                                newX - w,
-                                                newY1,
-                                                newX,
-                                                newY1 + h
-                                        );
-                                    }
-                                    default -> { // Lower left
-                                        double newX1 = xxx + snapshot[0] % snap;
-                                        double newY1 = -(yyy + snapshot[1] % snap);
-                                        er.setAllXY(
-                                                newX1,
-                                                newY1,
-                                                newX1 + w,
-                                                newY1 + h
-                                        );
-                                    }
-                                }
+                                er.setAllXY(
+                                        snapshot[0] + moveDistSnappedX,
+                                        snapshot[1] + moveDistSnappedY,
+                                        snapshot[2] + moveDistSnappedX,
+                                        snapshot[3] + moveDistSnappedY
+                                );
+                                // TODO:  Consider rotation for setting new XY values.
+                                //
+                                //
+//                                double rot = er.getRot();
+//                                int corner = er.getSelectedCorner();
+//                                if (rot == 180) {
+//                                    corner += 2;
+//                                    corner %= 4;
+//                                } else if (rot == 90) {
+//                                    corner += 1;
+//                                    corner %= 4;
+//                                }
+//                                switch (corner) {
+//                                    case 3 -> {
+//                                        double newX = xxx + snapshot[0] % snap;
+//                                        double newY = -(yyy + snapshot[3] % snap);
+//                                        if (rot == 0 || rot == 180) {
+//                                            er.setAllXY(
+//                                                    newX,
+//                                                    newY - h,
+//                                                    newX + w,
+//                                                    newY
+//                                            );
+//                                        } else {
+//                                            LOGGER.log(Level.SEVERE, "A");
+//                                            er.setAllXY(
+//                                                    newX,
+//                                                    newY - w,
+//                                                    newX + h,
+//                                                    newY
+//                                            );
+//
+//                                        }
+//                                    }
+//                                    case 2 -> {
+//                                        double newX = xxx + snapshot[2] % snap;
+//                                        double newY = -(yyy + snapshot[3] % snap);
+//                                        if (rot == 0 || rot == 180) {
+//                                            er.setAllXY(
+//                                                    newX - w,
+//                                                    newY - h,
+//                                                    newX,
+//                                                    newY
+//                                            );
+//                                        } else {
+//                                            LOGGER.log(Level.SEVERE, "B");
+//                                            er.setAllXY(
+//                                                    newX - h,
+//                                                    newY - w,
+//                                                    newX,
+//                                                    newY
+//                                            );
+//                                        }
+//                                    }
+//                                    case 1 -> {
+//                                            er.setAllXY(
+//                                                    snapshot[0] + moveDistSnappedX,
+//                                                    snapshot[1] + moveDistSnappedY,
+//                                                    snapshot[2] + moveDistSnappedX,
+//                                                    snapshot[3] + moveDistSnappedY
+//                                            );
+////                                        if (rot == 0 || rot == 180) {
+////                                            double newX = xxx + snapshot[2] % snap;
+////                                            double newY = -(yyy + snapshot[1] % snap);
+////                                            er.setAllXY(
+////                                                    newX - w,
+////                                                    newY,
+////                                                    newX,
+////                                                    newY + h
+////                                            );
+////                                        } else {
+////                                            LOGGER.log(Level.SEVERE, "C"); //RED
+////                                            double newX = xxx - snapshot[1] % snap;
+////                                            double newY = -(yyy - snapshot[2] % snap);
+////                                            er.setAllXY(
+////                                                    snapshot[0] + moveDistSnappedX,
+////                                                    snapshot[1] + moveDistSnappedY,
+////                                                    snapshot[2] + moveDistSnappedX,
+////                                                    snapshot[3] + moveDistSnappedY
+////                                            );
+////                                        }
+//                                    }
+//                                    default -> { // Lower left
+//                                        if (rot == 0 || rot == 180) {
+//                                            LOGGER.log(Level.SEVERE, "one");
+//                                            double newX = xxx + snapshot[0] % snap;
+//                                            double newY = -(yyy + snapshot[1] % snap);
+//                                            er.setAllXY(
+//                                                    newX,
+//                                                    newY,
+//                                                    newX + w,
+//                                                    newY + h
+//                                            );
+//                                        } else {
+//                                            LOGGER.log(Level.SEVERE, "D");
+//                                            double newX = xxx - snapshot[0] % snap - snap;
+//                                            double newY = -(yyy - snapshot[1] % snap);
+//                                            er.setAllXY( // Flip XY when rotated 90 or 270
+//                                                    newX,
+//                                                    newY,
+//                                                    newX + w,
+//                                                    newY + h
+//                                            );
+//                                        }
+//                                    }
+//                                }
                             }
                             default -> {
                                 // Non-movable thing.
@@ -384,6 +422,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     }
                     case ElementRectangle er -> {
                         double[] p = er.getPoints();
+
                         if ((Math.abs(me.getX() - p[0]) < PICK_SIZE && Math.abs(-me.getY() - p[1]) < PICK_SIZE)) {
                             er.setSelectedCorner(0); // Lower left. Y is inverted
                             picks.add(e);
@@ -417,14 +456,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             });
             LOGGER.log(Level.SEVERE, "Pick count: {0}", picks.size());
 
-//            if (picks.isEmpty()) {
-//                contextMenu.hide();
-//                return;
-//            }
-            // Remember where we started.
-//            movingOriginX = me.getX();
-//            movingOriginY = me.getY();
-//            LOGGER.log(Level.SEVERE, "Changed movingOrigin.");
             switch (me.getButton()) {
                 case PRIMARY -> { // Move or choose what to move.
                     // If one pick, pick it.
@@ -433,6 +464,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         me.consume();
                         return;
                     } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
+                        movingMouseStartX = me.getX();
+                        movingMouseStartY = me.getY();
                         Element pick = picks.getFirst();
                         movingElements.add(pick);
                         if (pick instanceof ElementSelectable es) {
@@ -496,56 +529,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 }
             }
         });
-//        setOnMouseClicked((me) -> {
-//            LOGGER.log(Level.SEVERE, "Editor Window Area Clicked: " + me.getButton().name());
-//            if (!movingElements.isEmpty()) {
-//                if (null != me.getButton()) {
-//                    switch (me.getButton()) {
-//                        case PRIMARY -> {
-//                            movingElements.clear(); // End move of node.
-//                            LOGGER.log(Level.SEVERE, "End of move.");
-//                            me.consume();
-//                        }
-//                        case MIDDLE -> { // Mirror
-//                            // All Nodes should be Rotatable. break if not.
-//                            if (elementsCanRotate(movingElements)) {
-//                                for (Element e : movingElements) {
-//                                    if (e instanceof ElementRotation er) {
-//                                        er.setMirror(!er.isMirrored());
-//                                    }
-//                                }                                //Rotation rotation = er.getRotation();
-//                                LOGGER.log(Level.SEVERE, "Mirror/180 Operation.");
-//                                me.consume();
-//                            }
-//                        }
-//                        case SECONDARY -> {
-//                            // Rotate  add 90 (actually "angle" from top of viewport)
-//                            if (elementsCanRotate(movingElements)) {
-//                                for (Element e : movingElements) {
-//                                    if (e instanceof ElementRotation er) {
-//                                        er.setRot(er.getRot() + 90);
-//                                    }
-//                                }
-//                                LOGGER.log(Level.SEVERE, "Rotate 90 Operation.");
-//                                me.consume();
-//                            }
-//                        }
-//                        default -> {
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//        workArea.setOnMousePressed(e -> {
-//            LOGGER.log(Level.SEVERE, "Begin Selection.");
-//            mouseDownX = e.getX();
-//            mouseDownY = e.getY();
-//            selectionRectangle.setVisible(true);
-//            selectionRectangle.setX(mouseDownX);
-//            selectionRectangle.setY(mouseDownY);
-//            selectionRectangle.setWidth(0);
-//            selectionRectangle.setHeight(0);
-//        });
 
         workArea.setOnMouseDragged(e -> {
             if (!movingElements.isEmpty()) {
@@ -577,11 +560,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 selectedElements.clear();
                 e.consume();
 
-//            LOGGER.log(Level.SEVERE, "Selection Rectangle: {0},{1}  ({2}x{3})",
-//                    new Object[]{
-//                        selectionRectangle.getX(), selectionRectangle.getY(),
-//                        selectionRectangle.getWidth(), selectionRectangle.getHeight()
-//                    });
                 // Place things inside recangle into selection list.
                 parentEditor.getSymbol().getElements().forEach((element) -> {
                     if (element instanceof ElementSelectable es) {
@@ -652,8 +630,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         double sW = selectionRectangle.getWidth();
         double sH = selectionRectangle.getHeight();
 
-        //LOGGER.log(Level.SEVERE, "     X Range: {0} .. {1}   <=== x: {2}", new Object[]{sX, sX + sW, x});
-        //LOGGER.log(Level.SEVERE, "     Y Range: {0} .. {1}   <=== y: {2}", new Object[]{sY, sY + sH, y});
         if (selectionRectangle.isVisible()) {
             if ((x > sX && y > sY) && (x < (sX + sW) && y < (sY + sH))) {
                 return true;
@@ -663,8 +639,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     }
 
     private void buildScene() {
-        //workArea.setScaleX(scale);
-        //workArea.setScaleY(scale);
         scaleText.setText("x" + scale);
 
         double dash = 2.5;
@@ -762,15 +736,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         return canRotate;
     }
 
-//    private ViewNode findViewNode(Element e) {
-//        for (ViewNode vn : nodes) {
-//            if (vn.getElement().equals(e)) {
-//                return vn;
-//            }
-//        }
-//        return null;
-//    }
-
     private boolean isOnlyWires(ArrayList<Element> picks) {
         for (Element e : picks) {
             if (!(e instanceof Wire)) {
@@ -800,6 +765,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         return l;
     }
+
     @Override
     public void nodePicked(ViewNode node, MouseEvent me) {
 
