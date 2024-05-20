@@ -166,6 +166,10 @@ public class TextNode extends ViewNode implements ElementListener {
         });
     }
 
+    public String getValue() {
+        return text.getText();
+    }
+
     private double getTextWidth() {
         // JavaFX getBoundsInLocal().getWidth() for text always
         // reports +0.99 more than actual width, so we subtract it.
