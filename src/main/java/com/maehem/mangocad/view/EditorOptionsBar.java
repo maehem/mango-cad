@@ -94,6 +94,10 @@ public class EditorOptionsBar extends ToolBar {
         toggleGroup.selectedToggleProperty().addListener(
                 (ObservableValue<? extends Toggle> observable,
                         Toggle oldValue, Toggle newValue) -> {
+                    LOGGER.log(Level.SEVERE, "EditorOptionsBar: Selected Toggle change: {0} ==> {1}",
+                            new Object[]{
+                                oldValue.getUserData().toString(),
+                                newValue.getUserData().toString()});
                     if (newValue == null) {
                         oldValue.setSelected(true);
                     } else {
