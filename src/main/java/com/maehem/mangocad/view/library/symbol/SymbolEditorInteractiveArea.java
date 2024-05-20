@@ -173,7 +173,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //                ke.consume();
 //            }
 //        });
-
         // Toggle CrossHair
         setOnMouseEntered((t) -> {
             getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
@@ -405,12 +404,30 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             movingMouseStartX = me.getX();
                             movingMouseStartY = me.getY();
                             Element pick = picks.getFirst();
-                            movingElements.add(pick);
-                            if (pick instanceof ElementSelectable es) {
-                                es.createSnapshot();
-                            }
 
-                            LOGGER.log(Level.SEVERE, "Moving a thing.");
+                            // What mode?
+                            switch (toolMode) {
+                                case MOVE -> {
+                                    movingElements.add(pick);
+                                    if (pick instanceof ElementSelectable es) {
+                                        es.createSnapshot();
+                                    }
+                                    LOGGER.log(Level.SEVERE, "Moving a thing.");
+                                }
+                                case TRASH -> {
+                                    if (pick instanceof ElementSelectable es) {
+                                        ViewNode node = getNode(es);
+                                        if (node != null) {
+                                        node.removeFrom(workArea);
+                                        parentEditor.getSymbol().getElements().remove(node.getElement());
+                                        nodes.remove(node); // TODO nodes needs listener and do this automatically.
+                                        LOGGER.log(Level.SEVERE, "Trashed: {0}", node.toString());
+                                        } else {
+                                            LOGGER.log(Level.SEVERE, "Oops! Trash Failed on " + es.toString());
+                                        }
+                                    }
+                                }
+                            }
                             me.consume();
                             return;
                         } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
@@ -740,6 +757,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
         }
 
+    }
+
+    private ViewNode getNode(ElementSelectable e) {
+        for (ViewNode vn : nodes) {
+            if (vn.getElement().equals(e)) {
+                return vn;
+            }
+        }
+        return null;
     }
 
     @Override
