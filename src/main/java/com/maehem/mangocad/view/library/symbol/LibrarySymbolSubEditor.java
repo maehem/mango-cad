@@ -173,7 +173,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
                 if (source instanceof ComboBox cb) {
                     Object selectedItem = cb.getSelectionModel().getSelectedItem();
                     if (selectedItem instanceof LayerElement le) {
-                        LOGGER.log(Level.SEVERE, "User Selected: " + le.getName());
+                        LOGGER.log(Level.SEVERE, "User Selected: {0}", le.getName());
                         //        parent.setCurrentLayerElement( le );
                     }
                 }
