@@ -62,7 +62,7 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
     private final double[] snapshot = {0, 0};
 
     private PinVisible visible = PinVisible.BOTH;
-    private PinLength length = PinLength.LONG;
+    private PinLength length = PinLength.MIDDLE;
     private PinDirection direction = PinDirection.IO;
     private PinFunction function = PinFunction.NONE;
     private int swapLevel = 0;
