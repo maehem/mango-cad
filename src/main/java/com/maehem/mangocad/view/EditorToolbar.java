@@ -16,8 +16,10 @@
  */
 package com.maehem.mangocad.view;
 
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
@@ -40,7 +42,7 @@ public class EditorToolbar extends ToolBar {
 
     //private final List<EditorTools> tools;
     private final ToggleGroup toggleGroup = new ToggleGroup();
-    private EditorTool currentTool;
+    private EditorTool currentTool = EditorTool.SELECT;
     private final ArrayList<EditorToolbarListener> listeners = new ArrayList<>();
 
     public EditorToolbar(List<EditorTool> tools, EditorToolbarListener listener) {
@@ -63,6 +65,9 @@ public class EditorToolbar extends ToolBar {
             } else {
                 ToggleButton b = createToolbarToggleButton(tool.bundleMessage(), tool.iconPath());
                 b.setUserData(tool);
+                if (tool.equals(currentTool)) {
+                    b.setSelected(true);
+                }
                 toolGroup.getChildren().add(b);
                 b.setToggleGroup(toggleGroup);
 
@@ -82,6 +87,21 @@ public class EditorToolbar extends ToolBar {
                 });
             }
         });
+    }
+
+    public void setCurrentTool(EditorTool tool) {
+        LOGGER.log(Level.SEVERE, "Toolbar setCurrentTool: old:{0}  new:{1}", new Object[]{currentTool.name(), tool.name()});
+        //EditorTool oldTool = currentTool;
+        //currentTool = tool;
+        for (Toggle t : toggleGroup.getToggles()) {
+            if (t.getUserData() == tool) {
+                t.setSelected(true);
+                break;
+            }
+        }
+//        listeners.forEach((l) -> {
+//            l.editorToolBarButtonChanged(oldTool, currentTool);
+//        });
     }
 
     private FlowPane makeToolGroup() {
