@@ -118,7 +118,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         setOnKeyPressed((ke) -> {
             if (ke.getCode() == ESCAPE) {
                 //LOGGER.log(Level.SEVERE, "Escape Pressed in editor.");
-                symbolEditorInteractiveArea.abandonOperation();
+                symbolEditorInteractiveArea.abandonOperation(true);
                 //leftToolBar.setCurrentTool(EditorTool.SELECT);
                 ke.consume();
             }
