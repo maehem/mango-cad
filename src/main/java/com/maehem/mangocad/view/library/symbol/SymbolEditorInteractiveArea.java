@@ -26,12 +26,12 @@ import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
@@ -41,13 +41,13 @@ import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
-import static javafx.scene.input.KeyCode.ESCAPE;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
 import static javafx.scene.input.MouseButton.SECONDARY;
@@ -94,6 +94,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private final ArrayList<Element> movingElements = new ArrayList<>();
     private final ArrayList<ViewNode> nodes = new ArrayList<>();
     private final Rectangle selectionRectangle = new Rectangle();
+    private ViewNode ephemeralNode;
+    private Element lastElementAdded = null;
     private double mouseDownX = Double.MIN_VALUE;
     private double mouseDownY = Double.MIN_VALUE;
     private double movingMouseStartX;
@@ -101,6 +103,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     // TODO get from control panel settings.
     private final Color selectionRectangleColor = new Color(1.0, 1.0, 1.0, 0.5);
+    private EditorTool toolMode = EditorTool.SELECT;
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -164,18 +167,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             event.consume();
         });
 
-        setOnKeyPressed((ke) -> {
-            if (!movingElements.isEmpty() && ke.getCode() == ESCAPE) {
-                for (Element e : movingElements) {
-                    if (e instanceof ElementSelectable exy) {
-                        exy.restoreSnapshot();
-                    }
-                }
-                movingElements.clear(); // End move of node.
-                LOGGER.log(Level.SEVERE, "Abandon move.");
-                ke.consume();
-            }
-        });
+//        setOnKeyPressed((ke) -> {
+//            if (ke.getCode() == ESCAPE) {
+//                abandonOperation();
+//                ke.consume();
+//            }
+//        });
 
         // Toggle CrossHair
         setOnMouseEntered((t) -> {
@@ -284,8 +281,21 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 if (null != me.getButton()) {
                     switch (me.getButton()) {
                         case PRIMARY -> {
-                            movingElements.clear(); // End move of node.
-                            LOGGER.log(Level.SEVERE, "End of move.");
+                            if (ephemeralNode != null) {
+                                // New node. Add to symbol.
+                                Symbol symbol = parentEditor.getSymbol();
+                                symbol.getElements().add(ephemeralNode.getElement());
+                                nodes.add(ephemeralNode);
+                                lastElementAdded = ephemeralNode.getElement();
+                                LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
+                                ephemeralNode = null;
+                                movingElements.clear(); // End move of node.
+                                // Initiate another placemet of this node type.
+                                setEditorTool(toolMode); // Trigger another pin placement.
+                            } else {
+                                movingElements.clear(); // End move of node.
+                                LOGGER.log(Level.SEVERE, "End of move.");
+                            }
                             me.consume();
                         }
                         case MIDDLE -> { // Mirror
@@ -316,7 +326,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         }
                     }
                 }
-                return;
             } else {  // Nothing currently happening pick things and do something.
 
                 //LOGGER.log(Level.SEVERE, "Editor Work Area Clicked: {0}", me.getButton().name());
@@ -376,9 +385,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             ep.selectVerticesIn(me.getX(), -me.getY(), PICK_SIZE);
 
                             if (ep.hasSelections()) {
-                                for (Vertex v : ep.getSelectedVertices()) {
-                                    picks.add(v);
-                                }
+                                picks.addAll(Arrays.asList(ep.getSelectedVertices()));
                             }
                         }
                         default -> {
@@ -549,6 +556,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         return false;
     }
 
+    public void abandonOperation() {
+        if (ephemeralNode != null) {
+            // TODO: Make this part of listener on 'nodes'.
+            ephemeralNode.removeFrom(workArea);
+            LOGGER.log(Level.SEVERE, "Remove ephemeral {0} from work area.", ephemeralNode.getElement().getElementName());
+            ephemeralNode = null;
+        }
+        if (!movingElements.isEmpty()) {
+            for (Element e : movingElements) {
+                if (e instanceof ElementSelectable exy) {
+                    exy.restoreSnapshot();
+                }
+            }
+            movingElements.clear(); // End move of node.
+            LOGGER.log(Level.SEVERE, "Abandon move.");
+        }
+        parentEditor.setToolMode(EditorTool.SELECT);
+    }
+
     private void buildScene() {
         scaleText.setText("x" + scale);
 
@@ -563,7 +589,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         crossHairArea.getChildren().addAll(hLine, vLine);
 
         Rectangle background = new Rectangle(-WA2, -WA2, WORK_AREA, WORK_AREA);
-        // TODO: Get color from control panel settings.
+        // TODO: Get color from control panel settings -> options -> colors -> symbolCanvasColor.
         background.setFill(new Color(0.2, 0.2, 0.2, 1.0));
         workArea.getChildren().add(background);
 
@@ -683,6 +709,37 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         l.setStrokeWidth(GRID_STROKE_WIDTH);
 
         return l;
+    }
+
+    public void setEditorTool(EditorTool tool) {
+        if (!toolMode.equals(tool)) {
+            // Abandon any current tool operations.
+            abandonOperation();
+
+            this.toolMode = tool;
+        }
+
+        switch (this.toolMode) {
+            case PIN -> {
+                // New Pin
+                Pin pin = new Pin();
+                if (lastElementAdded != null && lastElementAdded instanceof Pin lastP) {
+                    pin.setRot(lastP.getRot());
+                }
+                PinNode pinNode = new PinNode(pin,
+                        Color.RED, Color.DARKGREEN, Color.DARKGREY,
+                        null, true, this
+                );
+                //nodes.add(pinNode);
+                pinNode.addTo(workArea);
+                ephemeralNode = pinNode;
+                // add pin to moving elements.
+                movingMouseStartX = 0;
+                movingMouseStartY = 0;
+                movingElements.add(pin);
+            }
+        }
+
     }
 
     @Override
