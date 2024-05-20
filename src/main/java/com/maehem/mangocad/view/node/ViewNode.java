@@ -67,6 +67,12 @@ public abstract class ViewNode extends ArrayList<Shape> {
         }
     }
 
+    public void removeFrom(Group node) {
+        for (Shape s : this) {
+            node.getChildren().remove(s);
+        }
+    }
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
