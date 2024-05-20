@@ -33,7 +33,7 @@ import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.ToolBar;
+import static javafx.scene.input.KeyCode.ESCAPE;
 import javafx.scene.layout.HBox;
 
 /**
@@ -43,7 +43,6 @@ import javafx.scene.layout.HBox;
 public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
     //private final LibraryEditor parent;
-
     private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
             EditorOption.LAYER_SETTINGS,
             EditorOption.GRID,
@@ -86,9 +85,11 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
     private final EditorOptionsBar topToolbar;
     //private final VBox topArea = new VBox(topToolbar1);
-    private final ToolBar leftToolBar;
+    private final EditorToolbar leftToolBar;
     private final HBox bottomArea = new HBox();
     private final Symbol symbol;
+    private final SymbolEditorInteractiveArea symbolEditorInteractiveArea;
+    private final SymbolEditorPropertiesTabPane propertiesTabPane = new SymbolEditorPropertiesTabPane();
 
     public LibrarySymbolSubEditor(LibraryEditor parent, Symbol symbol) {
         super(parent);
@@ -103,25 +104,25 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         // left: tool bar
         leftToolBar = new EditorToolbar(tools, this);
         setLeft(leftToolBar);
-
-        SplitPane workArea = new SplitPane(new SymbolEditorInteractiveArea(this), new SymbolEditorPropertiesTabPane());
+        symbolEditorInteractiveArea = new SymbolEditorInteractiveArea(this);
+        SplitPane workArea = new SplitPane(symbolEditorInteractiveArea, propertiesTabPane);
         workArea.setDividerPosition(0, 0.8);
-        // center: work area
-        setCenter(workArea);
+        setCenter(workArea); // center: work area
+        setBottom(bottomArea); // bottom: message area
 
-        // bottom: message area
-        setBottom(bottomArea);
-        //bottomArea.getChildren().add(new Text("Editing: " + symbol.getName()));
-
-        // right: nothing.
-//        topArea.setPrefHeight(24);
-//        topArea.setFillWidth(true);
-//        topToolbar1.setPrefHeight(24);
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
 
         leftToolBar.setOrientation(Orientation.VERTICAL);
         leftToolBar.setPrefWidth(48);
+        setOnKeyPressed((ke) -> {
+            if (ke.getCode() == ESCAPE) {
+                //LOGGER.log(Level.SEVERE, "Escape Pressed in editor.");
+                symbolEditorInteractiveArea.abandonOperation();
+                //leftToolBar.setCurrentTool(EditorTool.SELECT);
+                ke.consume();
+            }
+        });
     }
 
     protected Drawing getDrawing() {
@@ -132,12 +133,21 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         return symbol;
     }
 
+    public void setToolMode(EditorTool tool) {
+        leftToolBar.setCurrentTool(tool);
+    }
+
     @Override
     public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
-        LOGGER.log(Level.SEVERE, "User changed tool: {0} ==> {1}", new Object[]{
-            oldValue == null ? "null" : oldValue.name(),
-            newValue == null ? "null" : newValue.name()
-        });
+        if (!oldValue.equals(newValue)) {
+            LOGGER.log(Level.SEVERE, "User changed tool: {0} ==> {1}", new Object[]{
+                oldValue == null ? "null" : oldValue.name(),
+                newValue == null ? "null" : newValue.name()
+            });
+            symbolEditorInteractiveArea.setEditorTool(newValue);
+        } else {
+            LOGGER.log(Level.SEVERE, "SubEditor leftToolbar nothing changed.");
+        }
     }
 
     @Override
@@ -158,7 +168,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
                     event.getEventType().getName() // ACTION
                 });
         Object source = event.getSource();
-        switch( option ) {
+        switch (option) {
             case LAYER_CHOOSER -> {
                 if (source instanceof ComboBox cb) {
                     Object selectedItem = cb.getSelectionModel().getSelectedItem();
