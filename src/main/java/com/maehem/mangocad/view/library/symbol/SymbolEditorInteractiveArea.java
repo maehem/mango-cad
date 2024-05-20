@@ -418,10 +418,13 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     if (pick instanceof ElementSelectable es) {
                                         ViewNode node = getNode(es);
                                         if (node != null) {
-                                        node.removeFrom(workArea);
-                                        parentEditor.getSymbol().getElements().remove(node.getElement());
-                                        nodes.remove(node); // TODO nodes needs listener and do this automatically.
-                                        LOGGER.log(Level.SEVERE, "Trashed: {0}", node.toString());
+                                            if (node instanceof TextNode tn) {
+                                                LOGGER.log(Level.SEVERE, "Remove text: " + tn.getValue());
+                                            }
+                                            node.removeFrom(workArea);
+                                            parentEditor.getSymbol().getElements().remove(node.getElement());
+                                            nodes.remove(node); // TODO nodes needs listener and do this automatically.
+                                            LOGGER.log(Level.SEVERE, "Trashed: {0}", node.toString());
                                         } else {
                                             LOGGER.log(Level.SEVERE, "Oops! Trash Failed on " + es.toString());
                                         }
@@ -573,7 +576,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         return false;
     }
 
-    public void abandonOperation() {
+    public void abandonOperation(boolean setToolMode) {
         if (ephemeralNode != null) {
             // TODO: Make this part of listener on 'nodes'.
             ephemeralNode.removeFrom(workArea);
@@ -589,7 +592,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             movingElements.clear(); // End move of node.
             LOGGER.log(Level.SEVERE, "Abandon move.");
         }
-        parentEditor.setToolMode(EditorTool.SELECT);
+        if (setToolMode) {
+            parentEditor.setToolMode(EditorTool.SELECT);
+        }
     }
 
     private void buildScene() {
@@ -731,7 +736,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     public void setEditorTool(EditorTool tool) {
         if (!toolMode.equals(tool)) {
             // Abandon any current tool operations.
-            abandonOperation();
+            abandonOperation(false);
 
             this.toolMode = tool;
         }
@@ -754,6 +759,21 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 movingMouseStartX = 0;
                 movingMouseStartY = 0;
                 movingElements.add(pin);
+            }
+            case TEXT -> {
+                ElementText text = new ElementText();
+                text.setValue(String.valueOf((int) (Math.random() * 10000)));
+                text.setLayer(94);  // TODO needs enum
+                LOGGER.log(Level.SEVERE, "New Text: " + text.getValue());
+                TextNode textNode = new TextNode(text, null,
+                        parentEditor.getDrawing().getLayers(),
+                        parentEditor.getDrawing().getPalette(),
+                        null, true, this);
+                textNode.addTo(workArea);
+                ephemeralNode = textNode;
+                movingMouseStartX = 0;
+                movingMouseStartY = 0;
+                movingElements.add(text);
             }
         }
 
