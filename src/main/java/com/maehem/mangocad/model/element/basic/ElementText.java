@@ -55,7 +55,7 @@ public class ElementText extends Element implements ElementXY, ElementRotation, 
 
     private double x;
     private double y;
-    private double size;
+    private double size = 1.778; // 0.7 inch
     private boolean selected = false;
     private final double[] snapshot = {0, 0};
 
