@@ -199,11 +199,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //                double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
 //                double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
                 //LOGGER.log(Level.SEVERE, "Mouse Moved:    xxx/yyy: {0},{1}", new Object[]{xxx, yyy});
-                double moveDistX = me.getX() - movingMouseStartX;
-                double moveDistY = -(me.getY() - movingMouseStartY);
+                //double moveDistX = me.getX() - movingMouseStartX;
+                //double moveDistY = -(me.getY() - movingMouseStartY);
 
-                double moveDistSnappedX = (int) (moveDistX / snap) * snap;
-                double moveDistSnappedY = (int) (moveDistY / snap) * snap;
+                //double moveDistSnappedX = (int) (moveDistX / snap) * snap;
+                //double moveDistSnappedY = (int) (moveDistY / snap) * snap;
+
+                double moveDistSnappedX = getSnappedLocation(me.getX(), movingMouseStartX);
+                double moveDistSnappedY = -getSnappedLocation(me.getY(), movingMouseStartY);
 
                 for (Element e : movingElements) {
                     if (e instanceof ElementSelectable es) {
@@ -246,7 +249,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     }
                 }
             }
+            me.consume();
         });
+    }
+
+    private double getSnappedLocation(double loc, double startLoc) {
+        double snap = parentEditor.getDrawing().getGrid().getSizeMM();
+        double moveDist = loc - startLoc;
+
+        return (int) (moveDist / snap) * snap;
     }
 
     private void initMouseDragged() {
@@ -281,17 +292,38 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     switch (me.getButton()) {
                         case PRIMARY -> {
                             if (ephemeralNode != null) {
-                                // New node. Add to symbol.
-                                Symbol symbol = parentEditor.getSymbol();
-                                symbol.getElements().add(ephemeralNode.getElement());
-                                nodes.add(ephemeralNode);
-                                lastElementAdded = ephemeralNode.getElement();
-                                LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
-                                ephemeralNode = null;
-                                movingElements.clear(); // End move of node.
-                                // Initiate another placemet of this node type.
-                                setEditorTool(toolMode); // Trigger another pin placement.
+                                if (toolMode.equals(EditorTool.PIN)) {
+                                    // New node. Add to symbol.
+                                    Symbol symbol = parentEditor.getSymbol();
+                                    symbol.getElements().add(ephemeralNode.getElement());
+                                    nodes.add(ephemeralNode);
+                                    lastElementAdded = ephemeralNode.getElement();
+                                    LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
+                                    ephemeralNode = null;
+                                    LOGGER.log(Level.SEVERE, "Clear movingElements. 1");
+                                    movingElements.clear(); // End move of node.
+                                    // Initiate another placemet of this node type.
+                                    setEditorTool(toolMode); // Trigger another pin placement.
+                                } else if (toolMode.equals(EditorTool.LINE)) {
+                                    if (ephemeralNode instanceof WireNode wn) {
+                                        Wire wire = (Wire) wn.getElement();
+                                        //wire.setX2(getSnappedLocation(me.getX(), 0));
+                                        //wire.setY2(-getSnappedLocation(me.getY(), 0));
+                                        wire.setSelectedEnd(WireEnd.NONE);
+                                        Symbol symbol = parentEditor.getSymbol();
+                                        symbol.getElements().add(ephemeralNode.getElement());
+                                        nodes.add(ephemeralNode);
+                                        lastElementAdded = ephemeralNode.getElement();
+                                        LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
+                                        ephemeralNode = null;
+                                        LOGGER.log(Level.SEVERE, "Clear movingElements. 3");
+                                        movingElements.clear(); // End move of node.
+                                        // Initiate new line.
+                                        initiateNewLineSegment(me, wire.getX2(), -wire.getY2());
+                                    }
+                                }
                             } else {
+                                LOGGER.log(Level.SEVERE, "Clear movingElements. 2");
                                 movingElements.clear(); // End move of node.
                                 LOGGER.log(Level.SEVERE, "End of move.");
                             }
@@ -395,61 +427,69 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
                 switch (me.getButton()) {
                     case PRIMARY -> { // Move or choose what to move.
-                        // If one pick, pick it.
-                        if (picks.isEmpty()) {
-                            contextMenu.hide();
+                        if (toolMode.equals(EditorTool.LINE)) {
+                            initiateNewLineSegment(me,
+                                    getSnappedLocation(me.getX(), 0),
+                                    getSnappedLocation(me.getY(), 0)
+                            );
                             me.consume();
-                            return;
-                        } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
-                            movingMouseStartX = me.getX();
-                            movingMouseStartY = me.getY();
-                            Element pick = picks.getFirst();
+                        } else {
+                            // If one pick, pick it.
+                            if (picks.isEmpty()) {
+                                contextMenu.hide();
+                                me.consume();
+                                return;
+                            } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
+                                movingMouseStartX = me.getX();
+                                movingMouseStartY = me.getY();
+                                Element pick = picks.getFirst();
 
-                            // What mode?
-                            switch (toolMode) {
-                                case MOVE -> {
-                                    movingElements.add(pick);
-                                    if (pick instanceof ElementSelectable es) {
-                                        es.createSnapshot();
+                                // What mode?
+                                switch (toolMode) {
+                                    case MOVE -> {
+                                        movingElements.add(pick);
+                                        if (pick instanceof ElementSelectable es) {
+                                            es.createSnapshot();
+                                        }
+                                        LOGGER.log(Level.SEVERE, "Moving a thing.");
                                     }
-                                    LOGGER.log(Level.SEVERE, "Moving a thing.");
-                                }
-                                case TRASH -> {
-                                    if (pick instanceof ElementSelectable es) {
-                                        ViewNode node = getNode(es);
-                                        if (node != null) {
-                                            if (node instanceof TextNode tn) {
-                                                LOGGER.log(Level.SEVERE, "Remove text: " + tn.getValue());
+                                    case TRASH -> {
+                                        if (pick instanceof ElementSelectable es) {
+                                            ViewNode node = getNode(es);
+                                            if (node != null) {
+                                                if (node instanceof TextNode tn) {
+                                                    LOGGER.log(Level.SEVERE, "Remove text: " + tn.getValue());
+                                                }
+                                                node.removeFrom(workArea);
+                                                parentEditor.getSymbol().getElements().remove(node.getElement());
+                                                nodes.remove(node); // TODO nodes needs listener and do this automatically.
+                                                LOGGER.log(Level.SEVERE, "Trashed: {0}", node.toString());
+                                            } else {
+                                                LOGGER.log(Level.SEVERE, "Oops! Trash Failed on " + es.toString());
                                             }
-                                            node.removeFrom(workArea);
-                                            parentEditor.getSymbol().getElements().remove(node.getElement());
-                                            nodes.remove(node); // TODO nodes needs listener and do this automatically.
-                                            LOGGER.log(Level.SEVERE, "Trashed: {0}", node.toString());
-                                        } else {
-                                            LOGGER.log(Level.SEVERE, "Oops! Trash Failed on " + es.toString());
                                         }
                                     }
                                 }
-                            }
-                            me.consume();
-                            return;
-                        } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
-                            // If more than one pick,
-                            // If all are wires, select them.
-                            // Add all picks to moving list.
-                            for (Element e : picks) {
-                                movingElements.add(e);
-                                if (e instanceof ElementSelectable es) {
-                                    es.createSnapshot();
+                                me.consume();
+                                return;
+                            } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
+                                // If more than one pick,
+                                // If all are wires, select them.
+                                // Add all picks to moving list.
+                                for (Element e : picks) {
+                                    movingElements.add(e);
+                                    if (e instanceof ElementSelectable es) {
+                                        es.createSnapshot();
+                                    }
                                 }
+                                LOGGER.log(Level.SEVERE, "Moving some wires.");
+                                me.consume();
+                            } else {
+                                // otherwise,  highlight first (grey out rest) and wait for either
+                                // another click or right-click to highlight next item.
+                                LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
+                                me.consume();
                             }
-                            LOGGER.log(Level.SEVERE, "Moving some wires.");
-                            me.consume();
-                        } else {
-                            // otherwise,  highlight first (grey out rest) and wait for either
-                            // another click or right-click to highlight next item.
-                            LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
-                            me.consume();
                         }
                     }
                     case SECONDARY -> { // Present pop-up menu.
@@ -488,6 +528,28 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 }
             }
         });
+    }
+
+    private void initiateNewLineSegment(MouseEvent me, double x, double y) {
+        // Start new line at mouse.
+        Wire wire = new Wire();
+        wire.setLayer(94);  // TODO needs enum
+        wire.setX1(x);
+        wire.setY1(-y);
+        wire.setX2(x);
+        wire.setY2(-y);
+        wire.setSelectedEnd(TWO);
+        wire.createSnapshot();
+        //LOGGER.log(Level.SEVERE, "New Wire");
+        WireNode wireNode = new WireNode(wire,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette(),
+                this);
+        wireNode.addTo(workArea);
+        ephemeralNode = wireNode;
+        movingMouseStartX = me.getX(); // Is this used?
+        movingMouseStartY = me.getY();
+        movingElements.add(wire);
     }
 
     private void initMouseReleased() {
@@ -774,6 +836,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 movingMouseStartX = 0;
                 movingMouseStartY = 0;
                 movingElements.add(text);
+            }
+            case EditorTool.LINE -> {
+                // Line created at first click.
+                LOGGER.log(Level.SEVERE, "New Wire...");
             }
         }
 
