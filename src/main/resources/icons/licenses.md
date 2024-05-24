@@ -56,6 +56,18 @@ Value               icon by Mark J Koch for the MangoCAD project. https://github
 Miter               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Optimize            icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Pin                 icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin                 icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Point           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Short           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Mid             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Long            icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin DotClk          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Dot             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Clk             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Vis None        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Vis Name        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Vis Num         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Vis Both        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Polygon             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Rectangle           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Split               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
