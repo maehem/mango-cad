@@ -96,6 +96,7 @@ public class PinFuncToggleWidget extends ToolModeWidget {
             } else {
                 LOGGER.log(Level.SEVERE, "Change PinFunc toggle to:{0}", newToggle.getUserData().toString());
                 currentToggle = newToggle;
+                pin.setFunction((PinFunction) currentToggle.getUserData());
             }
         });
 
