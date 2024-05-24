@@ -55,7 +55,7 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
     public static final String SWAPLEVEL_KEY = "swaplevel"; // TODO Use PinField enum.
     public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
-    private String name;
+    private String name = "A";
     private double x;
     private double y;
     private boolean selected = false;
