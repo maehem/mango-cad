@@ -851,6 +851,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 Pin pin = new Pin();
                 if (lastElementAdded != null && lastElementAdded instanceof Pin lastP) {
                     pin.setRot(lastP.getRot());
+                    pin.setDirection(lastP.getDirection());
+                    pin.setLength(lastP.getLength());
+                    pin.setFunction(lastP.getFunction());
+                    pin.setVisible(lastP.getVisible());
                 }
                 PinNode pinNode = new PinNode(pin,
                         Color.RED, Color.DARKGREEN, Color.DARKGREY,
