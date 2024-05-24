@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view;
 
+import com.maehem.mangocad.model.Element;
 import java.util.ResourceBundle;
 
 /**
@@ -65,6 +66,7 @@ public enum EditorTool {
 
     private final String path;
     private final String bundleKey;
+    private Element toolElement;
 
     private EditorTool(String path, String bundleKey) {
         this.path = path;
@@ -81,6 +83,18 @@ public enum EditorTool {
 
     public String bundleMessage() {
         return MSG.getString(bundleKey);
+    }
+
+    public void setToolElement(Element item) {
+        this.toolElement = item;
+    }
+
+    public Element getToolElement() {
+        return toolElement;
+    }
+
+    public void clearToolElement() {
+        this.toolElement = null;
     }
 
 }
