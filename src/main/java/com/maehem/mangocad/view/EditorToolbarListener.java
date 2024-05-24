@@ -22,5 +22,5 @@ package com.maehem.mangocad.view;
  */
 public interface EditorToolbarListener {
 
-    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue);
+    public void editorToolBarToolChanged(EditorTool oldValue, EditorTool newValue);
 }
