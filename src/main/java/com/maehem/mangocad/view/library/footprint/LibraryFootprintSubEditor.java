@@ -129,7 +129,7 @@ public class LibraryFootprintSubEditor extends LibrarySubEditor {
     }
 
     @Override
-    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
+    public void editorToolBarToolChanged(EditorTool oldValue, EditorTool newValue) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
