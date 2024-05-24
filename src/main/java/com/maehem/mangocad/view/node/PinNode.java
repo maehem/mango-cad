@@ -253,16 +253,11 @@ public class PinNode extends ViewNode implements ElementListener {
         return pinName.getBoundsInLocal().getWidth() - 1.0;
     }
 
-    private void updatePadPinVisible() {
-    }
-
     private void updatePadPin() {
         //Color pinNameColor = nameColor;
         //Color padColor = nameColor;
         //double vizPinRot = (pin.getRot() + getParentRot()) % 360;
         //double rawPinLen = pin.getLength().lenMM();
-
-        updatePadPinVisible();
 
         // Pin Name (inside component, pin function name)
         pinName.setText(pin.getName());
@@ -473,11 +468,11 @@ public class PinNode extends ViewNode implements ElementListener {
             case SELECTED -> {
                 updateColors();
             }
-            case PinField.DIRECTION -> {
+            case PinField.DIRECTION, PinField.SWAPLEVEL -> {
                 updatePinData();
             }
             case PinField.VISIBLE -> {
-                updatePadPinVisible();
+                updateColors();
             }
             case PinField.FUNCTION -> {
                 updateClockLines();
