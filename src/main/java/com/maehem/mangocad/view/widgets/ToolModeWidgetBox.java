@@ -18,9 +18,12 @@ package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.widgets.toolmode.MirrorToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinArrayWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinDirectionWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinFuncToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinLengthToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinRotationToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinSwapLevelWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinVisibilityToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.RotationWidget;
 import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
@@ -41,8 +44,8 @@ public class ToolModeWidgetBox extends HBox {
 
     public ToolModeWidgetBox() {
 
-        setHeight(48);
-        setSpacing(4);
+        setHeight(24);
+        setSpacing(2);
 
     }
 
@@ -70,11 +73,22 @@ public class ToolModeWidgetBox extends HBox {
             case PIN -> {
                 // Available pin styles.
                 // TODO: Pin Array Dialog.
+                PinArrayWidget paW = new PinArrayWidget(mode.getToolElement());
                 PinRotationToggleWidget prW = new PinRotationToggleWidget(mode.getToolElement());
                 PinFuncToggleWidget pfW = new PinFuncToggleWidget(mode.getToolElement());
                 PinLengthToggleWidget plW = new PinLengthToggleWidget(mode.getToolElement());
                 PinVisibilityToggleWidget pvW = new PinVisibilityToggleWidget(mode.getToolElement());
-                getChildren().addAll(plW, new Region(), pfW, new Region(), prW, new Region(), pvW);
+                PinDirectionWidget pdW = new PinDirectionWidget(mode.getToolElement());
+                PinSwapLevelWidget pswW = new PinSwapLevelWidget(mode.getToolElement());
+                getChildren().addAll(
+                        paW,
+                        plW,
+                        pfW,
+                        prW,
+                        pvW,
+                        pdW,
+                        pswW
+                );
             }
             case LINE -> {
                 // Line options
