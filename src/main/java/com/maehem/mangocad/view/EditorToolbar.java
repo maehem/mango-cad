@@ -77,13 +77,14 @@ public class EditorToolbar extends ToolBar {
         toggleGroup.selectedToggleProperty().addListener(
                 (ObservableValue<? extends Toggle> observable,
                         Toggle oldValue, Toggle newValue) -> {
+                    LOGGER.log(Level.SEVERE, "toggleGroup.listener(): Update.");
             if (newValue == null) {
                 oldValue.setSelected(true);
             } else {
                 EditorTool oldTool = currentTool;
                 currentTool = (EditorTool) newValue.getUserData();
                 listeners.forEach((l) -> {
-                    l.editorToolBarButtonChanged(oldTool, currentTool);
+                    l.editorToolBarToolChanged(oldTool, currentTool);
                 });
             }
         });
@@ -95,12 +96,14 @@ public class EditorToolbar extends ToolBar {
         //currentTool = tool;
         for (Toggle t : toggleGroup.getToggles()) {
             if (t.getUserData() == tool) {
-                t.setSelected(true);
+                LOGGER.log(Level.SEVERE, "Set the tool.");
+                toggleGroup.selectToggle(t); // Triggers a notify event if different.
+
                 break;
             }
         }
 //        listeners.forEach((l) -> {
-//            l.editorToolBarButtonChanged(oldTool, currentTool);
+//            l.editorToolBarToolChanged(oldTool, currentTool);
 //        });
     }
 
@@ -122,6 +125,10 @@ public class EditorToolbar extends ToolBar {
         b.setId("toolbar-button");
 
         return b;
+    }
+
+    public void addListener(EditorToolbarListener l) {
+        listeners.add(l);
     }
 
 }
