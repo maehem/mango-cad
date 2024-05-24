@@ -18,9 +18,9 @@ package com.maehem.mangocad.view;
 
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.widgets.CommandFieldWidget;
 import com.maehem.mangocad.view.widgets.ContextMessageWidget;
 import com.maehem.mangocad.view.widgets.LayerChooser;
+import com.maehem.mangocad.view.widgets.ToolModeWidgetBox;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,7 +37,7 @@ import javafx.scene.image.Image;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class EditorOptionsBar extends ToolBar {
+public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
 
     private static final int TOOLBAR_ICON_SIZE = 24;
 
@@ -45,6 +45,7 @@ public class EditorOptionsBar extends ToolBar {
     private final ArrayList<EditorOptionsBarListener> listeners = new ArrayList<>();
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private EditorOption currentOption;
+    private final ToolModeWidgetBox toolModeWidget = new ToolModeWidgetBox();
     ContextMessageWidget editMessage = new ContextMessageWidget("Foo", null);
 
     public EditorOptionsBar(Drawing drawing, List<EditorOption> options, EditorOptionsBarListener listener) {
@@ -75,13 +76,16 @@ public class EditorOptionsBar extends ToolBar {
                     });
 
                 }
+                case TOOL_MODE_SETTINGS -> {
+                    getItems().add(toolModeWidget);
+                }
                 case GRID_MOUSE_INFO -> {
 
                 }
-                case COMMAND_LINE -> {
-                    CommandFieldWidget commandField = new CommandFieldWidget(option.bundleMessage(), option.iconPath());
-                    getItems().add(commandField);
-                }
+//                case COMMAND_LINE -> {
+//                    CommandFieldWidget commandField = new CommandFieldWidget(option.bundleMessage(), option.iconPath());
+//                    getItems().add(commandField);
+//                }
                 case CONTEXT_MESSAGE -> {
                     getItems().add(editMessage);
                 }
@@ -125,5 +129,11 @@ public class EditorOptionsBar extends ToolBar {
 
     public void setMessage(String message) {
         editMessage.setText(message);
+    }
+
+    @Override
+    public void editorToolBarToolChanged(EditorTool oldValue, EditorTool newValue) {
+        LOGGER.log(Level.SEVERE, "EditorOptionsBar.editorToolBarToolChanged()");
+        toolModeWidget.setMode(newValue);
     }
 }
