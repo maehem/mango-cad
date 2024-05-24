@@ -99,7 +99,7 @@ public class LibraryTocSubEditor extends LibrarySubEditor {
     }
 
     @Override
-    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
+    public void editorToolBarToolChanged(EditorTool oldValue, EditorTool newValue) {
     }
 
 }
