@@ -277,7 +277,7 @@ public class LibraryDeviceSubEditor extends LibrarySubEditor {
     }
 
     @Override
-    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
+    public void editorToolBarToolChanged(EditorTool oldValue, EditorTool newValue) {
         LOGGER.log(Level.SEVERE, "User changed tool: {0} ==> {1}", new Object[]{
             oldValue == null ? "null" : oldValue.name(),
             newValue == null ? "null" : newValue.name()
