@@ -68,6 +68,7 @@ Pin Vis None        icon by Mark J Koch for the MangoCAD project. https://github
 Pin Vis Name        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Pin Vis Num         icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Pin Vis Both        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Pin Array           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Polygon             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Rectangle           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Split               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
