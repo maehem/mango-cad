@@ -51,9 +51,11 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorOption.SEPARATOR,
             EditorOption.GRID_MOUSE_INFO,
             EditorOption.SEPARATOR,
-            EditorOption.COMMAND_LINE,
+            //EditorOption.COMMAND_LINE, // Move to parent toolbar
+            //EditorOption.SEPARATOR,
+            EditorOption.TOOL_MODE_SETTINGS,
             EditorOption.SEPARATOR,
-            EditorOption.CONTEXT_MESSAGE
+            EditorOption.CONTEXT_MESSAGE // Move to parent toolbar.
     ));
 
     private final ArrayList<EditorTool> tools = new ArrayList<>(Arrays.asList(
@@ -83,9 +85,8 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorTool.MARK, EditorTool.DIMENSION
     ));
 
-    private final EditorOptionsBar topToolbar;
-    //private final VBox topArea = new VBox(topToolbar1);
-    private final EditorToolbar leftToolBar;
+    private final EditorOptionsBar optionsToolbar;
+    private final EditorToolbar editorToolbar;
     private final HBox bottomArea = new HBox();
     private final Symbol symbol;
     private final SymbolEditorInteractiveArea symbolEditorInteractiveArea;
@@ -96,14 +97,14 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         this.symbol = symbol;
 
         // top:  option toolbar row
-        topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
-        setTop(topToolbar);
+        optionsToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
+        setTop(optionsToolbar);
         // TODO i18n bundle
-        topToolbar.setMessage("Editing Symbol:   " + symbol.getName());
+        optionsToolbar.setMessage("Editing Symbol:   " + symbol.getName());
 
         // left: tool bar
-        leftToolBar = new EditorToolbar(tools, this);
-        setLeft(leftToolBar);
+        editorToolbar = new EditorToolbar(tools, this);
+        setLeft(editorToolbar);
         symbolEditorInteractiveArea = new SymbolEditorInteractiveArea(this);
         SplitPane workArea = new SplitPane(symbolEditorInteractiveArea, propertiesTabPane);
         workArea.setDividerPosition(0, 0.8);
@@ -113,8 +114,11 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
 
-        leftToolBar.setOrientation(Orientation.VERTICAL);
-        leftToolBar.setPrefWidth(48);
+        editorToolbar.setOrientation(Orientation.VERTICAL);
+        editorToolbar.setPrefWidth(48);
+
+        editorToolbar.addListener(optionsToolbar);
+
         setOnKeyPressed((ke) -> {
             if (ke.getCode() == ESCAPE) {
                 //LOGGER.log(Level.SEVERE, "Escape Pressed in editor.");
@@ -134,11 +138,12 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
     }
 
     public void setToolMode(EditorTool tool) {
-        leftToolBar.setCurrentTool(tool);
+        editorToolbar.setCurrentTool(tool);
+        optionsToolbar.editorToolBarToolChanged(tool, tool);
     }
 
     @Override
-    public void editorToolBarButtonChanged(EditorTool oldValue, EditorTool newValue) {
+    public void editorToolBarToolChanged(EditorTool oldValue, EditorTool newValue) {
         if (!oldValue.equals(newValue)) {
             LOGGER.log(Level.SEVERE, "User changed tool: {0} ==> {1}", new Object[]{
                 oldValue == null ? "null" : oldValue.name(),

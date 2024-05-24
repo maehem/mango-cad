@@ -839,7 +839,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             // Abandon any current tool operations.
             abandonOperation(false);
 
+            this.toolMode.clearToolElement();
             this.toolMode = tool;
+        } else {
+            parentEditor.setToolMode(tool);
         }
 
         switch (this.toolMode) {
@@ -860,6 +863,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 movingMouseStartX = 0;
                 movingMouseStartY = 0;
                 movingElements.add(pin);
+                this.toolMode.setToolElement(pin);
+                parentEditor.setToolMode(toolMode);
             }
             case TEXT -> {
                 ElementText text = new ElementText();
