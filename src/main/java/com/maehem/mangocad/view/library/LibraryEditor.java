@@ -26,9 +26,12 @@ import com.maehem.mangocad.view.library.device.LibraryDeviceSubEditor;
 import com.maehem.mangocad.view.library.footprint.LibraryFootprintSubEditor;
 import com.maehem.mangocad.view.library.symbol.LibrarySymbolSubEditor;
 import com.maehem.mangocad.view.library.toc.LibraryTocSubEditor;
+import com.maehem.mangocad.view.widgets.CommandFieldWidget;
+import com.maehem.mangocad.view.widgets.ContextMessageWidget;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -59,6 +62,7 @@ public class LibraryEditor extends VBox {
 
     private final BorderPane mainPane = new BorderPane();
 
+    private static final ResourceBundle MSG = ResourceBundle.getBundle("i18n/Editor");
     // TODO: Get from i18n bundle.
     private static final String TOC_STR = "Table of Contents";
     private static final String DEV_STR = "Device";
@@ -105,6 +109,8 @@ public class LibraryEditor extends VBox {
     private final ToggleButton deviceButton = ViewUtils.createIconToggleButton(DEV_STR, DEVICE_IMAGE);
     private final ToggleButton footprintButton = ViewUtils.createIconToggleButton(FPT_STR, FOOTPRINT_IMAGE);
     private final ToggleButton symbolButton = ViewUtils.createIconToggleButton(SYM_STR, SYMBOL_IMAGE);
+    private final CommandFieldWidget commandField = new CommandFieldWidget("OPTION_ICON_COMMAND", "/icons/command.png");
+    private final ContextMessageWidget editMessage = new ContextMessageWidget("Foo", null);
 
     final ToggleGroup modeToggle = new ToggleGroup();
     private Toggle currentToggle = tocButton;
@@ -170,6 +176,8 @@ public class LibraryEditor extends VBox {
         footprintButton.setSelected(false);
         symbolButton.setSelected(false);
 
+        editMessage.setText("Hello");
+
         /* Add toolbar buttons */
         ObservableList<Node> items = mainToolbar.getItems();
         items.add(openButton);
@@ -182,6 +190,10 @@ public class LibraryEditor extends VBox {
         items.add(deviceButton);
         items.add(footprintButton);
         items.add(symbolButton);
+        items.add(new Separator());
+        items.add(new Region());
+        items.add(commandField);
+        items.add(editMessage);
 
         /*
          *  Button callbacks
@@ -224,6 +236,7 @@ public class LibraryEditor extends VBox {
         if (type == null) {
             currentEditor = tocPane;
             tocButton.setSelected(true);
+            editMessage.setText("");
         } else {
             final String CREATE_NEW_MSG = "Create New " + type.text() + "...";
             switch (type) {
@@ -259,6 +272,8 @@ public class LibraryEditor extends VBox {
                         devicePane = new LibraryDeviceSubEditor(this, item);
                     }
                     currentEditor = devicePane;
+                    editMessage.setText("Editing Device: " + item);
+                    //editMessage.setLabel("Editing Device:");
                     deviceButton.setSelected(true);
                 }
                 case FOOTPRINT -> {
@@ -295,6 +310,8 @@ public class LibraryEditor extends VBox {
                         footprintPane = new LibraryFootprintSubEditor(this, item);
                     }
                     currentEditor = footprintPane;
+                    editMessage.setText("Editing Footprint: " + item);
+                    //editMessage.setLabel("Editing Footprint:");
                     footprintButton.setSelected(true);
                 }
                 case PACKAGE3D -> {
