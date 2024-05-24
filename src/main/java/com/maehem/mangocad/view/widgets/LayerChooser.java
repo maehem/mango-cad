@@ -50,6 +50,8 @@ public class LayerChooser extends HBox {
         chooser.setButtonCell(new ColorRectCell(palette));
         chooser.setCellFactory((ListView<LayerElement> list) -> new ColorRectCell(palette));
         chooser.getSelectionModel().select(0);
+        chooser.setPrefWidth(140); // TODO move to CSS?
+        chooser.setPrefHeight(20);
 
         getChildren().addAll(label, chooser);
 
