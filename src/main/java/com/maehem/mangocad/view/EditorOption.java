@@ -30,6 +30,7 @@ public enum EditorOption {
     COMMAND_LINE("/icons/command.png", "OPTION_ICON_COMMAND"),
     // TODO: Maybe current document name?
     CONTEXT_MESSAGE(null, null),
+    TOOL_MODE_SETTINGS(null, null),
     SEPARATOR(null, null);
 
     private static final ResourceBundle MSG = ResourceBundle.getBundle("i18n/Editor");
