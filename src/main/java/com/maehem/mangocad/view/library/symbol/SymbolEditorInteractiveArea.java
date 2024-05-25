@@ -37,6 +37,7 @@ import static com.maehem.mangocad.view.EditorTool.LOOK;
 import static com.maehem.mangocad.view.EditorTool.SELECT;
 import static com.maehem.mangocad.view.EditorTool.TRASH;
 import com.maehem.mangocad.view.PickListener;
+import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
 import com.maehem.mangocad.view.node.PolygonNode;
@@ -105,6 +106,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private double mouseDownY = Double.MIN_VALUE;
     private double movingMouseStartX;
     private double movingMouseStartY;
+    private MouseMovementListener mouseListener = null;
 
     // TODO get from control panel settings.
     private final Color selectionRectangleColor = new Color(1.0, 1.0, 1.0, 0.5);
@@ -192,8 +194,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         initMouseReleased();
     }
 
+    public void setMouseMoveListener(MouseMovementListener listener) {
+        this.mouseListener = listener;
+    }
+
     private void initMouseMoved() {
         workArea.setOnMouseMoved((MouseEvent me) -> {
+            if (mouseListener != null) {
+                mouseListener.workAreaMouseMoved(me.getX(), me.getY());
+            }
             // Move any selected node.
             if (!movingElements.isEmpty()) {
                 //LOGGER.log(Level.SEVERE, "Work Area: mXY: {0},{1}", new Object[]{me.getX(), me.getY()});
