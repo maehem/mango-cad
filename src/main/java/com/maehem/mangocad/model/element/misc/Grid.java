@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.misc;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.enums.GridField;
 import com.maehem.mangocad.model.element.enums.GridStyle;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.util.Units;
@@ -25,15 +26,15 @@ import com.maehem.mangocad.model.util.Units;
  * <pre>
  * grid EMPTY
  *    ATTRIBUTES
-          distance      %Real;         #IMPLIED
-          unitdist      %GridUnit;     #IMPLIED
-          unit          %GridUnit;     #IMPLIED
-          style         %GridStyle;    "lines"
-          multiple      %Int;          "1"
-          display       %Bool;         "no"
-          altdistance   %Real;         #IMPLIED
-          altunitdist   %GridUnit;     #IMPLIED
-          altunit       %GridUnit;     #IMPLIED
+ * distance      %Real;         #IMPLIED
+ * unitdist      %GridUnit;     #IMPLIED
+ * unit          %GridUnit;     #IMPLIED
+ * style         %GridStyle;    "lines"
+ * multiple      %Int;          "1"
+ * display       %Bool;         "no"
+ * altdistance   %Real;         #IMPLIED
+ * altunitdist   %GridUnit;     #IMPLIED
+ * altunit       %GridUnit;     #IMPLIED
  * </pre>
  *
  *
@@ -99,7 +100,11 @@ public class Grid extends Element {
      * @param distance the distance to set
      */
     public void setSize(double distance) {
-        this.distance = distance;
+        if (this.distance != distance) {
+            double oldVal = this.distance;
+            this.distance = distance;
+            notifyListeners(GridField.DISTANCE, oldVal, this.distance);
+        }
     }
 
     /**
@@ -120,7 +125,11 @@ public class Grid extends Element {
      * @param distUnit the distanceStoredUnit to set
      */
     public void setSizeUnit(GridUnit distUnit) {
-        this.distanceUnit = distUnit;
+        if (this.distanceUnit != distUnit) {
+            GridUnit oldVal = this.distanceUnit;
+            this.distanceUnit = distUnit;
+            notifyListeners(GridField.DISTANCE_UNIT, oldVal, this.distanceUnit);
+        }
     }
 
     /**
@@ -141,7 +150,11 @@ public class Grid extends Element {
      * @param style the style to set
      */
     public void setStyle(GridStyle style) {
-        this.style = style;
+        if (this.style != style) {
+            GridStyle oldVal = this.style;
+            this.style = style;
+            notifyListeners(GridField.STYLE, oldVal, this.style);
+        }
     }
 
     /**
@@ -155,7 +168,11 @@ public class Grid extends Element {
      * @param multiple the multiple to set
      */
     public void setMultiple(int multiple) {
-        this.multiple = multiple;
+        if (this.multiple != multiple) {
+            int oldVal = this.multiple;
+            this.multiple = multiple;
+            notifyListeners(GridField.MULTIPLE, oldVal, this.multiple);
+        }
     }
 
     /**
@@ -169,7 +186,11 @@ public class Grid extends Element {
      * @param display the display to set
      */
     public void setDisplay(boolean display) {
-        this.display = display;
+        if (this.display != display) {
+            boolean oldVal = this.display;
+            this.display = display;
+            notifyListeners(GridField.DISPLAY, oldVal, this.display);
+        }
     }
 
     /**
@@ -183,7 +204,11 @@ public class Grid extends Element {
      * @param altSize the altDistance to set
      */
     public void setAltSize(double altSize) {
-        this.altSize = altSize;
+        if (this.altSize != altSize) {
+            double oldVal = this.altSize;
+            this.altSize = altSize;
+            notifyListeners(GridField.ALT_SIZE, oldVal, this.altSize);
+        }
     }
 
     /**
@@ -194,10 +219,14 @@ public class Grid extends Element {
     }
 
     /**
-     * @param altSizeUnit the altStoredUnit to set
+     * @param altSizeStoredUnit the altStoredUnit to set
      */
-    public void setAltStoredUnit(GridUnit altSizeUnit) {
-        this.altStoredUnit = altSizeUnit;
+    public void setAltStoredUnit(GridUnit altSizeStoredUnit) {
+        if (this.altStoredUnit != altSizeStoredUnit) {
+            GridUnit oldVal = this.altStoredUnit;
+            this.altStoredUnit = altSizeStoredUnit;
+            notifyListeners(GridField.ALT_STORED_UNIT, oldVal, this.altStoredUnit);
+        }
     }
 
     /**
@@ -211,7 +240,11 @@ public class Grid extends Element {
      * @param altUnit the altUnit to set
      */
     public void setAltUnit(GridUnit altUnit) {
-        this.altUnit = altUnit;
+        if (this.altUnit != altUnit) {
+            GridUnit oldVal = altUnit;
+            this.altUnit = altUnit;
+            notifyListeners(GridField.ALT_UNIT, oldVal, this.altUnit);
+        }
     }
 
     @Override
