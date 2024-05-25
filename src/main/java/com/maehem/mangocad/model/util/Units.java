@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.model.util;
 
+import com.maehem.mangocad.model.element.enums.GridUnit;
+import static com.maehem.mangocad.model.element.enums.GridUnit.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,70 @@ public enum Units {
     private Units(String code, double mult) {
         this.code = code;
         this.mult = mult;
+    }
+
+    public static double convertUnit(double val, GridUnit srcUnit, GridUnit destUnit) {
+        if (srcUnit.equals(destUnit)) {
+            return val;
+        }
+
+        switch (destUnit) {
+            case INCH -> {
+                switch (srcUnit) {
+                    case MIC -> {
+                        return val * INCH.mult / MIC.mult; // Mult by 25400
+                    }
+                    case MIL -> {
+                        return val / MIC.mult;
+                    }
+                    case MM -> {
+                        return val * INCH.mult;
+                    }
+                }
+            }
+
+            case MIC -> {
+                switch (srcUnit) {
+                    case INCH -> {
+                        return val / (MIC.mult / INCH.mult); // divide by 25400
+                    }
+                    case MIL -> {
+                        return val * INCH.mult; // Divide by 25.4 ( or mult by 0.039370...)
+                    }
+                    case MM -> {
+                        return val / MIC.mult; // Divide by 1000.0
+                    }
+                }
+            }
+
+            case MIL -> {
+                switch (srcUnit) {
+                    case MIC -> {
+                        return val / INCH.mult; // multiply by 25.4 ( convert INCH )
+                    }
+                    case INCH -> {
+                        return val * MIC.mult; // multiply by 1000.0
+                    }
+                    case MM -> {
+                        return val / MIL.mult; // divide by 39.37...
+                    }
+                }
+            }
+            case MM -> {
+                switch (srcUnit) {
+                    case MIC -> {
+                        return val * MIC.mult;
+                    }
+                    case MIL -> {
+                        return val * MIL.mult; // multiply by 39.37...
+                    }
+                    case INCH -> {
+                        return val * INCH.mult; // div by 25.4 ( mult by 0.03937...)
+                    }
+                }
+            }
+        }
+        return val;
     }
 
     /**
