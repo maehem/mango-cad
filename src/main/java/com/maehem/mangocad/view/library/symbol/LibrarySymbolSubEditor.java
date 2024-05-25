@@ -53,9 +53,9 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorOption.SEPARATOR,
             //EditorOption.COMMAND_LINE, // Move to parent toolbar
             //EditorOption.SEPARATOR,
-            EditorOption.TOOL_MODE_SETTINGS,
-            EditorOption.SEPARATOR,
-            EditorOption.CONTEXT_MESSAGE // Move to parent toolbar.
+            EditorOption.TOOL_MODE_SETTINGS
+    //EditorOption.SEPARATOR,
+    //EditorOption.CONTEXT_MESSAGE // Move to parent toolbar.
     ));
 
     private final ArrayList<EditorTool> tools = new ArrayList<>(Arrays.asList(
@@ -106,6 +106,10 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         editorToolbar = new EditorToolbar(tools, this);
         setLeft(editorToolbar);
         symbolEditorInteractiveArea = new SymbolEditorInteractiveArea(this);
+
+        // Plumb the mouse XY tracker to the mouse location in work area.
+        symbolEditorInteractiveArea.setMouseMoveListener(optionsToolbar.getMouseListener());
+
         SplitPane workArea = new SplitPane(symbolEditorInteractiveArea, propertiesTabPane);
         workArea.setDividerPosition(0, 0.8);
         setCenter(workArea); // center: work area
