@@ -233,3 +233,13 @@
     -fx-border-width:1px;
     -fx-border-radius:3px;
 }
+
+#grid-mouse-widget {
+    -fx-fil: #833;
+}
+#grid-mouse-widget-units {
+    -fx-font-weight: bold;
+}
+#grid-mouse-widget-location {
+    -fx-fil: #383;
+}
