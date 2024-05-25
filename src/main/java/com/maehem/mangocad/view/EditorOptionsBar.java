@@ -18,7 +18,8 @@ package com.maehem.mangocad.view;
 
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.widgets.ContextMessageWidget;
+import com.maehem.mangocad.view.library.MouseMovementListener;
+import com.maehem.mangocad.view.widgets.GridMouseWidget;
 import com.maehem.mangocad.view.widgets.LayerChooser;
 import com.maehem.mangocad.view.widgets.ToolModeWidgetBox;
 import java.util.ArrayList;
@@ -46,7 +47,8 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private EditorOption currentOption;
     private final ToolModeWidgetBox toolModeWidget = new ToolModeWidgetBox();
-    ContextMessageWidget editMessage = new ContextMessageWidget("Foo", null);
+    private final GridMouseWidget gridMouseWidget = new GridMouseWidget();
+    //ContextMessageWidget editMessage = new ContextMessageWidget("Foo", null);
 
     public EditorOptionsBar(Drawing drawing, List<EditorOption> options, EditorOptionsBarListener listener) {
         this.options = options;
@@ -80,14 +82,16 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
                     getItems().add(toolModeWidget);
                 }
                 case GRID_MOUSE_INFO -> {
-
+                    getItems().add(gridMouseWidget);
+                    drawing.getGrid().addListener(gridMouseWidget);
+                    gridMouseWidget.updateUnitDisplay(drawing.getGrid());
                 }
 //                case COMMAND_LINE -> {
 //                    CommandFieldWidget commandField = new CommandFieldWidget(option.bundleMessage(), option.iconPath());
 //                    getItems().add(commandField);
 //                }
                 case CONTEXT_MESSAGE -> {
-                    getItems().add(editMessage);
+                    //getItems().add(editMessage);
                 }
                 default -> {
                     LOGGER.log(Level.SEVERE, "Unknown EditorOption in List: " + option.name());
@@ -116,6 +120,10 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
 
     }
 
+    public MouseMovementListener getMouseListener() {
+        return gridMouseWidget;
+    }
+
     private static ToggleButton createToolbarToggleButton(String name, String iconPath) {
         Image img = ViewUtils.getImage(iconPath);
 
@@ -128,7 +136,7 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
     }
 
     public void setMessage(String message) {
-        editMessage.setText(message);
+        //editMessage.setGridUnitText(message);
     }
 
     @Override
