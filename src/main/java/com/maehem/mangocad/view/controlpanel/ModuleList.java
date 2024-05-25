@@ -237,19 +237,25 @@ public class ModuleList extends TreeTableView<ControlPanelListItem> implements R
             // Library importLBR = EagleCADUtils.importLBR(lbr);
             Library library = LibraryCache.getInstance().getLibrary(lbrFile);
             if (library != null) {
-                TreeItem item;
-                if (!library.getDescriptions().isEmpty()) {
-                    item = new TreeItem(new LibraryItem(
-                            lbrFile.getName(),
-                            Library.getDescriptionShort(library.getDescription()),
-                            lbrFile,
-                            library
-                    ));
-                    parentItem.getChildren().add(item);
-                } else {
-                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile, library));
-                    parentItem.getChildren().add(item);
-                }
+                TreeItem item = new TreeItem(new LibraryItem(
+                        lbrFile.getName(),
+                        Library.getDescriptionShort(library.getDescription()),
+                        lbrFile, library));
+                parentItem.getChildren().add(item);
+
+//                TreeItem item;
+//                if (!library.getDescriptions().isEmpty()) {
+//                    item = new TreeItem(new LibraryItem(
+//                            lbrFile.getName(),
+//                            Library.getDescriptionShort(library.getDescription()),
+//                            lbrFile,
+//                            library
+//                    ));
+//                    parentItem.getChildren().add(item);
+//                } else {
+//                    item = new TreeItem(new LibraryItem(lbrFile.getName(), "", lbrFile, library));
+//                    parentItem.getChildren().add(item);
+//                }
                 populateLibraryDetailItems(library, lbrFile, item);
             } else {
                 TreeItem item = new TreeItem(new LibraryItem("ERROR", "Library Error", null, null));
