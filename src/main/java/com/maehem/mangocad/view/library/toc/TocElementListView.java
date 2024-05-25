@@ -112,6 +112,12 @@ public class TocElementListView extends VBox {
                 listener.selectionChanged(type, newValue);
             }
         });
+        listView.setOnMouseClicked((me) -> {
+            if (me.getClickCount() == 2) {
+                String selectedItem = listView.getSelectionModel().getSelectedItem();
+                listener.editItem(type, selectedItem);
+            }
+        });
 
         initContextMenus();
 
