@@ -69,27 +69,13 @@ public class LibraryEditor extends VBox {
     private static final String FPT_STR = "Footprint";
     private static final String SYM_STR = "Symbol";
 
-    public static final Image FILE_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/file.png")
-    );
-    public static final Image SAVE_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/floppy-disk.png")
-    );
-    public static final Image PRINT_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/printer.png")
-    );
-    public static final Image TOC_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/book.png")
-    );
-    public static final Image DEVICE_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/photo-album.png")
-    );
-    public static final Image FOOTPRINT_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/integrated-circuit.png")
-    );
-    public static final Image SYMBOL_IMAGE = new Image(
-            LibraryEditor.class.getResourceAsStream("/icons/logic-gate.png")
-    );
+    public static final Image FILE_IMAGE = ViewUtils.getImage("/icons/file.png");//new Image(
+    public static final Image SAVE_IMAGE = ViewUtils.getImage("/icons/floppy-disk.png");
+    public static final Image PRINT_IMAGE = ViewUtils.getImage("/icons/printer.png");
+    public static final Image TOC_IMAGE = ViewUtils.getImage("/icons/book.png");
+    public static final Image DEVICE_IMAGE = ViewUtils.getImage("/icons/photo-album.png");
+    public static final Image FOOTPRINT_IMAGE = ViewUtils.getImage("/icons/integrated-circuit.png");
+    public static final Image SYMBOL_IMAGE = ViewUtils.getImage("/icons/logic-gate.png");
 
     private final File file;
     private final Library library;
@@ -354,6 +340,7 @@ public class LibraryEditor extends VBox {
                             }
                         }
                         symbolPane = new LibrarySymbolSubEditor(this, symbol);
+                        editMessage.setText("Editing Symbol:  " + symbol.getName());
                     }
                     currentEditor = symbolPane;
                     symbolButton.setSelected(true);
