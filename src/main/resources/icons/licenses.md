@@ -49,6 +49,11 @@ Circuit Heart       icon by Unknown from Noun Project   https://thenounproject.c
 Logic Gate          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Add Symbol          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Array               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Bend 90             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Bend 45             icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Bend Curve          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Bend Free           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Bend S              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Grid                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Layers              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Name                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
