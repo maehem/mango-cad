@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementDualXY;
+import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.ElementXY;
@@ -31,6 +32,7 @@ import com.maehem.mangocad.model.element.enums.WireEnd;
 import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.INFO;
 import static com.maehem.mangocad.view.EditorTool.LOOK;
@@ -64,14 +66,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorInteractiveArea extends ScrollPane implements PickListener {
+public class SymbolEditorInteractiveArea extends ScrollPane implements PickListener, ElementListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -80,14 +81,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private static final double SCALE_FACTOR = 0.5;
     private static final int WORK_AREA = (int) (1000.0 / SCALE_MIN);
     private static final double WA2 = WORK_AREA / 2.0;
-    private static final double GRID_SIZE = 2.54;
+    //private static final double GRID_SIZE = 2.54;
     private static final Color GRID_COLOR = new Color(1.0, 1.0, 1.0, 0.1);
     private static final double GRID_STROKE_WIDTH = 0.05;
     private static final double PICK_SIZE = 1.0;
 
     private final Circle shadow = new Circle(1, Color.RED);
-    private final Text scaleText = new Text("x1.0");
-    private final Group workArea = new Group(shadow, scaleText);
+    //private final Text scaleText = new Text("x1.0");
+    private final Group workArea = new Group(shadow);//, scaleText);
     private final Group crossHairArea = new Group();
     private final Group scrollArea = new Group(workArea, crossHairArea);
     private final SymbolEditorContextMenu contextMenu = new SymbolEditorContextMenu();
@@ -100,6 +101,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private final ArrayList<Element> movingElements = new ArrayList<>();
     private final ArrayList<ViewNode> nodes = new ArrayList<>();
     private final Rectangle selectionRectangle = new Rectangle();
+    private final ArrayList<Line> gridLines = new ArrayList<>();
+    private final Rectangle background;
+
     private ViewNode ephemeralNode;
     private Element lastElementAdded = null;
     private double mouseDownX = Double.MIN_VALUE;
@@ -125,6 +129,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         setVvalue(0.5);
         setHvalue(0.5);
+
+        background = new Rectangle(-WA2, -WA2, WORK_AREA, WORK_AREA);
+        // TODO: Get color from control panel settings -> options -> colors -> symbolCanvasColor.
+        background.setFill(new Color(0.2, 0.2, 0.2, 1.0));
+        workArea.getChildren().add(background);
+
         buildScene();
 
         workScale.setX(scale);
@@ -132,10 +142,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         shadow.setVisible(false);
 
-        scaleText.setLayoutX(10);
-        scaleText.setLayoutY(10);
-        scaleText.setScaleX(0.5);
-        scaleText.setScaleY(0.5);
+        //scaleText.setLayoutX(10);
+        //scaleText.setLayoutY(10);
+        //scaleText.setScaleX(0.5);
+        //scaleText.setScaleY(0.5);
 
         selectionRectangle.setFill(null);
         selectionRectangle.setStroke(selectionRectangleColor);
@@ -148,6 +158,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         workArea.getTransforms().add(workScale);
 
+        // Listen to changes in the Grid settings.
+        parentEditor.getDrawing().getGrid().addListener(this);
+
         workArea.addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scrollAmt = event.getDeltaY();
             scale += scrollAmt * SCALE_FACTOR;
@@ -159,7 +172,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             workScale.setX(scale);
             workScale.setY(scale);
-            scaleText.setText("x" + String.format("%.2f", scale));
+            //scaleText.setText("x" + String.format("%.2f", scale));
 
             double mX = event.getX();
             double mY = event.getY();
@@ -708,7 +721,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     }
 
     private void buildScene() {
-        scaleText.setText("x" + scale);
+        //scaleText.setText("x" + scale);
 
         double dash = 2.5;
         double space = 3.0;
@@ -720,22 +733,16 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         crossHairArea.getChildren().addAll(hLine, vLine);
 
-        Rectangle background = new Rectangle(-WA2, -WA2, WORK_AREA, WORK_AREA);
-        // TODO: Get color from control panel settings -> options -> colors -> symbolCanvasColor.
-        background.setFill(new Color(0.2, 0.2, 0.2, 1.0));
-        workArea.getChildren().add(background);
-
-        int nGrids = (int) (WA2 / GRID_SIZE);
-
-        // Add Grid
-        workArea.getChildren().add(gridLine(0, true));
-        workArea.getChildren().add(gridLine(0, false));
-        for (int n = 1; n <= nGrids; n++) {
-            workArea.getChildren().add(gridLine(n, true));
-            workArea.getChildren().add(gridLine(-n, true));
-            workArea.getChildren().add(gridLine(n, false));
-            workArea.getChildren().add(gridLine(-n, false));
-        }
+        rebuildGrid();
+//        // Add Grid
+//        workArea.getChildren().add(gridLine(0, true));
+//        workArea.getChildren().add(gridLine(0, false));
+//        for (int n = 1; n <= nGrids; n++) {
+//            workArea.getChildren().add(gridLine(n, true));
+//            workArea.getChildren().add(gridLine(-n, true));
+//            workArea.getChildren().add(gridLine(n, false));
+//            workArea.getChildren().add(gridLine(-n, false));
+//        }
 
         Symbol symbol = parentEditor.getSymbol();
 
@@ -798,6 +805,65 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         });
     }
 
+    public void rebuildGrid() {
+        clearGridLines();
+        Grid grid = parentEditor.getDrawing().getGrid();
+        int multiple = grid.getMultiple();
+        double sizeMM = grid.getSizeMM();
+        int nGrids = (int) (WA2 / (multiple * sizeMM));
+
+        // Add Grid
+        addGridLine(0, true);
+        addGridLine(0, false);
+        for (int n = 1; n <= nGrids; n++) {
+            addGridLine(n, true);
+            addGridLine(-n, true);
+            addGridLine(n, false);
+            addGridLine(-n, false);
+        }
+
+        background.toBack();
+    }
+
+    private void addGridLine(int pos, boolean horiz) {
+        Line gl = gridLine(pos, horiz);
+        workArea.getChildren().add(gl);
+        gl.toBack();
+        gridLines.add(gl);
+    }
+
+    private void clearGridLines() {
+        for (Line l : gridLines) {
+            workArea.getChildren().remove(l);
+        }
+        gridLines.clear();
+    }
+
+    private Line gridLine(int n, boolean horiz) {
+        double x1, x2, y1, y2;
+
+        Grid grid = parentEditor.getDrawing().getGrid();
+        double gridInMM = grid.getSizeMM();
+        int multiple = grid.getMultiple();
+
+        if (horiz) { // H line
+            x1 = -WA2;
+            x2 = WA2;
+            y1 = n * gridInMM * multiple;
+            y2 = n * gridInMM * multiple;
+        } else {
+            x1 = n * gridInMM * multiple;
+            x2 = n * gridInMM * multiple;
+            y1 = -WA2;
+            y2 = WA2;
+        }
+        Line l = new Line(x1, y1, x2, y2);
+        l.setStroke(GRID_COLOR);
+        l.setStrokeWidth(GRID_STROKE_WIDTH);
+
+        return l;
+    }
+
     private boolean elementsCanRotate(ArrayList<Element> elements) {
         // All Nodes should be Rotatable. break if not.
         boolean canRotate = false;
@@ -820,27 +886,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
         }
         return true;
-    }
-
-    private Line gridLine(int n, boolean horiz) {
-        double x1, x2, y1, y2;
-
-        if (horiz) { // H line
-            x1 = -WA2;
-            x2 = WA2;
-            y1 = n * GRID_SIZE;
-            y2 = n * GRID_SIZE;
-        } else {
-            x1 = n * GRID_SIZE;
-            x2 = n * GRID_SIZE;
-            y1 = -WA2;
-            y2 = WA2;
-        }
-        Line l = new Line(x1, y1, x2, y2);
-        l.setStroke(GRID_COLOR);
-        l.setStrokeWidth(GRID_STROKE_WIDTH);
-
-        return l;
     }
 
     public void setEditorTool(EditorTool tool) {
@@ -915,5 +960,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     public void nodePicked(ViewNode node, MouseEvent me) {
 
         // TODO:  No more node picking.
+    }
+
+    @Override
+    public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
+        if (e instanceof Grid g) {
+            rebuildGrid();
+        }
     }
 }

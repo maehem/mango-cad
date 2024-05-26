@@ -16,8 +16,9 @@
  */
 package com.maehem.mangocad.view.settings;
 
+import com.maehem.mangocad.model.element.enums.GridStyle;
+import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.util.Units;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -49,7 +50,22 @@ import javafx.scene.text.Text;
  */
 public class GridSettingsPanel extends VBox {
 
+    Grid grid;
+    private final TextField sizeTextField;
+    private final TextField multipleTextField;
+    private final TextField altTextField;
+    ComboBox<String> sizeUnitsComboBox;
+    ComboBox<String> altUnitsComboBox;
+    private final ToggleGroup displayGroup;
+    private final ToggleGroup styleGroup;
+    private final RadioButton onButton;
+    private final RadioButton offButton;
+    private final RadioButton dotsButton;
+    private final RadioButton linesButton;
+
     public GridSettingsPanel(Grid gridSettings, boolean useDefaults) {
+
+        this.grid = gridSettings;
 
         Label displayLabel = new Label("Display");
         Label styleLabel = new Label("Style");
@@ -62,10 +78,10 @@ public class GridSettingsPanel extends VBox {
                 It is highly recommended to use the
                 default grid (0.10 inch) in schematics.""");
         hintInfoText.setId("grid-settings");
-        RadioButton onButton = new RadioButton("On");
-        RadioButton offButton = new RadioButton("Off");
-        RadioButton dotsButton = new RadioButton("Dots");
-        RadioButton linesButton = new RadioButton("Lines");
+        onButton = new RadioButton("On");
+        offButton = new RadioButton("Off");
+        dotsButton = new RadioButton("Dots");
+        linesButton = new RadioButton("Lines");
 
         HBox displayButtonsArea = new HBox(onButton, offButton);
         displayButtonsArea.setSpacing(16);
@@ -95,20 +111,23 @@ public class GridSettingsPanel extends VBox {
         HBox radioButtonsBox = new HBox(displayArea, spacer, styleArea);
         HBox.getHgrow(radioButtonsBox);
 
-        ToggleGroup displayGroup = new ToggleGroup();
+        displayGroup = new ToggleGroup();
         onButton.setToggleGroup(displayGroup);
         offButton.setToggleGroup(displayGroup);
 
-        ToggleGroup styleGroup = new ToggleGroup();
+        styleGroup = new ToggleGroup();
         dotsButton.setToggleGroup(styleGroup);
+        dotsButton.setUserData(GridStyle.DOTS);
         linesButton.setToggleGroup(styleGroup);
+        linesButton.setUserData(GridStyle.LINES);
 
-        TextField sizeTextField = new TextField();
-        TextField multipleTextField = new TextField();
-        TextField altTextField = new TextField();
+        // TODO: Live checking on values typed here.
+        sizeTextField = new TextField();
+        multipleTextField = new TextField();
+        altTextField = new TextField();
 
-        ComboBox<String> sizeUnitsComboBox = new ComboBox<>(FXCollections.observableArrayList(Units.asCodeList()));
-        ComboBox<String> altUnitsComboBox = new ComboBox<>(FXCollections.observableArrayList(Units.asCodeList()));
+        sizeUnitsComboBox = new ComboBox<>(FXCollections.observableArrayList(GridUnit.asCodeList()));
+        altUnitsComboBox = new ComboBox<>(FXCollections.observableArrayList(GridUnit.asCodeList()));
 
         Button sizeFinestButton = new Button("Finest");
         Button altFinestButton = new Button("Finest");
@@ -147,10 +166,12 @@ public class GridSettingsPanel extends VBox {
 
         // Set data state of UI items
         if (!useDefaults) { // Use Drawing's Grid Settings
-            onButton.setSelected(gridSettings.isDisplay());
-            offButton.setSelected(!gridSettings.isDisplay());
-            dotsButton.setSelected(gridSettings.isDots()); // Should toggle state of other radio button.
-            linesButton.setSelected(!gridSettings.isDots()); // Should toggle state of other radio button.
+            displayGroup.selectToggle(grid.isDisplay() ? onButton : offButton);
+            //onButton.setSelected(gridSettings.isDisplay());
+            //offButton.setSelected(!gridSettings.isDisplay());
+            styleGroup.selectToggle(grid.isDots() ? dotsButton : linesButton);
+            //dotsButton.setSelected(gridSettings.isDots()); // Should toggle state of other radio button.
+            //linesButton.setSelected(!gridSettings.isDots()); // Should toggle state of other radio button.
             sizeTextField.setText(String.valueOf(gridSettings.getSize())); // convert to current units
             sizeUnitsComboBox.getSelectionModel().select(gridSettings.getSizeUnit().code());
 
@@ -161,10 +182,12 @@ public class GridSettingsPanel extends VBox {
         } else {
             Grid gridDefaults = new Grid();
 
-            onButton.setSelected(gridDefaults.isDisplay());
-            offButton.setSelected(!gridDefaults.isDisplay());
-            dotsButton.setSelected(gridDefaults.isDots()); // Should toggle state of other radio button.
-            linesButton.setSelected(!gridDefaults.isDots()); // Should toggle state of other radio button.
+            displayGroup.selectToggle(gridDefaults.isDisplay() ? onButton : offButton);
+            //onButton.setSelected(gridDefaults.isDisplay());
+            //offButton.setSelected(!gridDefaults.isDisplay());
+            styleGroup.selectToggle(gridDefaults.isDots() ? dotsButton : linesButton);
+            //dotsButton.setSelected(gridDefaults.isDots()); // Should toggle state of other radio button.
+            //linesButton.setSelected(!gridDefaults.isDots()); // Should toggle state of other radio button.
             sizeTextField.setText(String.valueOf(gridDefaults.getSize())); // convert to current units
             sizeUnitsComboBox.getSelectionModel().select(gridDefaults.getSizeUnit().code());
 
@@ -177,6 +200,13 @@ public class GridSettingsPanel extends VBox {
 
     protected void doSave() {
         LOGGER.log(Level.SEVERE, "Grid Panel: Do save called.");
+        grid.setAltSize(Double.parseDouble(altTextField.getText()));
+        grid.setSize(Double.parseDouble(sizeTextField.getText()));
+        grid.setDisplay(displayGroup.getSelectedToggle().equals(onButton));
+        grid.setStyle((GridStyle) styleGroup.getSelectedToggle().getUserData());
+        grid.setSizeUnit(GridUnit.valueOf(sizeUnitsComboBox.getSelectionModel().getSelectedItem()));
+        grid.setAltStoredUnit(GridUnit.valueOf(altUnitsComboBox.getSelectionModel().getSelectedItem()));
+        grid.setMultiple(Integer.parseInt(multipleTextField.getText()));
     }
 
 }
