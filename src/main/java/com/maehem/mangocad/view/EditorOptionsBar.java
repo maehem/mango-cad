@@ -104,8 +104,8 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
                         Toggle oldValue, Toggle newValue) -> {
                     LOGGER.log(Level.SEVERE, "EditorOptionsBar: Selected Toggle change: {0} ==> {1}",
                             new Object[]{
-                                oldValue.getUserData().toString(),
-                                newValue.getUserData().toString()});
+                                oldValue != null ? oldValue.getUserData().toString() : "null",
+                                newValue != null ? newValue.getUserData().toString() : "null"});
                     if (newValue == null) {
                         oldValue.setSelected(true);
                     } else {
