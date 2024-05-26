@@ -20,7 +20,6 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.util.Units;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import java.util.logging.Level;
@@ -70,8 +69,8 @@ public class GridMouseWidget extends HBox implements MouseMovementListener, Elem
 
     @Override
     public void workAreaMouseMoved(double x, double y) {
-        String fX = String.format("%8.2f", Units.convertUnit((int) (x / snap) * snap, GridUnit.MM, currentUnits));
-        String fY = String.format("%8.2f", Units.convertUnit((int) (y / snap) * snap, GridUnit.MM, currentUnits));
+        String fX = String.format("%8.2f", GridUnit.convertUnit((int) (x / snap) * snap, GridUnit.MM, currentUnits));
+        String fY = String.format("%8.2f", GridUnit.convertUnit((int) (y / snap) * snap, GridUnit.MM, currentUnits));
         mouseXYLabel.setText("(" + fX + "," + fY + ")");
     }
 

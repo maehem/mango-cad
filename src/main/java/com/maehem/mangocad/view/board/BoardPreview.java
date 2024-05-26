@@ -22,12 +22,12 @@ import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.Board;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
+import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Signal;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.util.DrcDefs;
-import com.maehem.mangocad.model.util.Units;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.library.LibraryElementNode;
 import java.util.ArrayList;
@@ -317,17 +317,17 @@ public class BoardPreview extends Group {
 
         DesignRules dr = board.getDesignRules();
         String drMinWire = dr.getRule(DrcDefs.MS_WIDTH); // Wire Width
-        Double wireMin = Units.toMM(drMinWire);
+        Double wireMin = GridUnit.toMM(drMinWire);
         String drWire2Wire = dr.getRule(DrcDefs.MD_WIRE2WIRE); // Wire to Wire
-        Double wireIsolate = Units.toMM(drWire2Wire);
+        Double wireIsolate = GridUnit.toMM(drWire2Wire);
 //        String drDim2Wire = dr.getRule(DrcDefs.MD_COPPER2DIMENSION);
 //        Double dimIsolate = Units.toMM(drDim2Wire);
         String drThIso = dr.getRule(DrcDefs.SL_THERMAL_ISOLATE); // Thermal Isolation
-        Double thermalIsolate = Units.toMM(drThIso);
+        Double thermalIsolate = GridUnit.toMM(drThIso);
 //        String mlStopMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME); // Thermal Isolation
 //        Double viaStopMask = Units.toMM(mlStopMax);
         String mlViaStopLimit = dr.getRule(DrcDefs.ML_VIA_STOP_LIMIT); // Thermal Isolation
-        Double viaStopLimit = Units.toMM(mlViaStopLimit);
+        Double viaStopLimit = GridUnit.toMM(mlViaStopLimit);
 
         // Decide Top or bottom
         // Draw background

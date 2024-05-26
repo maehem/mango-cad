@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Depricated! Delete me soon. Moved to GridUnit
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */

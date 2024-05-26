@@ -17,10 +17,10 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.enums.ViaShape;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.util.DrcDefs;
-import com.maehem.mangocad.model.util.Units;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -152,10 +152,10 @@ public class Via extends Element {
             double flash = getDrill() * viaOuterVal;
 
             String drMinViaOuter = dr.getRule(DrcDefs.RL_MIN_VIA_OUTER); // rlMinViaOuter - unit mil/mm
-            Double viaMinOuterVal = Units.toMM(drMinViaOuter);
+            Double viaMinOuterVal = GridUnit.toMM(drMinViaOuter);
 
             String drMaxViaOuter = dr.getRule(DrcDefs.RL_MAX_VIA_OUTER);
-            Double viaMaxOuterVal = Units.toMM(drMaxViaOuter); // rlMaxViaOuter - unit mil/mm
+            Double viaMaxOuterVal = GridUnit.toMM(drMaxViaOuter); // rlMaxViaOuter - unit mil/mm
 
             if (flash < viaMinOuterVal) {
                 flash = viaMinOuterVal;
@@ -176,9 +176,9 @@ public class Via extends Element {
         // TODO: If limit less than drill, return 0;
         // Add the DRC mask amount.
         String rMin = dr.getRule(DrcDefs.ML_MIN_STOP_FRAME); // in mm or mil. i.e. "0.4mm", "10mil"
-        Double viaMinStopVal = Units.toMM(rMin);
+        Double viaMinStopVal = GridUnit.toMM(rMin);
         String rMax = dr.getRule(DrcDefs.ML_MAX_STOP_FRAME);
-        Double viaMaxStopVal = Units.toMM(rMax);
+        Double viaMaxStopVal = GridUnit.toMM(rMax);
         String rVal = dr.getRule(DrcDefs.MV_STOP_FRAME);
         Double viaStopVal = Double.valueOf(rVal); // in percent 0.0-1.0
 

@@ -20,7 +20,6 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.GridField;
 import com.maehem.mangocad.model.element.enums.GridStyle;
 import com.maehem.mangocad.model.element.enums.GridUnit;
-import com.maehem.mangocad.model.util.Units;
 
 /**
  * <pre>
@@ -81,15 +80,15 @@ public class Grid extends Element {
         switch (distanceStoredUnit) {
             case INCH -> {
                 // Convert to mm
-                return distance / Units.INCH.mult;
+                return distance / GridUnit.INCH.mult;
             }
             case MIC -> {
                 // Convert to mm.
-                return distance / Units.MIC.mult;
+                return distance / GridUnit.MIC.mult;
             }
             case MIL -> {
                 // Convert to mm.
-                return distance / Units.MIL.mult;
+                return distance / GridUnit.MIL.mult;
             }
 
         }
