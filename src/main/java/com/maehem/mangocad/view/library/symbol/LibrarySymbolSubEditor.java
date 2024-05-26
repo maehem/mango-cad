@@ -26,6 +26,7 @@ import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
+import com.maehem.mangocad.view.settings.GridSettingsDialog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -165,6 +166,11 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             oldValue == null ? "null" : oldValue.name(),
             newValue == null ? "null" : newValue.name()
         });
+        switch (newValue) {
+            case GRID -> {
+                GridSettingsDialog dialog = new GridSettingsDialog(getDrawing().getGrid());
+            }
+        }
     }
 
     @Override
