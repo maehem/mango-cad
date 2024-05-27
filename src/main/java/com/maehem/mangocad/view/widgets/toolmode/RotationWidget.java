@@ -16,8 +16,8 @@
  */
 package com.maehem.mangocad.view.widgets.toolmode;
 
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.view.ViewUtils;
-import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -27,16 +27,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 
 /**
  * Settings for element angle rotations.
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class RotationWidget extends HBox {
+public class RotationWidget extends ToolModeWidget {
 
-    private final ResourceBundle MSG; // Must be set in constructor or after.
     private static final String ICON_PATH = "/icons/rotate.png";
 
     private final ObservableList<String> options
@@ -46,11 +44,10 @@ public class RotationWidget extends HBox {
                     "180",
                     "270"
             );
+    @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
 
-    public RotationWidget() {
-
-        MSG = ResourceBundle.getBundle("i18n/Editor");
+    public RotationWidget(Element e) {
 
         Image img = ViewUtils.getImage(ICON_PATH);
         ImageView icon = ViewUtils.createIcon(img, 20);
@@ -62,6 +59,14 @@ public class RotationWidget extends HBox {
         comboBox.getSelectionModel().selectFirst();
         getChildren().addAll(iconLabel, comboBox);
 
+    }
+
+    @Override
+    public void stopListening() {
+    }
+
+    @Override
+    public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
     }
 
 }
