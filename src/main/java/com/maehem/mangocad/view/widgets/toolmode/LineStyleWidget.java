@@ -36,18 +36,6 @@ import javafx.scene.control.Label;
  */
 public class LineStyleWidget extends ToolModeWidget {
 
-//    private final ObservableList<String> options
-//            = FXCollections.observableArrayList(
-//                    PinDirection.NO_CONNECT.code(),
-//                    PinDirection.INPUT.code(),
-//                    PinDirection.OUTPUT.code(),
-//                    PinDirection.IO.code(),
-//                    PinDirection.OPEN_COLLECTOR.code(),
-//                    PinDirection.POWER.code(),
-//                    PinDirection.PASSIVE.code(),
-//                    PinDirection.HI_IMPEDANCE.code(),
-//                    PinDirection.SUPPLY.code()
-//            );
     private final ObservableList<WireStyle> options = FXCollections.observableArrayList(
             WireStyle.values()
     );
