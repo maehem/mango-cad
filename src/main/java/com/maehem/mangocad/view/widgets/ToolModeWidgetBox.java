@@ -99,8 +99,7 @@ public class ToolModeWidgetBox extends HBox {
                         pswW
                 );
             }
-            case LINE -> {
-                // Line options
+            case LINE -> { // Line options
                 LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
                 LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
                 LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
@@ -117,33 +116,44 @@ public class ToolModeWidgetBox extends HBox {
                 TextDistanceWidget tdW = new TextDistanceWidget(mode.getToolElement());
                 getChildren().addAll(rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
             }
-            case SPLIT -> {
-                // Split options
-                Text t = new Text("Split");
-                getChildren().add(t);
+            case SPLIT -> { // Split options
+                LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
+                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                getChildren().addAll(lbsW, mrW);
             }
-            case MITER -> {
-                // Miter options
-                Text t = new Text("Miter");
-                getChildren().add(t);
+            case MITER -> { // Miter options
+                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                getChildren().addAll(mrW);
             }
-            case ARC -> {
-                // Arc options
-                Text t = new Text("Arc");
-                getChildren().add(t);
+            case ARC -> { // Arc options
+                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                // Clockwise
+                // Line end
+                getChildren().addAll(lwW);
             }
-            case POLYGON -> {
-                // Polygon options
-                Text t = new Text("Polygon");
-                getChildren().add(t);
+            case POLYGON -> { // Polygon options
+                LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
+                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                // Hatch Fill style with spacing
+                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                getChildren().addAll(lbsW, lwW, mrW);
             }
-            case CIRCLE -> {
-                // Circle options
-                Text t = new Text("Circle");
-                getChildren().add(t);
+            case CIRCLE -> { // Circle options
+                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                getChildren().addAll(lwW);
             }
             case DIMENSION -> {
                 // Dimension options
+                // Dim Style
+                TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement());
+                TextRatioWidget trW = new TextRatioWidget(mode.getToolElement());
+                // Unit
+                // Precision
+                // Show
+                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                // Ext. Width (with auto)
+                // Ext Length (with auto)
+                // Ext Offset (with auto)
                 Text t = new Text("Dimension");
                 getChildren().add(t);
             }
