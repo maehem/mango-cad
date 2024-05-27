@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -146,7 +147,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         //scaleText.setLayoutY(10);
         //scaleText.setScaleX(0.5);
         //scaleText.setScaleY(0.5);
-
         selectionRectangle.setFill(null);
         selectionRectangle.setStroke(selectionRectangleColor);
         selectionRectangle.setStrokeType(StrokeType.CENTERED);
@@ -472,6 +472,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         getSnappedLocation(me.getX(), 0),
                                         getSnappedLocation(me.getY(), 0)
                                 );
+                                toolMode.setToolElement(ephemeralNode.getElement());
+                                Platform.runLater(() -> {
+                                    setEditorTool(toolMode);
+                                });
                             }
                             case MOVE -> {
                                 // If one pick, pick it.
