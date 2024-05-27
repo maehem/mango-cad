@@ -83,7 +83,9 @@ public class TextRatioWidget extends ToolModeWidget {
 
     @Override
     public void stopListening() {
-        text.removeListener(this);
+        if (text != null) {
+            text.removeListener(this);
+        }
     }
 
     @Override
