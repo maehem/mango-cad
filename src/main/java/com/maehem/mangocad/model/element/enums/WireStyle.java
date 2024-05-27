@@ -66,4 +66,10 @@ public enum WireStyle {
 
         return rtn;
     }
+
+    @Override
+    public String toString() {
+        return code.substring(0, 1).toUpperCase() + code.substring(1);
+    }
+
 }
