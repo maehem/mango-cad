@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.view.EditorTool;
+import com.maehem.mangocad.view.widgets.toolmode.ArcClockwiseToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineBendStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineWidthWidget;
@@ -39,7 +40,6 @@ import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Text;
 
 /**
  * Tool specific settings Widget near top of each Editor
@@ -69,14 +69,14 @@ public class ToolModeWidgetBox extends HBox {
         switch (mode) {
             case MOVE -> {
                 // alignment options
-                RotationWidget rW = new RotationWidget();
-                MirrorToggleWidget mW = new MirrorToggleWidget();
+                RotationWidget rW = new RotationWidget(mode.getToolElement());
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
                 getChildren().addAll(rW, new Region(), mW);
             }
             case ROTATE -> {
                 // alignment options
-                RotationWidget rW = new RotationWidget();
-                MirrorToggleWidget mW = new MirrorToggleWidget();
+                RotationWidget rW = new RotationWidget(mode.getToolElement());
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
                 getChildren().addAll(rW, new Region(), mW);
             }
             case PIN -> {
@@ -100,15 +100,17 @@ public class ToolModeWidgetBox extends HBox {
                 );
             }
             case LINE -> { // Line options
-                LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
-                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
-                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
-                getChildren().addAll(lbsW, lwW, lsW, mrW);
+                if (mode.getToolElement() != null) {
+                    LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
+                    LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                    LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
+                    MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                    getChildren().addAll(lbsW, lwW, lsW, mrW);
+                }
             }
             case TEXT -> {  // Text options
-                RotationWidget rW = new RotationWidget();
-                MirrorToggleWidget mW = new MirrorToggleWidget();
+                RotationWidget rW = new RotationWidget(mode.getToolElement());
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
                 TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement());
                 TextRatioWidget trW = new TextRatioWidget(mode.getToolElement());
                 TextFontWidget tfW = new TextFontWidget(mode.getToolElement());
@@ -126,10 +128,10 @@ public class ToolModeWidgetBox extends HBox {
                 getChildren().addAll(mrW);
             }
             case ARC -> { // Arc options
+                ArcClockwiseToggleWidget acW = new ArcClockwiseToggleWidget(mode.getToolElement());
                 LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                // Clockwise
                 // Line end
-                getChildren().addAll(lwW);
+                getChildren().addAll(acW, lwW);
             }
             case POLYGON -> { // Polygon options
                 LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
@@ -154,8 +156,7 @@ public class ToolModeWidgetBox extends HBox {
                 // Ext. Width (with auto)
                 // Ext Length (with auto)
                 // Ext Offset (with auto)
-                Text t = new Text("Dimension");
-                getChildren().add(t);
+                getChildren().addAll(tsW, trW, lwW);
             }
             default -> {
                 // Blank area.
