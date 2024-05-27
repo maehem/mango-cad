@@ -30,6 +30,9 @@ import com.maehem.mangocad.view.widgets.toolmode.PinRotationToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinSwapLevelWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinVisibilityToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.RotationWidget;
+import com.maehem.mangocad.view.widgets.toolmode.TextAlignWidget;
+import com.maehem.mangocad.view.widgets.toolmode.TextDistanceWidget;
+import com.maehem.mangocad.view.widgets.toolmode.TextFontWidget;
 import com.maehem.mangocad.view.widgets.toolmode.TextRatioWidget;
 import com.maehem.mangocad.view.widgets.toolmode.TextSizeWidget;
 import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
@@ -109,11 +112,10 @@ public class ToolModeWidgetBox extends HBox {
                 MirrorToggleWidget mW = new MirrorToggleWidget();
                 TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement());
                 TextRatioWidget trW = new TextRatioWidget(mode.getToolElement());
-                // Font
-                // Align
-                // Line Distance
-                getChildren().addAll(rW, new Region(), mW, tsW, trW);
-
+                TextFontWidget tfW = new TextFontWidget(mode.getToolElement());
+                TextAlignWidget taW = new TextAlignWidget(mode.getToolElement());
+                TextDistanceWidget tdW = new TextDistanceWidget(mode.getToolElement());
+                getChildren().addAll(rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
             }
             case SPLIT -> {
                 // Split options
