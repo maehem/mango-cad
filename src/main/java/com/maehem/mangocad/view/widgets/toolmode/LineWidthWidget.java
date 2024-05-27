@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Wire;
-import com.maehem.mangocad.model.element.enums.PinField;
+import com.maehem.mangocad.model.element.enums.WireField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -59,7 +59,7 @@ public class LineWidthWidget extends ToolModeWidget {
             this.wire.addListener(this);
         } else {
             this.wire = null;
-            LOGGER.log(Level.SEVERE, "LineWidthWidget: element is not of type Pin!");
+            LOGGER.log(Level.SEVERE, "LineWidthWidget: element is not of type Wire! type: {0}", e.getElementName());
         }
 
         setPrefWidth(170);
@@ -69,7 +69,6 @@ public class LineWidthWidget extends ToolModeWidget {
         double labelWidth = 55;
         iconLabel.setMinWidth(labelWidth);
         iconLabel.setPrefWidth(labelWidth);
-
 
         comboBox.setButtonCell(new EditableItemCell());
         comboBox.setEditable(true);
@@ -95,19 +94,21 @@ public class LineWidthWidget extends ToolModeWidget {
 
     @Override
     public void stopListening() {
-        wire.removeListener(this);
+        if (wire != null) {
+            wire.removeListener(this);
+        }
     }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(PinField.DIRECTION)) {
+        if (!field.equals(WireField.WIDTH)) {
             return;
         }
         if (newVal == null) {
             return;
         }
-        LOGGER.log(Level.SEVERE, "PinDirectionWidget: Pin dir: ==> {0}", newVal.toString());
+        LOGGER.log(Level.SEVERE, "LineWidthWidget: Wire width: ==> {0}", newVal.toString());
 
         if (newVal instanceof Double pd) {
             updateComboState(pd);

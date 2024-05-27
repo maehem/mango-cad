@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Wire;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget.ICON_SIZE;
@@ -61,16 +61,20 @@ public class LineBendStyleWidget extends ToolModeWidget {
             );
     @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
-    private final Pin pin;
+    private final Wire wire;
 
     @SuppressWarnings("unchecked")
     public LineBendStyleWidget(Element e) {
-        if (e instanceof Pin p) {
-            this.pin = p;
-            this.pin.addListener(this);
+        if (e instanceof Wire p) {
+            this.wire = p;
+            this.wire.addListener(this);
         } else {
-            this.pin = null;
-            LOGGER.log(Level.SEVERE, "LineBendStyleWidget: element is not of type Pin!");
+            this.wire = null;
+            if (e != null) {
+                LOGGER.log(Level.SEVERE, "LineBendStyleWidget: element is not of type Wire! type:{0}", e.getElementName());
+            } else {
+                LOGGER.log(Level.SEVERE, "LineBendStyleWidget: element is null.");
+            }
         }
 
         comboBox.getSelectionModel().selectFirst();
