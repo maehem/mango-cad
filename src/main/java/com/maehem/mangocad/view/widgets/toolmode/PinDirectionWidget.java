@@ -36,18 +36,10 @@ import javafx.scene.control.Label;
  */
 public class PinDirectionWidget extends ToolModeWidget {
 
-    private final ObservableList<String> options
-            = FXCollections.observableArrayList(
-                    PinDirection.NO_CONNECT.code(),
-                    PinDirection.INPUT.code(),
-                    PinDirection.OUTPUT.code(),
-                    PinDirection.IO.code(),
-                    PinDirection.OPEN_COLLECTOR.code(),
-                    PinDirection.POWER.code(),
-                    PinDirection.PASSIVE.code(),
-                    PinDirection.HI_IMPEDANCE.code(),
-                    PinDirection.SUPPLY.code()
-            );
+    private final ObservableList<PinDirection> options = FXCollections.observableArrayList(
+            PinDirection.values()
+    );
+
     @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
     private final Pin pin;
@@ -78,8 +70,8 @@ public class PinDirectionWidget extends ToolModeWidget {
 
     @SuppressWarnings("unchecked")
     private void updateComboState(PinDirection pl) {
-        for (String t : options) {
-            if (t.equals(pl.code())) {
+        for (PinDirection t : options) {
+            if (t.equals(pl)) {
                 comboBox.getSelectionModel().select(t);
                 break;
             }
