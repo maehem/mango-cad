@@ -17,7 +17,11 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.view.EditorTool;
+import com.maehem.mangocad.view.widgets.toolmode.LineBendStyleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.LineStyleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.LineWidthWidget;
 import com.maehem.mangocad.view.widgets.toolmode.MirrorToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.MiterRadiusWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinArrayWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinDirectionWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinFuncToggleWidget;
@@ -92,8 +96,11 @@ public class ToolModeWidgetBox extends HBox {
             }
             case LINE -> {
                 // Line options
-                Text t = new Text("Line");
-                getChildren().add(t);
+                LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
+                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
+                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                getChildren().addAll(lbsW, lwW, lsW, mrW);
             }
             case TEXT -> {
                 // Text options
