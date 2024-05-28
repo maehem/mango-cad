@@ -56,6 +56,8 @@ Bend Free           icon by Mark J Koch for the MangoCAD project. https://github
 Bend S              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Grid                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Layers              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Line Cap Round      icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Line Cap Flat       icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Name                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Value               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Miter               icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
