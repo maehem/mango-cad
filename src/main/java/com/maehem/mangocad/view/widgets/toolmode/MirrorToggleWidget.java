@@ -43,8 +43,8 @@ public class MirrorToggleWidget extends ToolModeWidget {
         setSpacing(0.0);
 
         Image img = ViewUtils.getImage(ICON_PATH);
-        ImageView mirNormal = ViewUtils.createIcon(img, 20);
-        ImageView mirFlipped = ViewUtils.createIcon(img, 20);
+        ImageView mirNormal = ViewUtils.createIcon(img, ICON_SIZE);
+        ImageView mirFlipped = ViewUtils.createIcon(img, ICON_SIZE);
         mirFlipped.setScaleX(-1.0);
 
         ToggleButton mirNormalToggle = new ToggleButton("", mirNormal); // TODO MSG Tooltip
