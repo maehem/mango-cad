@@ -477,6 +477,16 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     setEditorTool(toolMode);
                                 });
                             }
+                            case ARC -> {
+                                initiateNewLineSegment(me,
+                                        getSnappedLocation(me.getX(), 0),
+                                        getSnappedLocation(me.getY(), 0)
+                                );
+                                toolMode.setToolElement(ephemeralNode.getElement());
+                                Platform.runLater(() -> {
+                                    setEditorTool(toolMode);
+                                });
+                            }
                             case MOVE -> {
                                 // If one pick, pick it.
                                 if (picks.isEmpty()) {
