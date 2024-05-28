@@ -52,7 +52,7 @@ public class LineWidthWidget extends ToolModeWidget {
     private final ComboBox comboBox = new ComboBox(options);
     private final Wire wire;
 
-    @SuppressWarnings({"unchecked", "unchecked", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     public LineWidthWidget(Element e) {
         if (e instanceof Wire p) {
             this.wire = p;
