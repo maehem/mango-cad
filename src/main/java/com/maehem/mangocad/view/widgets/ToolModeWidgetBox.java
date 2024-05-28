@@ -17,8 +17,10 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.view.EditorTool;
+import static com.maehem.mangocad.view.EditorTool.ARC;
 import com.maehem.mangocad.view.widgets.toolmode.ArcClockwiseToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineBendStyleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.LineCapWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineWidthWidget;
 import com.maehem.mangocad.view.widgets.toolmode.MirrorToggleWidget;
@@ -100,12 +102,22 @@ public class ToolModeWidgetBox extends HBox {
                 );
             }
             case LINE -> { // Line options
+                // Tool Element is null until user clicks to start new line.
                 if (mode.getToolElement() != null) {
                     LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
                     LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
                     LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
                     MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
                     getChildren().addAll(lbsW, lwW, lsW, mrW);
+                }
+            }
+            case ARC -> { // Arc options
+                // Tool Element is null until user clicks to start new arc/line.
+                if (mode.getToolElement() != null) {
+                    ArcClockwiseToggleWidget acW = new ArcClockwiseToggleWidget(mode.getToolElement());
+                    LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                    LineCapWidget lcW = new LineCapWidget(mode.getToolElement());
+                    getChildren().addAll(acW, lwW, lcW);
                 }
             }
             case TEXT -> {  // Text options
@@ -126,12 +138,6 @@ public class ToolModeWidgetBox extends HBox {
             case MITER -> { // Miter options
                 MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
                 getChildren().addAll(mrW);
-            }
-            case ARC -> { // Arc options
-                ArcClockwiseToggleWidget acW = new ArcClockwiseToggleWidget(mode.getToolElement());
-                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                // Line end
-                getChildren().addAll(acW, lwW);
             }
             case POLYGON -> { // Polygon options
                 LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
