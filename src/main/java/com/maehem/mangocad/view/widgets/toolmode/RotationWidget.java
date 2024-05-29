@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementRotation;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.PinField;
+import com.maehem.mangocad.model.element.enums.RotationField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -42,15 +43,15 @@ public class RotationWidget extends ToolModeWidget {
 
     private static final String ICON_PATH = "/icons/rotate.png";
 
-    private final ObservableList<String> options
+    private final ObservableList<Double> options
             = FXCollections.observableArrayList(
-                    "0",
-                    "90",
-                    "180",
-                    "270"
+                    0.0,
+                    90.0,
+                    180.0,
+                    270.0
             );
     @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
+    private final ComboBox<Double> comboBox = new ComboBox(options);
     private final Element element;
     private final ElementRotation rotation;
 
@@ -62,7 +63,7 @@ public class RotationWidget extends ToolModeWidget {
         } else {
             this.element = null;
             this.rotation = null;
-            LOGGER.log(Level.SEVERE, "RotationWidget: element is not of type Pin!");
+            LOGGER.log(Level.SEVERE, "RotationWidget: element is not of type ElementRotation!");
         }
 
         Image img = ViewUtils.getImage(ICON_PATH);
@@ -76,14 +77,18 @@ public class RotationWidget extends ToolModeWidget {
 
         getChildren().addAll(iconLabel, comboBox);
 
+        comboBox.setOnAction((t) -> {
+            rotation.setRot((double) comboBox.getSelectionModel().getSelectedItem());
+            t.consume();
+        });
     }
 
     @SuppressWarnings("unchecked")
     private void updateRotation(double rot) {
 
-        for (String s : options) {
-            if (Double.parseDouble(s) == rot) {
-                comboBox.getSelectionModel().select(s);
+        for (double option : options) {
+            if (option == rot) {
+                comboBox.getSelectionModel().select(option);
                 break;
             }
         }
@@ -102,10 +107,13 @@ public class RotationWidget extends ToolModeWidget {
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
         if (!field.equals(ElementTextField.ROTATION)
-                && !field.equals(PinField.ROTATION)) {
+                && !field.equals(PinField.ROTATION)
+                && !field.equals(RotationField.MIRROR)) {
+            LOGGER.log(Level.SEVERE, "The Rotation Field is not an expected type: " + field.name());
             return;
         }
         if (newVal == null) {
+            LOGGER.log(Level.SEVERE, "NewVal is null! Don't do anything.");
             return;
         }
         LOGGER.log(Level.SEVERE, "RotationWidget: Element rot: ==> {0}", newVal.toString());
