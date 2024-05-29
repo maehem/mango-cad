@@ -193,7 +193,7 @@ public class TextNode extends ViewNode implements ElementListener {
         String textString = altText != null ? altText : textElement.getValue();
 
         // Replace exclamation with bar over text.
-        if (textString.startsWith("!")) {
+        if (textString != null && textString.startsWith("!")) {
             textString = textString.substring(1);
             barOver = true;
         } else {
