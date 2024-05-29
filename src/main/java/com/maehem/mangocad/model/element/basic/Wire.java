@@ -62,7 +62,7 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable {
     private double x2;
     private double y2;
     private WireEnd selectedEnd = WireEnd.NONE;
-    private double width;
+    private double width = 0.254;
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
     private double curve = 0.0;
