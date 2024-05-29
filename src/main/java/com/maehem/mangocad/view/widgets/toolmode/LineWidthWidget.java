@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.widgets.toolmode;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireField;
+import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -42,11 +43,7 @@ public class LineWidthWidget extends ToolModeWidget {
 
     private final ObservableList<Double> options
             = FXCollections.observableArrayList(
-                    0.01,
-                    0.02,
-                    0.04,
-                    0.08,
-                    1.0
+                    WireWidthDefaults.values()
             );
     @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
@@ -72,12 +69,17 @@ public class LineWidthWidget extends ToolModeWidget {
 
         comboBox.setButtonCell(new EditableItemCell());
         comboBox.setEditable(true);
-        comboBox.getSelectionModel().selectFirst();
+        updateComboState(wire.getWidth());
 
         getChildren().addAll(iconLabel, comboBox);
 
         comboBox.setOnAction((t) -> {
-            wire.setWidth((double) comboBox.getSelectionModel().getSelectedItem());
+            Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
+            if (selectedItem instanceof Double d) {
+                wire.setWidth(d);
+            } else if (selectedItem instanceof String s) {
+                wire.setWidth(Double.parseDouble(s));
+            }
             t.consume();
         });
     }
@@ -87,9 +89,12 @@ public class LineWidthWidget extends ToolModeWidget {
         for (Double t : options) {
             if (t == pl) {
                 comboBox.getSelectionModel().select(t);
-                break;
+                return;
             }
         }
+        // Value not in the exsisting list, add it.
+        options.add(pl);
+        comboBox.getSelectionModel().select(pl);
     }
 
     @Override
@@ -118,17 +123,37 @@ public class LineWidthWidget extends ToolModeWidget {
     public class EditableItemCell extends ListCell<Double> {
 
         private final TextField textField = new TextField();
+        private double previousValue;
 
+        @SuppressWarnings("unchecked")
         public EditableItemCell() {
             textField.setPrefWidth(100);
             textField.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
                 if (e.getCode() == KeyCode.ESCAPE) {
                     cancelEdit();
+                } else if (e.getCode() == KeyCode.ENTER) {
+                    LOGGER.log(Level.SEVERE, "LineWidthWidget: Enter key in combobox.");
+                    String typedValue = textField.getText();
+                    Double dValue = Double.valueOf(typedValue);
+                    if (!options.contains(dValue)) {
+                        options.add(dValue);
+                    }
+                    comboBox.getSelectionModel().select(dValue);
+                    wire.setWidth(dValue);
                 }
             });
             textField.setOnAction(e -> {
+                LOGGER.log(Level.SEVERE, "LineWidthWidget: TextField action.");
                 //getItem().setName(textField.getText());
-                setText(textField.getText());
+                String typedValue = textField.getText();
+                Double dValue;
+                try {
+                    dValue = Double.valueOf(typedValue);
+                } catch (NumberFormatException ex) {
+                    dValue = previousValue;
+                }
+                wire.setWidth(dValue);
+                setText(String.valueOf(dValue));
                 setContentDisplay(ContentDisplay.TEXT_ONLY);
             });
             setGraphic(textField);
