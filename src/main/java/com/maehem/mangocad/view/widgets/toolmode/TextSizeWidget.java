@@ -86,7 +86,7 @@ public class TextSizeWidget extends ToolModeWidget {
         getChildren().addAll(iconLabel, comboBox);
 
         comboBox.setOnAction((t) -> {
-            text.setSize((double) comboBox.getSelectionModel().getSelectedItem());
+            text.setSize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
             t.consume();
         });
     }
