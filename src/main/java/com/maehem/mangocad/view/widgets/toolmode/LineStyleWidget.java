@@ -58,7 +58,7 @@ public class LineStyleWidget extends ToolModeWidget {
         iconLabel.setPadding(new Insets(4));
         iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
-        updateComboState(WireStyle.CONTINUOUS);
+        updateComboState(wire.getStyle());
 
         getChildren().addAll(iconLabel, comboBox);
 
