@@ -102,14 +102,11 @@ public class ToolModeWidgetBox extends HBox {
                 );
             }
             case LINE -> { // Line options
-                // Tool Element is null until user clicks to start new line.
-                if (mode.getToolElement() != null) {
-                    LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
-                    LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                    LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
-                    MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
-                    getChildren().addAll(lbsW, lwW, lsW, mrW);
-                }
+                LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
+                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
+                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                getChildren().addAll(lbsW, lwW, lsW, mrW);
             }
             case ARC -> { // Arc options
                 // Tool Element is null until user clicks to start new arc/line.
