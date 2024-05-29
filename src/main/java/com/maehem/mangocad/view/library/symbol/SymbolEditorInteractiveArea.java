@@ -39,6 +39,7 @@ import static com.maehem.mangocad.view.EditorTool.LOOK;
 import static com.maehem.mangocad.view.EditorTool.SELECT;
 import static com.maehem.mangocad.view.EditorTool.TRASH;
 import com.maehem.mangocad.view.PickListener;
+import com.maehem.mangocad.view.TextEditDialog;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
@@ -56,6 +57,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
@@ -345,8 +347,20 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         // Initiate new line.
                                         initiateNewLineSegment(me, wire.getX2(), -wire.getY2());
                                         LOGGER.log(Level.SEVERE, "Set tool mode element.");
-                                        toolMode.setToolElement(wire);
+                                        toolMode.setToolElement(wire); ////   Looks wrong?  ???????
                                         setEditorTool(toolMode); // Refreshes with lastElementAdded values.
+                                    }
+                                } else if (toolMode.equals(EditorTool.TEXT)) {
+                                    if (ephemeralNode instanceof TextNode tn) {
+                                        ElementText text = (ElementText) tn.getElement();
+                                        Symbol symbol = parentEditor.getSymbol();
+                                        symbol.getElements().add(text);
+                                        nodes.add(ephemeralNode);
+                                        lastElementAdded = text;
+                                        ephemeralNode = null;
+                                        movingElements.clear();
+                                        //text = initiateNewText();  // Initiate new text.
+                                        setEditorTool(toolMode); // Reset widget.
                                     }
                                 }
                             } else {
@@ -569,6 +583,13 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         );
     }
 
+    private ElementText initiateNewText() {
+        ElementText text = new ElementText();
+        text.setLayer(94);  // TODO needs enum.  Get from layer chooser.
+
+        return text;
+    }
+
     private void initiateNewLineSegment(MouseEvent me, double x, double y) {
         // Start new line at mouse.
         Wire wire = new Wire();
@@ -611,6 +632,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             if (pick instanceof ElementSelectable es) {
                 es.createSnapshot();
             }
+
+            if (lastElementAdded != null && lastElementAdded instanceof ElementRotation tmpRot) {
+                LOGGER.log(Level.SEVERE, "I see a last added element.");
+                if (pick instanceof ElementRotation pickRot) {
+                    LOGGER.log(Level.SEVERE, "    It's a ElementRotation.");
+                    LOGGER.log(Level.SEVERE, "New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
+                    pickRot.setRot(pickRot.getRot() + tmpRot.getRot());
+                    pickRot.setMirror(tmpRot.isMirrored());
+                }
+            }
+
             LOGGER.log(Level.SEVERE, "Moving a thing.");
         }
     }
@@ -923,6 +955,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             parentEditor.setToolMode(tool);
         }
 
+        LOGGER.log(Level.SEVERE, "setEditorTool: handle tool mode: {0}", this.toolMode.name());
         switch (this.toolMode) {
             case PIN -> {
                 // New Pin
@@ -949,21 +982,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.setToolMode(toolMode);
             }
             case TEXT -> {
-                ElementText text = new ElementText();
+                ElementText text = initiateNewText();
                 // TODO: Dialog for new text value.
-                text.setValue(String.valueOf((int) (Math.random() * 10000)));
-                text.setLayer(94);  // TODO needs enum
-                LOGGER.log(Level.SEVERE, "New Text: " + text.getValue());
-                TextNode textNode = new TextNode(text, null,
-                        parentEditor.getDrawing().getLayers(),
-                        parentEditor.getDrawing().getPalette(),
-                        null, true, this);
-                textNode.addTo(workArea);
-                ephemeralNode = textNode;
-                movingMouseStartX = 0;
-                movingMouseStartY = 0;
-                movingElements.add(text);
-                this.toolMode.setToolElement(text);
+                TextEditDialog editDialog = new TextEditDialog(text);
+                if (editDialog.getResult() == ButtonType.OK) {
+                    //text.setValue(String.valueOf((int) (Math.random() * 10000)));
+                    LOGGER.log(Level.SEVERE, "New Text: " + text.getValue());
+                    TextNode textNode = new TextNode(text, null,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            null, true, this);
+                    textNode.addTo(workArea);
+                    ephemeralNode = textNode;
+                    movingMouseStartX = 0;
+                    movingMouseStartY = 0;
+                    movingElements.add(text);
+                    this.toolMode.setToolElement(text);
+                } else {
+                    parentEditor.setToolMode(SELECT);
+                }
             }
             case EditorTool.LINE -> {
                 // Line created at first click.
@@ -974,6 +1011,22 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     Wire tempWire = new Wire();
                     lastElementAdded = tempWire;
                     LOGGER.log(Level.SEVERE, "Add temp wire. It is the lastAdded.");
+                }
+
+                if (ephemeralNode == null) {
+                    this.toolMode.setToolElement(lastElementAdded);
+                    LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                } else {
+                    this.toolMode.setToolElement(ephemeralNode.getElement());
+                }
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.MOVE -> {
+                LOGGER.log(Level.SEVERE, "Handle 'Move' EditorTool...");
+                if (lastElementAdded == null || !(lastElementAdded instanceof ElementRotation)) {
+                    ElementText tempText = new ElementText();
+                    lastElementAdded = tempText;
+                    LOGGER.log(Level.SEVERE, "Add temp text(moveable/rotatable). It is the lastElementAdded.");
                 }
 
                 if (ephemeralNode == null) {
