@@ -69,6 +69,7 @@ public class WireNode extends ViewNode implements ElementListener {
         updateLine();
         updateCap();
         updateWidth();
+        updateStyle();
         updateCurve();
         updateLayer(); // Color
 
