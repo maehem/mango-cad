@@ -453,9 +453,9 @@ public class PinNode extends ViewNode implements ElementListener {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
 
-        LOGGER.log(Level.SEVERE,
-                "Pin properties have changed! {0}: {1} => {2}",
-                new Object[]{field, oldVal.toString(), newVal.toString()});
+//        LOGGER.log(Level.SEVERE,
+//                "Pin properties have changed! {0}: {1} => {2}",
+//                new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch ((PinField) field) {
             case PinField.NAME, PinField.PAD_VALUE -> {
@@ -487,6 +487,9 @@ public class PinNode extends ViewNode implements ElementListener {
                 updateColors();
             }
             case PinField.ROTATION -> {
+                LOGGER.log(Level.SEVERE,
+                        "Pin properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 // Adjust Rotation Transform
                 updateRotation();
             }
