@@ -59,7 +59,7 @@ public class LayerChooser extends HBox {
         setAlignment(Pos.CENTER);
     }
 
-    public ComboBox getChooser() {
+    public ComboBox<LayerElement> getChooser() {
         return chooser;
     }
 
