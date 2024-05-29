@@ -17,7 +17,12 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementRotation;
+import com.maehem.mangocad.model.element.enums.ElementTextField;
+import com.maehem.mangocad.model.element.enums.PinField;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
+import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -46,8 +51,19 @@ public class RotationWidget extends ToolModeWidget {
             );
     @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
+    private final Element element;
+    private final ElementRotation rotation;
 
     public RotationWidget(Element e) {
+        if (e instanceof ElementRotation p) {
+            this.element = e;
+            this.rotation = p;
+            this.element.addListener(this);
+        } else {
+            this.element = null;
+            this.rotation = null;
+            LOGGER.log(Level.SEVERE, "RotationWidget: element is not of type Pin!");
+        }
 
         Image img = ViewUtils.getImage(ICON_PATH);
         ImageView icon = ViewUtils.createIcon(img, 20);
@@ -56,17 +72,48 @@ public class RotationWidget extends ToolModeWidget {
         iconLabel.setAlignment(Pos.BASELINE_CENTER);
         iconLabel.setTooltip(new Tooltip(MSG.getString("TOOL_ICON_ROTATE")));
 
-        comboBox.getSelectionModel().selectFirst();
+        updateRotation(rotation.getRot());
+
         getChildren().addAll(iconLabel, comboBox);
 
     }
 
+    @SuppressWarnings("unchecked")
+    private void updateRotation(double rot) {
+
+        for (String s : options) {
+            if (Double.parseDouble(s) == rot) {
+                comboBox.getSelectionModel().select(s);
+                break;
+            }
+        }
+    }
+
     @Override
     public void stopListening() {
+        if (element != null) {
+            element.removeListener(this);
+        }
     }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
+        // Qualitfy what we can rotate.
+        // TODO: support rotate for groups of things and higher level things
+        // like devices and footprints.
+        if (!field.equals(ElementTextField.ROTATION)
+                && !field.equals(PinField.ROTATION)) {
+            return;
+        }
+        if (newVal == null) {
+            return;
+        }
+        LOGGER.log(Level.SEVERE, "RotationWidget: Element rot: ==> {0}", newVal.toString());
+
+        if (newVal instanceof Double pl) {
+            updateRotation(pl);
+        }
+
     }
 
 }
