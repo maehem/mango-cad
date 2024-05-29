@@ -17,6 +17,9 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementRotation;
+import com.maehem.mangocad.model.element.enums.PinField;
+import com.maehem.mangocad.model.element.enums.RotationField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -37,8 +40,19 @@ public class MirrorToggleWidget extends ToolModeWidget {
     private static final String ICON_PATH = "/icons/flip-horizontal.png";
 
     private final ToggleGroup group = new ToggleGroup();
+    private final Element element;
+    private final ElementRotation rotation;
 
     public MirrorToggleWidget(Element e) {
+        if (e instanceof ElementRotation p) {
+            this.element = e;
+            this.rotation = p;
+            this.element.addListener(this);
+        } else {
+            this.element = null;
+            this.rotation = null;
+            LOGGER.log(Level.SEVERE, "MirrorToggleWidget: element is not of type ElementRotation!");
+        }
 
         setSpacing(0.0);
 
@@ -60,30 +74,59 @@ public class MirrorToggleWidget extends ToolModeWidget {
         mirFlippedToggle.setUserData(Boolean.TRUE);
         mirFlippedToggle.setSelected(false);
 
-        group.selectToggle(mirNormalToggle);
+        updateToggleState(rotation.isMirrored());
 
         group.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) -> {
             if (newToggle == null) {
                 LOGGER.log(Level.SEVERE, "Nothing selected. Set target to not-mirrored.");
-                mirNormalToggle.setSelected(true);
-                mirFlippedToggle.setSelected(false);
+                group.selectToggle(mirNormalToggle);
             } else {
                 LOGGER.log(Level.SEVERE, "Change toggle to:{0}", newToggle.getUserData().toString());
-                if (oldToggle != null) {
-                    oldToggle.setSelected(false);
-                }
-                newToggle.setSelected(true);
+                rotation.setMirror((boolean) newToggle.getUserData());
+                updateToggleState(rotation.isMirrored());
             }
         });
 
     }
 
+    private void updateToggleState(boolean mir) {
+
+        for (Toggle option : group.getToggles()) {
+            if ((Boolean) option.getUserData() == mir) {
+                group.selectToggle(option);
+                break;
+            }
+        }
+    }
+
     @Override
     public void stopListening() {
+        if (element != null) {
+            element.removeListener(this);
+        }
     }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
+        // Qualify what we can mirror.
+        // TODO: support rotate for groups of things and higher level things
+        // like devices and footprints.
+        if (!field.equals(PinField.ROTATION)
+                && !field.equals(RotationField.MIRROR)) {
+            LOGGER.log(Level.SEVERE, "The Rotation/Mirror Field is not an expected type: " + field.toString() + field.name());
+            return;
+        }
+        if (newVal == null) {
+            LOGGER.log(Level.SEVERE, "NewVal is null! Don't do anything.");
+            return;
+        }
+        LOGGER.log(Level.SEVERE, "RotationWidget: Element mir: ==> {0}", newVal.toString());
+
+        if (newVal instanceof Boolean mirrored) {
+            updateToggleState(mirrored);
+        } else {
+            LOGGER.log(Level.SEVERE, "Provded newVal was not a Boolean!");
+        }
     }
 
 }
