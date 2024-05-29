@@ -337,12 +337,16 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         symbol.getElements().add(ephemeralNode.getElement());
                                         nodes.add(ephemeralNode);
                                         lastElementAdded = ephemeralNode.getElement();
+                                        LOGGER.log(Level.SEVERE, "Remember ephemeral element as lastAdded.");
                                         LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
                                         ephemeralNode = null;
                                         LOGGER.log(Level.SEVERE, "Clear movingElements. 3");
                                         movingElements.clear(); // End move of node.
                                         // Initiate new line.
                                         initiateNewLineSegment(me, wire.getX2(), -wire.getY2());
+                                        LOGGER.log(Level.SEVERE, "Set tool mode element.");
+                                        toolMode.setToolElement(wire);
+                                        setEditorTool(toolMode); // Refreshes with lastElementAdded values.
                                     }
                                 }
                             } else {
@@ -569,6 +573,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         // Start new line at mouse.
         Wire wire = new Wire();
         wire.setLayer(94);  // TODO needs enum
+        if (lastElementAdded != null && lastElementAdded instanceof Wire lastWire) {
+            wire.setWidth(lastWire.getWidth());
+            wire.setCurve(lastWire.getCurve());
+            wire.setStyle(lastWire.getStyle());
+            LOGGER.log(Level.SEVERE, "I see a last added element.");
+        }
         wire.setX1(x);
         wire.setY1(-y);
         wire.setX2(x);
@@ -940,6 +950,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             case TEXT -> {
                 ElementText text = new ElementText();
+                // TODO: Dialog for new text value.
                 text.setValue(String.valueOf((int) (Math.random() * 10000)));
                 text.setLayer(94);  // TODO needs enum
                 LOGGER.log(Level.SEVERE, "New Text: " + text.getValue());
@@ -952,10 +963,26 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 movingMouseStartX = 0;
                 movingMouseStartY = 0;
                 movingElements.add(text);
+                this.toolMode.setToolElement(text);
             }
             case EditorTool.LINE -> {
                 // Line created at first click.
                 LOGGER.log(Level.SEVERE, "New Wire...");
+                // Create a placeholder Wire to hold Widget settings that
+                // will be used once the user clicks in the workspace.
+                if (lastElementAdded == null || !(lastElementAdded instanceof Wire)) {
+                    Wire tempWire = new Wire();
+                    lastElementAdded = tempWire;
+                    LOGGER.log(Level.SEVERE, "Add temp wire. It is the lastAdded.");
+                }
+
+                if (ephemeralNode == null) {
+                    this.toolMode.setToolElement(lastElementAdded);
+                    LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                } else {
+                    this.toolMode.setToolElement(ephemeralNode.getElement());
+                }
+                parentEditor.setToolMode(toolMode);
             }
         }
 
