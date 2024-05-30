@@ -33,7 +33,7 @@ public class Vertex extends Element implements ElementXY, ElementSelectable {
     private double y;
     private double curve = 0;
     private boolean selected = false;
-    private final double[] snapshot = {0, 0};
+    private Vertex snapshot = null;
 
     @Override
     public String getElementName() {
@@ -121,19 +121,28 @@ public class Vertex extends Element implements ElementXY, ElementSelectable {
 
     @Override
     public void createSnapshot() {
-        snapshot[0] = getX();
-        snapshot[1] = getY();
+        snapshot = copy();
+
     }
 
     @Override
     public void restoreSnapshot() {
-        setX(snapshot[0]);
-        setY(snapshot[1]);
+        setX(snapshot.getX());
+        setY(snapshot.getY());
+        setCurve(snapshot.getCurve());
     }
 
     @Override
-    public double[] getSnapshot() {
+    public Element getSnapshot() {
         return snapshot;
     }
 
+    public Vertex copy() {
+        Vertex copyVertex = new Vertex();
+        copyVertex.setX(getX());
+        copyVertex.setY(getY());
+        copyVertex.setCurve(getCurve());
+
+        return copyVertex;
+    }
 }

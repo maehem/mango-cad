@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementDualXY;
 import com.maehem.mangocad.model.ElementSelectable;
+import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
@@ -50,7 +51,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements ElementDualXY, ElementSelectable {
+public class Wire extends Element implements ElementDualXY, ElementSelectable, FieldWidth {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -67,7 +68,7 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable {
     private WireStyle style = WireStyle.CONTINUOUS;
     private double curve = 0.0;
     private WireCap cap = WireCap.ROUND;
-    private double[] snapshot = {0, 0, 0, 0};
+    private Wire snapshot = null;
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -178,6 +179,7 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable {
     /**
      * @return the width
      */
+    @Override
     public double getWidth() {
         return width;
     }
@@ -185,6 +187,7 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable {
     /**
      * @param width the width to set
      */
+    @Override
     public void setWidth(double width) {
         if (getWidth() != width) {
             double oldVal = this.width;
@@ -298,22 +301,30 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable {
 
     @Override
     public void createSnapshot() {
-        snapshot[0] = getX1();
-        snapshot[1] = getY1();
-        snapshot[2] = getX2();
-        snapshot[3] = getY2();
+        snapshot = copy();
     }
 
     @Override
     public void restoreSnapshot() {
-        setX1(snapshot[0]);
-        setY1(snapshot[1]);
-        setX2(snapshot[2]);
-        setY2(snapshot[3]);
+        if (snapshot != null) {
+            setX1(snapshot.getX1());
+            setY1(snapshot.getY1());
+            setX2(snapshot.getX2());
+            setY2(snapshot.getY2());
+            setLayer(snapshot.getLayerNum());
+            setWidth(snapshot.getWidth());
+            setStyle(snapshot.getStyle());
+            setCurve(snapshot.getCurve());
+            setCap(snapshot.getCap());
+
+            snapshot = null;
+        } else {
+            LOGGER.log(Level.SEVERE, "Wire: restore, snapshot was null.");
+        }
     }
 
     @Override
-    public double[] getSnapshot() {
+    public Element getSnapshot() {
         return snapshot;
     }
 
@@ -325,6 +336,21 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable {
     @Override
     public void setSelected(boolean selected) {
         LOGGER.log(Level.SEVERE, "Wire.setSelected() mis-used.  Use setSelectedEnd() instead!");
+    }
+
+    public Wire copy() {
+        Wire copyWire = new Wire();
+
+        copyWire.setX1(getX1());
+        copyWire.setY1(getY1());
+        copyWire.setX2(getX2());
+        copyWire.setY2(getY2());
+        copyWire.setLayer(getLayerNum());
+        copyWire.setWidth(getWidth());
+        copyWire.setStyle(getStyle());
+        copyWire.setCurve(getCurve());
+
+        return copyWire;
     }
 
 }

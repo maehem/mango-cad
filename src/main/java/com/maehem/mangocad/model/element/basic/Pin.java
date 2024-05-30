@@ -59,7 +59,7 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
     private double x;
     private double y;
     private boolean selected = false;
-    private final double[] snapshot = {0, 0};
+    private Pin snapshot2 = null;
 
     private PinVisible visible = PinVisible.BOTH;
     private PinLength length = PinLength.MIDDLE;
@@ -154,7 +154,7 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
     }
 
     public void setPadValue(String value) {
-        if (!this.padValue.equals(value)) {
+        if (value == null || !this.padValue.equals(value)) {
             String oldVal = this.padValue;
             this.padValue = value;
             notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
@@ -336,19 +336,55 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
 
     @Override
     public void createSnapshot() {
-        snapshot[0] = getX();
-        snapshot[1] = getY();
+        snapshot2 = copy();
     }
 
     @Override
     public void restoreSnapshot() {
-        setX(snapshot[0]);
-        setY(snapshot[1]);
+        if (snapshot2 != null) {
+            setX(snapshot2.getX());
+            setY(snapshot2.getY());
+            setAllowMirror(snapshot2.isMirrorAllowed());
+            setConstrained(snapshot2.isConstrained());
+            setDirection(snapshot2.getDirection());
+            setFunction(snapshot2.getFunction());
+            setLength(snapshot2.getLength());
+            setName(snapshot2.getName());
+            setPadValue(snapshot2.getPadValue());
+            setSwapLevel(snapshot2.getSwapLevel());
+
+            snapshot2 = null;
+        }
     }
 
     @Override
-    public double[] getSnapshot() {
-        return snapshot;
+    public Element getSnapshot() {
+        if (snapshot2 == null) {
+            createSnapshot();
+        }
+        return snapshot2;
+    }
+
+    /**
+     * A copy of most settings. Maybe used by the "Copy" tool? Used by internal
+     * snapshot but can be used by other tools if needed.
+     *
+     * @return
+     */
+    public Pin copy() {
+        Pin copyPin = new Pin();
+        copyPin.setX(getX());
+        copyPin.setY(getY());
+        copyPin.setAllowMirror(isMirrorAllowed());
+        copyPin.setConstrained(isConstrained());
+        copyPin.setDirection(getDirection());
+        copyPin.setFunction(getFunction());
+        copyPin.setLength(getLength());
+        copyPin.setName(getName());
+        copyPin.setPadValue(getPadValue());
+        copyPin.setSwapLevel(getSwapLevel());
+
+        return copyPin;
     }
 
     @Override
@@ -364,4 +400,5 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
             notifyListeners(PinField.SELECTED, oldValue, this.selected);
         }
     }
+
 }
