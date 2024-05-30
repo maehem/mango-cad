@@ -36,7 +36,7 @@ public class ElementCircle extends Element implements ElementXY, ElementSelectab
     private double x;
     private double y;
     private double radius = 2.54;
-    private double width = 0.01;
+    private double width = 0.254;
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
