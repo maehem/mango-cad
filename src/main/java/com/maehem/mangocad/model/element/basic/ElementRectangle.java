@@ -39,7 +39,7 @@ public class ElementRectangle extends Element implements ElementSelectable {
 
     private boolean selected = false;
     private int selectedCorner = 0;
-    private final double[] snapshot = {0, 0, 0, 0};
+    private ElementRectangle snapshot = null;
 
     @Override
     public String getElementName() {
@@ -239,19 +239,20 @@ public class ElementRectangle extends Element implements ElementSelectable {
 
     @Override
     public void createSnapshot() {
-        snapshot[0] = getX1();
-        snapshot[1] = getY1();
-        snapshot[2] = getX2();
-        snapshot[3] = getY2();
+        snapshot = copy();
     }
 
     @Override
     public void restoreSnapshot() {
-        setAllXY(snapshot[0], snapshot[1], snapshot[2], snapshot[3]);
+        setAllXY(snapshot.getX1(), snapshot.getY1(), snapshot.getX2(), snapshot.getY2());
+        setLayer(snapshot.getLayerNum());
+        setRot(snapshot.getRot());
+
+        snapshot = null;
     }
 
     @Override
-    public double[] getSnapshot() {
+    public ElementRectangle getSnapshot() {
         return snapshot;
     }
 
@@ -267,5 +268,18 @@ public class ElementRectangle extends Element implements ElementSelectable {
             this.selected = selected;
             notifyListeners(ElementRectangleField.SELECTED, oldValue, this.selected);
         }
+    }
+
+    public ElementRectangle copy() {
+        ElementRectangle rectCopy = new ElementRectangle();
+
+        rectCopy.setX1(getX1());
+        rectCopy.setY1(getY1());
+        rectCopy.setX2(getX2());
+        rectCopy.setY2(getY2());
+        rectCopy.setLayer(getLayerNum());
+        rectCopy.setRot(getRot());
+
+        return rectCopy;
     }
 }

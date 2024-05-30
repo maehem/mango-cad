@@ -19,24 +19,28 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.ElementXY;
+import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.ElementCircleField;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements ElementXY, ElementSelectable {
+public class ElementCircle extends Element implements ElementXY, ElementSelectable, FieldWidth {
+
     public static final String ELEMENT_NAME = "circle";
 
     private double x;
     private double y;
-    private double radius;
-    private double width;
+    private double radius = 2.54;
+    private double width = 0.01;
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
-    private final double[] snapshot = {0, 0};
+    private ElementCircle snapshot = null;
 
     @Override
     public String getElementName() {
@@ -62,6 +66,7 @@ public class ElementCircle extends Element implements ElementXY, ElementSelectab
     /**
      * @return the width
      */
+    @Override
     public double getWidth() {
         return width;
     }
@@ -69,6 +74,7 @@ public class ElementCircle extends Element implements ElementXY, ElementSelectab
     /**
      * @param width the width to set
      */
+    @Override
     public void setWidth(double width) {
         double oldValue = this.width;
         this.width = width;
@@ -116,18 +122,38 @@ public class ElementCircle extends Element implements ElementXY, ElementSelectab
 
     @Override
     public void createSnapshot() {
-        snapshot[0] = getX();
-        snapshot[1] = getY();
+        snapshot = copy();
     }
 
     @Override
     public void restoreSnapshot() {
-        setX(snapshot[0]);
-        setY(snapshot[1]);
+        if (snapshot != null) {
+            setX(snapshot.getX());
+            setY(snapshot.getY());
+            setWidth(snapshot.getWidth());
+            setLayer(snapshot.getLayerNum());
+            setRadius(snapshot.getRadius());
+
+            snapshot = null;
+        } else {
+            LOGGER.log(Level.SEVERE, "ElementCircle: Tried to restore a NULL snapshot!");
+        }
+    }
+
+    public ElementCircle copy() {
+        ElementCircle copy = new ElementCircle();
+
+        copy.setX(getX());
+        copy.setY(getY());
+        copy.setWidth(getWidth());
+        copy.setLayer(getLayerNum());
+        copy.setRadius(getRadius());
+
+        return copy;
     }
 
     @Override
-    public double[] getSnapshot() {
+    public ElementCircle getSnapshot() {
         return snapshot;
     }
 
