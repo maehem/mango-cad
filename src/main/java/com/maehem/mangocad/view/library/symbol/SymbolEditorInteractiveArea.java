@@ -534,10 +534,26 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
                                 }
                             }
-                            case ROTATE ->
+                            case ROTATE -> {
                                 LOGGER.log(Level.SEVERE, "Rotate: ");
-                            case MIRROR ->
+                                if (picks.isEmpty()) {
+                                    contextMenu.hide();
+                                } else if (picks.size() == 1) {
+                                    initiateElementRotate(picks.getFirst());
+                                } else {
+                                    LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
+                                }
+                            }
+                            case MIRROR -> {
                                 LOGGER.log(Level.SEVERE, "Mirror: ");
+                                if (picks.isEmpty()) {
+                                    contextMenu.hide();
+                                } else if (picks.size() == 1) {
+                                    initiateElementMirror(picks.getFirst());
+                                } else {
+                                    LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
+                                }
+                            }
                             case MITER ->
                                 LOGGER.log(Level.SEVERE, " Miter: ");
                             case SPLIT -> // If in between ends of wire then split at this location
@@ -655,8 +671,20 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         }
     }
 
+    private void initiateElementRotate(Element pick) {
+        if (pick instanceof ElementRotation rotE) {
+            rotE.setRot(rotE.getRot() + 90.0);
+        }
+    }
+
+    private void initiateElementMirror(Element pick) {
+        if (pick instanceof ElementRotation rotE) {
+            rotE.setRot(rotE.getRot() + 180.0);
+        }
+    }
+
     private void initiateTrashElement(Element pick, double startX, double startY) {
-        movingMouseStartX = startX;
+        movingMouseStartX = startX;  // TODO:  Not used???
         movingMouseStartY = startY;
 
         if (pick instanceof ElementSelectable es) {
@@ -995,7 +1023,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 TextEditDialog editDialog = new TextEditDialog(text);
                 if (editDialog.getResult() == ButtonType.OK) {
                     //text.setValue(String.valueOf((int) (Math.random() * 10000)));
-                    LOGGER.log(Level.SEVERE, "New Text: " + text.getValue());
+                    LOGGER.log(Level.SEVERE, "    New Text: " + text.getValue());
                     TextNode textNode = new TextNode(text, null,
                             parentEditor.getDrawing().getLayers(),
                             parentEditor.getDrawing().getPalette(),
@@ -1012,7 +1040,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             case EditorTool.LINE -> {
                 // Line created at first click.
-                LOGGER.log(Level.SEVERE, "New Wire...");
+                LOGGER.log(Level.SEVERE, "    New Wire...");
                 // Create a placeholder Wire to hold Widget settings that
                 // will be used once the user clicks in the workspace.
                 if (lastElementAdded == null || !(lastElementAdded instanceof Wire)) {
@@ -1030,7 +1058,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.setToolMode(toolMode);
             }
             case EditorTool.MOVE -> {
-                LOGGER.log(Level.SEVERE, "Handle 'Move' EditorTool...");
+                LOGGER.log(Level.SEVERE, "    Handle 'Move' EditorTool...");
                 if (lastElementAdded == null || !(lastElementAdded instanceof ElementRotation)) {
                     ElementText tempText = new ElementText();
                     lastElementAdded = tempText;
@@ -1043,6 +1071,22 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 } else {
                     this.toolMode.setToolElement(ephemeralNode.getElement());
                 }
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.ROTATE -> {
+                LOGGER.log(Level.SEVERE, "    Handle 'Rotate' EditorTool...");
+                ElementText e = new ElementText();
+                e.setRot(90.0);
+                lastElementAdded = e; // Temp item for basis of rotations.
+                this.toolMode.setToolElement(lastElementAdded);
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.MIRROR -> {
+                LOGGER.log(Level.SEVERE, "    Handle 'Mirror' EditorTool...");
+                ElementText e = new ElementText();
+                e.setMirror(true);
+                lastElementAdded = e; // Temp item for basis of rotations.
+                this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);
             }
         }
