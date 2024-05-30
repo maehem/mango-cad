@@ -81,6 +81,11 @@ public class ToolModeWidgetBox extends HBox {
                 MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
                 getChildren().addAll(rW, new Region(), mW);
             }
+            case MIRROR -> {
+                // alignment options
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
+                getChildren().addAll(mW);
+            }
             case PIN -> {
                 // Available pin styles.
                 // TODO: Pin Array Dialog.
