@@ -640,10 +640,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
 
             if (lastElementAdded != null && lastElementAdded instanceof ElementRotation tmpRot) {
-                LOGGER.log(Level.SEVERE, "I see a last added element.");
+                //LOGGER.log(Level.SEVERE, "I see a last added element.");
+                //LOGGER.log(Level.SEVERE, "    lastElement: r:{0}  mir:{1}", new Object[]{tmpRot.getRot(), tmpRot.isMirrored() ? "Y" : "N"});
                 if (pick instanceof ElementRotation pickRot) {
-                    LOGGER.log(Level.SEVERE, "    It's a ElementRotation.");
-                    LOGGER.log(Level.SEVERE, "New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
+                    //LOGGER.log(Level.SEVERE, "    It's a ElementRotation.");
+                    //LOGGER.log(Level.SEVERE, "    pickRot: r:{0}  mir:{1}", new Object[]{pickRot.getRot(), pickRot.isMirrored() ? "Y" : "N"});
+                    //LOGGER.log(Level.SEVERE, "    New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
                     pickRot.setRot(pickRot.getRot() + tmpRot.getRot());
                     pickRot.setMirror(tmpRot.isMirrored());
                 }
