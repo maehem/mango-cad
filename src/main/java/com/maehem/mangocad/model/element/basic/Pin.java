@@ -306,7 +306,9 @@ public class Pin extends Element implements ElementXY, ElementRotation, ElementS
 
     @Override
     public void setMirror(boolean value) {
-        setRot(getRot() + 180);
+        if (value) {
+            setRot(getRot() + 180);
+        }
     }
 
     @Override
