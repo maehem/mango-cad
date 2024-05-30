@@ -239,34 +239,40 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     if (e instanceof ElementSelectable es) {
                         switch (es) {
                             case ElementXY exy -> {
-                                double[] snapshot = es.getSnapshot();
-                                exy.setX(snapshot[0] + moveDistSnappedX);
-                                exy.setY(snapshot[1] + moveDistSnappedY);
+                                //LOGGER.log(Level.SEVERE, "Move elementXY.");
+                                Element snapshot = es.getSnapshot();
+                                if (snapshot instanceof ElementXY snapXY) {
+                                    //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
+                                    exy.setX(snapXY.getX() + moveDistSnappedX);
+                                    exy.setY(snapXY.getY() + moveDistSnappedY);
+                                }
                             }
                             case ElementDualXY exy -> {
-                                double[] snapshot = es.getSnapshot();
-                                switch (exy.getSelectedEnd()) {
-                                    case ONE -> {
-                                        exy.setX1(snapshot[0] + moveDistSnappedX);
-                                        exy.setY1(snapshot[1] + moveDistSnappedY);
-                                    }
-                                    case TWO -> {
-                                        exy.setX2(snapshot[2] + moveDistSnappedX);
-                                        exy.setY2(snapshot[3] + moveDistSnappedY);
-                                    }
-                                    default -> {
+                                Element snapshot = es.getSnapshot();
+                                if (snapshot instanceof ElementDualXY snapXY) {
+                                    switch (exy.getSelectedEnd()) {
+                                        case ONE -> {
+                                            exy.setX1(snapXY.getX1() + moveDistSnappedX);
+                                            exy.setY1(snapXY.getY1() + moveDistSnappedY);
+                                        }
+                                        case TWO -> {
+                                            exy.setX2(snapXY.getX2() + moveDistSnappedX);
+                                            exy.setY2(snapXY.getY2() + moveDistSnappedY);
+                                        }
+                                        default -> {
+                                        }
                                     }
                                 }
                             }
                             case ElementRectangle er -> {
                                 // Determine which anchor was clicked and adjust
                                 // X1/Y1 and X2/Y2 accordingly.
-                                double[] snapshot = er.getSnapshot();
+                                ElementRectangle snapshot = er.getSnapshot();
                                 er.setAllXY(
-                                        snapshot[0] + moveDistSnappedX,
-                                        snapshot[1] + moveDistSnappedY,
-                                        snapshot[2] + moveDistSnappedX,
-                                        snapshot[3] + moveDistSnappedY
+                                        snapshot.getX1() + moveDistSnappedX,
+                                        snapshot.getY1() + moveDistSnappedY,
+                                        snapshot.getX2() + moveDistSnappedX,
+                                        snapshot.getY2() + moveDistSnappedY
                                 );
                             }
                             default -> {
