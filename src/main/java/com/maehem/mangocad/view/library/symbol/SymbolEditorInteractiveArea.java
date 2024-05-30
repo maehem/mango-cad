@@ -539,7 +539,11 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 if (picks.isEmpty()) {
                                     contextMenu.hide();
                                 } else if (picks.size() == 1) {
-                                    initiateElementRotate(picks.getFirst());
+                                    initiateElementRotate(picks.getFirst(), toolMode.getToolElement());
+                                    toolMode.setToolElement(picks.getFirst());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
                                 } else {
                                     LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
                                 }
@@ -549,7 +553,11 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 if (picks.isEmpty()) {
                                     contextMenu.hide();
                                 } else if (picks.size() == 1) {
-                                    initiateElementMirror(picks.getFirst());
+                                    initiateElementMirror(picks.getFirst(), toolMode.getToolElement());
+                                    toolMode.setToolElement(picks.getFirst());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
                                 } else {
                                     LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
                                 }
@@ -671,15 +679,28 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         }
     }
 
-    private void initiateElementRotate(Element pick) {
+    private void initiateElementRotate(Element pick, Element copyRotFrom) {
         if (pick instanceof ElementRotation rotE) {
-            rotE.setRot(rotE.getRot() + 90.0);
+            if (copyRotFrom instanceof ElementRotation er) {
+                rotE.setRot(rotE.getRot() + er.getRot());
+            } else {
+                LOGGER.log(Level.SEVERE, "Tried to copy rot value from a non-rotational element!");
+            }
         }
     }
 
-    private void initiateElementMirror(Element pick) {
+    private void initiateElementMirror(Element pick, Element copyRotFrom) {
         if (pick instanceof ElementRotation rotE) {
-            rotE.setRot(rotE.getRot() + 180.0);
+            if (copyRotFrom instanceof ElementRotation er) {
+                if (rotE.isMirrorAllowed()) {
+                    rotE.setMirror(er.isMirrored());
+                } else {
+                    double angle = er.isMirrored() ? 180.0 : 0.0;
+                    rotE.setRot(rotE.getRot() + angle);
+                }
+            } else {
+                LOGGER.log(Level.SEVERE, "Tried to copy mir value from a non-rotational element!");
+            }
         }
     }
 
