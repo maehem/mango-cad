@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementRotation;
-import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.RotationField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -68,11 +67,11 @@ public class MirrorToggleWidget extends ToolModeWidget {
 
         mirNormalToggle.setToggleGroup(group);
         mirNormalToggle.setUserData(Boolean.FALSE);
-        mirNormalToggle.setSelected(true);
+        //mirNormalToggle.setSelected(true);
 
         mirFlippedToggle.setToggleGroup(group);
         mirFlippedToggle.setUserData(Boolean.TRUE);
-        mirFlippedToggle.setSelected(false);
+        //mirFlippedToggle.setSelected(false);
 
         updateToggleState(rotation.isMirrored());
 
@@ -83,7 +82,7 @@ public class MirrorToggleWidget extends ToolModeWidget {
             } else {
                 LOGGER.log(Level.SEVERE, "Change toggle to:{0}", newToggle.getUserData().toString());
                 rotation.setMirror((boolean) newToggle.getUserData());
-                updateToggleState(rotation.isMirrored());
+                //updateToggleState(rotation.isMirrored());
             }
         });
 
@@ -111,9 +110,8 @@ public class MirrorToggleWidget extends ToolModeWidget {
         // Qualify what we can mirror.
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
-        if (!field.equals(PinField.ROTATION)
-                && !field.equals(RotationField.MIRROR)) {
-            LOGGER.log(Level.SEVERE, "The Rotation/Mirror Field is not an expected type: " + field.toString() + field.name());
+        if (!field.equals(RotationField.MIRROR)) {
+            //LOGGER.log(Level.SEVERE, "The Rotation/Mirror Field is not an expected type: " + field.toString() + field.name());
             return;
         }
         if (newVal == null) {
