@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -46,17 +46,24 @@ public class LineWidthWidget extends ToolModeWidget {
                     WireWidthDefaults.values()
             );
     @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
-    private final Wire wire;
+    private final ComboBox<Double> comboBox = new ComboBox(options);
+    private final Element element;
+    private final FieldWidth widthElement;
 
     @SuppressWarnings({"unchecked"})
     public LineWidthWidget(Element e) {
-        if (e instanceof Wire p) {
-            this.wire = p;
-            this.wire.addListener(this);
+        if (e instanceof FieldWidth fw) {
+            this.element = e;
+            this.widthElement = fw;
+            this.element.addListener(this);
         } else {
-            this.wire = null;
-            LOGGER.log(Level.SEVERE, "LineWidthWidget: element is not of type Wire! type: {0}", e.getElementName());
+            this.element = null;
+            this.widthElement = null;
+            if (e != null) {
+                LOGGER.log(Level.SEVERE, "LineWidthWidget: element is not of type Wire or Circle! type: {0}", e.getElementName());
+            } else {
+                LOGGER.log(Level.SEVERE, "LineWidthWidget: Element is null.");
+            }
         }
 
         setPrefWidth(170);
@@ -69,22 +76,21 @@ public class LineWidthWidget extends ToolModeWidget {
 
         comboBox.setButtonCell(new EditableItemCell());
         comboBox.setEditable(true);
-        updateComboState(wire.getWidth());
+        updateComboState(widthElement.getWidth());
 
         getChildren().addAll(iconLabel, comboBox);
 
         comboBox.setOnAction((t) -> {
             Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
             if (selectedItem instanceof Double d) {
-                wire.setWidth(d);
+                widthElement.setWidth(d);
             } else if (selectedItem instanceof String s) {
-                wire.setWidth(Double.parseDouble(s));
+                widthElement.setWidth(Double.parseDouble(s));
             }
             t.consume();
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void updateComboState(double pl) {
         for (Double t : options) {
             if (t == pl) {
@@ -99,8 +105,8 @@ public class LineWidthWidget extends ToolModeWidget {
 
     @Override
     public void stopListening() {
-        if (wire != null) {
-            wire.removeListener(this);
+        if (element != null) {
+            element.removeListener(this);
         }
     }
 
@@ -125,7 +131,6 @@ public class LineWidthWidget extends ToolModeWidget {
         private final TextField textField = new TextField();
         private double previousValue;
 
-        @SuppressWarnings("unchecked")
         public EditableItemCell() {
             textField.setPrefWidth(100);
             textField.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
@@ -139,7 +144,7 @@ public class LineWidthWidget extends ToolModeWidget {
                         options.add(dValue);
                     }
                     comboBox.getSelectionModel().select(dValue);
-                    wire.setWidth(dValue);
+                    widthElement.setWidth(dValue);
                 }
             });
             textField.setOnAction(e -> {
@@ -152,7 +157,7 @@ public class LineWidthWidget extends ToolModeWidget {
                 } catch (NumberFormatException ex) {
                     dValue = previousValue;
                 }
-                wire.setWidth(dValue);
+                widthElement.setWidth(dValue);
                 setText(String.valueOf(dValue));
                 setContentDisplay(ContentDisplay.TEXT_ONLY);
             });
