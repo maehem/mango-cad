@@ -34,6 +34,7 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.view.EditorTool;
+import static com.maehem.mangocad.view.EditorTool.CIRCLE;
 import static com.maehem.mangocad.view.EditorTool.INFO;
 import static com.maehem.mangocad.view.EditorTool.LOOK;
 import static com.maehem.mangocad.view.EditorTool.SELECT;
@@ -238,6 +239,18 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 for (Element e : movingElements) {
                     if (e instanceof ElementSelectable es) {
                         switch (es) {
+                            case ElementCircle circ -> {
+                                Element snapshot = es.getSnapshot();
+                                if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
+                                    // New circle, not yet placed. Adjust Radius
+                                    double hypot = Math.hypot(moveDistSnappedX, moveDistSnappedY);
+                                    circ.setRadius(hypot);
+                                } else {
+                                    // User moving circle at center X,Y
+                                    circ.setX(circ.getX() + moveDistSnappedX);
+                                    circ.setY(circ.getY() + moveDistSnappedY);
+                                }
+                            }
                             case ElementXY exy -> {
                                 //LOGGER.log(Level.SEVERE, "Move elementXY.");
                                 Element snapshot = es.getSnapshot();
@@ -367,6 +380,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         movingElements.clear();
                                         //text = initiateNewText();  // Initiate new text.
                                         setEditorTool(toolMode); // Reset widget.
+                                    }
+                                } else if (toolMode.equals(EditorTool.CIRCLE)) { // Sizing a new circle.
+                                    if (ephemeralNode instanceof CircleNode cn) {
+                                        ElementCircle circ = (ElementCircle) cn.getElement();
+                                        Symbol symbol = parentEditor.getSymbol();
+                                        symbol.getElements().add(circ);
+                                        nodes.add(ephemeralNode);
+                                        lastElementAdded = circ;
+                                        ephemeralNode = null;
+                                        movingElements.clear();
+                                        setEditorTool(toolMode);
                                     }
                                 }
                             } else {
@@ -503,6 +527,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             }
                             case ARC -> {
                                 initiateNewLineSegment(me,
+                                        getSnappedLocation(me.getX(), 0),
+                                        getSnappedLocation(me.getY(), 0)
+                                );
+                                toolMode.setToolElement(ephemeralNode.getElement());
+                                Platform.runLater(() -> {
+                                    setEditorTool(toolMode);
+                                });
+                            }
+                            case CIRCLE -> {
+                                LOGGER.log(Level.SEVERE, " Circle: ");
+                                initiateNewCircle(me,
                                         getSnappedLocation(me.getX(), 0),
                                         getSnappedLocation(me.getY(), 0)
                                 );
@@ -677,6 +712,29 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
             LOGGER.log(Level.SEVERE, "Moving a thing.");
         }
+    }
+
+    private void initiateNewCircle(MouseEvent me, double x, double y) {
+        // Start new line at mouse.
+        ElementCircle circle = new ElementCircle();
+        circle.setLayer(94);  // TODO needs enum. Read from Layer chooser.
+        if (lastElementAdded != null && lastElementAdded instanceof ElementCircle lastCircle) {
+            circle.setWidth(lastCircle.getWidth());
+            LOGGER.log(Level.SEVERE, "I see a last added circle element.");
+        }
+        circle.setX(x);
+        circle.setY(-y);
+        circle.createSnapshot();
+        //LOGGER.log(Level.SEVERE, "New Wire");
+        CircleNode circleNode = new CircleNode(circle,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette(),
+                this);
+        circleNode.addTo(workArea);
+        ephemeralNode = circleNode;
+        movingMouseStartX = me.getX(); // Is this used?
+        movingMouseStartY = me.getY();
+        movingElements.add(circle);
     }
 
     private void initiateElementRotate(Element pick, Element copyRotFrom) {
@@ -1068,6 +1126,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     Wire tempWire = new Wire();
                     lastElementAdded = tempWire;
                     LOGGER.log(Level.SEVERE, "Add temp wire. It is the lastAdded.");
+                }
+
+                if (ephemeralNode == null) {
+                    this.toolMode.setToolElement(lastElementAdded);
+                    LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                } else {
+                    this.toolMode.setToolElement(ephemeralNode.getElement());
+                }
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.CIRCLE -> {
+                // Center X,Y created at first click.
+                LOGGER.log(Level.SEVERE, "    New Circle...");
+                // Create a placeholder Circle to hold Widget settings that
+                // will be used once the user clicks in the workspace.
+                if (lastElementAdded == null || !(lastElementAdded instanceof ElementCircle)) {
+                    ElementCircle tempCircle = new ElementCircle();
+                    lastElementAdded = tempCircle;
+                    LOGGER.log(Level.SEVERE, "Add temp circle. It is the lastAdded.");
                 }
 
                 if (ephemeralNode == null) {
