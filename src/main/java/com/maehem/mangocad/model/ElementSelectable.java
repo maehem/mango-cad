@@ -26,7 +26,7 @@ public interface ElementSelectable {
 
     public void restoreSnapshot();
 
-    public double[] getSnapshot();
+    public Element getSnapshot();
 
     public boolean isSelected();
 
