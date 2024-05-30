@@ -57,7 +57,7 @@ public class ElementText extends Element implements ElementXY, ElementRotation, 
     private double y;
     private double size = 1.778; // 0.7 inch
     private boolean selected = false;
-    private final double[] snapshot = {0, 0};
+    private ElementText snapshot = null;
 
     private TextFont font = TextFont.PROPORTIONAL;
     private int ratio = 8;
@@ -287,28 +287,6 @@ public class ElementText extends Element implements ElementXY, ElementRotation, 
         return grouprefs;
     }
 
-    public ElementText copy() {
-        ElementText copy = new ElementText();
-
-        copy.setX(x);
-        copy.setY(y);
-        copy.setAlign(align);
-        copy.setDistance(distance);
-        copy.setFont(font);
-        copy.setLayer(getLayerNum());
-        copy.setRatio(ratio);
-        copy.setSize(size);
-        copy.setValue(value);
-
-        // Copy GroupRefs
-        for (String ref : grouprefs) {
-            copy.grouprefs.add(ref);
-        }
-        Rotation.copyValues(getRotation(), copy.getRotation());
-
-        return copy;
-    }
-
     @Override
     public boolean isSpun() {
         return rotation.isSpun();
@@ -386,19 +364,66 @@ public class ElementText extends Element implements ElementXY, ElementRotation, 
 
     @Override
     public void createSnapshot() {
-        snapshot[0] = getX();
-        snapshot[1] = getY();
+        snapshot = copy();
     }
 
     @Override
     public void restoreSnapshot() {
-        setX(snapshot[0]);
-        setY(snapshot[1]);
+        if (snapshot != null) {
+            setX(snapshot.getX());
+            setY(snapshot.getY());
+            setAlign(snapshot.getAlign());
+            setAllowMirror(snapshot.isMirrorAllowed());
+            setAllowSpin(snapshot.isSpinAllowed());
+            setConstrained(snapshot.isConstrained());
+            setDistance(snapshot.getDistance());
+            setFont(snapshot.getFont());
+            setLayer(snapshot.getLayerNum());
+            setMirror(snapshot.isMirrored());
+            setRatio(snapshot.getRatio());
+            setRot(snapshot.getRot());
+            setSize(snapshot.getSize());
+            setSpin(snapshot.isSpin());
+            setValue(snapshot.getValue());
+
+            snapshot = null;
+        } else {
+            LOGGER.log(Level.SEVERE, "Tried to restore a NULL snapshot!");
+        }
     }
 
     @Override
-    public double[] getSnapshot() {
+    public ElementText getSnapshot() {
         return snapshot;
+    }
+
+    public ElementText copy() {
+        ElementText copy = new ElementText();
+
+        copy.setX(x);
+        copy.setY(y);
+        copy.setAlign(align);
+        copy.setAllowMirror(isMirrorAllowed());
+        copy.setAllowSpin(isSpinAllowed());
+        copy.setConstrained(isConstrained());
+        copy.setDistance(distance);
+        copy.setFont(font);
+        copy.setLayer(getLayerNum());
+        copy.setMirror(isMirrored());
+        copy.setRatio(ratio);
+        copy.setRot(getRot());
+        copy.setSize(size);
+        copy.setSpin(isSpin());
+        copy.setValue(value);
+
+
+        // Copy GroupRefs
+        for (String ref : grouprefs) {
+            copy.grouprefs.add(ref);
+        }
+        Rotation.copyValues(getRotation(), copy.getRotation());
+
+        return copy;
     }
 
     @Override
