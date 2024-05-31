@@ -247,8 +247,27 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     circ.setRadius(hypot);
                                 } else {
                                     // User moving circle at center X,Y
+                                    // TODO needs snapshot?
                                     circ.setX(circ.getX() + moveDistSnappedX);
                                     circ.setY(circ.getY() + moveDistSnappedY);
+                                }
+                            }
+                            case ElementRectangle rect -> {
+                                Element snapshot = es.getSnapshot();
+                                if (snapshot instanceof ElementRectangle snapRect) {
+                                    if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
+                                        // New rect, not yet placed. Adjust Width and height.
+                                        rect.setX2(rect.getX1() + moveDistSnappedX);
+                                        rect.setY2(rect.getY1() + moveDistSnappedY);
+                                    } else {
+                                        // User moving circle at center X,Y
+                                        rect.setAllXY(
+                                                snapRect.getX1() + moveDistSnappedX,
+                                                snapRect.getY1() + moveDistSnappedY,
+                                                snapRect.getX2() + moveDistSnappedX,
+                                                snapRect.getY2() + moveDistSnappedY
+                                        );
+                                    }
                                 }
                             }
                             case ElementXY exy -> {
@@ -276,17 +295,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         }
                                     }
                                 }
-                            }
-                            case ElementRectangle er -> {
-                                // Determine which anchor was clicked and adjust
-                                // X1/Y1 and X2/Y2 accordingly.
-                                ElementRectangle snapshot = er.getSnapshot();
-                                er.setAllXY(
-                                        snapshot.getX1() + moveDistSnappedX,
-                                        snapshot.getY1() + moveDistSnappedY,
-                                        snapshot.getX2() + moveDistSnappedX,
-                                        snapshot.getY2() + moveDistSnappedY
-                                );
                             }
                             default -> {
                                 // Non-movable thing.
@@ -391,6 +399,19 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         ephemeralNode = null;
                                         movingElements.clear();
                                         setEditorTool(toolMode);
+                                    }
+                                } else if (toolMode.equals(EditorTool.RECTANGLE)) { // Sizing a new Rectangle
+                                    if (ephemeralNode instanceof RectangleNode wn) {
+                                        ElementRectangle rect = (ElementRectangle) wn.getElement();
+                                        Symbol symbol = parentEditor.getSymbol();
+                                        symbol.getElements().add(rect);
+                                        nodes.add(ephemeralNode);
+                                        lastElementAdded = rect;
+                                        LOGGER.log(Level.SEVERE, "Remember ephemeral rectangle as lastAdded.");
+                                        LOGGER.log(Level.SEVERE, "Placed new {0}.", rect.getElementName());
+                                        ephemeralNode = null;
+                                        movingElements.clear(); // End move of node.
+                                        setEditorTool(toolMode); // Refreshes with lastElementAdded values.
                                     }
                                 }
                             } else {
@@ -538,6 +559,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             case CIRCLE -> {
                                 LOGGER.log(Level.SEVERE, " Circle: ");
                                 initiateNewCircle(me,
+                                        getSnappedLocation(me.getX(), 0),
+                                        getSnappedLocation(me.getY(), 0)
+                                );
+                                toolMode.setToolElement(ephemeralNode.getElement());
+                                Platform.runLater(() -> {
+                                    setEditorTool(toolMode);
+                                });
+                            }
+                            case RECTANGLE -> {
+                                LOGGER.log(Level.SEVERE, " Rectangle: ");
+                                initiateNewRectangle(me,
                                         getSnappedLocation(me.getX(), 0),
                                         getSnappedLocation(me.getY(), 0)
                                 );
@@ -735,6 +767,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         movingMouseStartX = me.getX(); // Is this used?
         movingMouseStartY = me.getY();
         movingElements.add(circle);
+    }
+
+    private void initiateNewRectangle(MouseEvent me, double x, double y) {
+        // Start new line at mouse.
+        ElementRectangle rect = new ElementRectangle();
+        rect.setLayer(94);  // TODO needs enum. Read from Layer chooser.
+        rect.setX1(x);
+        rect.setY1(-y);
+        rect.createSnapshot();
+        //LOGGER.log(Level.SEVERE, "New Wire");
+        RectangleNode rectNode = new RectangleNode(rect,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette(),
+                this);
+        rectNode.addTo(workArea);
+        ephemeralNode = rectNode;
+        movingMouseStartX = me.getX(); // Is this used?
+        movingMouseStartY = me.getY();
+        movingElements.add(rect);
     }
 
     private void initiateElementRotate(Element pick, Element copyRotFrom) {
@@ -1145,6 +1196,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     ElementCircle tempCircle = new ElementCircle();
                     lastElementAdded = tempCircle;
                     LOGGER.log(Level.SEVERE, "Add temp circle. It is the lastAdded.");
+                }
+
+                if (ephemeralNode == null) {
+                    this.toolMode.setToolElement(lastElementAdded);
+                    LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                } else {
+                    this.toolMode.setToolElement(ephemeralNode.getElement());
+                }
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.RECTANGLE -> {
+                // Center X,Y created at first click.
+                LOGGER.log(Level.SEVERE, "    New Rectangle...");
+                // Create a placeholder Recangle to hold Widget settings that
+                // will be used once the user clicks in the workspace.
+                if (lastElementAdded == null || !(lastElementAdded instanceof ElementCircle)) {
+                    ElementRectangle tempCircle = new ElementRectangle();
+                    lastElementAdded = tempCircle;
+                    LOGGER.log(Level.SEVERE, "Add temp rectangle. It is the lastAdded.");
                 }
 
                 if (ephemeralNode == null) {
