@@ -27,6 +27,7 @@ import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
@@ -270,6 +271,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     }
                                 }
                             }
+                            case ElementPolygon poly -> {
+                                Element snapshot = es.getSnapshot();
+                                if (snapshot instanceof ElementPolygon snapPoly) {
+                                    if (ephemeralNode != null) {
+                                        // Poly with new Vertex
+                                        Vertex v0 = poly.getVertices().getFirst();
+                                        Vertex vMoving = poly.getVertices().getLast();
+                                        vMoving.setX(v0.getX() + moveDistSnappedX);
+                                        vMoving.setY(v0.getY() + moveDistSnappedY);
+                                        LOGGER.log(Level.SEVERE, "Moving Poly Vertex: {0},{1}   obj:{2}", new Object[]{vMoving.getX(), vMoving.getY(), vMoving.hashCode()});
+                                    } else {
+                                        Vertex[] selectedVertices = poly.getSelectedVertices();
+                                        // Move selected vertices together.
+                                        LOGGER.log(Level.SEVERE, "Polygon: Move selected vertices. Not implemented yet!");
+                                    }
+                                } else {
+                                    LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not ElementPolygon: " + snapshot.getElementName());
+                                }
+                            }
                             case ElementXY exy -> {
                                 //LOGGER.log(Level.SEVERE, "Move elementXY.");
                                 Element snapshot = es.getSnapshot();
@@ -389,7 +409,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         //text = initiateNewText();  // Initiate new text.
                                         setEditorTool(toolMode); // Reset widget.
                                     }
-                                } else if (toolMode.equals(EditorTool.CIRCLE)) { // Sizing a new circle.
+                                } else if (toolMode.equals(EditorTool.CIRCLE)) { // Finish sizing a new circle.
                                     if (ephemeralNode instanceof CircleNode cn) {
                                         ElementCircle circ = (ElementCircle) cn.getElement();
                                         Symbol symbol = parentEditor.getSymbol();
@@ -400,7 +420,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         movingElements.clear();
                                         setEditorTool(toolMode);
                                     }
-                                } else if (toolMode.equals(EditorTool.RECTANGLE)) { // Sizing a new Rectangle
+                                } else if (toolMode.equals(EditorTool.RECTANGLE)) { // Finish sizing a new Rectangle
                                     if (ephemeralNode instanceof RectangleNode wn) {
                                         ElementRectangle rect = (ElementRectangle) wn.getElement();
                                         Symbol symbol = parentEditor.getSymbol();
@@ -412,6 +432,50 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         ephemeralNode = null;
                                         movingElements.clear(); // End move of node.
                                         setEditorTool(toolMode); // Refreshes with lastElementAdded values.
+                                    }
+                                } else if (toolMode.equals(EditorTool.POLYGON)) { // Finish adding vertices to new Polygon
+                                    if (ephemeralNode instanceof PolygonNode wn) {
+                                        ElementPolygon poly = (ElementPolygon) wn.getElement();
+                                        List<Vertex> verts = poly.getVertices();
+                                        Vertex last = verts.getLast();
+                                        if (verts.size() > 3) {
+                                            Vertex first = verts.getFirst();
+
+                                            // check if x,y is same as first()
+                                            if (first.getX() == last.getX() && first.getY() == last.getY()) {
+                                                // Closure!
+                                                LOGGER.log(Level.SEVERE, "Polygon CLOSE detected.");
+                                                verts.remove(last);
+                                                // Nail it down
+                                                Symbol symbol = parentEditor.getSymbol();
+                                                symbol.getElements().add(poly);
+                                                nodes.add(wn);
+                                                wn.setClosePath(true); // Close it up.
+                                                ElementPolygon lastPolygon = new ElementPolygon();
+                                                lastPolygon.setWidth(poly.getWidth());
+                                                lastElementAdded = lastPolygon;
+                                                ephemeralNode = null;
+                                                movingElements.clear();
+                                                setEditorTool(toolMode);
+                                            } else {
+                                                LOGGER.log(Level.SEVERE, "Mouse clicked: polygon add vert.");
+                                                // Add a new Vertex
+                                                Vertex newVert = new Vertex();
+                                                newVert.setX(last.getX());
+                                                newVert.setY(last.getY());
+                                                // TODO Curve?
+                                                poly.addVertex(newVert);
+                                                setEditorTool(toolMode);
+                                            }
+                                        } else {
+                                            LOGGER.log(Level.SEVERE, "Mouse clicked: polygon add vert.");
+                                            // Add a new Vertex
+                                            Vertex newVert = new Vertex();
+                                            newVert.setX(last.getX());
+                                            newVert.setY(last.getY());
+                                            poly.addVertex(newVert);
+                                            setEditorTool(toolMode);
+                                        }
                                     }
                                 }
                             } else {
@@ -570,6 +634,17 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             case RECTANGLE -> {
                                 LOGGER.log(Level.SEVERE, " Rectangle: ");
                                 initiateNewRectangle(me,
+                                        getSnappedLocation(me.getX(), 0),
+                                        getSnappedLocation(me.getY(), 0)
+                                );
+                                toolMode.setToolElement(ephemeralNode.getElement());
+                                Platform.runLater(() -> {
+                                    setEditorTool(toolMode);
+                                });
+                            }
+                            case POLYGON -> {
+                                LOGGER.log(Level.SEVERE, " Create new Polygon: ");
+                                initiateNewPolygon(me,
                                         getSnappedLocation(me.getX(), 0),
                                         getSnappedLocation(me.getY(), 0)
                                 );
@@ -786,6 +861,47 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         movingMouseStartX = me.getX(); // Is this used?
         movingMouseStartY = me.getY();
         movingElements.add(rect);
+    }
+
+    private void initiateNewPolygon(MouseEvent me, double x, double y) {
+        LOGGER.log(Level.SEVERE, "Initiate new Polygon.");
+        ElementPolygon poly = new ElementPolygon();
+        //poly.setSelected(true);
+        poly.setLayer(94);
+        if (lastElementAdded != null && lastElementAdded instanceof ElementPolygon lastPoly) {
+            poly.setWidth(lastPoly.getWidth());
+            LOGGER.log(Level.SEVERE, "I see a last added element.");
+        }
+        PolygonNode node = new PolygonNode(poly,
+                parentEditor.getDrawing().getLayers(),
+                parentEditor.getDrawing().getPalette(),
+                this);
+        node.addTo(workArea);
+        ephemeralNode = node;
+        movingMouseStartX = me.getX(); // Is this used?
+        movingMouseStartY = me.getY();
+        movingElements.add(poly);
+
+        // Create snapshot?
+        initiateNewPolygonSegment(me, x, y, poly);
+        initiateNewPolygonSegment(me, 0, 0, poly);
+
+        node.rebuildPath();
+        int i = 0; // Debug stop point
+    }
+
+    private void initiateNewPolygonSegment(MouseEvent me, double x, double y, ElementPolygon poly) {
+        LOGGER.log(Level.SEVERE, "Initiate new Vertex for Polygon at: {0},{1}", new Object[]{x, y});
+        // Start new line at mouse.
+        Vertex vertex = new Vertex();
+        vertex.setX(x);
+        vertex.setY(-y);
+        vertex.createSnapshot();
+        //LOGGER.log(Level.SEVERE, "New Wire");
+        poly.addVertex(vertex);
+
+        //movingMouseStartX = me.getX(); // Is this used?
+        //movingMouseStartY = me.getY();
     }
 
     private void initiateElementRotate(Element pick, Element copyRotFrom) {
@@ -1212,8 +1328,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 // Create a placeholder Recangle to hold Widget settings that
                 // will be used once the user clicks in the workspace.
                 if (lastElementAdded == null || !(lastElementAdded instanceof ElementCircle)) {
-                    ElementRectangle tempCircle = new ElementRectangle();
-                    lastElementAdded = tempCircle;
+                    ElementRectangle tempRect = new ElementRectangle();
+                    lastElementAdded = tempRect;
                     LOGGER.log(Level.SEVERE, "Add temp rectangle. It is the lastAdded.");
                 }
 
@@ -1221,6 +1337,26 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     this.toolMode.setToolElement(lastElementAdded);
                     LOGGER.log(Level.SEVERE, "Set tool element to last added.");
                 } else {
+                    this.toolMode.setToolElement(ephemeralNode.getElement());
+                }
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.POLYGON -> {
+                // Line created at first click.
+                LOGGER.log(Level.SEVERE, "    Editor Tool Polygon");
+                // Create a placeholder Wire to hold Widget settings that
+                // will be used once the user clicks in the workspace.
+                if (lastElementAdded == null || !(lastElementAdded instanceof ElementPolygon)) {
+                    ElementPolygon tempPoly = new ElementPolygon();
+                    lastElementAdded = tempPoly;
+                    LOGGER.log(Level.SEVERE, "Add temp polygon. It is the lastAdded.");
+                }
+
+                if (ephemeralNode == null) {
+                    this.toolMode.setToolElement(lastElementAdded);
+                    LOGGER.log(Level.SEVERE, "Assign lastAdded to the toolElement.");
+                } else {
+                    LOGGER.log(Level.SEVERE, "Assign ephemeral node element to the toolElement.");
                     this.toolMode.setToolElement(ephemeralNode.getElement());
                 }
                 parentEditor.setToolMode(toolMode);
