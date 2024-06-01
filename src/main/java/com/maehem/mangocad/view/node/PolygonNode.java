@@ -29,13 +29,17 @@ import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import static com.maehem.mangocad.view.library.LibraryElementNode.distance;
+import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.PathElement;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
@@ -50,6 +54,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
     private final Layers layers;
     private final ColorPalette palette;
     private final Path path = new Path();
+    private boolean closePath = false;
 
     public PolygonNode(ElementPolygon er, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(er, pickListener);
@@ -59,25 +64,34 @@ public class PolygonNode extends ViewNode implements ElementListener {
         this.palette = palette;
 
         path.setStrokeLineJoin(StrokeLineJoin.ROUND);
-        path.setStrokeType(StrokeType.INSIDE);
+        path.setStrokeType(StrokeType.CENTERED);
         path.setStrokeLineCap(StrokeLineCap.ROUND);
+        path.setStrokeWidth(0.254);
+        path.setStroke(Color.GREEN);
         path.setSmooth(true);
+        path.setFill(Color.TRANSPARENT);
 
         add(path);
 
-        updateVertices();
         updateLayer();
         updateWidth();
+        rebuildPath();
 
+        if (!er.getVertices().isEmpty()) {
+            Platform.runLater(() -> {
+                for (Vertex v : polygonElement.getVertices()) {
+                    v.addListener(this);
+                }
+            });
+
+        }
         Platform.runLater(() -> {
-            for (Vertex v : polygonElement.getVertices()) {
-                v.addListener(this);
-            }
             polygonElement.addListener(this);
         });
     }
 
-    private void updateVertices() {
+    public void rebuildPath() {
+        LOGGER.log(Level.SEVERE, "Rebuild path.");
         path.getElements().clear();
 
         double lastX = 0.0;
@@ -88,7 +102,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
             if (isFirst) {
                 lastX = v.getX();
                 lastY = v.getY();
-                arc = v.getCurve();
+                arc = v.getCurve(); // Arc/Curve is applied to (n+1) element.
                 isFirst = false;
                 MoveTo mt = new MoveTo(lastX, -lastY);
                 path.getElements().add(mt);
@@ -104,28 +118,46 @@ public class PolygonNode extends ViewNode implements ElementListener {
             lastY = y1;
         }
 
+        if (closePath) {
+            path.getElements().add(new ClosePath());
+        }
         // Close the path using the last curve.
-        addPathEdge(path, arc, lastX, lastY, polygonElement.getVertices().get(0).getX(), polygonElement.getVertices().get(0).getY());
+//        addPathEdge(path, arc, lastX, lastY, polygonElement.getVertices().get(0).getX(), polygonElement.getVertices().get(0).getY());
+    }
 
-//        double x1 = polygonElement.getX1();
-//        double y1 = -polygonElement.getY1();
-//        double x2 = polygonElement.getX2();
-//        double y2 = -polygonElement.getY2();
-//
-//        path.getPoints().clear();
-//        path.getPoints().addAll(
-//                x1, y1,
-//                x2, y1,
-//                x2, y2,
-//                x1, y2
-//        );
-//
-//        double rot = getRot();
-//        if (isMirrored()) {
-//            rot += 180;
+    /**
+     * Sync Vertex data with Path segments.
+     */
+    private void updateVerticesXY() {
+//        if (polygonElement.getVertices().size() != path.getElements().size()) {
+//            LOGGER.log(Level.SEVERE, "PolygonNode:  Vertices and Path elements are out of sync. But how? Rebuilding.");
+//            rebuildVertices();
+//        } else {
+        List<Vertex> vertices = polygonElement.getVertices();
+        ObservableList<PathElement> pathElements = path.getElements();
+
+        // TODO: Bind Path elements to property of Vector
+        for (int i = 0; i < vertices.size(); i++) {
+            Vertex v = vertices.get(i);
+            PathElement pe = pathElements.get(i);
+            if (pe instanceof MoveTo mt) {
+                mt.setX(v.getX());
+                mt.setY(-v.getY());
+            } else if (pe instanceof ArcTo mt) {
+                mt.setX(v.getX());
+                mt.setY(-v.getY());
+            } else if (pe instanceof LineTo mt) {
+                mt.setX(v.getX());
+                mt.setY(-v.getY());
+            } else {
+                LOGGER.log(Level.SEVERE, "PolygonNode: Path element was not a MoveTo! But how?");
+            }
+        }
 //        }
-//        rot %= 360;
-//        path.setRotate(rot);
+    }
+
+    public void setClosePath(boolean closePath) {
+        this.closePath = closePath;
     }
 
     private void updateWidth() {
@@ -136,42 +168,11 @@ public class PolygonNode extends ViewNode implements ElementListener {
         LayerElement layer = layers.get(polygonElement.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
 
-        path.setStroke(polygonElement.hasSelections() ? c.brighter().brighter() : c);
-        path.setFill(c);
-    }
-
-    @Override
-    public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        LOGGER.log(Level.SEVERE,
-                "Polygon properties have changed! {0}: {1} => {2}",
-                new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
-
-        if (field instanceof ElementPolygonField erf) {
-            switch (erf) {
-                case ElementPolygonField.WIDTH -> {
-                    updateWidth();
-                }
-                case ElementPolygonField.LAYER -> {
-                    updateLayer();
-                }
-                case ElementPolygonField.VERTEX -> {
-                    updateVertices();
-                }
-            }
-        }
-        if (field instanceof RotationField rf) {
-            updateVertices();
-        }
-        if (field instanceof VertexField vf) {
-            switch (vf) {
-                case SELECTED -> {
-                    updateLayer();
-                }
-                default -> {
-                    updateVertices();
-                }
-            }
-
+        path.setStroke(polygonElement.isSelected() || polygonElement.hasSelections() ? c.brighter().brighter() : c);
+        if (closePath) {
+            path.setFill(c);
+        } else {
+            path.setFill(Color.TRANSPARENT);
         }
     }
 
@@ -199,6 +200,48 @@ public class PolygonNode extends ViewNode implements ElementListener {
             path.getElements().add(arcTo);
         }
 
+    }
+
+    @Override
+    public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
+        LOGGER.log(Level.SEVERE,
+                "Polygon properties have changed! {0}: {1} => {2}",
+                new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
+
+        if (field instanceof ElementPolygonField erf) {
+            switch (erf) {
+                case ElementPolygonField.WIDTH -> {
+                    updateWidth();
+                }
+                case ElementPolygonField.LAYER -> {
+                    updateLayer();
+                }
+                case ElementPolygonField.VERTEX -> {
+                    LOGGER.log(Level.SEVERE, "Polygon Vertex has changed.");
+                    if ((oldVal == null && newVal != null) || (oldVal != null && newVal == null)) {
+                        LOGGER.log(Level.SEVERE, "    Something was added or removed. Rebuild path.");
+                        // Vertex added or removed.
+                        rebuildPath();
+                    }
+                }
+            }
+        }
+        if (field instanceof RotationField rf) {
+            rebuildPath();
+        }
+        if (field instanceof VertexField vf) {
+            switch (vf) {
+                case SELECTED -> {
+                    updateLayer();
+                }
+                default -> {
+                    LOGGER.log(Level.SEVERE, "    Vertex field has changed. f:" + vf.name());
+//                    updateVertices();
+                    updateVerticesXY();
+                }
+            }
+
+        }
     }
 
     @Override
