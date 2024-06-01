@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.basic.Vertex;
 public enum ElementPolygonField {
     WIDTH("width", Double.class),
     LAYER("layer", Integer.class),
+    SELECTED("selected", Boolean.class),
     VERTEX("vertex", Vertex.class);
 
     private final String fName;
