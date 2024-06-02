@@ -24,12 +24,34 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.ElementSelectable;
 import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.ElementPolygonField;
+import com.maehem.mangocad.model.element.enums.PolygonPour;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * <pre>
+ * ELEMENT polygon
+ * Sub-elements:  vertex
+ *          The vertices must define a valid polygon; if the last vertex
+ *          is the same as the first one, it is ignored.
+ * Attribute List
+ *          width         %Dimension;    #REQUIRED
+ *          layer         %Layer;        #REQUIRED
+ *          spacing       %Dimension;    #IMPLIED
+ *          pour          %PolygonPour;  "solid"
+ *          isolate       %Dimension;    #IMPLIED
+ *          orphans       %Bool;         "no"
+ *          thermals      %Bool;         "yes"
+ *          rank          %Int;          "0"
+ *          grouprefs     IDREFS         #IMPLIED
+ *
+ *      isolate: Only in <signal> or <package> context
+ *      orphans: Only in <signal> context
+ *      thermals:Only in <signal> context
+ *      rank: 1..6 in <signal> context, 0 or 7 in <package> context.
+ * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
@@ -39,12 +61,12 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
     public static final String ELEMENT_NAME = "polygon";
 
     private double width = 0.254;
-//    private double spacing;
-//    private String pour = "solid"; // TODO: Enum
-    //private double isolate;
-    //private boolean orphans = false;
-    //private boolean thermals = true;
-    //private int rank = 1;
+    private PolygonPour pour = PolygonPour.SOLID;
+    private double spacing = 1.27;
+    private double isolate;  // Not in symbol, footprint?
+    private boolean orphans = false;
+    private boolean thermals = true;
+    private int rank = 1;
     private final List<Vertex> vertices = new ArrayList<>();
 
     // Ephemaral data
@@ -72,96 +94,122 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
         this.width = width;
     }
 
-//    /**
-//     * @return the spacing
-//     */
-//    public double getSpacing() {
-//        return spacing;
-//    }
-//
-//    /**
-//     * @param spacing the spacing to set
-//     */
-//    public void setSpacing(double spacing) {
-//        this.spacing = spacing;
-//    }
-//
-//    /**
-//     * @return the pour
-//     */
-//    public String getPour() {
-//        return pour;
-//    }
-//
-//    /**
-//     * @param pour the pour to set
-//     */
-//    public void setPour(String pour) {
-//        this.pour = pour;
-//    }
-//
-//    /**
-//     * @return the isolate
-//     */
-//    public double getIsolate() {
-//        return isolate;
-//    }
-//
-//    /**
-//     * @param isolate the isolate to set
-//     */
-//    public void setIsolate(double isolate) {
-//        this.isolate = isolate;
-//    }
-//
-//    /**
-//     * @return the orphans
-//     */
-//    public boolean isOrphans() {
-//        return orphans;
-//    }
-//
-//    /**
-//     * @param orphans the orphans to set
-//     */
-//    public void setOrphans(boolean orphans) {
-//        this.orphans = orphans;
-//    }
-//
-//    /**
-//     * @return the thermals
-//     */
-//    public boolean isThermals() {
-//        return thermals;
-//    }
-//
-//    /**
-//     * @param thermals the thermals to set
-//     */
-//    public void setThermals(boolean thermals) {
-//        this.thermals = thermals;
-//    }
-//
-//    /**
-//     * @return the rank
-//     */
-//    public int getRank() {
-//        return rank;
-//    }
-//
-//    /**
-//     * @param rank the rank to set
-//     */
-//    public void setRank(int rank) {
-//        // Ingest may try to set rank of zero. Lowest is "1".
-//        if (rank <= 0) {
-//            this.rank = 1;
-//        } else if (rank > 6) {  // Highest rank is 6
-//            this.rank = 6;
-//        } else {
-//            this.rank = rank;
-//        }
-//    }
+    /**
+     * @return the pour
+     */
+    public PolygonPour getPour() {
+        return pour;
+    }
+
+    /**
+     * @param pour the pour to set
+     */
+    public void setPour(PolygonPour pour) {
+        if (this.pour != pour) {
+            PolygonPour oldVal = this.pour;
+            this.pour = pour;
+            notifyListeners(ElementPolygonField.POUR, oldVal, this.pour);
+        }
+    }
+
+    /**
+     * @param pour the pour to set
+     */
+    public void setPour(String pour) {
+        setPour(PolygonPour.fromCode(pour));
+    }
+
+    public double getSpacing() {
+        return spacing;
+    }
+
+    public void setSpacing(double val) {
+        if (this.spacing != val) {
+            double oldVal = this.spacing;
+            this.spacing = val;
+            notifyListeners(ElementPolygonField.SPACING, oldVal, this.spacing);
+        }
+    }
+
+    /**
+     * @return the isolate
+     */
+    public double getIsolate() {
+        return isolate;
+    }
+
+    /**
+     * @param isolate the isolate to set
+     */
+    public void setIsolate(double isolate) {
+        if (this.isolate != isolate) {
+            double oldVal = this.isolate;
+            this.isolate = isolate;
+            notifyListeners(ElementPolygonField.ISOLATE, oldVal, this.isolate);
+        }
+    }
+
+    /**
+     * @return the orphans
+     */
+    public boolean isOrphans() {
+        return orphans;
+    }
+
+    /**
+     * @param orphans the orphans to set
+     */
+    public void setOrphans(boolean orphans) {
+        if (this.orphans != orphans) {
+            boolean oldVal = this.orphans;
+            this.orphans = orphans;
+            notifyListeners(ElementPolygonField.ORPHANS, oldVal, this.orphans);
+        }
+    }
+
+    /**
+     * @return the thermals
+     */
+    public boolean isThermals() {
+        return thermals;
+    }
+
+    /**
+     * @param thermals the thermals to set
+     */
+    public void setThermals(boolean thermals) {
+        if (this.thermals != thermals) {
+            boolean oldVal = this.thermals;
+            this.thermals = thermals;
+            notifyListeners(ElementPolygonField.THERMAL, oldVal, this.thermals);
+        }
+    }
+
+    /**
+     * @return the rank
+     */
+    public int getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(int rank) {
+        if (this.rank != rank) {
+            int oldVal = this.rank;
+            // Ingest may try to set rank of zero. Lowest is "1".
+            if (rank <= 0) {
+                this.rank = 1;
+            } else if (rank > 6) {  // Highest rank is 6
+                this.rank = 6;
+            } else {
+                this.rank = rank;
+            }
+            notifyListeners(ElementPolygonField.RANK, oldVal, this.rank);
+        }
+    }
+
     /**
      * @return the vertices
      */
@@ -170,12 +218,15 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
     }
 
     /**
+     * Should only be called by ingest (file load). Not for casual use!
+     *
      * @param vertices the vertices to set
      */
     public void setVertices(List<Vertex> vertices) {
         this.vertices.clear();
         for (Vertex v : vertices) {
             this.vertices.add(v);
+            v.addListener(this);
         }
     }
 
@@ -187,20 +238,20 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
     public void addVertex(Vertex vertNew) {
         LOGGER.log(Level.SEVERE, "Polygon added a vertex. {0},{1}  obj:{2}", new Object[]{vertNew.getX(), vertNew.getY(), vertNew.hashCode()});
         getVertices().add(vertNew);
-        StringBuilder sb = new StringBuilder("PolyList:");
-        for (Vertex v : getVertices()) {
-            sb.append("\n    ");
-            sb.append(v.hashCode());
-            if (getVertices().getFirst().equals(v)) {
-                sb.append("(*)");
-            }
-            sb.append(" ===>  ");
-            sb.append("x: ");
-            sb.append(v.getX());
-            sb.append(",  y: ");
-            sb.append(v.getY());
-        }
-        LOGGER.log(Level.SEVERE, sb.toString());
+//        StringBuilder sb = new StringBuilder("PolyList:");
+//        for (Vertex v : getVertices()) {
+//            sb.append("\n    ");
+//            sb.append(v.hashCode());
+//            if (getVertices().getFirst().equals(v)) {
+//                sb.append("(*)");
+//            }
+//            sb.append(" ===>  ");
+//            sb.append("x: ");
+//            sb.append(v.getX());
+//            sb.append(",  y: ");
+//            sb.append(v.getY());
+//        }
+//        LOGGER.log(Level.SEVERE, sb.toString());
         vertNew.addListener(this);
         notifyListeners(ElementPolygonField.VERTEX, null, vertNew);
     }
@@ -320,6 +371,14 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
         }
     }
 
+    /**
+     * When vertexes change they come through here. We aggregate and forward.
+     *
+     * @param e
+     * @param field
+     * @param oldVal
+     * @param newVal
+     */
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         notifyListeners(field, oldVal, newVal);
