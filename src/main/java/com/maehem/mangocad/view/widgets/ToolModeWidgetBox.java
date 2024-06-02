@@ -32,6 +32,7 @@ import com.maehem.mangocad.view.widgets.toolmode.PinLengthToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinRotationToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinSwapLevelWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinVisibilityToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PolygonFillWidget;
 import com.maehem.mangocad.view.widgets.toolmode.RotationWidget;
 import com.maehem.mangocad.view.widgets.toolmode.TextAlignWidget;
 import com.maehem.mangocad.view.widgets.toolmode.TextDistanceWidget;
@@ -145,8 +146,9 @@ public class ToolModeWidgetBox extends HBox {
                 LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
                 LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
                 // Hatch Fill style with spacing
+                PolygonFillWidget pfW = new PolygonFillWidget(mode.getToolElement());
                 MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
-                getChildren().addAll(lbsW, lwW, mrW);
+                getChildren().addAll(lbsW, lwW, pfW, mrW);
             }
             case CIRCLE -> { // Circle options
                 LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
