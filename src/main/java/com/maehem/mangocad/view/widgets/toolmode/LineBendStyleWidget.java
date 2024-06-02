@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.Wire;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -68,6 +69,10 @@ public class LineBendStyleWidget extends ToolModeWidget {
         if (e instanceof Wire p) {
             this.wire = p;
             this.wire.addListener(this);
+        } else if (e instanceof ElementPolygon ep) {
+            this.wire = null;
+
+
         } else {
             this.wire = null;
             if (e != null) {
