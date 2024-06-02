@@ -35,7 +35,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -77,14 +76,15 @@ public class PolygonNode extends ViewNode implements ElementListener {
         updateWidth();
         rebuildPath();
 
-        if (!er.getVertices().isEmpty()) {
-            Platform.runLater(() -> {
-                for (Vertex v : polygonElement.getVertices()) {
-                    v.addListener(this);
-                }
-            });
-
-        }
+        // Should have been done by ElementPolygon
+//        if (!er.getVertices().isEmpty()) {
+//            Platform.runLater(() -> {
+//                for (Vertex v : polygonElement.getVertices()) {
+//                    v.addListener(this);
+//                }
+//            });
+//
+//        }
         Platform.runLater(() -> {
             polygonElement.addListener(this);
         });
@@ -119,10 +119,11 @@ public class PolygonNode extends ViewNode implements ElementListener {
         }
 
         if (closePath) {
-            path.getElements().add(new ClosePath());
+            //path.getElements().add(new ClosePath());
+
+            // Close the path using the last curve.
+            addPathEdge(path, arc, lastX, lastY, polygonElement.getVertices().get(0).getX(), polygonElement.getVertices().get(0).getY());
         }
-        // Close the path using the last curve.
-//        addPathEdge(path, arc, lastX, lastY, polygonElement.getVertices().get(0).getX(), polygonElement.getVertices().get(0).getY());
     }
 
     /**
@@ -158,6 +159,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
 
     public void setClosePath(boolean closePath) {
         this.closePath = closePath;
+        updateLayer();
     }
 
     private void updateWidth() {
@@ -172,7 +174,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
         if (closePath) {
             path.setFill(c);
         } else {
-            path.setFill(Color.TRANSPARENT);
+            path.setFill(null);
         }
     }
 
