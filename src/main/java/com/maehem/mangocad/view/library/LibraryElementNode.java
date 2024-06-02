@@ -54,6 +54,7 @@ import com.maehem.mangocad.model.element.highlevel.Segment;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import java.math.BigDecimal;
@@ -120,7 +121,6 @@ public class LibraryElementNode {
 //    private enum PatternStyle {
 //        DARK_THIN, DARK_MED, DARK_THICK, LIGHT_THIN, LIGHT_MED, LIGHT_THICK
 //    }
-
     // Should come from a DRC object?
     private static final double MASK_W_DEFAULT = 0.1;
 
@@ -693,7 +693,7 @@ public class LibraryElementNode {
             et.setAlign(BOTTOM_LEFT);
         }
         et.setY(-y);
-        et.setLayer(95);
+        et.setLayerNum(95);
         et.setSize(fontSize);
         et.setValue(le.getValue());
 
@@ -3125,12 +3125,19 @@ public class LibraryElementNode {
         final boolean mirror = inst == null ? false : inst.getRotation().isMirror();
 
         symbol.getElements().forEach((e) -> {
-            LayerElement le = layers.get(e.getLayerNum());
-            if (le == null) {
-                LOGGER.log(Level.SEVERE, "No Layer for: {0}", e.getLayerNum());
+            Color c;
+            if (e instanceof LayerNumberProperty lp) {
+                LayerElement le = layers.get(lp.getLayerNum());
+                if (le == null) {
+                    LOGGER.log(Level.SEVERE, "No Layer for: {0}", lp.getLayerNum());
+                    c = Color.RED;
+                } else {
+                    int colorIndex = le.getColorIndex();
+                    c = ColorUtils.getColor(palette.getHex(colorIndex));
+                }
+            } else {
+                c = Color.GREY;
             }
-            int colorIndex = le.getColorIndex();
-            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
             // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
             if (e instanceof ElementPolygon ep) {
@@ -3241,9 +3248,14 @@ public class LibraryElementNode {
 
         if (pkg != null) {
             pkg.getElements().forEach((e) -> {
-                LayerElement le = layers.get(e.getLayerNum());
-                int colorIndex = le.getColorIndex();
-                Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+                Color c;
+                if (e instanceof LayerNumberProperty lp) {
+                    LayerElement le = layers.get(lp.getLayerNum());
+                    int colorIndex = le.getColorIndex();
+                    c = ColorUtils.getColor(palette.getHex(colorIndex));
+                } else {
+                    c = Color.GREY;
+                }
 
                 if (e instanceof PadSMD padSMD) {
                     Color maskColor = ColorUtils.getColor(palette.getHex(layers.get(29).getColorIndex()));

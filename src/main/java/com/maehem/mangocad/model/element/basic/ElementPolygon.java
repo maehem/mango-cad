@@ -23,8 +23,9 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.enums.ElementPolygonField;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
-import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,11 +56,12 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends Element implements ElementListener, ElementSelectable, WidthProperty {
+public class ElementPolygon extends Element implements LayerNumberProperty, ElementListener, ElementSelectable, WidthProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
 
+    private int layer;
     private double width = 0.254;
     private PolygonPour pour = PolygonPour.SOLID;
     private double spacing = 1.27;
@@ -331,7 +333,7 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
         ElementPolygon copy = new ElementPolygon();
 
         copy.setWidth(getWidth());
-        copy.setLayer(getLayerNum());
+        copy.setLayerNum(getLayerNum());
         copy.setVertices(getVertices());
 
         return copy;
@@ -346,7 +348,7 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
     public void restoreSnapshot() {
         if (snapshot != null) {
             setWidth(snapshot.getWidth());
-            setLayer(snapshot.getLayerNum());
+            setLayerNum(snapshot.getLayerNum());
             setVertices(snapshot.getVertices());
 
             snapshot = null;
@@ -386,6 +388,20 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         notifyListeners(field, oldVal, newVal);
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
     }
 
 }

@@ -127,7 +127,7 @@ public class TextTester2 extends Application implements ElementListener, PickLis
         et.setValue(textValue);
         et.setSize(1.0);
         et.setRatio(1);
-        et.setLayer(96);
+        et.setLayerNum(96);
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
         et.setAllowMirror(true);

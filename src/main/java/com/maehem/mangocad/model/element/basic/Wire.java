@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.text.MessageFormat;
@@ -51,13 +52,14 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LocationDualXYProperty, ElementSelectable, WidthProperty {
+public class Wire extends Element implements LayerNumberProperty, LocationDualXYProperty, ElementSelectable, WidthProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
 
+    private int layer = DEFAULT_LAYER;
     private double x1;
     private double y1;
     private double x2;
@@ -73,7 +75,6 @@ public class Wire extends Element implements LocationDualXYProperty, ElementSele
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     public Wire() {
-        setLayer(DEFAULT_LAYER);
     }
 
     @Override
@@ -311,7 +312,7 @@ public class Wire extends Element implements LocationDualXYProperty, ElementSele
             setY1(snapshot.getY1());
             setX2(snapshot.getX2());
             setY2(snapshot.getY2());
-            setLayer(snapshot.getLayerNum());
+            setLayerNum(snapshot.getLayerNum());
             setWidth(snapshot.getWidth());
             setStyle(snapshot.getStyle());
             setCurve(snapshot.getCurve());
@@ -345,12 +346,26 @@ public class Wire extends Element implements LocationDualXYProperty, ElementSele
         copyWire.setY1(getY1());
         copyWire.setX2(getX2());
         copyWire.setY2(getY2());
-        copyWire.setLayer(getLayerNum());
+        copyWire.setLayerNum(getLayerNum());
         copyWire.setWidth(getWidth());
         copyWire.setStyle(getStyle());
         copyWire.setCurve(getCurve());
 
         return copyWire;
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
     }
 
 }

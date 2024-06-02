@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridUnit;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Dimension extends Element implements WidthProperty {
+public class Dimension extends Element implements LayerNumberProperty, WidthProperty {
 
     public static final String ELEMENT_NAME = "dimension";
 
@@ -50,6 +51,7 @@ public class Dimension extends Element implements WidthProperty {
     //          precision     %Int;          "2"
     //          visible       %Bool;         "no"
     //          grouprefs     IDREFS         #IMPLIED
+    private int layer;
     private double x1;
     private double y1;
     private double x2;
@@ -306,4 +308,17 @@ public class Dimension extends Element implements WidthProperty {
         return grouprefs;
     }
 
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
+    }
 }

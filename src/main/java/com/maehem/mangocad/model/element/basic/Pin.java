@@ -76,11 +76,6 @@ public class Pin extends Element implements LocationXYProperty, ElementRotation,
     }
 
     @Override
-    public int getLayerNum() {
-        return 94; // Same as symbol color  // TODO: get from static table.
-    }
-
-    @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
@@ -154,7 +149,7 @@ public class Pin extends Element implements LocationXYProperty, ElementRotation,
     }
 
     public void setPadValue(String value) {
-        if (value == null || !this.padValue.equals(value)) {
+        if (value == null || (this.padValue != null && !this.padValue.equals(value))) {
             String oldVal = this.padValue;
             this.padValue = value;
             notifyListeners(PinField.PAD_VALUE, oldVal, padValue);

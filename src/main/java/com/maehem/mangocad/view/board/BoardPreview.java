@@ -27,6 +27,7 @@ import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Signal;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.Grid;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.util.DrcDefs;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.library.LibraryElementNode;
@@ -118,8 +119,13 @@ public class BoardPreview extends Group {
         ObservableList<Node> chld = getChildren();
 
         for (Element element : board.getPlain()) {
-            int colorIndex = layers.get(element.getLayerNum()).getColorIndex();
-            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
+            Color c;
+            if (element instanceof LayerNumberProperty lp) {
+                int colorIndex = layers.get(lp.getLayerNum()).getColorIndex();
+                c = ColorUtils.getColor(palette.getHex(colorIndex));
+            } else {
+                c = Color.GRAY;
+            }
 
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
@@ -187,7 +193,7 @@ public class BoardPreview extends Group {
                     new Object[]{sig.getName(), sig.getNetClassNum()});
             for (Element el : sig.getElements()) {
                 if (el instanceof Wire w) {
-                    int colorIndex = layers.get(el.getLayerNum()).getColorIndex();
+                    int colorIndex = layers.get(w.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     LOGGER.log(Level.FINER, "    Element: {0} on layerNum: {1} at: {2},{3} to {4},{5} with width: {6}",
                             new Object[]{
@@ -216,7 +222,7 @@ public class BoardPreview extends Group {
                             board.getDesignRules()
                     ));
                 } else if (el instanceof ElementPolygon ep) {
-                    int colorIndex = layers.get(el.getLayerNum()).getColorIndex();
+                    int colorIndex = layers.get(ep.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     chld.add(LibraryElementNode.createPolygonCurved(ep, c, false));
                 } else {
@@ -339,7 +345,7 @@ public class BoardPreview extends Group {
         for (Element element : board.getPlain()) {
             //int colorIndex = layers[element.getLayerNum()].getColorIndex();
             //Color c = ColorUtils.getColor(palette.getHex(colorIndex));
-            int l = element.getLayerNum();
+            //int l = element.getLayerNum();
 
             // Skip if not a layer we want to draw. Speeds up draw.
             // 1,16           Top or Bottom Copper
@@ -351,7 +357,7 @@ public class BoardPreview extends Group {
 //            }
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
-                switch (l) {
+                switch (e.getLayerNum()) {
                     case 21 /*, 22 */, 25 /*, 26 */ -> {
                         Node n = LibraryElementNode.createPolygonCurved(e, silkScreenColor, false);
                         silkNodes.add(n);
@@ -373,7 +379,7 @@ public class BoardPreview extends Group {
                     }
                 }
             } else if (element instanceof Wire e) {
-                switch (l) {
+                switch (e.getLayerNum()) {
                     case 1 /* , 16 */ -> { // TODO: Plain Wire should not appear in Layer1-16.
                         // Text in etch.
                         // TODO: Toggle top or bottom.
@@ -396,7 +402,7 @@ public class BoardPreview extends Group {
                     }
                 }
             } else if (element instanceof ElementText e) {
-                switch (l) {
+                switch (e.getLayerNum()) {
                     case 1 /*, 16 */ -> {
                         // Text in etch.
                         // TODO: Toggle top or bottom.
@@ -438,7 +444,7 @@ public class BoardPreview extends Group {
 //                        e, layers, palette)
 //                );
             } else if (element instanceof ElementCircle e) {
-                switch (l) {
+                switch (e.getLayerNum()) {
                     case 1 /*, 16 */ -> {
                         Node n = LibraryElementNode.createCircleNode(e, copperColor, false);
                         rank.get(0).add(n);
@@ -458,7 +464,7 @@ public class BoardPreview extends Group {
                 // Only the plain group can have Spline and the Spline can only
                 // be on the Dimension layer.
             } else if (element instanceof ElementRectangle e) {
-                switch (l) {
+                switch (e.getLayerNum()) {
                     case 1 /*, 16 */ -> {
                         // Text in etch.
                         // TODO: Toggle top or bottom.
@@ -582,7 +588,6 @@ public class BoardPreview extends Group {
 //                // Text Restrict Nodes
 //                List<Node> restrictText = LibraryElementNode.createPackageMfgPreviewTxtNode(pkg, element, 21, silkScreenColor, 0);
 //                restrict.addAll(restrictText);
-
             } else {
                 LOGGER.log(Level.SEVERE,
                         "Couldn''t find local library called: {0} for package: {1}",
@@ -599,10 +604,11 @@ public class BoardPreview extends Group {
             ArrayList<Shape> restricts = new ArrayList<>();
 
             for (Element el : sig.getElements()) {
-                if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
-                    continue; // Only layer 1 for now.
-                }
                 if (el instanceof SignalPolygon ep) {
+                    if (ep.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
+                        continue; // Only layer 1 for now.
+                    }
+
                     signalPolys.get(ep.getRank()).add(ep);
 
                     Shape poly2 = LibraryElementNode.createPolygonCurved(ep, copperColor, false);
@@ -632,10 +638,17 @@ public class BoardPreview extends Group {
             ArrayList<Shape> sigCopper = new ArrayList<>();
 
             for (Element el : sig.getElements()) {
-                if (el.getLayerNum() != 1 && (!((el instanceof Via) || (el instanceof ContactRef)))) { // TODO: Via uses 'extent'
-                    continue; // Only layer 1 for now.
-                }
+//                if (el.getLayerNum() != 1 &&
+//                        (
+//                        !( (el instanceof Via) || (el instanceof ContactRef))
+//                        )
+//                    ) { // TODO: Via uses 'extent'
+//                    continue; // Only layer 1 for now.
+//                }
                 if (el instanceof Wire w) {
+                    if (w.getLayerNum() != 1) {
+                        continue; // Only top for now.
+                    }
                     sigCopper.add(LibraryElementNode.createWireNode(w, copperColor, false));
 
                     Shape isoWire2 = LibraryElementNode.createWireNode(w, substrateColor, false);
@@ -747,7 +760,7 @@ public class BoardPreview extends Group {
                             }
                         }
                     } else {
-                        LOGGER.log(Level.SEVERE, "pad is: {0} on layer: {1}", new Object[]{pad.getElementName(), pad.getLayerNum()});
+                        LOGGER.log(Level.SEVERE, "pad is: {0} not handled.", new Object[]{pad.getElementName()});
                     }
                 } else if (el instanceof Via v) {
                     Circle viaC2 = new Circle(v.getDerivedDiameter(dr, Via.Layer.TOP) / 2.0, copperColor);

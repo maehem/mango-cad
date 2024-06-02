@@ -1,17 +1,17 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.basic;
@@ -27,10 +27,10 @@ import com.maehem.mangocad.model.util.Rotation;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class PadTHD extends Element {
-    
+
     public static final String ELEMENT_NAME = "thd";
     public static final double DEFAULT_FLASH = 0.51; // Calc dfault diameter ( DEF_FLASH + drill );
-    
+
     private String name;
     private double x;
     private double y;
@@ -42,7 +42,7 @@ public class PadTHD extends Element {
     private double diameter = 0.0; // 0.0 == auto diamteter
     private boolean first;
 
-    
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -89,11 +89,11 @@ public class PadTHD extends Element {
     public void setY(double y) {
         this.y = y;
     }
-    
+
     public Rotation getRotation() {
         return rotation;
     }
-    
+
     /**
      * @return the rotation
      */
@@ -175,10 +175,10 @@ public class PadTHD extends Element {
         if ( getDiameter() == 0.0 ) { // Use default
             return getDrill() + DEFAULT_FLASH;
         }
-        
+
         return getDiameter();
     }
-    
+
     /**
      * @param diameter the diameter to set
      */
@@ -186,15 +186,20 @@ public class PadTHD extends Element {
         this.diameter = diameter;
     }
 
-    /**
-     *
-     * @return layer number
-     */
-    @Override
-    public int getLayerNum() {
-        return 17; // TODO: get from static table.
-    }
-    
+//    /**
+//     *
+//     * @return layer number
+//     */
+//    @Override
+//    public int getLayerNum() {
+//        return 17; // TODO: get from static table.
+//    }
+//
+//    @Override
+//    public void setLayerNum(int layer) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
+//
     /**
      * @return the first
      */
@@ -209,5 +214,5 @@ public class PadTHD extends Element {
         this.first = first;
     }
 
-    
+
 }

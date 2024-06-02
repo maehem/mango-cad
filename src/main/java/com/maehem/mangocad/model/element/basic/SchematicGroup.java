@@ -1,25 +1,25 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import java.util.ArrayList;
 
 /**
@@ -33,13 +33,14 @@ import java.util.ArrayList;
           showAnnotations   %Bool;         #IMPLIED
           layer             %Layer;        #IMPLIED
           grouprefs         IDREFS         #IMPLIED
- * 
- * 
+ *
+ *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SchematicGroup extends Element {
-    public static final String ELEMENT_NAME = "schematic_group";   
-    
+public class SchematicGroup extends Element implements LayerNumberProperty {
+    public static final String ELEMENT_NAME = "schematic_group";
+
+    private int layer;
     private String name;
     private boolean selectable;
     private double width;
@@ -47,9 +48,8 @@ public class SchematicGroup extends Element {
     private TextFont titleFont;
     private WireStyle style;
     private boolean showAnnotations;
-    private int layer;
     private ArrayList<String> grouprefs = new ArrayList<>();
-    
+
 
     @Override
     public String getElementName() {
@@ -182,5 +182,18 @@ public class SchematicGroup extends Element {
         this.grouprefs = grouprefs;
     }
 
-    
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
+    }
+
 }

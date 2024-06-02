@@ -28,6 +28,7 @@ import com.maehem.mangocad.model.element.highlevel.Net;
 import com.maehem.mangocad.model.element.highlevel.Sheet;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.library.LibraryElementNode;
@@ -80,8 +81,13 @@ public class SchematicPreview extends Group {
 //            LOGGER.log(Level.SEVERE, "No <plain> nodes found!");
 //        }
         for (Element element : sheet.getPlain()) {
-            LayerElement layer = layers.get(element.getLayerNum());
-            Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
+            Color c;
+            if (element instanceof LayerNumberProperty le) {
+                LayerElement layer = layers.get(le.getLayerNum());
+                c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
+            } else {
+                c = Color.GREY;
+            }
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
             if (element instanceof ElementPolygon e) {
                 getChildren().add(LibraryElementNode.createPolygonCurved(e, c, false));
@@ -166,29 +172,34 @@ public class SchematicPreview extends Group {
                 //LOGGER.log(Level.SEVERE, "Draw Seg");
 
                 seg.forEach((element) -> {
-                    int layerNum = element.getLayerNum();
-                    Color c = Color.DARKGRAY;
-                    if (layerNum != 0) {
-                        int colorIndex = layers.get(layerNum).getColorIndex();
-                        c = ColorUtils.getColor(palette.getHex(colorIndex));
-                    }
                     if (element instanceof PinRef e) {
+                        LOGGER.log(Level.SEVERE, "Found a PinRef, but I don't know what to do with it.");
                         // Might not have any visual element.
                         //        LOGGER.log(Level.SEVERE, "TODO: Draw PinRef Node");
                         //getChildren().add(LibraryElementNode.createPinNode(e., Color.PALEGREEN));
                     } else if (element instanceof PortRef e) {
                         LOGGER.log(Level.SEVERE, "TODO: Draw PortRef Node");
                         //getChildren().add(LibraryElementNode.createPortNode(e., Color.PALEGREEN));
-                    } else if (element instanceof Wire e) {
-                        getChildren().add(LibraryElementNode.createWireNode(e, c, false));
-                    } else if (element instanceof Junction e) {
-                        getChildren().add(LibraryElementNode.createJunctionNode(e, c));
-                    } else if (element instanceof LabelElement e) {
-                        getChildren().add(LibraryElementNode.createLabelNode(e, c));
-                    } else if (element instanceof Probe e) {
-                        getChildren().add(LibraryElementNode.createProbeNode(e, c, seg));
-                    } else {
-                        LOGGER.log(Level.SEVERE, "Unknown Element in Segment List: " + element.getElementName());
+                    } else if (element instanceof LayerNumberProperty le) {
+                        int layerNum = le.getLayerNum();
+                        Color c;
+                        if (layerNum != 0) {
+                            int colorIndex = layers.get(layerNum).getColorIndex();
+                            c = ColorUtils.getColor(palette.getHex(colorIndex));
+                        } else {
+                            c = Color.DARKGRAY;
+                        }
+                        if (element instanceof Wire e) {
+                            getChildren().add(LibraryElementNode.createWireNode(e, c, false));
+                        } else if (element instanceof Junction e) {
+                            getChildren().add(LibraryElementNode.createJunctionNode(e, c));
+                        } else if (element instanceof LabelElement e) {
+                            getChildren().add(LibraryElementNode.createLabelNode(e, c));
+                        } else if (element instanceof Probe e) {
+                            getChildren().add(LibraryElementNode.createProbeNode(e, c, seg));
+                        } else {
+                            LOGGER.log(Level.SEVERE, "Unknown Element in Segment List: " + element.getElementName());
+                        }
                     }
 
                 });

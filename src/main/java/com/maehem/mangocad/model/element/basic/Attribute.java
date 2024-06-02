@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 
@@ -33,10 +34,11 @@ import java.util.ArrayList;
  * grouprefs IDREFS #IMPLIED > <!-- display: Only in <element> or <instance>
  * context --> <!-- constant:Only in <device> context -->
  */
-public class Attribute extends Element {
+public class Attribute extends Element implements LayerNumberProperty {
 
     public static final String ELEMENT_NAME = "attribute";
 
+    private int layer;
     private String name;
     private double x;
     private double y;
@@ -237,6 +239,20 @@ public class Attribute extends Element {
     @Override
     public String toString() {
         return "Attribute: " + getName() + ":" + getValue() + " :: " + getX() + "," + getY() + " . " + getAlign().code();
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
     }
 
 }

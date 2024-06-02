@@ -17,9 +17,10 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.property.ElementSelectable;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.enums.RotationField;
+import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -28,9 +29,10 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements ElementSelectable {
+public class ElementRectangle extends Element implements LayerNumberProperty, ElementSelectable {
     public static final String ELEMENT_NAME = "rectangle";
 
+    private int layer;
     private double x1;
     private double y1;
     private double x2;
@@ -245,7 +247,7 @@ public class ElementRectangle extends Element implements ElementSelectable {
     @Override
     public void restoreSnapshot() {
         setAllXY(snapshot.getX1(), snapshot.getY1(), snapshot.getX2(), snapshot.getY2());
-        setLayer(snapshot.getLayerNum());
+        setLayerNum(snapshot.getLayerNum());
         setRot(snapshot.getRot());
 
         snapshot = null;
@@ -277,9 +279,23 @@ public class ElementRectangle extends Element implements ElementSelectable {
         rectCopy.setY1(getY1());
         rectCopy.setX2(getX2());
         rectCopy.setY2(getY2());
-        rectCopy.setLayer(getLayerNum());
+        rectCopy.setLayerNum(getLayerNum());
         rectCopy.setRot(getRot());
 
         return rectCopy;
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
     }
 }

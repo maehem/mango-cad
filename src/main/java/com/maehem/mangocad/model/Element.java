@@ -37,17 +37,18 @@ public abstract class Element {
     /**
      * @return the layer
      */
-    public int getLayerNum() {
-        return layer;
-    }
-
-    /**
-     * @param layer the layer to set
-     */
-    public void setLayer(int layer) {
-        this.layer = layer;
-    }
-
+//    @Override
+//    public int getLayerNum() {
+//        return layer;
+//    }
+//
+//    /**
+//     * @param layer the layer to set
+//     */
+//    public void setLayer(int layer) {
+//        this.layer = layer;
+//    }
+//
     public boolean addListener(ElementListener el) {
         return this.listeners.add(el);
     }

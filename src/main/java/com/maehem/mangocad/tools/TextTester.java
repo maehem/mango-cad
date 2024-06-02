@@ -113,7 +113,7 @@ public class TextTester extends Application {
         et.setValue(textValue);
         et.setSize(1.0);
         et.setRatio(8);
-        et.setLayer(21);
+        et.setLayerNum(21);
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
         et.getRotation().setMirror(false);

@@ -32,6 +32,7 @@ import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.ControlPanel;
 import com.maehem.mangocad.view.GroupContainer;
@@ -160,15 +161,21 @@ public class DetailNodes {
 
         Symbol symbol = lib.getSymbol(gate.getSymbol());
         symbol.getElements().forEach((e) -> {
-            //LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
-            int layerNum = e.getLayerNum();
-            //LayerElement le = layers[layerNum];
-            LayerElement le = layers2.get(layerNum);
-            if (le == null) {
-                LOGGER.log(Level.SEVERE, "No Layer for: {0}", layerNum);
+            Color c;
+            if (e instanceof LayerNumberProperty lp) {
+                //LOGGER.log(Level.SEVERE, "Process Symbol Element: " + e.getElementName() );
+                int layerNum = lp.getLayerNum();
+                //LayerElement le = layers[layerNum];
+                LayerElement le = layers2.get(layerNum);
+                if (le == null) {
+                    LOGGER.log(Level.SEVERE, "No Layer for: {0}", layerNum);
+                    c = Color.RED;
+                } else {
+                    c = ColorUtils.getColor(palette.getHex(le.getColorIndex()));
+                }
+            } else {
+                c = Color.GREY;
             }
-            int colorIndex = le.getColorIndex();
-            Color c = ColorUtils.getColor(palette.getHex(colorIndex));
 
             if (e instanceof Wire wire) {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));

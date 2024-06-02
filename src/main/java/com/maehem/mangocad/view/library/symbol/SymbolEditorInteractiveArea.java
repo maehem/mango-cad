@@ -783,7 +783,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     private ElementText initiateNewText() {
         ElementText text = new ElementText();
-        text.setLayer(94);  // TODO needs enum.  Get from layer chooser.
+        text.setLayerNum(94);  // TODO needs enum.  Get from layer chooser.
 
         return text;
     }
@@ -791,7 +791,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private void initiateNewLineSegment(MouseEvent me, double x, double y) {
         // Start new line at mouse.
         Wire wire = new Wire();
-        wire.setLayer(94);  // TODO needs enum
+        wire.setLayerNum(94);  // TODO needs enum
         if (lastElementAdded != null && lastElementAdded instanceof Wire lastWire) {
             wire.setWidth(lastWire.getWidth());
             wire.setCurve(lastWire.getCurve());
@@ -850,7 +850,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private void initiateNewCircle(MouseEvent me, double x, double y) {
         // Start new line at mouse.
         ElementCircle circle = new ElementCircle();
-        circle.setLayer(94);  // TODO needs enum. Read from Layer chooser.
+        circle.setLayerNum(94);  // TODO needs enum. Read from Layer chooser.
         if (lastElementAdded != null && lastElementAdded instanceof ElementCircle lastCircle) {
             circle.setWidth(lastCircle.getWidth());
             LOGGER.log(Level.SEVERE, "I see a last added circle element.");
@@ -873,7 +873,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private void initiateNewRectangle(MouseEvent me, double x, double y) {
         // Start new line at mouse.
         ElementRectangle rect = new ElementRectangle();
-        rect.setLayer(94);  // TODO needs enum. Read from Layer chooser.
+        rect.setLayerNum(94);  // TODO needs enum. Read from Layer chooser.
         rect.setX1(x);
         rect.setY1(-y);
         rect.createSnapshot();
@@ -893,7 +893,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         LOGGER.log(Level.SEVERE, "Initiate new Polygon.");
         ElementPolygon poly = new ElementPolygon();
         //poly.setSelected(true);
-        poly.setLayer(94);
+        poly.setLayerNum(94);
         if (lastElementAdded != null && lastElementAdded instanceof ElementPolygon lastPoly) {
             poly.setWidth(lastPoly.getWidth());
             LOGGER.log(Level.SEVERE, "I see a last added element.");

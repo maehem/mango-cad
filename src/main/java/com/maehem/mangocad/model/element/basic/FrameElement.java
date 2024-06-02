@@ -1,30 +1,31 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one or more 
+    Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with this
-    work for additional information regarding copyright ownership.  The ASF 
-    licenses this file to you under the Apache License, Version 2.0 
-    (the "License"); you may not use this file except in compliance with the 
+    work for additional information regarding copyright ownership.  The ASF
+    licenses this file to you under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with the
     License.  You may obtain a copy of the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software 
-    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the 
-    License for the specific language governing permissions and limitations 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+    License for the specific language governing permissions and limitations
     under the License.
  */
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class FrameElement extends Element {
+public class FrameElement extends Element implements LayerNumberProperty {
     public static final String ELEMENT_NAME = "frame";
 
     //     frame ( no elements )
@@ -41,7 +42,7 @@ public class FrameElement extends Element {
     //          border-bottom %Bool;        "yes"
     //          grouprefs     IDREFS         #IMPLIED
     //
-    
+    private int layer;
     private double x1;
     private double y1;
     private double x2;
@@ -54,7 +55,7 @@ public class FrameElement extends Element {
     private boolean borderBottom = true;
     private ArrayList<String> groupRefs = new ArrayList<>();
 
-    
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -202,5 +203,19 @@ public class FrameElement extends Element {
 
     public List<String> getGroupRefs() {
         return groupRefs;
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
     }
 }

@@ -736,7 +736,7 @@ public class EagleCADIngest {
                 case "width" ->
                     wire.setWidth(Double.parseDouble(value));
                 case "layer" ->
-                    wire.setLayer(Integer.parseInt(value));
+                    wire.setLayerNum(Integer.parseInt(value));
                 case "extent" ->
                     wire.setExtent(value);
                 case "style" ->
@@ -769,7 +769,7 @@ public class EagleCADIngest {
                 case "thermals" ->
                     smd.setThermals(value.equals("yes"));
                 case "layer" ->
-                    smd.setLayer(Integer.parseInt(value));
+                    smd.setLayerNum(Integer.parseInt(value));
                 case "name" ->
                     smd.setName(value);
                 case "rot" -> // Eagle 'rot' attribute has the letter 'R' prefixing it.
@@ -849,7 +849,7 @@ public class EagleCADIngest {
                 case "size" ->
                     text.setSize(Double.parseDouble(value));
                 case "layer" ->
-                    text.setLayer(Integer.parseInt(value));
+                    text.setLayerNum(Integer.parseInt(value));
                 case "font" -> {
                     text.setFont(TextFont.fromCode(value));
                 }
@@ -873,7 +873,7 @@ public class EagleCADIngest {
                 case "width" ->
                     poly.setWidth(Double.parseDouble(value));
                 case "layer" ->
-                    poly.setLayer(Integer.parseInt(value));
+                    poly.setLayerNum(Integer.parseInt(value));
                 case "spacing" -> {
                 } // Non-signal polygon
 //                    poly.setSpacing(Double.parseDouble(value));
@@ -919,7 +919,7 @@ public class EagleCADIngest {
                 case "width" ->
                     poly.setWidth(Double.parseDouble(value));
                 case "layer" ->
-                    poly.setLayer(Integer.parseInt(value));
+                    poly.setLayerNum(Integer.parseInt(value));
                 case "spacing" ->
                     poly.setSpacing(Double.parseDouble(value));
                 case "pour" ->
@@ -957,7 +957,7 @@ public class EagleCADIngest {
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
                 case "layer" ->
-                    rect.setLayer(Integer.parseInt(value));
+                    rect.setLayerNum(Integer.parseInt(value));
                 case "x1" ->
                     rect.setX1(Double.parseDouble(value));
                 case "x2" ->
@@ -1000,7 +1000,7 @@ public class EagleCADIngest {
             String value = item.getNodeValue();
             switch (item.getNodeName()) {
                 case "layer" ->
-                    circ.setLayer(Integer.parseInt(value));
+                    circ.setLayerNum(Integer.parseInt(value));
                 case "x" ->
                     circ.setX(Double.parseDouble(value));
                 case "y" ->
@@ -1134,7 +1134,7 @@ public class EagleCADIngest {
                 case "size" ->
                     label.setSize(Double.parseDouble(value));
                 case "layer" ->
-                    label.setLayer(Integer.parseInt(value));
+                    label.setLayerNum(Integer.parseInt(value));
                 case "font" ->
                     label.setFont(TextFont.fromCode(value));
                 case "ratio" ->
@@ -1190,7 +1190,7 @@ public class EagleCADIngest {
                 case "size" ->
                     probe.setSize(Double.parseDouble(value));
                 case "layer" ->
-                    probe.setLayer(Integer.parseInt(value));
+                    probe.setLayerNum(Integer.parseInt(value));
                 case "font" ->
                     probe.setFont(TextFont.fromCode(value));
                 case "ratio" ->
@@ -1224,7 +1224,7 @@ public class EagleCADIngest {
                 case "rows" ->
                     frame.setRows(Integer.parseInt(value));
                 case "layer" ->
-                    frame.setLayer(Integer.parseInt(value));
+                    frame.setLayerNum(Integer.parseInt(value));
                 case "border-top" ->
                     frame.setBorderTop(value.equalsIgnoreCase("yes"));
                 case "border-right" ->
@@ -1498,7 +1498,7 @@ public class EagleCADIngest {
                 case "size" ->
                     attribute.setSize(Double.parseDouble(value));
                 case "layer" ->
-                    attribute.setLayer(Integer.parseInt(value));
+                    attribute.setLayerNum(Integer.parseInt(value));
                 case "display" ->
                     attribute.setDisplay(value);
                 case "constant" ->
@@ -1776,7 +1776,7 @@ public class EagleCADIngest {
                 case "showAnnotations" ->
                     group.setShowAnnotations(value.equalsIgnoreCase("yes"));
                 case "layer" ->
-                    group.setLayer(Integer.parseInt(value));
+                    group.setLayerNum(Integer.parseInt(value));
                 case "grouprefs" ->
                     ingestGroupRefs(group.getGrouprefs(), value);
                 default ->
@@ -2392,7 +2392,7 @@ public class EagleCADIngest {
                 case "width" ->
                     spline.setWidth(Double.parseDouble(value));
                 case "layer" ->
-                    spline.setLayer(Integer.parseInt(value));
+                    spline.setLayerNum(Integer.parseInt(value));
                 case "locked" ->
                     spline.setLocked(value.equalsIgnoreCase("yes"));
 
@@ -2499,7 +2499,7 @@ public class EagleCADIngest {
                     dim.setY3(Double.parseDouble(value));
                     break;
                 case "layer":
-                    dim.setLayer(Integer.parseInt(value));
+                    dim.setLayerNum(Integer.parseInt(value));
                     break;
                 case "dtype":
                     dim.setDtype(DimensionType.fromCode(value));

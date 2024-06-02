@@ -23,6 +23,7 @@ import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
@@ -47,12 +48,13 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element implements LocationXYProperty, ElementRotation, ElementSelectable {
+public class ElementText extends Element implements LayerNumberProperty, LocationXYProperty, ElementRotation, ElementSelectable {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "text";
 
+    private int layer;
     private double x;
     private double y;
     private double size = 1.778; // 0.7 inch
@@ -378,7 +380,7 @@ public class ElementText extends Element implements LocationXYProperty, ElementR
             setConstrained(snapshot.isConstrained());
             setDistance(snapshot.getDistance());
             setFont(snapshot.getFont());
-            setLayer(snapshot.getLayerNum());
+            setLayerNum(snapshot.getLayerNum());
             setMirror(snapshot.isMirrored());
             setRatio(snapshot.getRatio());
             setRot(snapshot.getRot());
@@ -408,7 +410,7 @@ public class ElementText extends Element implements LocationXYProperty, ElementR
         copy.setConstrained(isConstrained());
         copy.setDistance(distance);
         copy.setFont(font);
-        copy.setLayer(getLayerNum());
+        copy.setLayerNum(getLayerNum());
         copy.setMirror(isMirrored());
         copy.setRatio(ratio);
         copy.setRot(getRot());
@@ -437,6 +439,20 @@ public class ElementText extends Element implements LocationXYProperty, ElementR
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(ElementTextField.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
     }
 

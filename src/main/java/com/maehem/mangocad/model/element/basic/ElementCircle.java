@@ -18,9 +18,10 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ElementCircleField;
-import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -29,10 +30,11 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements LocationXYProperty, ElementSelectable, WidthProperty {
+public class ElementCircle extends Element implements LayerNumberProperty, LocationXYProperty, ElementSelectable, WidthProperty {
 
     public static final String ELEMENT_NAME = "circle";
 
+    private int layer;
     private double x;
     private double y;
     private double radius = 2.54;
@@ -131,7 +133,7 @@ public class ElementCircle extends Element implements LocationXYProperty, Elemen
             setX(snapshot.getX());
             setY(snapshot.getY());
             setWidth(snapshot.getWidth());
-            setLayer(snapshot.getLayerNum());
+            setLayerNum(snapshot.getLayerNum());
             setRadius(snapshot.getRadius());
 
             snapshot = null;
@@ -146,7 +148,7 @@ public class ElementCircle extends Element implements LocationXYProperty, Elemen
         copy.setX(getX());
         copy.setY(getY());
         copy.setWidth(getWidth());
-        copy.setLayer(getLayerNum());
+        copy.setLayerNum(getLayerNum());
         copy.setRadius(getRadius());
 
         return copy;
@@ -168,6 +170,20 @@ public class ElementCircle extends Element implements LocationXYProperty, Elemen
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(ElementCircleField.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public int getLayerNum() {
+        return layer;
+    }
+
+    @Override
+    public void setLayerNum(int layer) {
+        if (this.layer != layer) {
+            int oldVal = this.layer;
+            this.layer = layer;
+            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
     }
 
