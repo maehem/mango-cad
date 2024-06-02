@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.enums.PinField;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -118,7 +118,7 @@ public class PinRotationToggleWidget extends ToolModeWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(PinField.ROTATION)) {
+        if (!field.equals(RotationProperty.Field.VALUE)) {
             return;
         }
         if (newVal == null) {

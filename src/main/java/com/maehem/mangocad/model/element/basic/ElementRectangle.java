@@ -18,8 +18,8 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
-import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -235,7 +235,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (getRot() != value) {
             double oldValue = getRot();
             this.rotation.setValue(value);
-            notifyListeners(RotationField.VALUE, oldValue, getRot());
+            notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
         }
     }
 

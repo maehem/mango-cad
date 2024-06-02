@@ -22,7 +22,6 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
-import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.util.Rotation;
@@ -113,7 +112,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
                 }
             }
         }
-        if (field instanceof RotationField rf) {
+        if (field instanceof RotationProperty.Field rf) {
             updatePoints();
         }
     }

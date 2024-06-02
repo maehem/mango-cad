@@ -29,7 +29,7 @@ public enum PinField {
     DIRECTION("direction", PinDirection.class),
     FUNCTION("function", PinFunction.class),
     SWAPLEVEL("swapLevel", Integer.class),
-    ROTATION("rotation", Double.class),
+    //ROTATION("rotation", Double.class),
     PAD_VALUE("padValue", String.class);
 
     private final String fName;

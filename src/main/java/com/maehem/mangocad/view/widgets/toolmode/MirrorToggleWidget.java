@@ -17,7 +17,6 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -110,7 +109,7 @@ public class MirrorToggleWidget extends ToolModeWidget {
         // Qualify what we can mirror.
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
-        if (!field.equals(RotationField.MIRROR)) {
+        if (!field.equals(RotationProperty.Field.MIRROR)) {
             //LOGGER.log(Level.SEVERE, "The Rotation/Mirror Field is not an expected type: " + field.toString() + field.name());
             return;
         }

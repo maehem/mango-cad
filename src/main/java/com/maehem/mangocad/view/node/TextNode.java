@@ -23,10 +23,9 @@ import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
 import static com.maehem.mangocad.model.element.enums.ElementTextField.*;
-import com.maehem.mangocad.model.element.enums.RotationField;
-import static com.maehem.mangocad.model.element.enums.RotationField.*;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -563,7 +562,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 }
             }
         }
-        if (field instanceof RotationField rf) {
+        if (field instanceof RotationProperty.Field rf) {
             switch (rf) {
                 case MIRROR, SPIN -> {
                     updateLocation();

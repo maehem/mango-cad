@@ -18,7 +18,6 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
-import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
@@ -299,7 +298,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.isSpin() != spin) {
             boolean oldValue = isSpin();
             rotation.setSpin(spin);
-            notifyListeners(RotationField.SPIN, oldValue, this.isSpin());
+            notifyListeners(RotationProperty.Field.SPIN, oldValue, this.isSpin());
         }
     }
 
@@ -313,7 +312,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.isSpinAllowed() != allowSpin) {
             boolean oldValue = isSpinAllowed();
             rotation.setAllowSpin(allowSpin);
-            notifyListeners(RotationField.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+            notifyListeners(RotationProperty.Field.ALLOW_SPIN, oldValue, this.isSpinAllowed());
         }
     }
 
@@ -332,7 +331,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.isConstrained() != value) {
             boolean oldValue = this.isConstrained();
             rotation.setConstrained(value);
-            notifyListeners(RotationField.CONSTRAINED, oldValue, this.isConstrained());
+            notifyListeners(RotationProperty.Field.CONSTRAINED, oldValue, this.isConstrained());
         }
     }
 
@@ -341,7 +340,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.isMirrored() != value) {
             boolean oldValue = this.isMirrored();
             rotation.setMirror(value);
-            notifyListeners(RotationField.MIRROR, oldValue, this.isMirrored());
+            notifyListeners(RotationProperty.Field.MIRROR, oldValue, this.isMirrored());
         }
     }
 
@@ -360,7 +359,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.isMirrorAllowed() != value) {
             boolean oldValue = this.isMirrorAllowed();
             rotation.setAllowMirror(value);
-            notifyListeners(RotationField.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+            notifyListeners(RotationProperty.Field.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
         }
     }
 

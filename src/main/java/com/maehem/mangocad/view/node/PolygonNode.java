@@ -23,9 +23,9 @@ import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementPolygonField;
-import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.enums.VertexField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -223,10 +223,10 @@ public class PolygonNode extends ViewNode implements ElementListener {
                 }
             }
         }
-        if (field instanceof RotationField) {
+        if (field instanceof RotationProperty.Field) {
             rebuildPath();
         }
-        if (field instanceof SelectableProperty) {
+        if (field instanceof SelectableProperty.Field) {
             updateLayer();
         }
         if (field instanceof VertexField vf) {

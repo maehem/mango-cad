@@ -18,8 +18,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
-import com.maehem.mangocad.model.element.enums.PinField;
-import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -107,8 +105,8 @@ public class RotationWidget extends ToolModeWidget {
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
         if (!field.equals(ElementTextField.ROTATION)
-                && !field.equals(PinField.ROTATION)
-                && !field.equals(RotationField.MIRROR)) {
+                && !field.equals(RotationProperty.Field.VALUE)
+                && !field.equals(RotationProperty.Field.MIRROR)) {
             LOGGER.log(Level.SEVERE, "The Rotation Field is not an expected type: " + field.name());
             return;
         }

@@ -24,6 +24,7 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import static com.maehem.mangocad.model.element.enums.PinVisible.*;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.PickListener;
@@ -487,7 +488,7 @@ public class PinNode extends ViewNode implements ElementListener {
                 updatePadPin();
                 updateColors();
             }
-            case PinField.ROTATION -> {
+            case RotationProperty.Field.VALUE -> {
                 LOGGER.log(Level.SEVERE,
                         "Pin properties have changed! {0}: {1} => {2}",
                         new Object[]{field, oldVal.toString(), newVal.toString()});

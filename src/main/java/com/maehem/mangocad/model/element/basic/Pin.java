@@ -270,7 +270,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         if (this.rotation.getValue() != val) {
             double oldVal = this.getRot();
             this.rotation.setValue(val);
-            notifyListeners(PinField.ROTATION, oldVal, this.rotation.getValue());
+            notifyListeners(RotationProperty.Field.VALUE, oldVal, this.rotation.getValue());
         }
     }
 
