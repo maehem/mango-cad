@@ -732,6 +732,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         td.showAndWait();
                                         pin.setName(td.getResult());
                                     } // else ignore.
+                                    // TODO: Present multi pin dialog edit form.
                                 }
                             }
                             default -> {
