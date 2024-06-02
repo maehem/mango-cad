@@ -18,8 +18,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
-import com.maehem.mangocad.model.element.enums.ElementPolygonField;
-import static com.maehem.mangocad.model.element.enums.ElementPolygonField.SPACING;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -177,8 +175,8 @@ public class PolygonFillWidget extends ToolModeWidget {
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        if (!field.equals(ElementPolygonField.POUR)
-                && !field.equals(ElementPolygonField.SPACING)) {
+        if (!field.equals(ElementPolygon.Field.POUR)
+                && !field.equals(ElementPolygon.Field.SPACING)) {
             return;
         }
         if (newVal == null) {
@@ -189,7 +187,7 @@ public class PolygonFillWidget extends ToolModeWidget {
 
         if (newVal instanceof PolygonPour) {
             updateToggleState();
-        } else if (field.equals(SPACING)) {
+        } else if (field.equals(ElementPolygon.Field.SPACING)) {
             updateComboState((double) newVal);
         } else {
             LOGGER.log(Level.SEVERE, "Provded newVal was not a PolygonFill or Spacing!");

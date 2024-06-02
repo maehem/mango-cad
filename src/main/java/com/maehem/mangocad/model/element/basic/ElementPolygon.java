@@ -21,7 +21,6 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
-import com.maehem.mangocad.model.element.enums.ElementPolygonField;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -61,6 +60,35 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
 
+    public enum Field {
+        //WIDTH("width", Double.class),
+        //LAYER("layer", Integer.class),
+        //SELECTED("selected", Boolean.class),
+        POUR("pour", PolygonPour.class),
+        SPACING("spacing", Double.class),
+        ISOLATE("isolate", Double.class),
+        ORPHANS("orphans", Boolean.class),
+        THERMAL("thermal", Boolean.class),
+        RANK("rank", Integer.class),
+        VERTEX("vertex", Vertex.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
     private int layer;
     private double width = 0.254;
     private PolygonPour pour = PolygonPour.SOLID;
@@ -114,7 +142,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (this.pour != pour) {
             PolygonPour oldVal = this.pour;
             this.pour = pour;
-            notifyListeners(ElementPolygonField.POUR, oldVal, this.pour);
+            notifyListeners(ElementPolygon.Field.POUR, oldVal, this.pour);
         }
     }
 
@@ -133,7 +161,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (this.spacing != val) {
             double oldVal = this.spacing;
             this.spacing = val;
-            notifyListeners(ElementPolygonField.SPACING, oldVal, this.spacing);
+            notifyListeners(ElementPolygon.Field.SPACING, oldVal, this.spacing);
         }
     }
 
@@ -151,7 +179,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (this.isolate != isolate) {
             double oldVal = this.isolate;
             this.isolate = isolate;
-            notifyListeners(ElementPolygonField.ISOLATE, oldVal, this.isolate);
+            notifyListeners(ElementPolygon.Field.ISOLATE, oldVal, this.isolate);
         }
     }
 
@@ -169,7 +197,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (this.orphans != orphans) {
             boolean oldVal = this.orphans;
             this.orphans = orphans;
-            notifyListeners(ElementPolygonField.ORPHANS, oldVal, this.orphans);
+            notifyListeners(ElementPolygon.Field.ORPHANS, oldVal, this.orphans);
         }
     }
 
@@ -187,7 +215,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (this.thermals != thermals) {
             boolean oldVal = this.thermals;
             this.thermals = thermals;
-            notifyListeners(ElementPolygonField.THERMAL, oldVal, this.thermals);
+            notifyListeners(ElementPolygon.Field.THERMAL, oldVal, this.thermals);
         }
     }
 
@@ -212,7 +240,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
             } else {
                 this.rank = rank;
             }
-            notifyListeners(ElementPolygonField.RANK, oldVal, this.rank);
+            notifyListeners(ElementPolygon.Field.RANK, oldVal, this.rank);
         }
     }
 
@@ -259,7 +287,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
 //        }
 //        LOGGER.log(Level.SEVERE, sb.toString());
         vertNew.addListener(this);
-        notifyListeners(ElementPolygonField.VERTEX, null, vertNew);
+        notifyListeners(ElementPolygon.Field.VERTEX, null, vertNew);
     }
 
     /**
@@ -274,7 +302,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         getVertices().add(verts.indexOf(before) + 1, vertNew);
 
         vertNew.addListener(this);
-        notifyListeners(ElementPolygonField.VERTEX, null, vertNew);
+        notifyListeners(ElementPolygon.Field.VERTEX, null, vertNew);
     }
 
     public void removeVertex(Vertex v) {
@@ -282,7 +310,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (getVertices().contains(v)) {
             getVertices().remove(v);
             v.removeListener(this);
-            notifyListeners(ElementPolygonField.VERTEX, v, null);
+            notifyListeners(ElementPolygon.Field.VERTEX, v, null);
         }
     }
 
@@ -373,7 +401,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         if (this.selected != selected) {
             boolean oldValue = this.selected;
             this.selected = selected;
-            notifyListeners(ElementPolygonField.SELECTED, oldValue, this.selected);
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
     }
 

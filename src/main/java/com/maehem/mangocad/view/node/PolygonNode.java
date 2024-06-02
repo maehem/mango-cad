@@ -22,11 +22,12 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.drawing.Layers;
-import com.maehem.mangocad.model.element.enums.ElementPolygonField;
 import com.maehem.mangocad.model.element.enums.VertexField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import static com.maehem.mangocad.view.library.LibraryElementNode.distance;
@@ -205,24 +206,42 @@ public class PolygonNode extends ViewNode implements ElementListener {
                 "Polygon properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
 
-        if (field instanceof ElementPolygonField erf) {
-            switch (erf) {
-                case ElementPolygonField.WIDTH -> {
-                    updateWidth();
-                }
-                case ElementPolygonField.LAYER -> {
-                    updateLayer();
-                }
-                case ElementPolygonField.VERTEX -> {
-                    LOGGER.log(Level.SEVERE, "Polygon Vertex has changed.");
-                    if ((oldVal == null && newVal != null) || (oldVal != null && newVal == null)) {
-                        LOGGER.log(Level.SEVERE, "    Something was added or removed. Rebuild path.");
-                        // Vertex added or removed.
-                        rebuildPath();
-                    }
+        switch (field) {
+            case WidthProperty.Field.WIDTH -> {
+                updateWidth();
+            }
+            case LayerNumberProperty.Field.LAYER -> {
+                updateLayer();
+            }
+            case ElementPolygon.Field.VERTEX -> {
+                LOGGER.log(Level.SEVERE, "Polygon Vertex has changed.");
+                if ((oldVal == null && newVal != null) || (oldVal != null && newVal == null)) {
+                    LOGGER.log(Level.SEVERE, "    Something was added or removed. Rebuild path.");
+                    // Vertex added or removed.
+                    rebuildPath();
                 }
             }
+            default -> {
+            }
         }
+//        if (field instanceof ElementPolygonField erf) {
+//            switch (erf) {
+//                case WidthProperty.Field.WIDTH -> {
+//                    updateWidth();
+//                }
+//                case ElementPolygon.Field.LAYER -> {
+//                    updateLayer();
+//                }
+//                case ElementPolygon.Field.VERTEX -> {
+//                    LOGGER.log(Level.SEVERE, "Polygon Vertex has changed.");
+//                    if ((oldVal == null && newVal != null) || (oldVal != null && newVal == null)) {
+//                        LOGGER.log(Level.SEVERE, "    Something was added or removed. Rebuild path.");
+//                        // Vertex added or removed.
+//                        rebuildPath();
+//                    }
+//                }
+//            }
+//        }
         if (field instanceof RotationProperty.Field) {
             rebuildPath();
         }
