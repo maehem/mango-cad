@@ -22,8 +22,8 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.drawing.Layers;
-import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
 import com.maehem.mangocad.view.node.PinNode;
@@ -229,14 +229,16 @@ public class PinTester extends Application implements ElementListener, PickListe
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        switch ((PinField) field) {
-            case Y -> {
+        switch (field) {
+            case LocationXYProperty.Field.Y -> {
                 hLine.setStartY(-pinElement.getY());
                 hLine.setEndY(-pinElement.getY());
             }
-            case X -> {
+            case LocationXYProperty.Field.X -> {
                 vLine.setStartX(pinElement.getX());
                 vLine.setEndX(pinElement.getX());
+            }
+            default -> {
             }
         }
     }

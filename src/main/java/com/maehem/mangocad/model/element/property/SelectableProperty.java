@@ -24,6 +24,27 @@ import com.maehem.mangocad.model.Element;
  */
 public interface SelectableProperty {
 
+    public enum Field {
+        SELECTED("selected", Boolean.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
+
     public void createSnapshot();
 
     public void restoreSnapshot();

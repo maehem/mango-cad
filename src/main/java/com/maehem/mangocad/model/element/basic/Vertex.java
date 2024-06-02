@@ -118,7 +118,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
         if (this.selected != selected) {
             boolean oldValue = this.selected;
             this.selected = selected;
-            notifyListeners(VertexField.SELECTED, oldValue, this.selected);
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
     }
 

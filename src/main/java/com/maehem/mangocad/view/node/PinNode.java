@@ -23,6 +23,8 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import static com.maehem.mangocad.model.element.enums.PinVisible.*;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.ViewUtils;
@@ -457,16 +459,15 @@ public class PinNode extends ViewNode implements ElementListener {
 //                "Pin properties have changed! {0}: {1} => {2}",
 //                new Object[]{field, oldVal.toString(), newVal.toString()});
 
-        switch ((PinField) field) {
-            case PinField.NAME, PinField.PAD_VALUE -> {
-                updatePadPin();
-            }
-            case PinField.X, PinField.Y -> {
-                // Adjust position transform
+        switch (field) {
+            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
                 updatePosition();
             }
-            case SELECTED -> {
+            case SelectableProperty.Field.SELECTED -> {
                 updateColors();
+            }
+            case PinField.NAME, PinField.PAD_VALUE -> {
+                updatePadPin();
             }
             case PinField.DIRECTION, PinField.SWAPLEVEL -> {
                 updatePinData();
@@ -492,6 +493,8 @@ public class PinNode extends ViewNode implements ElementListener {
                         new Object[]{field, oldVal.toString(), newVal.toString()});
                 // Adjust Rotation Transform
                 updateRotation();
+            }
+            default -> {
             }
         }
 

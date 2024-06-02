@@ -114,7 +114,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         if (this.x != x) {
             double oldX = this.x;
             this.x = x;
-            notifyListeners(PinField.X, oldX, x);
+            notifyListeners(LocationXYProperty.Field.X, oldX, x);
         }
     }
 
@@ -134,7 +134,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         if (this.y != y) {
             double oldY = this.y;
             this.y = y;
-            notifyListeners(PinField.Y, oldY, y);
+            notifyListeners(LocationXYProperty.Field.Y, oldY, y);
         }
     }
 
@@ -394,7 +394,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         if (this.selected != selected) {
             boolean oldValue = this.selected;
             this.selected = selected;
-            notifyListeners(PinField.SELECTED, oldValue, this.selected);
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
     }
 
