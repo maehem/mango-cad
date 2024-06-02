@@ -23,7 +23,6 @@ import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.text.MessageFormat;
@@ -53,9 +52,39 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, LocationDualXYProperty, SelectableProperty, WidthProperty, CurveProperty {
+public class Wire extends Element implements LayerNumberProperty, SelectableProperty, WidthProperty, CurveProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
+
+    public enum Field {
+        X1("x1", Double.class), Y1("y1", Double.class),
+        X2("x2", Double.class), Y2("y2", Double.class),
+        END("selectedEnd", WireEnd.class),
+        //WIDTH("width", Double.class),
+        //LAYER("layer", Integer.class),
+        EXTENT("extent", String.class),
+        STYLE("style", WireStyle.class),
+        //CURVE("curve", Double.class),
+        CAP("cap", WireCap.class),
+        GROUP_REF("groupRef", String.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
 
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
@@ -86,7 +115,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @return the x1
      */
-    @Override
     public double getX1() {
         return x1;
     }
@@ -94,7 +122,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @param x1 the x1 to set
      */
-    @Override
     public void setX1(double x1) {
         if (this.x1 != x1) {
             double oldVal = this.x1;
@@ -106,7 +133,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @return the y1
      */
-    @Override
     public double getY1() {
         return y1;
     }
@@ -114,7 +140,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @param y1 the y1 to set
      */
-    @Override
     public void setY1(double y1) {
         if (this.y1 != y1) {
             double oldVal = this.y1;
@@ -126,7 +151,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @return the x2
      */
-    @Override
     public double getX2() {
         return x2;
     }
@@ -134,7 +158,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @param x2 the x2 to set
      */
-    @Override
     public void setX2(double x2) {
         if (this.x2 != x2) {
             double oldVal = this.x2;
@@ -146,7 +169,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @return the y2
      */
-    @Override
     public double getY2() {
         return y2;
     }
@@ -154,7 +176,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @param y2 the y2 to set
      */
-    @Override
     public void setY2(double y2) {
         if (this.y2 != y2) {
             double oldVal = this.y2;
@@ -289,7 +310,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
         return mf.format(o);
     }
 
-    @Override
     public void setSelectedEnd(WireEnd end) {
         if (!getSelectedEnd().equals(end)) {
             WireEnd oldVal = this.getSelectedEnd();
@@ -298,7 +318,6 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
         }
     }
 
-    @Override
     public WireEnd getSelectedEnd() {
         return selectedEnd;
     }

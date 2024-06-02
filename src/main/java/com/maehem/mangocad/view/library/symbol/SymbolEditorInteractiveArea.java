@@ -30,7 +30,6 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -305,15 +304,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     exy.setY(snapXY.getY() + moveDistSnappedY);
                                 }
                             }
-                            case LocationDualXYProperty exy -> {
+                            case Wire exy -> {
                                 Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof LocationDualXYProperty snapXY) {
+                                if (snapshot instanceof Wire snapXY) {
                                     switch (exy.getSelectedEnd()) {
-                                        case ONE -> {
+                                        case WireEnd.ONE -> {
                                             exy.setX1(snapXY.getX1() + moveDistSnappedX);
                                             exy.setY1(snapXY.getY1() + moveDistSnappedY);
                                         }
-                                        case TWO -> {
+                                        case WireEnd.TWO -> {
                                             exy.setX2(snapXY.getX2() + moveDistSnappedX);
                                             exy.setY2(snapXY.getY2() + moveDistSnappedY);
                                         }
@@ -532,15 +531,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 picks.add(e);
                             }
                         }
-                        case LocationDualXYProperty ee -> {
-                            if (Math.abs(me.getX() - ee.getX1()) < PICK_SIZE
-                                    && Math.abs(-me.getY() - ee.getY1()) < PICK_SIZE) {
+                        case Wire wire -> {
+                            if (Math.abs(me.getX() - wire.getX1()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - wire.getY1()) < PICK_SIZE) {
                                 picks.add(e);
-                                ((LocationDualXYProperty) e).setSelectedEnd(ONE);
-                            } else if (Math.abs(me.getX() - ee.getX2()) < PICK_SIZE
-                                    && Math.abs(-me.getY() - ee.getY2()) < PICK_SIZE) {
+                                wire.setSelectedEnd(ONE);
+                            } else if (Math.abs(me.getX() - wire.getX2()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - wire.getY2()) < PICK_SIZE) {
                                 picks.add(e);
-                                ((LocationDualXYProperty) e).setSelectedEnd(TWO);
+                                wire.setSelectedEnd(TWO);
                             }
                         }
                         case ElementRectangle er -> {
@@ -998,25 +997,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1} not in rect area.", new Object[]{exy.getX(), exy.getY()});
                                 }
                             }
-                            case LocationDualXYProperty exy -> {
-                                boolean p1 = isInsideSelection(exy.getX1(), -exy.getY1());
-                                boolean p2 = isInsideSelection(exy.getX2(), -exy.getY2());
+                            case Wire wire -> {
+                                boolean p1 = isInsideSelection(wire.getX1(), -wire.getY1());
+                                boolean p2 = isInsideSelection(wire.getX2(), -wire.getY2());
 
                                 if (p1 && p2) {
                                     //LOGGER.log(Level.SEVERE, "ElementDualXY BOTH");
-                                    exy.setSelectedEnd(WireEnd.BOTH);
+                                    wire.setSelectedEnd(WireEnd.BOTH);
                                 } else if (p1) {
                                     //LOGGER.log(Level.SEVERE, "ElementDualXY ONE");
-                                    exy.setSelectedEnd(WireEnd.ONE);
+                                    wire.setSelectedEnd(WireEnd.ONE);
                                 } else if (p2) {
-                                    exy.setSelectedEnd(WireEnd.TWO);
+                                    wire.setSelectedEnd(WireEnd.TWO);
                                     //LOGGER.log(Level.SEVERE, "ElementDualXY TWO");
                                 } else {
-                                    exy.setSelectedEnd(WireEnd.NONE);
+                                    wire.setSelectedEnd(WireEnd.NONE);
                                     //LOGGER.log(Level.SEVERE, "ElementDualXY NONE");
                                 }
 
-                                if (exy.getSelectedEnd() != WireEnd.NONE) {
+                                if (wire.getSelectedEnd() != WireEnd.NONE) {
                                     selectedElements.add(element);
                                 }
                             }
