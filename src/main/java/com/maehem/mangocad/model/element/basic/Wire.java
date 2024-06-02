@@ -21,6 +21,7 @@ import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -52,7 +53,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, LocationDualXYProperty, SelectableProperty, WidthProperty {
+public class Wire extends Element implements LayerNumberProperty, LocationDualXYProperty, SelectableProperty, WidthProperty, CurveProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -66,9 +67,9 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     private double y2;
     private WireEnd selectedEnd = WireEnd.NONE;
     private double width = 0.254;
+    private double curve = 0.0;
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
-    private double curve = 0.0;
     private WireCap cap = WireCap.ROUND;
     private Wire snapshot = null;
 
@@ -200,6 +201,7 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @return the curve
      */
+    @Override
     public double getCurve() {
         return curve;
     }
@@ -207,11 +209,12 @@ public class Wire extends Element implements LayerNumberProperty, LocationDualXY
     /**
      * @param curve the curve to set
      */
+    @Override
     public void setCurve(double curve) {
         if (getCurve() != curve) {
             double oldVal = this.curve;
             this.curve = curve;
-            notifyListeners(WireField.CURVE, oldVal, this.curve);
+            notifyListeners(CurveProperty.Field.CURVE, oldVal, this.curve);
         }
     }
 

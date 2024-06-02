@@ -14,31 +14,37 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model.element.enums;
+package com.maehem.mangocad.model.element.property;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public enum VertexField {
-    X("x", Double.class), Y("y", Double.class);
-    //CURVE("curve", Double.class),
-    //SELECTED("selected", Boolean.class);
+public interface CurveProperty {
 
-    private final String fName;
-    private final Class clazz;
+    public enum Field {
+        CURVE("curve", Double.class);
 
-    private VertexField(String name, Class clazz) {
-        this.fName = name;
-        this.clazz = clazz;
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
     }
 
-    public String fName() {
-        return fName;
-    }
+    public double getCurve();
 
-    public Class clazz() {
-        return clazz;
-    }
+    public void setCurve(double x);
 
 }

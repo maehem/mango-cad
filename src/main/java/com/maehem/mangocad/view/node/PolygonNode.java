@@ -26,6 +26,7 @@ import com.maehem.mangocad.model.element.enums.ElementPolygonField;
 import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.enums.VertexField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import static com.maehem.mangocad.view.library.LibraryElementNode.distance;
@@ -130,10 +131,6 @@ public class PolygonNode extends ViewNode implements ElementListener {
      * Sync Vertex data with Path segments.
      */
     private void updateVerticesXY() {
-//        if (polygonElement.getVertices().size() != path.getElements().size()) {
-//            LOGGER.log(Level.SEVERE, "PolygonNode:  Vertices and Path elements are out of sync. But how? Rebuilding.");
-//            rebuildVertices();
-//        } else {
         List<Vertex> vertices = polygonElement.getVertices();
         ObservableList<PathElement> pathElements = path.getElements();
 
@@ -154,7 +151,6 @@ public class PolygonNode extends ViewNode implements ElementListener {
                 LOGGER.log(Level.SEVERE, "PolygonNode: Path element was not a MoveTo! But how?");
             }
         }
-//        }
     }
 
     public void setClosePath(boolean closePath) {
@@ -201,7 +197,6 @@ public class PolygonNode extends ViewNode implements ElementListener {
             arcTo.setRadiusY(radius);
             path.getElements().add(arcTo);
         }
-
     }
 
     @Override
@@ -228,21 +223,15 @@ public class PolygonNode extends ViewNode implements ElementListener {
                 }
             }
         }
-        if (field instanceof RotationField rf) {
+        if (field instanceof RotationField) {
             rebuildPath();
         }
+        if (field instanceof SelectableProperty) {
+            updateLayer();
+        }
         if (field instanceof VertexField vf) {
-            switch (vf) {
-                case SELECTED -> {
-                    updateLayer();
-                }
-                default -> {
-                    LOGGER.log(Level.SEVERE, "    Vertex field has changed. f:" + vf.name());
-//                    updateVertices();
-                    updateVerticesXY();
-                }
-            }
-
+            LOGGER.log(Level.SEVERE, "    Vertex field has changed. f: {0}", vf.name());
+            updateVerticesXY();
         }
     }
 
@@ -250,7 +239,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
     public String toString() {
         StringBuilder sb = new StringBuilder("PolygonNode with " + polygonElement.getVertices().size() + " Vertices:\n          ");
         for (Vertex v : polygonElement.getVertices()) {
-            sb.append(v.getX() + "," + v.getY() + "crv(" + v.getCurve() + ")");
+            sb.append(v.getX()).append(",").append(v.getY()).append("crv(").append(v.getCurve()).append(")");
             sb.append("   ");
         }
 

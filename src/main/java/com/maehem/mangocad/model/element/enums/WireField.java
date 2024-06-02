@@ -25,10 +25,10 @@ public enum WireField {
     X2("x2", Double.class), Y2("y2", Double.class),
     END("selectedEnd", WireEnd.class),
     //WIDTH("width", Double.class),
-    LAYER("layer", Integer.class),
+    //LAYER("layer", Integer.class),
     EXTENT("extent", String.class),
     STYLE("style", WireStyle.class),
-    CURVE("curve", Double.class),
+    //CURVE("curve", Double.class),
     CAP("cap", WireCap.class),
     GROUP_REF("groupRef", String.class);
 

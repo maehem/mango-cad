@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.VertexField;
+import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 
@@ -25,7 +26,7 @@ import com.maehem.mangocad.model.element.property.SelectableProperty;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Vertex extends Element implements LocationXYProperty, SelectableProperty {
+public class Vertex extends Element implements LocationXYProperty, SelectableProperty, CurveProperty {
 
     public static final String ELEMENT_NAME = "vertex";
 
@@ -83,6 +84,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
     /**
      * @return the curve
      */
+    @Override
     public double getCurve() {
         return curve;
     }
@@ -90,12 +92,13 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
     /**
      * @param curve the curve to set
      */
+    @Override
     public void setCurve(double curve) {
         this.curve = curve;
         if (this.curve != curve) {
             double oldVal = this.curve;
             this.curve = curve;
-            notifyListeners(VertexField.CURVE, oldVal, this.curve);
+            notifyListeners(CurveProperty.Field.CURVE, oldVal, this.curve);
         }
     }
 

@@ -24,6 +24,8 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.CurveProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -211,10 +213,10 @@ public class WireNode extends ViewNode implements ElementListener {
             case WireField.CAP -> {
                 updateCap();
             }
-            case WireField.CURVE -> {
+            case CurveProperty.Field.CURVE -> {
                 updateCurve();
             }
-            case WireField.LAYER -> {
+            case LayerNumberProperty.Field.LAYER -> {
                 updateLayer();
             }
             case WireField.STYLE -> {
