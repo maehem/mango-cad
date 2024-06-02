@@ -21,8 +21,9 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.drawing.Layers;
-import com.maehem.mangocad.model.element.enums.ElementCircleField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import java.util.logging.Level;
@@ -93,18 +94,20 @@ public class CircleNode extends ViewNode implements ElementListener {
                 "Circle properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
-        switch ((ElementCircleField) field) {
-            case ElementCircleField.X, ElementCircleField.Y -> {
+        switch (field) {
+            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
                 updateLocation();
             }
-            case ElementCircleField.SELECTED -> {
+            case SelectableProperty.Field.SELECTED -> {
                 updateLayer();
             }
-            case ElementCircleField.RADIUS -> {
+            case ElementCircle.Field.RADIUS -> {
                 updateRadius();
             }
-            case ElementCircleField.WIDTH -> {
+            case ElementCircle.Field.WIDTH -> {
                 updateWidth();
+            }
+            default -> {
             }
         }
     }

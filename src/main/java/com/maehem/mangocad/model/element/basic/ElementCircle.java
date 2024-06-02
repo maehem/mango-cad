@@ -17,7 +17,6 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.enums.ElementCircleField;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -33,6 +32,30 @@ import java.util.logging.Level;
 public class ElementCircle extends Element implements LayerNumberProperty, LocationXYProperty, SelectableProperty, WidthProperty {
 
     public static final String ELEMENT_NAME = "circle";
+
+    public enum Field {
+        //X("x", Double.class), Y("y", Double.class),
+        //SELECTED("selected", Boolean.class),
+        RADIUS("raduis", Double.class),
+        WIDTH("width", Double.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
 
     private int layer;
     private double x;
@@ -62,7 +85,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     public void setRadius(double radius) {
         double oldValue = this.radius;
         this.radius = radius;
-        notifyListeners(ElementCircleField.RADIUS, oldValue, this.radius);
+        notifyListeners(ElementCircle.Field.RADIUS, oldValue, this.radius);
     }
 
     /**
@@ -80,7 +103,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     public void setWidth(double width) {
         double oldValue = this.width;
         this.width = width;
-        notifyListeners(ElementCircleField.WIDTH, oldValue, this.width);
+        notifyListeners(ElementCircle.Field.WIDTH, oldValue, this.width);
     }
 
     /**
@@ -96,7 +119,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     public void setX(double x) {
         double oldValue = this.x;
         this.x = x;
-        notifyListeners(ElementCircleField.X, oldValue, this.x);
+        notifyListeners(LocationXYProperty.Field.X, oldValue, this.x);
     }
 
     /**
@@ -112,7 +135,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     public void setY(double y) {
         double oldValue = this.y;
         this.y = y;
-        notifyListeners(ElementCircleField.Y, oldValue, this.y);
+        notifyListeners(LocationXYProperty.Field.Y, oldValue, this.y);
     }
 
     /**
@@ -169,7 +192,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
         if (this.selected != selected) {
             boolean oldValue = this.selected;
             this.selected = selected;
-            notifyListeners(ElementCircleField.SELECTED, oldValue, this.selected);
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
     }
 
