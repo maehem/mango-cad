@@ -26,6 +26,12 @@ public enum ElementPolygonField {
     WIDTH("width", Double.class),
     LAYER("layer", Integer.class),
     SELECTED("selected", Boolean.class),
+    POUR("pour", PolygonPour.class),
+    SPACING("spacing", Double.class),
+    ISOLATE("isolate", Double.class),
+    ORPHANS("orphans", Boolean.class),
+    THERMAL("thermal", Boolean.class),
+    RANK("rank", Integer.class),
     VERTEX("vertex", Vertex.class);
 
     private final String fName;
