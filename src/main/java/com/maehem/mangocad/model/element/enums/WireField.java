@@ -24,7 +24,7 @@ public enum WireField {
     X1("x1", Double.class), Y1("y1", Double.class),
     X2("x2", Double.class), Y2("y2", Double.class),
     END("selectedEnd", WireEnd.class),
-    WIDTH("width", Double.class),
+    //WIDTH("width", Double.class),
     LAYER("layer", Integer.class),
     EXTENT("extent", String.class),
     STYLE("style", WireStyle.class),

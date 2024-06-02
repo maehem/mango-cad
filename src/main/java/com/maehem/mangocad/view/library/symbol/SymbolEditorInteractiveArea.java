@@ -17,11 +17,7 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementDualXY;
 import com.maehem.mangocad.model.ElementListener;
-import com.maehem.mangocad.model.ElementRotation;
-import com.maehem.mangocad.model.ElementSelectable;
-import com.maehem.mangocad.model.ElementXY;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
@@ -34,6 +30,10 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
+import com.maehem.mangocad.model.element.property.ElementDualXY;
+import com.maehem.mangocad.model.element.property.ElementRotation;
+import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.CIRCLE;
 import static com.maehem.mangocad.view.EditorTool.INFO;
@@ -296,10 +296,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not ElementPolygon: " + snapshot.getElementName());
                                 }
                             }
-                            case ElementXY exy -> {
+                            case LocationXYProperty exy -> {
                                 //LOGGER.log(Level.SEVERE, "Move elementXY.");
                                 Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof ElementXY snapXY) {
+                                if (snapshot instanceof LocationXYProperty snapXY) {
                                     //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
                                     exy.setX(snapXY.getX() + moveDistSnappedX);
                                     exy.setY(snapXY.getY() + moveDistSnappedY);
@@ -526,7 +526,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 ArrayList<Element> picks = new ArrayList<>();
                 parentEditor.getSymbol().getElements().forEach((e) -> {
                     switch (e) {
-                        case ElementXY ee -> {
+                        case LocationXYProperty ee -> {
                             if (Math.abs(me.getX() - ee.getX()) < PICK_SIZE
                                     && Math.abs(-me.getY() - ee.getY()) < PICK_SIZE) {
                                 picks.add(e);
@@ -988,7 +988,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.getSymbol().getElements().forEach((element) -> {
                     if (element instanceof ElementSelectable es) {
                         switch (es) {
-                            case ElementXY exy -> {
+                            case LocationXYProperty exy -> {
                                 if (isInsideSelection(exy.getX(), -exy.getY())) {
                                     selectedElements.add(element);
                                     es.setSelected(true);

@@ -14,42 +14,23 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model;
+package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.Element;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementRotation {
+public interface ElementSelectable {
 
-    public Rotation getRotation();
+    public void createSnapshot();
 
-    public double getRot();
+    public void restoreSnapshot();
 
-    public void setRot(double value);
+    public Element getSnapshot();
 
-    public boolean isSpun();
+    public boolean isSelected();
 
-    public void setSpin(boolean value);
-
-    public boolean isSpin();
-
-    public boolean isSpinAllowed();
-
-    public void setAllowSpin(boolean value);
-
-    public void setMirror(boolean value);
-
-    public boolean isMirrored();
-
-    public boolean isMirrorAllowed();
-
-    public void setAllowMirror(boolean value);
-
-    public boolean isConstrained();
-
-    public void setConstrained(boolean value);
-
+    public void setSelected(boolean selected);
 }

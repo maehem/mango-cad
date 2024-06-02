@@ -14,34 +14,41 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model;
-
-import com.maehem.mangocad.model.element.enums.WireEnd;
+package com.maehem.mangocad.model.element.property;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementDualXY {
+public interface LocationXYProperty {
 
-    public double getX1();
+    public enum Field {
+        X("x", Double.class),
+        Y("y", Double.class);
 
-    public double getY1();
+        private final String fName;
+        private final Class clazz;
 
-    public void setX1(double x);
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
 
-    public void setY1(double y);
+        public String fName() {
+            return fName;
+        }
 
-    public double getX2();
+        public Class clazz() {
+            return clazz;
+        }
 
-    public double getY2();
+    }
+    public double getX();
 
-    public void setX2(double x);
+    public double getY();
 
-    public void setY2(double y);
+    public void setX(double x);
 
-    public void setSelectedEnd(WireEnd end);
-
-    public WireEnd getSelectedEnd();
+    public void setY(double y);
 
 }

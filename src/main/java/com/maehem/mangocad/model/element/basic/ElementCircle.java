@@ -17,10 +17,10 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementSelectable;
-import com.maehem.mangocad.model.ElementXY;
-import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.ElementCircleField;
+import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -29,7 +29,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements ElementXY, ElementSelectable, FieldWidth {
+public class ElementCircle extends Element implements LocationXYProperty, ElementSelectable, WidthProperty {
 
     public static final String ELEMENT_NAME = "circle";
 

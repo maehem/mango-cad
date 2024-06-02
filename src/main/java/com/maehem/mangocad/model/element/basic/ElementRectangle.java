@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementSelectable;
+import com.maehem.mangocad.model.element.property.ElementSelectable;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.util.Rotation;

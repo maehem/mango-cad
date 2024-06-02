@@ -17,13 +17,13 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementDualXY;
-import com.maehem.mangocad.model.ElementSelectable;
-import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.ElementDualXY;
+import com.maehem.mangocad.model.element.property.ElementSelectable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements ElementDualXY, ElementSelectable, FieldWidth {
+public class Wire extends Element implements ElementDualXY, ElementSelectable, WidthProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -192,7 +192,7 @@ public class Wire extends Element implements ElementDualXY, ElementSelectable, F
         if (getWidth() != width) {
             double oldVal = this.width;
             this.width = width;
-            notifyListeners(WireField.WIDTH, oldVal, this.width);
+            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
         }
     }
 

@@ -14,20 +14,42 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model;
+package com.maehem.mangocad.model.element.property;
+
+import com.maehem.mangocad.model.util.Rotation;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementXY {
+public interface ElementRotation {
 
-    public double getX();
+    public Rotation getRotation();
 
-    public double getY();
+    public double getRot();
 
-    public void setX(double x);
+    public void setRot(double value);
 
-    public void setY(double y);
+    public boolean isSpun();
+
+    public void setSpin(boolean value);
+
+    public boolean isSpin();
+
+    public boolean isSpinAllowed();
+
+    public void setAllowSpin(boolean value);
+
+    public void setMirror(boolean value);
+
+    public boolean isMirrored();
+
+    public boolean isMirrorAllowed();
+
+    public void setAllowMirror(boolean value);
+
+    public boolean isConstrained();
+
+    public void setConstrained(boolean value);
 
 }

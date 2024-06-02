@@ -21,10 +21,10 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
-import com.maehem.mangocad.model.ElementSelectable;
-import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.ElementPolygonField;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
+import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.ElementSelectable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,7 +55,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends Element implements ElementListener, ElementSelectable, FieldWidth {
+public class ElementPolygon extends Element implements ElementListener, ElementSelectable, WidthProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
@@ -91,7 +91,11 @@ public class ElementPolygon extends Element implements ElementListener, ElementS
      */
     @Override
     public void setWidth(double width) {
-        this.width = width;
+        if (this.width != width) {
+            double oldVal = this.width;
+            this.width = width;
+            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
+        }
     }
 
     /**

@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementRotation;
+import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.RotationField;

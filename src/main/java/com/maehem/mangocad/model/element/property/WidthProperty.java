@@ -14,21 +14,37 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model;
+package com.maehem.mangocad.model.element.property;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementSelectable {
+public interface WidthProperty {
 
-    public void createSnapshot();
+    public enum Field {
+        WIDTH("width", Double.class);
 
-    public void restoreSnapshot();
+        private final String fName;
+        private final Class clazz;
 
-    public Element getSnapshot();
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
 
-    public boolean isSelected();
+        public String fName() {
+            return fName;
+        }
 
-    public void setSelected(boolean selected);
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
+
+    public double getWidth();
+
+    public void setWidth(double x);
+
 }

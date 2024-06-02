@@ -17,16 +17,16 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.FieldWidth;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridUnit;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Dimension extends Element implements FieldWidth {
+public class Dimension extends Element implements WidthProperty {
 
     public static final String ELEMENT_NAME = "dimension";
 
@@ -50,7 +50,6 @@ public class Dimension extends Element implements FieldWidth {
     //          precision     %Int;          "2"
     //          visible       %Bool;         "no"
     //          grouprefs     IDREFS         #IMPLIED
-
     private double x1;
     private double y1;
     private double x2;
@@ -68,7 +67,6 @@ public class Dimension extends Element implements FieldWidth {
     private int precision = 2;
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
-
 
     @Override
     public String getElementName() {

@@ -14,16 +14,34 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model;
+package com.maehem.mangocad.model.element.property;
+
+import com.maehem.mangocad.model.element.enums.WireEnd;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface FieldWidth {
+public interface ElementDualXY {
 
-    public double getWidth();
+    public double getX1();
 
-    public void setWidth(double x);
+    public double getY1();
+
+    public void setX1(double x);
+
+    public void setY1(double y);
+
+    public double getX2();
+
+    public double getY2();
+
+    public void setX2(double x);
+
+    public void setY2(double y);
+
+    public void setSelectedEnd(WireEnd end);
+
+    public WireEnd getSelectedEnd();
 
 }

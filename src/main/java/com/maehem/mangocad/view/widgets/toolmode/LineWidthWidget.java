@@ -17,9 +17,8 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.FieldWidth;
-import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -48,11 +47,11 @@ public class LineWidthWidget extends ToolModeWidget {
     @SuppressWarnings("unchecked")
     private final ComboBox<Double> comboBox = new ComboBox(options);
     private final Element element;
-    private final FieldWidth widthElement;
+    private final WidthProperty widthElement;
 
     @SuppressWarnings({"unchecked"})
     public LineWidthWidget(Element e) {
-        if (e instanceof FieldWidth fw) {
+        if (e instanceof WidthProperty fw) {
             this.element = e;
             this.widthElement = fw;
             this.element.addListener(this);
@@ -113,7 +112,7 @@ public class LineWidthWidget extends ToolModeWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(WireField.WIDTH)) {
+        if (!field.equals(WidthProperty.Field.WIDTH)) {
             return;
         }
         if (newVal == null) {
