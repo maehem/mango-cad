@@ -31,9 +31,9 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.property.ElementRotation;
-import com.maehem.mangocad.model.element.property.ElementSelectable;
 import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.CIRCLE;
 import static com.maehem.mangocad.view.EditorTool.INFO;
@@ -244,7 +244,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 double moveDistSnappedY = -getSnappedLocation(me.getY(), movingMouseStartY);
 
                 for (Element e : movingElements) {
-                    if (e instanceof ElementSelectable es) {
+                    if (e instanceof SelectableProperty es) {
                         switch (es) {
                             case ElementCircle circ -> {
                                 Element snapshot = es.getSnapshot();
@@ -672,7 +672,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     // Add all picks to moving list.
                                     for (Element e : picks) {
                                         movingElements.add(e);
-                                        if (e instanceof ElementSelectable es) {
+                                        if (e instanceof SelectableProperty es) {
                                             es.createSnapshot();
                                         }
                                     }
@@ -827,7 +827,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             Element pick = picks.getFirst();
 
             movingElements.add(pick);
-            if (pick instanceof ElementSelectable es) {
+            if (pick instanceof SelectableProperty es) {
                 es.createSnapshot();
             }
 
@@ -958,7 +958,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         movingMouseStartX = startX;  // TODO:  Not used???
         movingMouseStartY = startY;
 
-        if (pick instanceof ElementSelectable es) {
+        if (pick instanceof SelectableProperty es) {
             ViewNode node = getNode(es);
             if (node != null) {
                 if (node instanceof TextNode tn) {
@@ -986,7 +986,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
                 // Place things inside recangle into selection list.
                 parentEditor.getSymbol().getElements().forEach((element) -> {
-                    if (element instanceof ElementSelectable es) {
+                    if (element instanceof SelectableProperty es) {
                         switch (es) {
                             case LocationXYProperty exy -> {
                                 if (isInsideSelection(exy.getX(), -exy.getY())) {
@@ -1071,7 +1071,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         }
         if (!movingElements.isEmpty()) {
             for (Element e : movingElements) {
-                if (e instanceof ElementSelectable exy) {
+                if (e instanceof SelectableProperty exy) {
                     exy.restoreSnapshot();
                 }
             }
@@ -1426,7 +1426,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     }
 
-    private ViewNode getNode(ElementSelectable e) {
+    private ViewNode getNode(SelectableProperty e) {
         for (ViewNode vn : nodes) {
             if (vn.getElement().equals(e)) {
                 return vn;

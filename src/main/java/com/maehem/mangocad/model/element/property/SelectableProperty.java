@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.Element;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementSelectable {
+public interface SelectableProperty {
 
     public void createSnapshot();
 

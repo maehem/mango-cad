@@ -18,14 +18,14 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.VertexField;
-import com.maehem.mangocad.model.element.property.ElementSelectable;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Vertex extends Element implements LocationXYProperty, ElementSelectable {
+public class Vertex extends Element implements LocationXYProperty, SelectableProperty {
 
     public static final String ELEMENT_NAME = "vertex";
 

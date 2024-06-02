@@ -23,8 +23,8 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.property.ElementRotation;
-import com.maehem.mangocad.model.element.property.ElementSelectable;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Pin extends Element implements LocationXYProperty, ElementRotation, ElementSelectable {
+public class Pin extends Element implements LocationXYProperty, ElementRotation, SelectableProperty {
 
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.

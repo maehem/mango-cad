@@ -19,8 +19,8 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.enums.RotationField;
-import com.maehem.mangocad.model.element.property.ElementSelectable;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -29,7 +29,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements LayerNumberProperty, ElementSelectable {
+public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty {
     public static final String ELEMENT_NAME = "rectangle";
 
     private int layer;
