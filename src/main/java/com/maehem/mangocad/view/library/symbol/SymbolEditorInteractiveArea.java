@@ -30,9 +30,9 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.property.ElementDualXY;
 import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.CIRCLE;
@@ -305,9 +305,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     exy.setY(snapXY.getY() + moveDistSnappedY);
                                 }
                             }
-                            case ElementDualXY exy -> {
+                            case LocationDualXYProperty exy -> {
                                 Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof ElementDualXY snapXY) {
+                                if (snapshot instanceof LocationDualXYProperty snapXY) {
                                     switch (exy.getSelectedEnd()) {
                                         case ONE -> {
                                             exy.setX1(snapXY.getX1() + moveDistSnappedX);
@@ -532,15 +532,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 picks.add(e);
                             }
                         }
-                        case ElementDualXY ee -> {
+                        case LocationDualXYProperty ee -> {
                             if (Math.abs(me.getX() - ee.getX1()) < PICK_SIZE
                                     && Math.abs(-me.getY() - ee.getY1()) < PICK_SIZE) {
                                 picks.add(e);
-                                ((ElementDualXY) e).setSelectedEnd(ONE);
+                                ((LocationDualXYProperty) e).setSelectedEnd(ONE);
                             } else if (Math.abs(me.getX() - ee.getX2()) < PICK_SIZE
                                     && Math.abs(-me.getY() - ee.getY2()) < PICK_SIZE) {
                                 picks.add(e);
-                                ((ElementDualXY) e).setSelectedEnd(TWO);
+                                ((LocationDualXYProperty) e).setSelectedEnd(TWO);
                             }
                         }
                         case ElementRectangle er -> {
@@ -998,7 +998,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1} not in rect area.", new Object[]{exy.getX(), exy.getY()});
                                 }
                             }
-                            case ElementDualXY exy -> {
+                            case LocationDualXYProperty exy -> {
                                 boolean p1 = isInsideSelection(exy.getX1(), -exy.getY1());
                                 boolean p2 = isInsideSelection(exy.getX2(), -exy.getY2());
 

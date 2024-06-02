@@ -21,9 +21,9 @@ import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
-import com.maehem.mangocad.model.element.property.WidthProperty;
-import com.maehem.mangocad.model.element.property.ElementDualXY;
 import com.maehem.mangocad.model.element.property.ElementSelectable;
+import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements ElementDualXY, ElementSelectable, WidthProperty {
+public class Wire extends Element implements LocationDualXYProperty, ElementSelectable, WidthProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 

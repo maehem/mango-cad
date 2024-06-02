@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.element.enums.WireEnd;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementDualXY {
+public interface LocationDualXYProperty {
 
     public double getX1();
 
