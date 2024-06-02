@@ -451,6 +451,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                                 symbol.getElements().add(poly);
                                                 nodes.add(wn);
                                                 wn.setClosePath(true); // Close it up.
+                                                //wn.rebuildPath();
                                                 ElementPolygon lastPolygon = new ElementPolygon();
                                                 lastPolygon.setWidth(poly.getWidth());
                                                 lastElementAdded = lastPolygon;
@@ -887,7 +888,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         initiateNewPolygonSegment(me, 0, 0, poly);
 
         node.rebuildPath();
-        int i = 0; // Debug stop point
     }
 
     private void initiateNewPolygonSegment(MouseEvent me, double x, double y, ElementPolygon poly) {
