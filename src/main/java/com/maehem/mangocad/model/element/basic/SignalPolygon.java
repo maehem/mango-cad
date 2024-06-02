@@ -29,7 +29,7 @@ public class SignalPolygon extends ElementPolygon {
 
     //private double width;
     private double spacing;
-    private String pour = "solid"; // TODO: Enum
+    //private String pour = "solid"; // TODO: Enum
     private double isolate;
     private boolean orphans = false;
     private boolean thermals = true;
@@ -67,20 +67,6 @@ public class SignalPolygon extends ElementPolygon {
      */
     public void setSpacing(double spacing) {
         this.spacing = spacing;
-    }
-
-    /**
-     * @return the pour
-     */
-    public String getPour() {
-        return pour;
-    }
-
-    /**
-     * @param pour the pour to set
-     */
-    public void setPour(String pour) {
-        this.pour = pour;
     }
 
     /**
