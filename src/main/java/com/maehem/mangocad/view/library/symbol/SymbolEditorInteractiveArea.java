@@ -42,6 +42,7 @@ import static com.maehem.mangocad.view.EditorTool.SELECT;
 import static com.maehem.mangocad.view.EditorTool.TRASH;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.TextEditDialog;
+import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.node.CircleNode;
 import com.maehem.mangocad.view.node.PinNode;
@@ -53,6 +54,7 @@ import com.maehem.mangocad.view.node.WireNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -61,6 +63,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextInputDialog;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
 import static javafx.scene.input.MouseButton.SECONDARY;
@@ -80,6 +83,7 @@ import javafx.scene.transform.Scale;
 public class SymbolEditorInteractiveArea extends ScrollPane implements PickListener, ElementListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
+    protected final ResourceBundle MSG; // Must be set in constructor or after.
 
     private static final double SCALE_MAX = 40.0;
     private static final double SCALE_MIN = 5.0;
@@ -123,6 +127,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
+
+        this.MSG = ResourceBundle.getBundle("i18n/Editor");
 
         // Things put into scrollArea will keep a constant size (0,0 crosshair)
         // Things put into workArea will scale with mouse scroll.
@@ -707,9 +713,27 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             }
                             case MITER ->
                                 LOGGER.log(Level.SEVERE, " Miter: ");
-                            case SPLIT -> // If in between ends of wire then split at this location
+                            case SPLIT -> {  // If in between ends of wire then split at this location
                                 // Add isInBetween() method to Wire.
                                 LOGGER.log(Level.SEVERE, "Check for wire here to split.");
+                            }
+                            case NAME -> {
+                                LOGGER.log(Level.SEVERE, " Name: ");
+                                if (picks.isEmpty()) {
+                                    contextMenu.hide();
+                                } else if (picks.size() == 1) {
+                                    if (picks.getFirst() instanceof Pin pin) {
+                                        // Show Pin name dialog
+                                        TextInputDialog td = new TextInputDialog(pin.getName());
+                                        ViewUtils.applyAppStylesheet(td.getDialogPane().getStylesheets());
+                                        td.setGraphic(null);
+                                        td.setTitle(MSG.getString("NAME_DIALOG_TITLE"));
+                                        td.setHeaderText(MSG.getString("NAME_PIN_DIALOG_HEADER"));
+                                        td.showAndWait();
+                                        pin.setName(td.getResult());
+                                    } // else ignore.
+                                }
+                            }
                             default -> {
                                 LOGGER.log(Level.SEVERE, "Tool not handled yet! ==> {0}", toolMode.name());
                             }
@@ -1391,6 +1415,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 e.setMirror(true);
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.NAME -> {
+                LOGGER.log(Level.SEVERE, "    Handle 'Name' EditorTool...");
                 parentEditor.setToolMode(toolMode);
             }
         }
