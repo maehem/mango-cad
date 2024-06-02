@@ -21,9 +21,9 @@ import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
-import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element implements LayerNumberProperty, LocationXYProperty, ElementRotation, SelectableProperty {
+public class ElementText extends Element implements LayerNumberProperty, LocationXYProperty, RotationProperty, SelectableProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 

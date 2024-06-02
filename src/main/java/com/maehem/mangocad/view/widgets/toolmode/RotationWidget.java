@@ -17,10 +17,10 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.RotationField;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -53,17 +53,17 @@ public class RotationWidget extends ToolModeWidget {
     @SuppressWarnings("unchecked")
     private final ComboBox<Double> comboBox = new ComboBox(options);
     private final Element element;
-    private final ElementRotation rotation;
+    private final RotationProperty rotation;
 
     public RotationWidget(Element e) {
-        if (e instanceof ElementRotation p) {
+        if (e instanceof RotationProperty p) {
             this.element = e;
             this.rotation = p;
             this.element.addListener(this);
         } else {
             this.element = null;
             this.rotation = null;
-            LOGGER.log(Level.SEVERE, "RotationWidget: element is not of type ElementRotation!");
+            LOGGER.log(Level.SEVERE, "RotationWidget: element is not of type RotationProperty!");
         }
 
         Image img = ViewUtils.getImage(ICON_PATH);

@@ -17,8 +17,8 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.enums.RotationField;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -40,17 +40,17 @@ public class MirrorToggleWidget extends ToolModeWidget {
 
     private final ToggleGroup group = new ToggleGroup();
     private final Element element;
-    private final ElementRotation rotation;
+    private final RotationProperty rotation;
 
     public MirrorToggleWidget(Element e) {
-        if (e instanceof ElementRotation p) {
+        if (e instanceof RotationProperty p) {
             this.element = e;
             this.rotation = p;
             this.element.addListener(this);
         } else {
             this.element = null;
             this.rotation = null;
-            LOGGER.log(Level.SEVERE, "MirrorToggleWidget: element is not of type ElementRotation!");
+            LOGGER.log(Level.SEVERE, "MirrorToggleWidget: element is not of type RotationProperty!");
         }
 
         setSpacing(0.0);

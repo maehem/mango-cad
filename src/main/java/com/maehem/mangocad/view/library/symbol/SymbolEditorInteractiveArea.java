@@ -30,9 +30,9 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.property.LocationDualXYProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.CIRCLE;
@@ -496,7 +496,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             // All Nodes should be Rotatable. break if not.
                             if (elementsCanRotate(movingElements)) {
                                 for (Element e : movingElements) {
-                                    if (e instanceof ElementRotation er) {
+                                    if (e instanceof RotationProperty er) {
                                         er.setMirror(!er.isMirrored());
                                     }
                                 }                                //Rotation rotation = er.getRotation();
@@ -508,7 +508,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             // Rotate  add 90 (actually "angle" from top of viewport)
                             if (elementsCanRotate(movingElements)) {
                                 for (Element e : movingElements) {
-                                    if (e instanceof ElementRotation er) {
+                                    if (e instanceof RotationProperty er) {
                                         er.setRot(er.getRot() + 90);
                                     }
                                 }
@@ -831,11 +831,11 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 es.createSnapshot();
             }
 
-            if (lastElementAdded != null && lastElementAdded instanceof ElementRotation tmpRot) {
+            if (lastElementAdded != null && lastElementAdded instanceof RotationProperty tmpRot) {
                 //LOGGER.log(Level.SEVERE, "I see a last added element.");
                 //LOGGER.log(Level.SEVERE, "    lastElement: r:{0}  mir:{1}", new Object[]{tmpRot.getRot(), tmpRot.isMirrored() ? "Y" : "N"});
-                if (pick instanceof ElementRotation pickRot) {
-                    //LOGGER.log(Level.SEVERE, "    It's a ElementRotation.");
+                if (pick instanceof RotationProperty pickRot) {
+                    //LOGGER.log(Level.SEVERE, "    It's a RotationProperty.");
                     //LOGGER.log(Level.SEVERE, "    pickRot: r:{0}  mir:{1}", new Object[]{pickRot.getRot(), pickRot.isMirrored() ? "Y" : "N"});
                     //LOGGER.log(Level.SEVERE, "    New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
                     pickRot.setRot(pickRot.getRot() + tmpRot.getRot());
@@ -930,8 +930,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     }
 
     private void initiateElementRotate(Element pick, Element copyRotFrom) {
-        if (pick instanceof ElementRotation rotE) {
-            if (copyRotFrom instanceof ElementRotation er) {
+        if (pick instanceof RotationProperty rotE) {
+            if (copyRotFrom instanceof RotationProperty er) {
                 rotE.setRot(rotE.getRot() + er.getRot());
             } else {
                 LOGGER.log(Level.SEVERE, "Tried to copy rot value from a non-rotational element!");
@@ -940,8 +940,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     }
 
     private void initiateElementMirror(Element pick, Element copyRotFrom) {
-        if (pick instanceof ElementRotation rotE) {
-            if (copyRotFrom instanceof ElementRotation er) {
+        if (pick instanceof RotationProperty rotE) {
+            if (copyRotFrom instanceof RotationProperty er) {
                 if (rotE.isMirrorAllowed()) {
                     rotE.setMirror(er.isMirrored());
                 } else {
@@ -1231,7 +1231,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         // All Nodes should be Rotatable. break if not.
         boolean canRotate = false;
         for (Element e : elements) {
-            if (e instanceof ElementRotation) {
+            if (e instanceof RotationProperty) {
                 canRotate = true;
             } else {
                 canRotate = false;
@@ -1388,7 +1388,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             case EditorTool.MOVE -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Move' EditorTool...");
-                if (lastElementAdded == null || !(lastElementAdded instanceof ElementRotation)) {
+                if (lastElementAdded == null || !(lastElementAdded instanceof RotationProperty)) {
                     ElementText tempText = new ElementText();
                     lastElementAdded = tempText;
                     LOGGER.log(Level.SEVERE, "Add temp text(moveable/rotatable). It is the lastElementAdded.");

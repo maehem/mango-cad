@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.util.Rotation;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface ElementRotation {
+public interface RotationProperty {
 
     public Rotation getRotation();
 

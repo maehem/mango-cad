@@ -19,12 +19,12 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
-import com.maehem.mangocad.model.element.property.ElementRotation;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.enums.RotationField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -38,7 +38,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class RectangleNode extends ViewNode implements ElementRotation, ElementListener {
+public class RectangleNode extends ViewNode implements RotationProperty, ElementListener {
 
     private final ElementRectangle rectangle;
     private final Layers layers;
