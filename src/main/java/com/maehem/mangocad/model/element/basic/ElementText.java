@@ -17,7 +17,6 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
@@ -52,6 +51,35 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "text";
+
+    public enum Field {
+        //X("x", Double.class), Y("y", Double.class),
+        //SELECTED("selected", Boolean.class),
+        SIZE("size", Double.class),
+        LAYER("layer", Integer.class),
+        FONT("font", String.class),
+        RATIO("ratio", Integer.class),
+        ROTATION("rotation", String.class),
+        ALIGN("align", TextAlign.class),
+        DISTANCE("distance", Integer.class),
+        VALUE("value", String.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+    }
 
     private int layer;
     private double x;
@@ -96,7 +124,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.x != x) {
             double oldValue = this.x;
             this.x = x;
-            notifyListeners(ElementTextField.X, oldValue, this.x);
+            notifyListeners(LocationXYProperty.Field.X, oldValue, this.x);
         }
     }
 
@@ -116,7 +144,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.y != y) {
             double oldValue = this.y;
             this.y = y;
-            notifyListeners(ElementTextField.Y, oldValue, this.y);
+            notifyListeners(LocationXYProperty.Field.Y, oldValue, this.y);
         }
     }
 
@@ -134,7 +162,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (getSize() != size) {
             double oldValue = this.size;
             this.size = size;
-            notifyListeners(ElementTextField.SIZE, oldValue, this.size);
+            notifyListeners(ElementText.Field.SIZE, oldValue, this.size);
         }
     }
 
@@ -152,7 +180,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (getDistance() != distance) {
             double oldValue = this.distance;
             this.distance = distance;
-            notifyListeners(ElementTextField.DISTANCE, oldValue, this.distance);
+            notifyListeners(ElementText.Field.DISTANCE, oldValue, this.distance);
         }
     }
 
@@ -175,7 +203,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
             }
             double oldValue = this.ratio;
             this.ratio = ratio;
-            notifyListeners(ElementTextField.RATIO, oldValue, this.ratio);
+            notifyListeners(ElementText.Field.RATIO, oldValue, this.ratio);
         }
     }
 
@@ -200,7 +228,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     public void setRotation(Rotation r) {
         //Rotation oldValue = this.getRotation();
         Rotation.copyValues(r, this.getRotation());
-        notifyListeners(ElementTextField.ROTATION, null, this.getRotation());
+        notifyListeners(ElementText.Field.ROTATION, null, this.getRotation());
     }
 
     @Override
@@ -213,7 +241,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (getRot() != rot) {
             double oldValue = this.getRot();
             getRotation().setValue(rot);
-            notifyListeners(ElementTextField.ROTATION, oldValue, this.getRot());
+            notifyListeners(ElementText.Field.ROTATION, oldValue, this.getRot());
         }
     }
 
@@ -233,7 +261,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
             if (align != null) {
                 this.align = align;
             }
-            notifyListeners(ElementTextField.ALIGN, oldValue, this.align);
+            notifyListeners(ElementText.Field.ALIGN, oldValue, this.align);
         }
     }
 
@@ -260,7 +288,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     public void setValue(String value) {
         String oldValue = this.value;
         this.value = value;
-        notifyListeners(ElementTextField.VALUE, oldValue, this.value);
+        notifyListeners(ElementText.Field.VALUE, oldValue, this.value);
     }
 
     /**
@@ -277,7 +305,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (!this.font.equals(font)) {
             TextFont oldValue = this.font;
             this.font = font;
-            notifyListeners(ElementTextField.FONT, oldValue, this.font);
+            notifyListeners(ElementText.Field.FONT, oldValue, this.font);
         }
     }
 
@@ -417,7 +445,6 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         copy.setSpin(isSpin());
         copy.setValue(value);
 
-
         // Copy GroupRefs
         for (String ref : grouprefs) {
             copy.grouprefs.add(ref);
@@ -437,7 +464,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (this.selected != selected) {
             boolean oldValue = this.selected;
             this.selected = selected;
-            notifyListeners(ElementTextField.SELECTED, oldValue, this.selected);
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
     }
 

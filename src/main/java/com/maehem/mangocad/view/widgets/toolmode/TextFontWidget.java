@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -86,7 +85,7 @@ public class TextFontWidget extends ToolModeWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(ElementTextField.FONT)) {
+        if (!field.equals(ElementText.Field.FONT)) {
             return;
         }
         if (newVal == null) {

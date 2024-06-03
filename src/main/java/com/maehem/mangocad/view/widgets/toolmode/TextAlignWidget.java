@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.model.element.enums.ElementTextField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -88,7 +87,7 @@ public class TextAlignWidget extends ToolModeWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(ElementTextField.ALIGN)) {
+        if (!field.equals(ElementText.Field.ALIGN)) {
             return;
         }
         if (newVal == null) {

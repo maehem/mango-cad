@@ -17,7 +17,6 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.enums.VertexField;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -57,7 +56,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
         if (this.x != x) {
             double oldVal = this.x;
             this.x = x;
-            notifyListeners(VertexField.X, oldVal, this.x);
+            notifyListeners(LocationXYProperty.Field.X, oldVal, this.x);
         }
     }
 
@@ -77,7 +76,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
         if (this.y != y) {
             double oldVal = this.y;
             this.y = y;
-            notifyListeners(VertexField.Y, oldVal, this.y);
+            notifyListeners(LocationXYProperty.Field.Y, oldVal, this.y);
         }
     }
 

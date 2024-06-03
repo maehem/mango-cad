@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.model.element.enums.ElementTextField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -109,7 +108,7 @@ public class TextSizeWidget extends ToolModeWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(ElementTextField.SIZE)) {
+        if (!field.equals(ElementText.Field.SIZE)) {
             return;
         }
         if (newVal == null) {

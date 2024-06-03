@@ -21,11 +21,12 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
-import com.maehem.mangocad.model.element.enums.ElementTextField;
-import static com.maehem.mangocad.model.element.enums.ElementTextField.*;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -515,51 +516,50 @@ public class TextNode extends ViewNode implements ElementListener {
         text.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
     }
 
-
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         LOGGER.log(Level.SEVERE,
                 "Text properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
-        if (field instanceof ElementTextField etf) {
-            switch (etf) {
-                case VALUE, DISTANCE -> {
-                    updateValue();
-                    updateDistance();
-                    updateDebugBox();
-                }
-                case LAYER -> {
-                    updateLayer();
-                }
-                case X, Y -> {
-                    updateLocation();
-                }
-                case SELECTED -> {
-                    updateLayer();
-                }
-                case ROTATION -> {
-                    updateLocation();
-                    updateAlignRotation();
-                    updateSpin();
-                }
-                case ALIGN -> {
-                    updateAlignRotation();
-                }
-                case RATIO -> {
-                    updateRatio();
-                    updateValue();
-                    updateFont();
-                    updateDistance();
-                    updateAlignRotation();
-                    updateSpin();
-                    updateDebugBox();
-                }
-                case SIZE, FONT -> {
-                    updateFont();
-                    updateDistance();
-                    updateDebugBox();
-                }
+        switch (field) {
+            case ElementText.Field.VALUE, ElementText.Field.DISTANCE -> {
+                updateValue();
+                updateDistance();
+                updateDebugBox();
+            }
+            case LayerNumberProperty.Field.LAYER -> {
+                updateLayer();
+            }
+            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
+                updateLocation();
+            }
+            case SelectableProperty.Field.SELECTED -> {
+                updateLayer();
+            }
+//            case RotationProperty.Field.VALUE -> {
+//                updateLocation();
+//                updateAlignRotation();
+//                updateSpin();
+//            }
+            case ElementText.Field.ALIGN -> {
+                updateAlignRotation();
+            }
+            case ElementText.Field.RATIO -> {
+                updateRatio();
+                updateValue();
+                updateFont();
+                updateDistance();
+                updateAlignRotation();
+                updateSpin();
+                updateDebugBox();
+            }
+            case ElementText.Field.SIZE, ElementText.Field.FONT -> {
+                updateFont();
+                updateDistance();
+                updateDebugBox();
+            }
+            default -> {
             }
         }
         if (field instanceof RotationProperty.Field rf) {

@@ -22,9 +22,9 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.drawing.Layers;
-import com.maehem.mangocad.model.element.enums.VertexField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
@@ -221,6 +221,10 @@ public class PolygonNode extends ViewNode implements ElementListener {
                     rebuildPath();
                 }
             }
+            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
+                LOGGER.log(Level.SEVERE, "    Vertex field has changed. f: {0}", field.name());
+                updateVerticesXY();
+            }
             default -> {
             }
         }
@@ -248,10 +252,10 @@ public class PolygonNode extends ViewNode implements ElementListener {
         if (field instanceof SelectableProperty.Field) {
             updateLayer();
         }
-        if (field instanceof VertexField vf) {
-            LOGGER.log(Level.SEVERE, "    Vertex field has changed. f: {0}", vf.name());
-            updateVerticesXY();
-        }
+//        if (field instanceof VertexField vf) {
+//            LOGGER.log(Level.SEVERE, "    Vertex field has changed. f: {0}", vf.name());
+//            updateVerticesXY();
+//        }
     }
 
     @Override
