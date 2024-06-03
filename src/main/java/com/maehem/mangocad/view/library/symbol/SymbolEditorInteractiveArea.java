@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
+import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
@@ -1419,6 +1420,13 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             case EditorTool.NAME -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Name' EditorTool...");
+                parentEditor.setToolMode(toolMode);
+            }
+            case EditorTool.DIMENSION -> {
+                LOGGER.log(Level.SEVERE, "    Handle 'Dimension' EditorTool...");
+                Dimension e = new Dimension();
+                lastElementAdded = e;
+                this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);
             }
         }
