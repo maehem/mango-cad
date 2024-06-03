@@ -16,12 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.maehem.mangocad.model.element.property.VisibleProperty;
 
 /**
  *
@@ -31,20 +26,15 @@ import javafx.beans.property.StringProperty;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LayerElement {
+public class LayerElement implements VisibleProperty {
 
-    private final IntegerProperty number = new SimpleIntegerProperty(0);
-    private final StringProperty name = new SimpleStringProperty("???");
-    private final IntegerProperty colorIndex = new SimpleIntegerProperty(0);
-    //private int colorIndex = 0;
-    private final IntegerProperty fill = new SimpleIntegerProperty(0);
-    //private int fill = 1;
-    private final BooleanProperty visible = new SimpleBooleanProperty(true);
-    //private boolean visible = true;
-    private final BooleanProperty active = new SimpleBooleanProperty(true);
-    //private boolean active = true;
-
-    private final BooleanProperty allowDelete = new SimpleBooleanProperty(true);
+    private int number = 0;
+    private String name = "???";
+    private int colorIndex = 0;
+    private int fill = 1;
+    private boolean visible = true;
+    private boolean active = true;
+    private boolean allowDelete = true;
 
     public LayerElement() {
     }
@@ -53,100 +43,94 @@ public class LayerElement {
      * @return the number
      */
     public int getNumber() {
-        return number.get();
+        return number;
     }
 
     /**
      * @param number the number to set
      */
     public void setNumber(int number) {
-        this.number.set(number);
+        this.number = number;
     }
 
     /**
      * @return the name
      */
     public String getName() {
-        return name.get();
+        return name;
     }
 
     /**
      * @param name the name to set
      */
     public void setName(String name) {
-        this.name.set(name);
+        this.name = name;
     }
 
     /**
      * @return the colorIndex
      */
     public int getColorIndex() {
-        return colorIndex.get();
+        return colorIndex;
     }
 
     /**
      * @param colorIndex the colorIndex to set
      */
     public void setColorIndex(int colorIndex) {
-        this.colorIndex.set(colorIndex);
+        this.colorIndex = colorIndex;
     }
 
     /**
      * @return the fill
      */
     public int getFill() {
-        return fill.get();
+        return fill;
     }
 
     /**
      * @param fill the fill to set
      */
     public void setFill(int fill) {
-        this.fill.set(fill);
-    }
-
-    public final BooleanProperty visibleProperty() {
-        return visible;
+        this.fill = fill;
     }
 
     /**
      * @return the visible
      */
+    @Override
     public final boolean isVisible() {
-        return visible.get();
+        return visible;
     }
 
     /**
      * @param visible the visible to set
      */
+    @Override
     public final void setVisible(boolean visible) {
-        this.visible.set(visible);
+        this.visible = visible;
     }
 
     /**
      * @return the active
      */
     public boolean isActive() {
-        return active.get();
+        return active;
     }
 
     /**
      * @param active the active to set
      */
     public void setActive(boolean active) {
-        this.active.set(active);
+        this.active = active;
     }
 
     public boolean isAllowDelete() {
-        return allowDelete.get();
+        return allowDelete;
     }
 
     public void setAllowDelete(boolean value) {
-        allowDelete.set(value);
-    }
-
-    public BooleanProperty allowDeleteProperty() {
-        return allowDelete;
+        allowDelete = value;
     }
 
     @Override
@@ -156,8 +140,8 @@ public class LayerElement {
                 + " name: " + name
                 + " index:" + colorIndex
                 + " fill: " + fill
-                + " visible: " + (visible.get() ? "Y" : "N")
-                + " active: " + (active.get() ? "Y" : "N");
+                + " visible: " + (visible ? "Y" : "N")
+                + " active: " + (active ? "Y" : "N");
 
     }
 }
