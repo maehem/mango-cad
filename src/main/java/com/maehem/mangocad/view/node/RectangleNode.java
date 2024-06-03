@@ -21,9 +21,9 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.drawing.Layers;
-import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.RotationProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -102,17 +102,17 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
                 "Rectangle properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
 
-        if (field instanceof ElementRectangleField erf) {
-            switch (erf) {
-                case ElementRectangleField.X1, ElementRectangleField.Y1, ElementRectangleField.X2, ElementRectangleField.Y2, ElementRectangleField.ALL_XY -> {
-                    updatePoints();
-                }
-                case ElementRectangleField.SELECTED -> {
-                    updateLayer();
-                }
+        switch (field) {
+            case ElementRectangle.Field.X1, ElementRectangle.Field.Y1, ElementRectangle.Field.X2, ElementRectangle.Field.Y2, ElementRectangle.Field.ALL_XY -> {
+                updatePoints();
+            }
+            case SelectableProperty.Field.SELECTED -> {
+                updateLayer();
+            }
+            default -> {
             }
         }
-        if (field instanceof RotationProperty.Field rf) {
+        if (field instanceof RotationProperty.Field) {
             updatePoints();
         }
     }

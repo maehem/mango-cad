@@ -17,7 +17,6 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.element.enums.ElementRectangleField;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -30,7 +29,31 @@ import java.util.logging.Level;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty {
+
     public static final String ELEMENT_NAME = "rectangle";
+
+    public enum Field {
+        X1("x1", Double.class), Y1("y1", Double.class),
+        X2("x2", Double.class), Y2("y2", Double.class),
+        ALL_XY("allXY", null);
+        //SELECTED("selected", Boolean.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+    }
 
     private int layer;
     private double x1;
@@ -62,7 +85,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (this.x1 != x1) {
             double oldVal = this.x1;
             this.x1 = x1;
-            notifyListeners(ElementRectangleField.X1, oldVal, this.x1);
+            notifyListeners(ElementRectangle.Field.X1, oldVal, this.x1);
         }
     }
 
@@ -80,7 +103,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (this.y1 != y1) {
             double oldVal = this.y1;
             this.y1 = y1;
-            notifyListeners(ElementRectangleField.Y1, oldVal, this.y1);
+            notifyListeners(ElementRectangle.Field.Y1, oldVal, this.y1);
         }
     }
 
@@ -98,7 +121,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (this.x2 != x2) {
             double oldVal = this.x2;
             this.x2 = x2;
-            notifyListeners(ElementRectangleField.X2, oldVal, this.x2);
+            notifyListeners(ElementRectangle.Field.X2, oldVal, this.x2);
         }
     }
 
@@ -116,7 +139,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (this.y2 != y2) {
             double oldVal = this.y2;
             this.y2 = y2;
-            notifyListeners(ElementRectangleField.Y2, oldVal, this.y2);
+            notifyListeners(ElementRectangle.Field.Y2, oldVal, this.y2);
         }
     }
 
@@ -137,7 +160,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         this.x2 = x2;
         this.y2 = y2;
 
-        notifyListeners(ElementRectangleField.ALL_XY, null, null);
+        notifyListeners(ElementRectangle.Field.ALL_XY, null, null);
     }
 
     /**
@@ -228,6 +251,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
             selectedCorner = corner;
         }
     }
+
     /**
      * @param value the rotation to set
      */
@@ -268,7 +292,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (this.selected != selected) {
             boolean oldValue = this.selected;
             this.selected = selected;
-            notifyListeners(ElementRectangleField.SELECTED, oldValue, this.selected);
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
     }
 
