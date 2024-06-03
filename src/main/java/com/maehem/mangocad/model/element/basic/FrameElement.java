@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class FrameElement extends Element implements LayerNumberProperty {
+public class FrameElement extends Element implements LayerNumberProperty, GrouprefsProperty {
     public static final String ELEMENT_NAME = "frame";
 
     //     frame ( no elements )
@@ -53,7 +54,7 @@ public class FrameElement extends Element implements LayerNumberProperty {
     private boolean borderTop  = true;
     private boolean borderRight = true;
     private boolean borderBottom = true;
-    private ArrayList<String> groupRefs = new ArrayList<>();
+    private final ArrayList<String> groupRefs = new ArrayList<>();
 
 
     @Override
@@ -217,5 +218,10 @@ public class FrameElement extends Element implements LayerNumberProperty {
             this.layer = layer;
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
+    }
+
+    @Override
+    public ArrayList<String> getGrouprefs() {
+        return groupRefs;
     }
 }

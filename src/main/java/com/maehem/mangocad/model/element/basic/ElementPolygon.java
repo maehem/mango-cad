@@ -22,6 +22,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
@@ -55,7 +56,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends Element implements LayerNumberProperty, ElementListener, SelectableProperty, WidthProperty {
+public class ElementPolygon extends Element implements LayerNumberProperty, ElementListener, SelectableProperty, WidthProperty, GrouprefsProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
@@ -98,6 +99,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
     private boolean thermals = true;
     private int rank = 1;
     private final List<Vertex> vertices = new ArrayList<>();
+    private final ArrayList<String> grouprefs = new ArrayList<>();
 
     // Ephemaral data
     private ElementPolygon snapshot = null;
@@ -354,7 +356,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
             }
         }
 
-        return found.toArray(new Vertex[]{});
+        return found.toArray(Vertex[]::new);
     }
 
     public ElementPolygon copy() {
@@ -430,6 +432,11 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
             this.layer = layer;
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
+    }
+
+    @Override
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
     }
 
 }

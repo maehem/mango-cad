@@ -21,6 +21,7 @@ import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.property.CurveProperty;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
@@ -51,7 +52,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, SelectableProperty, WidthProperty, CurveProperty {
+public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, WidthProperty, CurveProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -295,6 +296,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

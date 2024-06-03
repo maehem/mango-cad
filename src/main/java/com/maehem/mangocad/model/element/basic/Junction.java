@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Junction extends Element implements LayerNumberProperty {
+public class Junction extends Element implements LayerNumberProperty, GrouprefsProperty {
 
     public static final String ELEMENT_NAME = "junction";
     public static final int DEFAULT_LAYER = 91; // Nets. Not changable.
@@ -36,10 +37,9 @@ public class Junction extends Element implements LayerNumberProperty {
     //          y             %Coord;        #REQUIRED
     //          grouprefs     IDREFS         #IMPLIED
 
-    private final ArrayList<String> grouprefs = new ArrayList<>();
-
     private double x;
     private double y;
+    private final ArrayList<String> grouprefs = new ArrayList<>();
 
     @Override
     public String getElementName() {
@@ -77,6 +77,7 @@ public class Junction extends Element implements LayerNumberProperty {
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class ElementElement extends Element {
+public class ElementElement extends Element implements GrouprefsProperty {
 
     public static final String ELEMENT_NAME = "element";
 
@@ -238,6 +239,7 @@ public class ElementElement extends Element {
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

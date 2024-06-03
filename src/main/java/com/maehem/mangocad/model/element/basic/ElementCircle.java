@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -29,7 +30,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements LayerNumberProperty, LocationXYProperty, SelectableProperty, WidthProperty {
+public class ElementCircle extends Element implements LayerNumberProperty, LocationXYProperty, SelectableProperty, GrouprefsProperty, WidthProperty {
 
     public static final String ELEMENT_NAME = "circle";
 
@@ -109,6 +110,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     /**
      * @return the x
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -116,6 +118,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     /**
      * @param x the x to set
      */
+    @Override
     public void setX(double x) {
         double oldValue = this.x;
         this.x = x;
@@ -125,6 +128,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     /**
      * @return the y
      */
+    @Override
     public double getY() {
         return y;
     }
@@ -132,6 +136,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     /**
      * @param y the y to set
      */
+    @Override
     public void setY(double y) {
         double oldValue = this.y;
         this.y = y;
@@ -141,6 +146,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

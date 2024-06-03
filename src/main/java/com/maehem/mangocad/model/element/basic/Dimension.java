@@ -19,7 +19,9 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridUnit;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.VisibleProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
 
@@ -27,7 +29,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Dimension extends Element implements LayerNumberProperty, WidthProperty {
+public class Dimension extends Element implements LayerNumberProperty, GrouprefsProperty, WidthProperty, VisibleProperty {
 
     public static final String ELEMENT_NAME = "dimension";
 
@@ -51,6 +53,36 @@ public class Dimension extends Element implements LayerNumberProperty, WidthProp
     //          precision     %Int;          "2"
     //          visible       %Bool;         "no"
     //          grouprefs     IDREFS         #IMPLIED
+    public enum Field {
+        X1("x1", Double.class), Y1("y1", Double.class),
+        X2("x2", Double.class), Y2("y2", Double.class),
+        X3("x3", Double.class), Y3("y3", Double.class),
+        D_TYPE("dType", DimensionType.class),
+        EXTWIDTH("extwidth", Double.class),
+        EXTOFFSET("extoffset", Double.class),
+        TEXTSIZE("textsize", Double.class),
+        TEXTRATIO("textratio", Integer.class),
+        UNIT("unit", GridUnit.class),
+        PRECISION("precision", Integer.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
+
     private int layer;
     private double x1;
     private double y1;
@@ -290,6 +322,7 @@ public class Dimension extends Element implements LayerNumberProperty, WidthProp
     /**
      * @return the visible
      */
+    @Override
     public boolean isVisible() {
         return visible;
     }
@@ -297,6 +330,7 @@ public class Dimension extends Element implements LayerNumberProperty, WidthProp
     /**
      * @param visible the visible to set
      */
+    @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -304,6 +338,7 @@ public class Dimension extends Element implements LayerNumberProperty, WidthProp
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

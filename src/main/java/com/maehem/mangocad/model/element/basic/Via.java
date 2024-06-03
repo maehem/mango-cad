@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.enums.ViaShape;
 import com.maehem.mangocad.model.element.misc.DesignRules;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.util.DrcDefs;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Via extends Element {
+public class Via extends Element implements GrouprefsProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -231,6 +232,7 @@ public class Via extends Element {
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

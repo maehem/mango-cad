@@ -19,6 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
@@ -46,7 +47,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element implements LayerNumberProperty, LocationXYProperty, RotationProperty, SelectableProperty {
+public class ElementText extends Element implements LayerNumberProperty, LocationXYProperty, RotationProperty, SelectableProperty, GrouprefsProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -267,7 +268,6 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     public void setAlign(String val) {
         TextAlign ta = TextAlign.fromCode(val);
-        TextAlign oldValue = this.align;
         if (ta == null) {
             LOGGER.log(Level.SEVERE, "TextAlign: tried to set an alignment called \"{0}\"", val);
         } else {
@@ -312,6 +312,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     /**
      * @return the grouprefs
      */
+    @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
     }

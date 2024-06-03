@@ -17,18 +17,20 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty {
+public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty {
 
     public static final String ELEMENT_NAME = "rectangle";
 
@@ -61,6 +63,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     private double x2;
     private double y2;
     private final Rotation rotation = new Rotation();
+    private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
     private int selectedCorner = 0;
@@ -322,4 +325,10 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
     }
+
+    @Override
+    public ArrayList<String> getGrouprefs() {
+        return grouprefs;
+    }
+
 }

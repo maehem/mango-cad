@@ -19,20 +19,24 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.misc.DesignRules;
+import com.maehem.mangocad.model.element.property.GrouprefsProperty;
+import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.util.DrcDefs;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Hole extends Element {
+public class Hole extends Element implements LocationXYProperty, GrouprefsProperty {
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "hole";
 
     private double x;
     private double y;
     private double drill;
+    private final ArrayList<String> groupRefs = new ArrayList<>();
 
 
     @Override
@@ -43,6 +47,7 @@ public class Hole extends Element {
     /**
      * @return the x
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -50,6 +55,7 @@ public class Hole extends Element {
     /**
      * @param x the x to set
      */
+    @Override
     public void setX(double x) {
         this.x = x;
     }
@@ -57,6 +63,7 @@ public class Hole extends Element {
     /**
      * @return the y
      */
+    @Override
     public double getY() {
         return y;
     }
@@ -64,6 +71,7 @@ public class Hole extends Element {
     /**
      * @param y the y to set
      */
+    @Override
     public void setY(double y) {
         this.y = y;
     }
@@ -111,6 +119,11 @@ public class Hole extends Element {
 
         //LOGGER.log(Level.SEVERE, "Final Diameter: " + (getDrill() + 2 * maskBase));
         return getDrill() + 2 * maskBase;
+    }
+
+    @Override
+    public ArrayList<String> getGrouprefs() {
+        return groupRefs;
     }
 
 }
