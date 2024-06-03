@@ -19,7 +19,6 @@ package com.maehem.mangocad.view.widgets.toolmode;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireCap;
-import com.maehem.mangocad.model.element.enums.WireField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -106,7 +105,7 @@ public class LineCapWidget extends ToolModeWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(WireField.CAP)) {
+        if (!field.equals(Wire.Field.CAP)) {
             return;
         }
         if (newVal == null) {

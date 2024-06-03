@@ -22,7 +22,6 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.WireEnd;
-import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
@@ -197,20 +196,20 @@ public class WireNode extends ViewNode implements ElementListener {
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        //WireField f = (WireField) field;
+        //Wire.Field f = (Wire.Field) field;
 
         LOGGER.log(Level.SEVERE,
                 "Wire properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (field) {
-            case WireField.X1, WireField.Y1, WireField.X2, WireField.Y2 -> {
+            case Wire.Field.X1, Wire.Field.Y1, Wire.Field.X2, Wire.Field.Y2 -> {
                 updateLine();
             }
-            case WireField.END -> {
+            case Wire.Field.END -> {
                 updateLayer();
             }
-            case WireField.CAP -> {
+            case Wire.Field.CAP -> {
                 updateCap();
             }
             case CurveProperty.Field.CURVE -> {
@@ -219,7 +218,7 @@ public class WireNode extends ViewNode implements ElementListener {
             case LayerNumberProperty.Field.LAYER -> {
                 updateLayer();
             }
-            case WireField.STYLE -> {
+            case Wire.Field.STYLE -> {
                 updateStyle();
             }
             case WidthProperty.Field.WIDTH -> {

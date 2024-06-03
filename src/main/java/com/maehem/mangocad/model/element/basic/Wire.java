@@ -19,7 +19,6 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
-import com.maehem.mangocad.model.element.enums.WireField;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
@@ -126,7 +125,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (this.x1 != x1) {
             double oldVal = this.x1;
             this.x1 = x1;
-            notifyListeners(WireField.X1, oldVal, this.x1);
+            notifyListeners(Wire.Field.X1, oldVal, this.x1);
         }
     }
 
@@ -144,7 +143,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (this.y1 != y1) {
             double oldVal = this.y1;
             this.y1 = y1;
-            notifyListeners(WireField.Y1, oldVal, this.y1);
+            notifyListeners(Wire.Field.Y1, oldVal, this.y1);
         }
     }
 
@@ -162,7 +161,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (this.x2 != x2) {
             double oldVal = this.x2;
             this.x2 = x2;
-            notifyListeners(WireField.X2, oldVal, this.x2);
+            notifyListeners(Wire.Field.X2, oldVal, this.x2);
         }
     }
 
@@ -180,7 +179,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (this.y2 != y2) {
             double oldVal = this.y2;
             this.y2 = y2;
-            notifyListeners(WireField.Y2, oldVal, this.y2);
+            notifyListeners(Wire.Field.Y2, oldVal, this.y2);
         }
     }
 
@@ -253,7 +252,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (getCap() != cap) {
             WireCap oldVal = this.cap;
             this.cap = cap;
-            notifyListeners(WireField.CAP, oldVal, this.cap);
+            notifyListeners(Wire.Field.CAP, oldVal, this.cap);
         }
     }
 
@@ -271,7 +270,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (!getExtent().equals(extent)) {
             String oldVal = this.extent;
             this.extent = extent;
-            notifyListeners(WireField.EXTENT, oldVal, this.extent);
+            notifyListeners(Wire.Field.EXTENT, oldVal, this.extent);
         }
     }
 
@@ -289,7 +288,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (!getStyle().equals(style)) {
             WireStyle oldVal = this.style;
             this.style = style;
-            notifyListeners(WireField.STYLE, oldVal, this.style);
+            notifyListeners(Wire.Field.STYLE, oldVal, this.style);
         }
     }
 
@@ -314,7 +313,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (!getSelectedEnd().equals(end)) {
             WireEnd oldVal = this.getSelectedEnd();
             this.selectedEnd = end;
-            notifyListeners(WireField.END, oldVal, this.selectedEnd);
+            notifyListeners(Wire.Field.END, oldVal, this.selectedEnd);
         }
     }
 
