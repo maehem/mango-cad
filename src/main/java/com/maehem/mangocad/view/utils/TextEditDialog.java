@@ -14,9 +14,11 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view;
+package com.maehem.mangocad.view.utils;
 
 import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.view.TextEditPanel;
+import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.scene.control.ButtonType;
