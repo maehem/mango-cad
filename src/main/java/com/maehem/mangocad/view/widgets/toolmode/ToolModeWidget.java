@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.widgets.toolmode;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
 import java.util.ResourceBundle;
+import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 
 /**
@@ -35,6 +36,7 @@ public abstract class ToolModeWidget extends HBox implements ElementListener {
         setId("tool-mode-widget");
 
         setSpacing(0.0);
+        setAlignment(Pos.BASELINE_CENTER);
 
         //setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
 
