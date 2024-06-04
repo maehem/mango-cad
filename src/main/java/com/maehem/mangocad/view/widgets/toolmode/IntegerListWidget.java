@@ -118,9 +118,13 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
                 try {
                     int parseInteger = Integer.parseInt((String) selectedItem);
                     if (!options.contains(parseInteger)) { // Check if it's already in list.
-                        // If not, add it to the list, sort the list
-                        options.add(parseInteger);
-                        Collections.sort(options);
+                        if (intValue.isInRange(parseInteger)) {
+                            // If not, add it to the list, sort the list
+                            options.add(parseInteger);
+                            Collections.sort(options);
+                        } else {
+                            doRangeErrorDialog(parseInteger);
+                        }
                     }
                     // Select the value.
                     comboBox.getSelectionModel().select(parseInteger); // Select it.
@@ -130,12 +134,7 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
                     }
                 } catch (NumberFormatException ex) {
                     // If not a number, show error dialog.
-                    String errorHeader = MSG.getString("REAL_VALUE_ERROR_HEADER");
-                    String errorMsg = MessageFormat.format(
-                            MSG.getString("REAL_VALUE_ERROR_RANGE"),
-                            field.fName(), selectedItem,
-                            intValue.getMin(), intValue.getMax());
-                    Dialogs.errorDialog(errorHeader, errorMsg).show();
+                    doRangeErrorDialog(selectedItem);
                 }
             }
         });
@@ -145,6 +144,15 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
             }
         });
 
+    }
+
+    private void doRangeErrorDialog(Object selectedItem) {
+        String errorHeader = MSG.getString("INT_VALUE_ERROR_HEADER");
+        String errorMsg = MessageFormat.format(
+                MSG.getString("INT_VALUE_ERROR_RANGE"),
+                field.fName(), selectedItem,
+                intValue.getMin(), intValue.getMax());
+        Dialogs.errorDialog(errorHeader, errorMsg).show();
     }
 
     private void updateComboState(double pl) {
