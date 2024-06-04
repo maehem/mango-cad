@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
@@ -53,14 +55,14 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     //          precision     %Int;          "2"
     //          visible       %Bool;         "no"
     //          grouprefs     IDREFS         #IMPLIED
-    public enum Field {
+    public enum Field implements ElementField {
         X1("x1", Double.class), Y1("y1", Double.class),
         X2("x2", Double.class), Y2("y2", Double.class),
         X3("x3", Double.class), Y3("y3", Double.class),
         D_TYPE("dType", DimensionType.class),
         EXTWIDTH("extwidth", Double.class),
         EXTOFFSET("extoffset", Double.class),
-        TEXTSIZE("textsize", Double.class),
+        TEXTSIZE("textsize", RealValue.class),
         TEXTRATIO("textratio", Integer.class),
         UNIT("unit", GridUnit.class),
         PRECISION("precision", Integer.class);
@@ -73,10 +75,12 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
@@ -95,7 +99,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     private double extwidth = 0;
     private double extlength = 0;
     private double extoffset = 0;
-    private double textsize = 10;
+    private final RealValue textsize = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from ElementText
     private int textratio = 8;
     private GridUnit unit = GridUnit.MM;
     private int precision = 2;
@@ -267,14 +271,18 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      * @return the textsize
      */
     public double getTextsize() {
-        return textsize;
+        return textsize.get();
     }
 
     /**
      * @param textsize the textsize to set
      */
     public void setTextsize(double textsize) {
-        this.textsize = textsize;
+        this.textsize.set(textsize);
+    }
+
+    public RealValue getTextSizeProperty() {
+        return textsize;
     }
 
     /**
