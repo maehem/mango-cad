@@ -65,4 +65,7 @@ public class RealValue extends ElementValue {
         this.max = val;
     }
 
+    public boolean isInRange(double val) {
+        return (val > getMin() && val < getMax());
+    }
 }
