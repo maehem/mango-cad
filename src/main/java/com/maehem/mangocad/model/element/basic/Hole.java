@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
@@ -32,6 +33,29 @@ import java.util.logging.Logger;
 public class Hole extends Element implements LocationXYProperty, GrouprefsProperty {
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "hole";
+
+    public enum Field implements ElementField {
+        DRILL("drill", Double.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        @Override
+        public String fName() {
+            return fName;
+        }
+
+        @Override
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
 
     private double x;
     private double y;
