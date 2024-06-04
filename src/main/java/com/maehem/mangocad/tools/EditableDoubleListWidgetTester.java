@@ -65,7 +65,7 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
     private final EditableDoubleListWidget listWidget = new EditableDoubleListWidget(
             dimElement.getTextSizeProperty(),
             Dimension.Field.TEXTSIZE,
-            "TEXT_SIZE",
+            "TEXT_SIZE", "mm",
             options
     );
     private final VBox hBox = new VBox(listWidget, sampleText);
