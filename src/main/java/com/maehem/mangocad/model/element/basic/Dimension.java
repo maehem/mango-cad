@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.DimensionType;
@@ -63,7 +64,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         EXTWIDTH("extwidth", Double.class),
         EXTOFFSET("extoffset", Double.class),
         TEXTSIZE("textsize", RealValue.class),
-        TEXTRATIO("textratio", Integer.class),
+        TEXTRATIO("textratio", IntValue.class),
         UNIT("unit", GridUnit.class),
         PRECISION("precision", Integer.class);
 
@@ -100,7 +101,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     private double extlength = 0;
     private double extoffset = 0;
     private final RealValue textsize = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from ElementText
-    private int textratio = 8;
+    private final IntValue textratio = new IntValue(8, 0, 31);
     private GridUnit unit = GridUnit.MM;
     private int precision = 2;
     private boolean visible = false;
@@ -289,14 +290,18 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      * @return the textratio
      */
     public int getTextratio() {
-        return textratio;
+        return textratio.get();
     }
 
     /**
      * @param textratio the textratio to set
      */
     public void setTextratio(int textratio) {
-        this.textratio = textratio;
+        this.textratio.set(textratio);
+    }
+
+    public IntValue getTextRatioProperty() {
+        return textratio;
     }
 
     /**
