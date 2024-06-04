@@ -47,7 +47,15 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
     private final ElementField field;
     private final String unitDisplay;
 
-    public EditableDoubleListWidget(RealValue rv, ElementField f, String msgKeyBase, String unit, ObservableList<Double> options) {
+    public EditableDoubleListWidget(RealValue rv, ElementField f,
+            String msgKeyBase, String unit,
+            ObservableList<Double> options) {
+        this(rv, f, msgKeyBase, unit, false, options);
+    }
+
+    public EditableDoubleListWidget(RealValue rv, ElementField f,
+            String msgKeyBase, String unit, boolean allowEdit,
+            ObservableList<Double> options) {
         this.realValue = rv;
         this.field = f;
         this.options = options;
@@ -91,7 +99,7 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
 
         realValue.addListener(this);
         comboBox.setButtonCell(new TextFieldListCell<>());
-        comboBox.setEditable(true);
+        comboBox.setEditable(allowEdit);
         comboBox.getSelectionModel().selectFirst();
         getChildren().add(comboBox);
 
@@ -101,34 +109,48 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
             Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
             if (selectedItem instanceof Double) {  // It came from the list.
                 realValue.set((double) selectedItem);
-                comboBox.setEditable(false);
+                if (allowEdit) {
+                    comboBox.setEditable(false);
+                }
             } else { // User typed a new value (string), might be a non-number string.
                 try {
                     double parseDouble = Double.parseDouble((String) selectedItem);
                     if (!options.contains(parseDouble)) { // Check if it's already in list.
-                        // If not, add it to the list, sort the list
-                        options.add(parseDouble);
-                        Collections.sort(options);
+                        if (realValue.isInRange(parseDouble)) {
+                            // If not, add it to the list, sort the list
+                            options.add(parseDouble);
+                            Collections.sort(options);
+                        } else {
+                            doRangeErrorDialog(parseDouble);
+                        }
                     }
                     // Select the value.
                     comboBox.getSelectionModel().select(parseDouble); // Select it.
                     realValue.set(parseDouble);
-                    comboBox.setEditable(false);
+                    if (allowEdit) {
+                        comboBox.setEditable(false);
+                    }
                 } catch (NumberFormatException ex) {
                     // If not a number, show error dialog.
-                    String errorHeader = MSG.getString("REAL_VALUE_ERROR_HEADER");
-                    String errorMsg = MessageFormat.format(
-                            MSG.getString("REAL_VALUE_ERROR_RANGE"),
-                            field.fName(), selectedItem,
-                            realValue.getMin(), realValue.getMax());
-                    Dialogs.errorDialog(errorHeader, errorMsg).show();
+                    doRangeErrorDialog(selectedItem);
                 }
             }
         });
         comboBox.setOnMouseClicked((t) -> {
-            comboBox.setEditable(true);
+            if (allowEdit) {
+                comboBox.setEditable(true);
+            }
         });
 
+    }
+
+    private void doRangeErrorDialog(Object item) {
+        String errorHeader = MSG.getString("REAL_VALUE_ERROR_HEADER");
+        String errorMsg = MessageFormat.format(
+                MSG.getString("REAL_VALUE_ERROR_RANGE"),
+                field.fName(), item,
+                realValue.getMin(), realValue.getMax());
+        Dialogs.errorDialog(errorHeader, errorMsg).show();
     }
 
     private void updateComboState(double pl) {
