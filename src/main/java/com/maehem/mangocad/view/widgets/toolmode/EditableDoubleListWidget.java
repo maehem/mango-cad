@@ -120,7 +120,7 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
                     String errorMsg = MessageFormat.format(
                             MSG.getString("REAL_VALUE_ERROR_RANGE"),
                             field.fName(), selectedItem,
-                            realValue.MIN, realValue.MAX);
+                            realValue.getMin(), realValue.getMax());
                     Dialogs.errorDialog(errorHeader, errorMsg).show();
                 }
             }

@@ -24,13 +24,17 @@ public class RealValue extends ElementValue {
 
     private double value;
     private double oldValue;
-    public final double MIN;
-    public final double MAX;
+    private double min = Double.MIN_VALUE;
+    private double max = Double.MAX_VALUE;
+
+    public RealValue(double value) {
+        this.value = value;
+    }
 
     public RealValue(double value, double min, double max) {
-        this.value = value;
-        this.MIN = min;
-        this.MAX = max;
+        this(value);
+        this.min = min;
+        this.max = max;
     }
 
     public double get() {
@@ -43,6 +47,22 @@ public class RealValue extends ElementValue {
         if (oldValue != this.value) {
             notifyValueChange();
         }
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public void setMin(double val) {
+        this.min = val;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public void setMax(double val) {
+        this.max = val;
     }
 
 }
