@@ -28,12 +28,10 @@ import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.text.Text;
 
 /**
  * Settings for element angle rotations.
@@ -42,37 +40,33 @@ import javafx.scene.control.cell.TextFieldListCell;
  */
 public class EditableDoubleListWidget extends ToolModeWidget implements ElementValueListener {
 
+    private final double MIN_WIDTH = 40;
     private final ObservableList<Double> options;
     private final ComboBox<Double> comboBox;
     private final RealValue realValue;
     private final ElementField field;
+    private final String unitDisplay;
 
-    public EditableDoubleListWidget(RealValue rv, ElementField f, String msgKeyBase, ObservableList<Double> options) {
+    public EditableDoubleListWidget(RealValue rv, ElementField f, String msgKeyBase, String unit, ObservableList<Double> options) {
         this.realValue = rv;
         this.field = f;
         this.options = options;
         comboBox = new ComboBox<>(options);
+        this.unitDisplay = unit;
 
-        setPrefWidth(130);
-
+        setMinWidth(MIN_WIDTH);
+        setPrefWidth(MIN_WIDTH);
+        setSpacing(4);
         // TODO: Icon as Label
-        String labelStr;
+        String labelStr = "";
         Tooltip tt = new Tooltip();
         if (msgKeyBase != null) {
-            Label iconLabel;
             try {
-                labelStr = MSG.getString(msgKeyBase + "_LABEL") + ":";
-                iconLabel = new Label(labelStr);
+                labelStr = MSG.getString(msgKeyBase + "_LABEL");
             } catch (MissingResourceException ex) {
-                iconLabel = new Label("???");
+                labelStr = "???";
                 LOGGER.log(Level.SEVERE, "Couldn''t find requested i18n: {0}_LABEL", msgKeyBase);
             }
-            iconLabel.setPadding(new Insets(4));
-            iconLabel.setAlignment(Pos.BASELINE_CENTER);
-            double labelWidth = 55;  // Calculate?
-            iconLabel.setMinWidth(labelWidth);
-            iconLabel.setPrefWidth(labelWidth);
-            getChildren().add(iconLabel);
 
             // Set the tooltip
             try {
@@ -83,6 +77,17 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
                 // tt can remain blank.
             }
         }
+        if (unitDisplay != null && !unitDisplay.isEmpty()) {
+            labelStr += " (" + unitDisplay + ")";
+        }
+        if (!labelStr.isEmpty()) {
+            labelStr += ":";
+        }
+
+        Text iconLabel;
+        iconLabel = new Text(labelStr);
+        iconLabel.setId("widget-label");
+        getChildren().add(iconLabel);
 
         realValue.addListener(this);
         comboBox.setButtonCell(new TextFieldListCell<>());
@@ -96,6 +101,7 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
             Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
             if (selectedItem instanceof Double) {  // It came from the list.
                 realValue.set((double) selectedItem);
+                comboBox.setEditable(false);
             } else { // User typed a new value (string), might be a non-number string.
                 try {
                     double parseDouble = Double.parseDouble((String) selectedItem);
@@ -107,6 +113,7 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
                     // Select the value.
                     comboBox.getSelectionModel().select(parseDouble); // Select it.
                     realValue.set(parseDouble);
+                    comboBox.setEditable(false);
                 } catch (NumberFormatException ex) {
                     // If not a number, show error dialog.
                     String errorHeader = MSG.getString("REAL_VALUE_ERROR_HEADER");
@@ -117,6 +124,9 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
                     Dialogs.errorDialog(errorHeader, errorMsg).show();
                 }
             }
+        });
+        comboBox.setOnMouseClicked((t) -> {
+            comboBox.setEditable(true);
         });
 
     }
