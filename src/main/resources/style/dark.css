@@ -4,6 +4,7 @@
     
     /* -fx-base: #373e43;  */
     -fx-base: #222428;
+    -fx-text-fill: #ddd;
     -fx-control-inner-background: derive(-fx-base, 35%);
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 
@@ -235,11 +236,16 @@
 }
 
 #grid-mouse-widget {
-    -fx-fil: #833;
+    -fx-fill: #833;
 }
 #grid-mouse-widget-units {
     -fx-font-weight: bold;
 }
 #grid-mouse-widget-location {
-    -fx-fil: #383;
+    -fx-fill: #383;
+}
+
+#widget-label {
+    -fx-fill: -fx-text-fill;
+    -fx-text-origin: bottom;
 }
