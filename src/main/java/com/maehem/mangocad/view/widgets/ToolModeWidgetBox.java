@@ -126,7 +126,7 @@ public class ToolModeWidgetBox extends HBox {
             case TEXT -> {  // Text options
                 RotationWidget rW = new RotationWidget(mode.getToolElement());
                 MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
-                TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement());
+                TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement()); // Upgrade to EditableDoubleListWidget
                 TextRatioWidget trW = new TextRatioWidget(mode.getToolElement());
                 TextFontWidget tfW = new TextFontWidget(mode.getToolElement());
                 TextAlignWidget taW = new TextAlignWidget(mode.getToolElement());
