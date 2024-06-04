@@ -41,7 +41,7 @@ import static com.maehem.mangocad.view.EditorTool.LOOK;
 import static com.maehem.mangocad.view.EditorTool.SELECT;
 import static com.maehem.mangocad.view.EditorTool.TRASH;
 import com.maehem.mangocad.view.PickListener;
-import com.maehem.mangocad.view.TextEditDialog;
+import com.maehem.mangocad.view.utils.TextEditDialog;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.node.CircleNode;
