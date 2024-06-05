@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -58,14 +59,24 @@ public class TextSizeWidget extends ToolModeWidget {
     @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
     private final ElementText text;
+    private final Element element;
+    private final Dimension dimension;
 
     @SuppressWarnings({"unchecked"})
     public TextSizeWidget(Element e) {
         if (e instanceof ElementText p) {
             this.text = p;
+            this.element = e;
+            this.dimension = null;
             this.text.addListener(this);
-        } else {
+        } else if (e instanceof Dimension d) {
+            this.element = e;
+            this.dimension = d;
             this.text = null;
+        } else {
+            this.element = null;
+            this.text = null;
+            this.dimension = null;
             LOGGER.log(Level.SEVERE, "TextSizeWidget: element is not of type ElementText!");
         }
 
@@ -77,7 +88,6 @@ public class TextSizeWidget extends ToolModeWidget {
         iconLabel.setMinWidth(labelWidth);
         iconLabel.setPrefWidth(labelWidth);
 
-
         comboBox.setButtonCell(new EditableItemCell());
         comboBox.setEditable(true);
         comboBox.getSelectionModel().selectFirst();
@@ -85,7 +95,11 @@ public class TextSizeWidget extends ToolModeWidget {
         getChildren().addAll(iconLabel, comboBox);
 
         comboBox.setOnAction((t) -> {
-            text.setSize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+            if (text != null) {
+                text.setSize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+            } else if (dimension != null) {
+                dimension.setTextsize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+            }
             t.consume();
         });
     }
@@ -102,26 +116,27 @@ public class TextSizeWidget extends ToolModeWidget {
 
     @Override
     public void stopListening() {
-        text.removeListener(this);
+        element.removeListener(this);
     }
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        // Update widgets.
-        if (!field.equals(ElementText.Field.SIZE)) {
-            return;
-        }
-        if (newVal == null) {
-            return;
-        }
-        LOGGER.log(Level.SEVERE, "TextSizeWidget: Text size: ==> {0}", newVal.toString());
+        switch (field) {
+            case ElementText.Field.SIZE, Dimension.Field.TEXTSIZE -> {
+                if (newVal != null) {
+                    LOGGER.log(Level.SEVERE, "TextSizeWidget: Text size: ==> {0}", newVal.toString());
 
-        if (newVal instanceof Double pd) {
-            updateComboState(pd);
+                    if (newVal instanceof Double pd) {
+                        updateComboState(pd);
+                    }
+                }
+            }
+            default -> {
+            }
         }
     }
 
-    public class EditableItemCell extends ListCell<Double> {
+    public class EditableItemCell<Double> extends ListCell<Double> {
 
         private final TextField textField = new TextField();
 
