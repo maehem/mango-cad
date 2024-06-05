@@ -16,13 +16,15 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.element.ElementField;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public interface WidthProperty {
 
-    public enum Field {
+    public enum Field implements ElementField {
         WIDTH("width", Double.class);
 
         private final String fName;
@@ -33,14 +35,15 @@ public interface WidthProperty {
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
-
     }
 
     public double getWidth();
