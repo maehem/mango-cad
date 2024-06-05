@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireStyle;
@@ -56,7 +57,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
-    public enum Field {
+    public enum Field implements ElementField {
         X1("x1", Double.class), Y1("y1", Double.class),
         X2("x2", Double.class), Y2("y2", Double.class),
         END("selectedEnd", WireEnd.class),
@@ -76,10 +77,12 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
