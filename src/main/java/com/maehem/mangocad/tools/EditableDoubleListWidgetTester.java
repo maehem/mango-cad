@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.widgets.toolmode.EditableDoubleListWidget;
+import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import javafx.application.Application;
@@ -62,7 +62,7 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
     private final Text sampleText = new Text("Hello");
     //private RealValue realValue = new RealValue(123.456);
     private final Dimension dimElement = new Dimension();
-    private final EditableDoubleListWidget listWidget = new EditableDoubleListWidget(
+    private final RealValueListWidget listWidget = new RealValueListWidget(
             dimElement.getTextSizeProperty(),
             Dimension.Field.TEXTSIZE,
             "TEXT_SIZE", "mm",
