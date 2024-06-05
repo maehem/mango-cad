@@ -38,22 +38,22 @@ import javafx.scene.text.Text;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class EditableDoubleListWidget extends ToolModeWidget implements ElementValueListener {
+public class RealValueListWidget extends ToolModeWidget implements ElementValueListener {
 
-    private final double MIN_WIDTH = 40;
+    private final double MIN_WIDTH = 150;
     private final ObservableList<Double> options;
     private final ComboBox<Double> comboBox;
     private final RealValue realValue;
     private final ElementField field;
     private final String unitDisplay;
 
-    public EditableDoubleListWidget(RealValue rv, ElementField f,
+    public RealValueListWidget(RealValue rv, ElementField f,
             String msgKeyBase, String unit,
             ObservableList<Double> options) {
         this(rv, f, msgKeyBase, unit, false, options);
     }
 
-    public EditableDoubleListWidget(RealValue rv, ElementField f,
+    public RealValueListWidget(RealValue rv, ElementField f,
             String msgKeyBase, String unit, boolean allowEdit,
             ObservableList<Double> options) {
         this.realValue = rv;
@@ -62,12 +62,14 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
         comboBox = new ComboBox<>(options);
         this.unitDisplay = unit;
 
-        setMinWidth(MIN_WIDTH);
+        //setMinWidth(MIN_WIDTH);
         setPrefWidth(MIN_WIDTH);
         setSpacing(4);
         // TODO: Icon as Label
         String labelStr = "";
         Tooltip tt = new Tooltip();
+        comboBox.setTooltip(tt);
+
         if (msgKeyBase != null) {
             try {
                 labelStr = MSG.getString(msgKeyBase + "_LABEL");
@@ -92,7 +94,7 @@ public class EditableDoubleListWidget extends ToolModeWidget implements ElementV
             labelStr += ":";
         }
 
-        Text iconLabel;
+        Text iconLabel; // TODO: try as Label again and set tooltip.
         iconLabel = new Text(labelStr);
         iconLabel.setId("widget-label");
         getChildren().add(iconLabel);
