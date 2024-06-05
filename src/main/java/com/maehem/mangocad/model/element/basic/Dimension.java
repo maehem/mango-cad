@@ -27,6 +27,8 @@ import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -66,7 +68,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         TEXTSIZE("textsize", RealValue.class),
         TEXTRATIO("textratio", IntValue.class),
         UNIT("unit", GridUnit.class),
-        PRECISION("precision", Integer.class);
+        PRECISION("precision", IntValue.class);
 
         private final String fName;
         private final Class clazz;
@@ -96,16 +98,32 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     private double x3;
     private double y3;
     private DimensionType dtype = DimensionType.PARALLEL;
-    private double width = 0.13;
-    private double extwidth = 0;
-    private double extlength = 0;
-    private double extoffset = 0;
-    private final RealValue textsize = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from ElementText
+    private final RealValue width = new RealValue(0.13, 0.0, 200.0);
+    private final RealValue extwidth = new RealValue(0, 0.0, 200.0);
+    private final RealValue extlength = new RealValue(0, 0.0, 200.0);
+    private final RealValue extoffset = new RealValue(0, 0.0, 200.0);
+    private final RealValue textsize = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from  a sample ElementText
     private final IntValue textratio = new IntValue(8, 0, 31);
     private GridUnit unit = GridUnit.MM;
-    private int precision = 2;
+    private final IntValue precision = new IntValue(2, 0, 6);
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
+
+    public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
+            = FXCollections.observableArrayList(
+                    0.0,
+                    0.01,
+                    0.0125,
+                    0.025,
+                    0.03937008,
+                    0.05,
+                    0.10,
+                    0.5,
+                    1.0,
+                    2.0,
+                    5.0,
+                    10.0
+            );
 
     @Override
     public String getElementName() {
@@ -215,7 +233,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     @Override
     public double getWidth() {
-        return width;
+        return width.get();
     }
 
     /**
@@ -223,49 +241,61 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     @Override
     public void setWidth(double width) {
-        this.width = width;
+        this.width.set(width);
     }
 
     /**
      * @return the extwidth
      */
     public double getExtwidth() {
-        return extwidth;
+        return extwidth.get();
     }
 
     /**
      * @param extwidth the extwidth to set
      */
     public void setExtwidth(double extwidth) {
-        this.extwidth = extwidth;
+        this.extwidth.set(extwidth);
+    }
+
+    public RealValue getExtWidthProperty() {
+        return extwidth;
     }
 
     /**
      * @return the extlength
      */
     public double getExtlength() {
-        return extlength;
+        return extlength.get();
     }
 
     /**
      * @param extlength the extlength to set
      */
     public void setExtlength(double extlength) {
-        this.extlength = extlength;
+        this.extlength.set(extlength);
+    }
+
+    public RealValue getExtlengthProperty() {
+        return extlength;
     }
 
     /**
      * @return the extoffset
      */
     public double getExtoffset() {
-        return extoffset;
+        return extoffset.get();
     }
 
     /**
      * @param extoffset the extoffset to set
      */
     public void setExtoffset(double extoffset) {
-        this.extoffset = extoffset;
+        this.extoffset.set(extoffset);
+    }
+
+    public RealValue getExtOffsetProperty() {
+        return extoffset;
     }
 
     /**
@@ -322,14 +352,18 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      * @return the precision
      */
     public int getPrecision() {
-        return precision;
+        return precision.get();
     }
 
     /**
      * @param precision the precision to set
      */
     public void setPrecision(int precision) {
-        this.precision = precision;
+        this.precision.set(precision);
+    }
+
+    public IntValue getPrecisionProperty() {
+        return precision;
     }
 
     /**
