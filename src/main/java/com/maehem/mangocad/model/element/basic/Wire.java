@@ -30,6 +30,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * <pre>
@@ -89,6 +91,23 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
 
     }
 
+    // TODO: No JavaFX in model package!!!!
+    public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
+            = FXCollections.observableArrayList(
+                    -1.0,
+                    0.0,
+                    0.01,
+                    0.0125,
+                    0.025,
+                    0.03937008,
+                    0.05,
+                    0.10,
+                    0.5,
+                    1.0,
+                    2.0,
+                    5.0,
+                    10.0
+            );
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
 
