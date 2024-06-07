@@ -19,10 +19,11 @@ package com.maehem.mangocad.tools;
 import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.model.ElementValue;
 import com.maehem.mangocad.model.ElementValueListener;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget;
+import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget2;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import javafx.application.Application;
@@ -42,8 +43,11 @@ import javafx.stage.Stage;
  */
 public class EditableDoubleListWidgetTester extends Application implements ElementValueListener {
 
+    private final RealValue autoValue = new RealValue(123.456);
+
     private final ObservableList<Double> options
             = FXCollections.observableArrayList(
+                    -1.0,
                     0.0,
                     0.01,
                     0.0125,
@@ -62,10 +66,11 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
     private final Text sampleText = new Text("Hello");
     //private RealValue realValue = new RealValue(123.456);
     private final Dimension dimElement = new Dimension();
-    private final RealValueListWidget listWidget = new RealValueListWidget(
+    private final RealValueListWidget2 listWidget = new RealValueListWidget2(
             dimElement.getTextSizeProperty(),
             Dimension.Field.TEXTSIZE,
             "TEXT_SIZE", "mm",
+            true, autoValue,
             options
     );
     private final VBox hBox = new VBox(listWidget, sampleText);
