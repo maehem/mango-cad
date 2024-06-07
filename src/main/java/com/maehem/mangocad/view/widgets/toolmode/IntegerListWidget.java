@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -40,7 +41,7 @@ import javafx.scene.text.Text;
  */
 public class IntegerListWidget extends ToolModeWidget implements ElementValueListener {
 
-    private final double MIN_WIDTH = 40;
+    private final double PREF_WIDTH = 130;
     private final ObservableList<Integer> options;
     private final ComboBox<Integer> comboBox;
     private final IntValue intValue;
@@ -64,9 +65,9 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
         this.unitDisplay = unit;
         //this.allowEdit = allowEdit;
 
-        setMinWidth(MIN_WIDTH);
-        setPrefWidth(MIN_WIDTH);
+        setPrefWidth(PREF_WIDTH);
         setSpacing(4);
+        setPadding(new Insets(0, 0, 0, 4));
         // TODO: Icon as Label
         String labelStr = "";
         Tooltip tt = new Tooltip();
