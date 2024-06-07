@@ -185,7 +185,7 @@ public class ToolModeWidgetBox extends HBox {
                     );
                     // Ext Length (with auto)
                     // Ext Offset (with auto)
-                    getChildren().addAll(tsW, /*textRatioWidget,*/ lineWidthWidget, extWidthWidget);
+                    getChildren().addAll(tsW, textRatioWidget, lineWidthWidget, extWidthWidget);
                 }
             }
             default -> {
