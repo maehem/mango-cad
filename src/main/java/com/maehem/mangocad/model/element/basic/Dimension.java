@@ -27,8 +27,6 @@ import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  *
@@ -108,22 +106,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     private final IntValue precision = new IntValue(2, 0, 6);
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
-
-    public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
-            = FXCollections.observableArrayList(
-                    0.0,
-                    0.01,
-                    0.0125,
-                    0.025,
-                    0.03937008,
-                    0.05,
-                    0.10,
-                    0.5,
-                    1.0,
-                    2.0,
-                    5.0,
-                    10.0
-            );
 
     @Override
     public String getElementName() {
@@ -242,6 +224,10 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     @Override
     public void setWidth(double width) {
         this.width.set(width);
+    }
+
+    public RealValue getWidthProperty() {
+        return width;
     }
 
     /**
