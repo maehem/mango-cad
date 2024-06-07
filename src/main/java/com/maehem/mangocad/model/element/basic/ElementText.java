@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
@@ -28,6 +29,8 @@ import com.maehem.mangocad.model.util.Rotation;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * <pre>
@@ -53,7 +56,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     public static final String ELEMENT_NAME = "text";
 
-    public enum Field {
+    public enum Field implements ElementField {
         //X("x", Double.class), Y("y", Double.class),
         //SELECTED("selected", Boolean.class),
         SIZE("size", Double.class),
@@ -73,14 +76,24 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
     }
+
+    public static final ObservableList<Integer> TEXT_RATIO_DEFAULT_OPTIONS
+            = FXCollections.observableArrayList(
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+                    30, 31
+            );
 
     private int layer;
     private double x;
