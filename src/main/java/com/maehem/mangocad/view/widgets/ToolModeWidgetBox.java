@@ -17,10 +17,13 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.element.basic.Dimension;
+import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.ARC;
 import com.maehem.mangocad.view.widgets.toolmode.ArcClockwiseToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.IntegerListWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineBendStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineCapWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineStyleWidget;
@@ -35,7 +38,7 @@ import com.maehem.mangocad.view.widgets.toolmode.PinRotationToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinSwapLevelWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinVisibilityToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PolygonFillWidget;
-import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget;
+import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget2;
 import com.maehem.mangocad.view.widgets.toolmode.RotationWidget;
 import com.maehem.mangocad.view.widgets.toolmode.TextAlignWidget;
 import com.maehem.mangocad.view.widgets.toolmode.TextDistanceWidget;
@@ -162,20 +165,27 @@ public class ToolModeWidgetBox extends HBox {
                     // Dimension options
                     // Dim Style
                     TextSizeWidget tsW = new TextSizeWidget(d);
-                    //TextRatioWidget trW = new TextRatioWidget(d);
+                    IntegerListWidget textRatioWidget = new IntegerListWidget(
+                            d.getTextRatioProperty(), ElementText.Field.RATIO,
+                            "TEXT_RATIO", "%",
+                            ElementText.TEXT_RATIO_DEFAULT_OPTIONS);
                     // Unit
                     // Precision
                     // Show
-                    LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                    RealValueListWidget lw2W = new RealValueListWidget(
-                            d.getExtWidthProperty(), WidthProperty.Field.WIDTH,
-                            "LINE_WIDTH", "2",
-                            Dimension.WIDTH_DEFAULT_OPTIONS
+                    RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
+                            d.getWidthProperty(), WidthProperty.Field.WIDTH,
+                            "LINE_WIDTH", null, ToolModeWidget.EDITABLE,
+                            null, Wire.WIDTH_DEFAULT_OPTIONS
                     );
                     // Ext. Width (with auto)
+                    RealValueListWidget2 extWidthWidget = new RealValueListWidget2(
+                            d.getExtWidthProperty(), WidthProperty.Field.WIDTH,
+                            "EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
+                            d.getWidthProperty(), Wire.WIDTH_DEFAULT_OPTIONS
+                    );
                     // Ext Length (with auto)
                     // Ext Offset (with auto)
-                    getChildren().addAll(tsW, lwW, lw2W);
+                    getChildren().addAll(tsW, /*textRatioWidget,*/ lineWidthWidget, extWidthWidget);
                 }
             }
             default -> {
