@@ -27,7 +27,9 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -43,7 +45,7 @@ import javafx.util.Callback;
  */
 public class RealValueListWidget2 extends ToolModeWidget implements ElementValueListener {
 
-    private final double MIN_WIDTH = 150;
+    private final double PREF_WIDTH = 160;
     private final ObservableList<Double> options;
     private final ComboBox<Double> comboBox;
     private final RealValue realValue;
@@ -53,13 +55,13 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
     public RealValueListWidget2(RealValue rv, ElementField f,
             String msgKeyBase, String unit,
             ObservableList<Double> options) {
-        this(rv, f, msgKeyBase, unit, false, null, options);
+        this(rv, f, msgKeyBase, unit, false, null, 1.0, options);
     }
 
     public RealValueListWidget2(RealValue rv, ElementField f,
             String msgKeyBase, String unit,
             boolean allowEdit,
-            RealValue autoValue,
+            RealValue autoValue, double multiplier,
             ObservableList<Double> options) {
         this.realValue = rv;
         this.field = f;
@@ -67,8 +69,9 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
         comboBox = new ComboBox<>(options);
         this.unitDisplay = unit;
 
-        setPrefWidth(MIN_WIDTH);
+        setPrefWidth(PREF_WIDTH);
         setSpacing(4);
+        setPadding(new Insets(0, 0, 0, 4));
         // TODO: Icon as Label
         String labelStr = "";
         Tooltip tt = new Tooltip();
@@ -103,9 +106,12 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
         iconLabel.setId("widget-label");
         getChildren().add(iconLabel);
 
-        realValue.addListener(this);
-        comboBox.setButtonCell(new TextFieldCell<>(autoValue != null));
-        comboBox.setCellFactory(new ListCellFactory(autoValue != null));
+        Platform.runLater(() -> {
+            realValue.addListener(this);
+        });
+
+        comboBox.setButtonCell(new TextFieldCell<>(multiplier, autoValue != null));
+        comboBox.setCellFactory(new ListCellFactory(multiplier, autoValue != null));
         comboBox.setEditable(false);
         getChildren().add(comboBox);
 
@@ -117,13 +123,13 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
                 LOGGER.log(Level.SEVERE, "selectedItem: Double: {0}", selectedItem);
                 if (autoValue != null && selectedItem == options.get(0)) {
                     realValue.set(autoValue.get());
-                    LOGGER.log(Level.SEVERE, "Set autoValue: " + autoValue.get());
+                    //LOGGER.log(Level.SEVERE, "Set autoValue: " + autoValue.get());
                 } else {
                     if (selectedItem == options.get(0)) {
                         comboBox.getSelectionModel().select(1);
                     } else {
                         realValue.set((double) selectedItem);
-                        LOGGER.log(Level.SEVERE, "Set ListValue: " + selectedItem);
+                        //LOGGER.log(Level.SEVERE, "Set ListValue: " + selectedItem);
                     }
                 }
                 if (allowEdit) {
@@ -139,7 +145,7 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
                             options.add(parseDouble);
                             Collections.sort(options);
                         } else {
-                            doRangeErrorDialog(parseDouble);
+                            doRangeErrorDialog(parseDouble, multiplier);
                         }
                     }
                     // Select the value.
@@ -150,7 +156,7 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
                     }
                 } catch (NumberFormatException ex) {
                     // If not a number, show error dialog.
-                    doRangeErrorDialog(selectedItem);
+                    doRangeErrorDialog(selectedItem, multiplier);
                 }
             }
         });
@@ -163,12 +169,12 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
         comboBox.getSelectionModel().clearAndSelect(0);
     }
 
-    private void doRangeErrorDialog(Object item) {
+    private void doRangeErrorDialog(Object item, double multiplier) {
         String errorHeader = MSG.getString("REAL_VALUE_ERROR_HEADER");
         String errorMsg = MessageFormat.format(
                 MSG.getString("REAL_VALUE_ERROR_RANGE"),
                 field.fName(), item,
-                realValue.getMin(), realValue.getMax());
+                realValue.getMin() * multiplier, realValue.getMax() * multiplier);
         Dialogs.errorDialog(errorHeader, errorMsg).show();
     }
 
@@ -212,16 +218,18 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
 
     private class TextFieldCell<Double> extends TextFieldListCell<Double> {
 
+        private final double multiplier;
         private final boolean hasAuto;
 
-        public TextFieldCell(boolean hasAuto) {
+        public TextFieldCell(double multiplier, boolean hasAuto) {
+            this.multiplier = multiplier;
             this.hasAuto = hasAuto;
         }
 
         @Override
         public void updateItem(Double value, boolean empty) {
             super.updateItem(value, empty);
-            LOGGER.log(Level.SEVERE, "TextField updateItem():{0} {1}", new Object[]{value, (empty ? "empty" : "...")});
+            //LOGGER.log(Level.SEVERE, "TextField updateItem():{0} {1}", new Object[]{value, (empty ? "empty" : "...")});
             if (empty || value == null) {
                 setText(null);
             } else if (hasAuto && value.equals(-1.0)) {
@@ -230,7 +238,8 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
                 if (value.equals(-1.0)) {
                     setText(null);
                 } else {
-                    setText(String.valueOf(value));
+                    double v = (double) value;
+                    setText(String.valueOf(v * multiplier));
                 }
             }
         }
@@ -239,9 +248,11 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
     private class ListCellFactory implements Callback<ListView<Double>, ListCell<Double>> {
 
         private final boolean hasAuto;
+        private final double multiplier;
 
-        public ListCellFactory(boolean hasAuto) {
+        public ListCellFactory(double multiplier, boolean hasAuto) {
             super();
+            this.multiplier = multiplier;
             this.hasAuto = hasAuto;
         }
 
@@ -259,7 +270,7 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
                         if (value.equals(-1.0)) {
                             setText(null);
                         } else {
-                            setText(String.valueOf(value));
+                            setText(String.valueOf(value * multiplier));
                         }
                     }
                 }
