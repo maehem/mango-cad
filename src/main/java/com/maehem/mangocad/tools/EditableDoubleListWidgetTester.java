@@ -70,7 +70,7 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
             dimElement.getTextSizeProperty(),
             Dimension.Field.TEXTSIZE,
             "TEXT_SIZE", "mm",
-            true, autoValue,
+            true, autoValue, 1.0,
             options
     );
     private final VBox hBox = new VBox(listWidget, sampleText);
