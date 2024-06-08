@@ -19,14 +19,19 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.UnitValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridUnit;
+import com.maehem.mangocad.model.element.property.GridUnitProperty;
+import com.maehem.mangocad.model.element.property.GridUnitProperty.Unit;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -102,10 +107,15 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     private final RealValue extoffset = new RealValue(0, 0.0, 200.0);
     private final RealValue textsize = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from  a sample ElementText
     private final IntValue textratio = new IntValue(8, 0, 31);
-    private GridUnit unit = GridUnit.MM;
+    private final UnitValue unit = new UnitValue(GridUnitProperty.Unit.MM);
     private final IntValue precision = new IntValue(2, 0, 6);
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
+
+    public static final ObservableList<Integer> PRECISION_OPTIONS
+            = FXCollections.observableArrayList(
+                    0, 1, 2, 3, 4, 5, 6
+            );
 
     @Override
     public String getElementName() {
@@ -262,7 +272,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         this.extlength.set(extlength);
     }
 
-    public RealValue getExtlengthProperty() {
+    public RealValue getExtLengthProperty() {
         return extlength;
     }
 
@@ -323,15 +333,19 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     /**
      * @return the unit
      */
-    public GridUnit getUnit() {
-        return unit;
+    public Unit getUnit() {
+        return unit.get();
     }
 
     /**
      * @param unit the unit to set
      */
-    public void setUnit(GridUnit unit) {
-        this.unit = unit;
+    public void setUnit(Unit unit) {
+        this.unit.set(unit);
+    }
+
+    public UnitValue getUnitProperty() {
+        return unit;
     }
 
     /**
