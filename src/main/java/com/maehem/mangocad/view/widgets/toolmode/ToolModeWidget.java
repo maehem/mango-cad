@@ -28,7 +28,7 @@ import javafx.scene.layout.HBox;
  */
 public abstract class ToolModeWidget extends HBox implements ElementListener {
     protected final ResourceBundle MSG; // Must be set in constructor or after.
-    public static final double ICON_SIZE = 12;
+    public static final double ICON_SIZE = 16;
     public static final boolean EDITABLE = true;
 
     public ToolModeWidget() {
