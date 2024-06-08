@@ -54,6 +54,13 @@ Bend 45             icon by Mark J Koch for the MangoCAD project. https://github
 Bend Curve          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Bend Free           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Bend S              icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Parallel        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Horiz           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Vert            icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Radius          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Angle           icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Diameter        icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
+Dim Leader          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Fill Solid          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Fill Hatch          icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
 Grid                icon by Mark J Koch for the MangoCAD project. https://github.com/maehem/mango-cad
