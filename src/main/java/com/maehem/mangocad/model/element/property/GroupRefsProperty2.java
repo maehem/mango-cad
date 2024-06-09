@@ -22,7 +22,7 @@ import java.util.ArrayList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface GrouprefsProperty {
+public interface GroupRefsProperty2 {
 
     public enum Field {
         GROUPREFS("grouprefs", ArrayList.class);
