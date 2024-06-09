@@ -99,30 +99,30 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
         // top:  option toolbar row
         optionsToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
-        setTop(optionsToolbar);
-        // TODO i18n bundle
+        // TODO: i18n bundle
         optionsToolbar.setMessage("Editing Symbol:   " + symbol.getName());
 
         // left: tool bar
         editorToolbar = new EditorToolbar(tools, this);
-        setLeft(editorToolbar);
-        symbolEditorInteractiveArea = new SymbolEditorInteractiveArea(this);
-
-        // Plumb the mouse XY tracker to the mouse location in work area.
-        symbolEditorInteractiveArea.setMouseMoveListener(optionsToolbar.getMouseListener());
-
-        SplitPane workArea = new SplitPane(symbolEditorInteractiveArea, propertiesTabPane);
-        workArea.setDividerPosition(0, 0.8);
-        setCenter(workArea); // center: work area
-        setBottom(bottomArea); // bottom: message area
+        editorToolbar.setOrientation(Orientation.VERTICAL);
+        editorToolbar.setPrefWidth(48);
+        editorToolbar.addListener(optionsToolbar);
 
         bottomArea.setPrefHeight(24);
         bottomArea.setFillHeight(true);
 
-        editorToolbar.setOrientation(Orientation.VERTICAL);
-        editorToolbar.setPrefWidth(48);
+        symbolEditorInteractiveArea = new SymbolEditorInteractiveArea(this);
 
-        editorToolbar.addListener(optionsToolbar);
+        SplitPane workArea = new SplitPane(symbolEditorInteractiveArea, propertiesTabPane);
+        workArea.setDividerPosition(0, 0.8);
+
+        setTop(optionsToolbar);
+        setLeft(editorToolbar);
+        setCenter(workArea); // center: work area
+        setBottom(bottomArea); // bottom: message area
+
+        // Plumb the mouse XY tracker to the mouse location in work area.
+        symbolEditorInteractiveArea.setMouseMoveListener(optionsToolbar.getMouseListener());
 
         setOnKeyPressed((ke) -> {
             if (ke.getCode() == ESCAPE) {
