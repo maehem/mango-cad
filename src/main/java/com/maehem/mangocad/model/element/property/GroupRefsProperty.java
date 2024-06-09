@@ -45,5 +45,4 @@ public interface GrouprefsProperty {
     }
 
     public ArrayList<String> getGrouprefs();
-
 }
