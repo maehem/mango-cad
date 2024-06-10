@@ -41,7 +41,6 @@ import static com.maehem.mangocad.view.EditorTool.LOOK;
 import static com.maehem.mangocad.view.EditorTool.SELECT;
 import static com.maehem.mangocad.view.EditorTool.TRASH;
 import com.maehem.mangocad.view.PickListener;
-import com.maehem.mangocad.view.utils.TextEditDialog;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.node.CircleNode;
@@ -51,6 +50,7 @@ import com.maehem.mangocad.view.node.RectangleNode;
 import com.maehem.mangocad.view.node.TextNode;
 import com.maehem.mangocad.view.node.ViewNode;
 import com.maehem.mangocad.view.node.WireNode;
+import com.maehem.mangocad.view.utils.TextEditDialog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -591,12 +591,21 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 switch (me.getButton()) {
                     case PRIMARY -> { // Move or choose what to move.
                         switch (toolMode) {
-                            case SELECT ->
+                            case SELECT -> {
                                 LOGGER.log(Level.SEVERE, "Inspect: ");
-                            case INFO ->
+                            }
+                            case INFO -> {  // Info and Look are the same.
                                 LOGGER.log(Level.SEVERE, " Edit Properties: ");
-                            case LOOK ->
+                                if (picks.size() == 1) {
+                                    parentEditor.setElementFocus(picks.getFirst());
+                                }
+                            }
+                            case LOOK -> {
                                 LOGGER.log(Level.SEVERE, " Highlight: ");
+                                if (picks.size() == 1) {
+                                    parentEditor.setElementFocus(picks.getFirst());
+                                }
+                            }
                             case TRASH -> {
                                 LOGGER.log(Level.SEVERE, " Trash: ");
                                 if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
