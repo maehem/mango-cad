@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.StringValue;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
@@ -56,9 +57,9 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     public static final String SWAPLEVEL_KEY = "swaplevel"; // TODO Use PinField enum.
     public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
-    private StringValue nameProperty = new StringValue("A");
-    private double x;
-    private double y;
+    private final StringValue nameProperty = new StringValue("A");
+    private final RealValue xProperty = new RealValue(0);
+    private final RealValue yProperty = new RealValue(0);
     private boolean selected = false;
     private Pin snapshot2 = null;
 
@@ -108,7 +109,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public double getX() {
-        return x;
+        return xProperty.get();
     }
 
     /**
@@ -116,11 +117,15 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public void setX(double x) {
-        if (this.x != x) {
-            double oldX = this.x;
-            this.x = x;
+        if (xProperty.get() != x) {
+            double oldX = xProperty.get();
+            xProperty.set(x);
             notifyListeners(LocationXYProperty.Field.X, oldX, x);
         }
+    }
+
+    public RealValue getXProperty() {
+        return xProperty;
     }
 
     /**
@@ -128,7 +133,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public double getY() {
-        return y;
+        return yProperty.get();
     }
 
     /**
@@ -136,11 +141,15 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public void setY(double y) {
-        if (this.y != y) {
-            double oldY = this.y;
-            this.y = y;
+        if (yProperty.get() != y) {
+            double oldY = yProperty.get();
+            yProperty.set(y);
             notifyListeners(LocationXYProperty.Field.Y, oldY, y);
         }
+    }
+
+    public RealValue getYProperty() {
+        return yProperty;
     }
 
     /**
