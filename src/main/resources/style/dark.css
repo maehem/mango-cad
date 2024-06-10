@@ -262,3 +262,7 @@
     -fx-font-weight: bold;
     -fx-opacity: 0.40;
 }
+
+#location-xy-field {
+    -fx-font-size: 80%;
+}
