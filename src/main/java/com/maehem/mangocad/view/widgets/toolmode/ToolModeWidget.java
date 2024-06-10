@@ -18,8 +18,13 @@ package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 /**
@@ -29,18 +34,47 @@ import javafx.scene.layout.HBox;
 public abstract class ToolModeWidget extends HBox implements ElementListener {
     protected final ResourceBundle MSG; // Must be set in constructor or after.
     public static final double ICON_SIZE = 16;
+    public static final double LABEL_PADDING = 8;
+    //public static final double SPACING = 8;
+    private static final double LABEL_AREA_WIDTH = 80;
     public static final boolean EDITABLE = true;
+    private final Label label = new Label("");
+    private final HBox labelBox = new HBox(label);
 
     public ToolModeWidget() {
+        this(null);
+    }
+
+    public ToolModeWidget(String msgBundleKey) {
         this.MSG = ResourceBundle.getBundle("i18n/Editor");
+        if (msgBundleKey != null) {
+            try {
+                String string = MSG.getString(msgBundleKey + "_LABEL") + ":";
+                setLabel(string);
+            } catch (MissingResourceException ex) { // tt can remain blank.
+                LOGGER.log(Level.SEVERE, "Couldn''t find requested i18n: {0}_LABEL", msgBundleKey);
+                setLabel("<ERR>:");
+            }
+        }
 
         setId("tool-mode-widget");
 
-        setSpacing(0.0);
-        setAlignment(Pos.BASELINE_CENTER);
+        setPadding(new Insets(4));
+        //setSpacing(SPACING);
+        setAlignment(Pos.BASELINE_LEFT);
 
-        //setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
+        labelBox.setMinWidth(LABEL_AREA_WIDTH);
+        labelBox.setMaxWidth(LABEL_AREA_WIDTH);
+        labelBox.setPrefWidth(LABEL_AREA_WIDTH);
+        labelBox.setAlignment(Pos.BASELINE_RIGHT);
+        labelBox.setPadding(new Insets(0, LABEL_PADDING, 0, 0));
 
+        getChildren().add(labelBox);
+    }
+
+    public final void setLabel(String labelValue) {
+        this.label.setText(labelValue);
+        label.requestLayout();
     }
 
     public abstract void stopListening();
