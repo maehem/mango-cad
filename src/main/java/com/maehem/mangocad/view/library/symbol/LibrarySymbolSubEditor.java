@@ -44,6 +44,7 @@ import javafx.scene.layout.HBox;
  */
 public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
+    private static final double DIVIDER_POS = 0.8;
     //private final LibraryEditor parent;
     private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
             EditorOption.LAYER_SETTINGS,
@@ -115,7 +116,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         symbolEditorInteractiveArea = new SymbolEditorInteractiveArea(this);
 
         SplitPane workArea = new SplitPane(symbolEditorInteractiveArea, propertiesTabPane);
-        workArea.setDividerPosition(0, 0.8);
+        workArea.setDividerPosition(0, DIVIDER_POS);
 
         setTop(optionsToolbar);
         setLeft(editorToolbar);
