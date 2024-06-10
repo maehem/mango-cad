@@ -47,6 +47,7 @@ public class PinLengthToggleWidget extends ToolModeWidget {
     private final Pin pin;
 
     public PinLengthToggleWidget(Element e) {
+        super("PIN_LENGTH");
         if (e instanceof Pin p) {
             this.pin = p;
             this.pin.addListener(this);

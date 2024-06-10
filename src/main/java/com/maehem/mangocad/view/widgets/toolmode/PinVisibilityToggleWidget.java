@@ -47,6 +47,7 @@ public class PinVisibilityToggleWidget extends ToolModeWidget {
     private final Pin pin;
 
     public PinVisibilityToggleWidget(Element e) {
+        super("PIN_VISIBILITY");
         if (e instanceof Pin p) {
             this.pin = p;
             this.pin.addListener(this);

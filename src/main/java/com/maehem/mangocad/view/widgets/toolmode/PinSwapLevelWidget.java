@@ -21,9 +21,7 @@ import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.application.Platform;
 import javafx.scene.control.Spinner;
 
 /**
@@ -39,22 +37,22 @@ public class PinSwapLevelWidget extends ToolModeWidget {
 
     @SuppressWarnings({"unchecked", "unchecked"})
     public PinSwapLevelWidget(Element e) {
+        super("PIN_SWAP_LEVEL");
         if (e instanceof Pin p) {
             this.pin = p;
-            this.pin.addListener(this);
+            Platform.runLater(() -> {
+                this.pin.addListener(this);
+            });
         } else {
             this.pin = null;
             LOGGER.log(Level.SEVERE, "PinSwapLevelWidget: element is not of type Pin!");
         }
 
         spinner.setPrefWidth(70);
-        Label iconLabel = new Label(MSG.getString("PIN_SWAP_LEVEL"));
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
         updateSpinnerState(0);
 
-        getChildren().addAll(iconLabel, spinner);
+        getChildren().addAll(spinner);
 
         spinner.valueProperty().addListener((obsVal, oldValue, newValue) -> {
             pin.setSwapLevel((int) newValue);

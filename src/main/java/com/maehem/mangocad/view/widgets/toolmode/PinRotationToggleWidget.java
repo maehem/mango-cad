@@ -43,6 +43,8 @@ public class PinRotationToggleWidget extends ToolModeWidget {
     private final Pin pin;
 
     public PinRotationToggleWidget(Element e) {
+        super("PIN_ORIENTATION");
+
         if (e instanceof Pin p) {
             this.pin = p;
             this.pin.addListener(this);

@@ -22,12 +22,10 @@ import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 
 /**
  * Settings for element angle rotations.
@@ -40,30 +38,27 @@ public class PinDirectionWidget extends ToolModeWidget {
             PinDirection.values()
     );
 
-    @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
+    private final ComboBox<PinDirection> comboBox = new ComboBox<>(options);
     private final Pin pin;
 
-    @SuppressWarnings("unchecked")
     public PinDirectionWidget(Element e) {
+        super("PIN_DIRECTION");
         if (e instanceof Pin p) {
             this.pin = p;
-            this.pin.addListener(this);
+            Platform.runLater(() -> {
+                this.pin.addListener(this);
+            });
         } else {
             this.pin = null;
             LOGGER.log(Level.SEVERE, "PinDirectionWidget: element is not of type Pin!");
         }
 
-        Label iconLabel = new Label(MSG.getString("PIN_DIRECTION"));
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
-
         updateComboState(PinDirection.IO);
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
-            pin.setDirection(PinDirection.fromCode((String) comboBox.getSelectionModel().getSelectedItem()));
+            pin.setDirection(comboBox.getSelectionModel().getSelectedItem());
             t.consume();
         });
     }

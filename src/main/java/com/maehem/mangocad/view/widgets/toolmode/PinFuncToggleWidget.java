@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -46,13 +47,17 @@ public class PinFuncToggleWidget extends ToolModeWidget {
     private final Pin pin;
 
     public PinFuncToggleWidget(Element e) {
+        super("PIN_FUNCTION");
         if (e instanceof Pin p) {
             this.pin = p;
-            this.pin.addListener(this);
+            Platform.runLater(() -> {
+                this.pin.addListener(this);
+            });
         } else {
             this.pin = null;
-            LOGGER.log(Level.SEVERE, "PinFuncoggleWidget: pin element is not of type Pin!");
+            LOGGER.log(Level.SEVERE, "PinFunctionWidget: pin element is not of type Pin!");
         }
+
         Image imgNone = ViewUtils.getImage(ICON_PIN_NONE_PATH);
         Image imgDot = ViewUtils.getImage(ICON_PIN_DOT_PATH);
         Image imgClk = ViewUtils.getImage(ICON_PIN_CLK_PATH);
