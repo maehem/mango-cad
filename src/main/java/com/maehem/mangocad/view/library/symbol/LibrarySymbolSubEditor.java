@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
+import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;
@@ -145,6 +146,10 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
     public void setToolMode(EditorTool tool) {
         editorToolbar.setCurrentTool(tool);
         optionsToolbar.editorToolBarToolChanged(tool, tool);
+    }
+
+    public void setElementFocus(Element e) {
+        propertiesTabPane.setPropertiesItem(e);
     }
 
     @Override
