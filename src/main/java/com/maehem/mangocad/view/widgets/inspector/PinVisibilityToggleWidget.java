@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
+import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import java.util.logging.Level;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
