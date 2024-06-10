@@ -1,7 +1,7 @@
 .root {
     -fx-accent: #ce7b0f;  /* mango */
     -fx-focus-color: derive(-fx-accent, -20%);
-    
+
     /* -fx-base: #373e43;  */
     -fx-base: #222428;
     -fx-text-fill: #ddd;
@@ -124,7 +124,7 @@
 
 #editor-options-message-text {
     -fx-font-weight: bold;
-    -fx-font-size: 120%;    
+    -fx-font-size: 120%;
 }
 
 #button-icon{
@@ -231,6 +231,12 @@
 }
 
 #tool-mode-widget {
+    -fx-border-color:-fx-accent;
+    -fx-border-width:1px;
+    -fx-border-radius:3px;
+}
+
+#inspector-widget {
     -fx-border-color:derive(-fx-base, 35%);
     -fx-border-width:1px;
     /*-fx-border-radius:3px; */
