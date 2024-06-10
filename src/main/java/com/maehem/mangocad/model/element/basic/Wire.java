@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
@@ -112,10 +113,10 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     public static final int DEFAULT_LAYER = 94; // Nets
 
     private int layer = DEFAULT_LAYER;
-    private double x1;
-    private double y1;
-    private double x2;
-    private double y2;
+    public final RealValue x1Property = new RealValue(0);
+    public final RealValue y1Property = new RealValue(0);
+    public final RealValue x2Property = new RealValue(0);
+    public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
     private double width = 0.254;
     private double curve = 0.0;
@@ -138,17 +139,17 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      * @return the x1
      */
     public double getX1() {
-        return x1;
+        return x1Property.get();
     }
 
     /**
      * @param x1 the x1 to set
      */
     public void setX1(double x1) {
-        if (this.x1 != x1) {
-            double oldVal = this.x1;
-            this.x1 = x1;
-            notifyListeners(Wire.Field.X1, oldVal, this.x1);
+        if (getX1() != x1) {
+            double oldVal = getX1();
+            x1Property.set(x1);
+            notifyListeners(Wire.Field.X1, oldVal, getX1());
         }
     }
 
@@ -156,17 +157,17 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      * @return the y1
      */
     public double getY1() {
-        return y1;
+        return y1Property.get();
     }
 
     /**
      * @param y1 the y1 to set
      */
     public void setY1(double y1) {
-        if (this.y1 != y1) {
-            double oldVal = this.y1;
-            this.y1 = y1;
-            notifyListeners(Wire.Field.Y1, oldVal, this.y1);
+        if (getY1() != y1) {
+            double oldVal = getY1();
+            y1Property.set(y1);
+            notifyListeners(Wire.Field.Y1, oldVal, getY1());
         }
     }
 
@@ -174,17 +175,17 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      * @return the x2
      */
     public double getX2() {
-        return x2;
+        return x2Property.get();
     }
 
     /**
      * @param x2 the x2 to set
      */
     public void setX2(double x2) {
-        if (this.x2 != x2) {
-            double oldVal = this.x2;
-            this.x2 = x2;
-            notifyListeners(Wire.Field.X2, oldVal, this.x2);
+        if (getX2() != x2) {
+            double oldVal = getX2();
+            x2Property.set(x2);
+            notifyListeners(Wire.Field.X2, oldVal, getX2());
         }
     }
 
@@ -192,31 +193,31 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      * @return the y2
      */
     public double getY2() {
-        return y2;
+        return y2Property.get();
     }
 
     /**
      * @param y2 the y2 to set
      */
     public void setY2(double y2) {
-        if (this.y2 != y2) {
-            double oldVal = this.y2;
-            this.y2 = y2;
-            notifyListeners(Wire.Field.Y2, oldVal, this.y2);
+        if (getY2() != y2) {
+            double oldVal = getY2();
+            y2Property.set(y2);
+            notifyListeners(Wire.Field.Y2, oldVal, getY2());
         }
     }
 
     public double getAverageX() {
-        return (x1 + x2) / 2.0;
+        return (getX1() + getX2()) / 2.0;
     }
 
     public double getAverageY() {
-        return (y1 + y2) / 2.0;
+        return (getY1() + getY2()) / 2.0;
     }
 
     public double getLength() {
-        double ac = Math.abs(y2 - y1);
-        double cb = Math.abs(x2 - x1);
+        double ac = Math.abs(getY2() - getY1());
+        double cb = Math.abs(getX2() - getX1());
 
         return Math.hypot(ac, cb);
     }
