@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model.Element;
 import javafx.scene.control.TabPane;
 
 /**
@@ -34,13 +34,12 @@ public class SymbolEditorPropertiesTabPane extends TabPane {
         getTabs().addAll(propertiesTab);
     }
 
-    public void setPropertiesItem(LibraryElement item) {
+    public void setPropertiesItem(Element item) {
         getSelectionModel().select(propertiesTab);
 
         // Set
         // propertiesTab.setItem( item );
         // Refill the properties widgets.
         propertiesTab.updateContent(item);
-
     }
 }
