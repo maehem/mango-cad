@@ -18,6 +18,10 @@ package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Wire;
+import com.maehem.mangocad.view.widgets.toolmode.LineStyleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.LineWidthWidget;
+import com.maehem.mangocad.view.widgets.inspector.LocationXYWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinDirectionWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinFuncToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinLengthToggleWidget;
@@ -48,7 +52,7 @@ public class SymbolEditorPropertiesListTab extends Tab {
         updateContent(item);
     }
 
-    protected void updateContent(Element item) {
+    protected final void updateContent(Element item) {
         this.element = item;
 
         propertyNodes.getChildren().clear();
@@ -70,9 +74,9 @@ public class SymbolEditorPropertiesListTab extends Tab {
     private void generatePropertyNodes() {
         switch (element) {
             case Pin p -> {
-                // name
                 // XY location
-                StringValueWidget xyw = new StringValueWidget(p.getNameProperty(), "PIN_NAME");
+                StringValueWidget nw = new StringValueWidget(p.getNameProperty(), "PIN_NAME");
+                LocationXYWidget lxy = new LocationXYWidget(p.getXProperty(), p.getYProperty(), "PIN_LOCATION");
                 PinRotationToggleWidget prw = new PinRotationToggleWidget(p);
                 PinDirectionWidget pdw = new PinDirectionWidget(p);
                 PinSwapLevelWidget psw = new PinSwapLevelWidget(p);
@@ -80,7 +84,17 @@ public class SymbolEditorPropertiesListTab extends Tab {
                 PinFuncToggleWidget pfw = new PinFuncToggleWidget(p);
                 PinVisibilityToggleWidget pvw = new PinVisibilityToggleWidget(p);
 
-                propertyNodes.getChildren().addAll(xyw, prw, pdw, psw, plw, pfw, pvw);
+                propertyNodes.getChildren().addAll(nw, lxy, prw, pdw, psw, plw, pfw, pvw);
+            }
+            case Wire w -> {
+                LocationXYWidget lxy1 = new LocationXYWidget(w.x1Property, w.y1Property, "LINE_LOCATION_1");
+                LocationXYWidget lxy2 = new LocationXYWidget(w.x2Property, w.y2Property, "LINE_LOCATION_2");
+                //LineBendStyleWidget lbsW = new LineBendStyleWidget(w);
+                LineWidthWidget lwW = new LineWidthWidget(w);
+                LineStyleWidget lsW = new LineStyleWidget(w);
+                //MiterRadiusWidget mrW = new MiterRadiusWidget(w);
+
+                propertyNodes.getChildren().addAll(lxy1, lxy2, lwW, lsW);
             }
             default -> {
             }
