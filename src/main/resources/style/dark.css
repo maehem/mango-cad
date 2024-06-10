@@ -171,6 +171,7 @@
 #layer-chooser-button {
     -fx-background-color: #aaa;
 }
+
 #layer-chooser-button .text {
     -fx-fill: #444;
 }
@@ -230,9 +231,9 @@
 }
 
 #tool-mode-widget {
-    -fx-border-color:-fx-accent;
+    -fx-border-color:derive(-fx-base, 35%);
     -fx-border-width:1px;
-    -fx-border-radius:3px;
+    /*-fx-border-radius:3px; */
 }
 
 #grid-mouse-widget {
@@ -248,4 +249,16 @@
 #widget-label {
     -fx-fill: -fx-text-fill;
     -fx-text-origin: bottom;
+}
+
+#properties-list-heading {
+    -fx-fill: -fx-text-fill;
+    -fx-font-size:120%;
+    -fx-font-weight: bold;
+}
+#properties-list-heading-nothing {
+    -fx-fill: -fx-text-fill;
+    -fx-font-size:120%;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.40;
 }
