@@ -23,11 +23,8 @@ import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -51,6 +48,7 @@ public class LineWidthWidget extends ToolModeWidget {
 
     @SuppressWarnings({"unchecked"})
     public LineWidthWidget(Element e) {
+        super("LINE_WIDTH");
         if (e instanceof WidthProperty fw) {
             this.element = e;
             this.widthElement = fw;
@@ -65,19 +63,12 @@ public class LineWidthWidget extends ToolModeWidget {
             }
         }
 
-        setPrefWidth(170);
-        Label iconLabel = new Label(MSG.getString("LINE_WIDTH") + ":");
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
-        double labelWidth = 55;
-        iconLabel.setMinWidth(labelWidth);
-        iconLabel.setPrefWidth(labelWidth);
-
+        //setPrefWidth(170);
         comboBox.setButtonCell(new EditableItemCell());
         comboBox.setEditable(true);
         updateComboState(widthElement.getWidth());
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             Object selectedItem = comboBox.getSelectionModel().getSelectedItem();

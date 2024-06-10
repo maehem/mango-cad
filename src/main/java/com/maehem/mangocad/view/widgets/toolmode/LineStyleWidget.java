@@ -23,10 +23,7 @@ import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 
 /**
  * Settings for element angle rotations.
@@ -39,12 +36,11 @@ public class LineStyleWidget extends ToolModeWidget {
             WireStyle.values()
     );
 
-    @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
+    private final ComboBox<WireStyle> comboBox = new ComboBox<>(options);
     private final Wire wire;
 
-    @SuppressWarnings("unchecked")
     public LineStyleWidget(Element e) {
+        super("LINE_STYLE");
         if (e instanceof Wire w) {
             this.wire = w;
             this.wire.addListener(this);
@@ -53,13 +49,9 @@ public class LineStyleWidget extends ToolModeWidget {
             LOGGER.log(Level.SEVERE, "WireStyleWidget: element is not of type Wire!");
         }
 
-        Label iconLabel = new Label(MSG.getString("LINE_STYLE") + ":");
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
-
         updateComboState(wire.getStyle());
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             wire.setStyle((WireStyle) comboBox.getSelectionModel().getSelectedItem());
@@ -67,7 +59,6 @@ public class LineStyleWidget extends ToolModeWidget {
         });
     }
 
-    @SuppressWarnings({"unchecked", "unchecked"})
     private void updateComboState(WireStyle pl) {
         for (WireStyle t : options) {
             if (t.equals(pl)) {
