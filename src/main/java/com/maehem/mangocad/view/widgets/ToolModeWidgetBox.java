@@ -29,17 +29,10 @@ import com.maehem.mangocad.view.widgets.toolmode.GridUnitListWidget;
 import com.maehem.mangocad.view.widgets.toolmode.IntegerListWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineBendStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineCapWidget;
-import com.maehem.mangocad.view.widgets.toolmode.LineStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineWidthWidget;
 import com.maehem.mangocad.view.widgets.toolmode.MirrorToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.MiterRadiusWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinArrayWidget;
-import com.maehem.mangocad.view.widgets.toolmode.PinDirectionWidget;
-import com.maehem.mangocad.view.widgets.toolmode.PinFuncToggleWidget;
-import com.maehem.mangocad.view.widgets.toolmode.PinLengthToggleWidget;
-import com.maehem.mangocad.view.widgets.toolmode.PinRotationToggleWidget;
-import com.maehem.mangocad.view.widgets.toolmode.PinSwapLevelWidget;
-import com.maehem.mangocad.view.widgets.toolmode.PinVisibilityToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PolygonFillWidget;
 import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget2;
 import com.maehem.mangocad.view.widgets.toolmode.RotationWidget;
@@ -97,31 +90,32 @@ public class ToolModeWidgetBox extends HBox {
                 getChildren().addAll(mW);
             }
             case PIN -> {
-                // Available pin styles.
-                // TODO: Pin Array Dialog.
+// Moved to Inspector
+//                // Available pin styles.
+//                // TODO: Pin Array Dialog.
                 PinArrayWidget paW = new PinArrayWidget(mode.getToolElement());
-                PinRotationToggleWidget prW = new PinRotationToggleWidget(mode.getToolElement());
-                PinFuncToggleWidget pfW = new PinFuncToggleWidget(mode.getToolElement());
-                PinLengthToggleWidget plW = new PinLengthToggleWidget(mode.getToolElement());
-                PinVisibilityToggleWidget pvW = new PinVisibilityToggleWidget(mode.getToolElement());
-                PinDirectionWidget pdW = new PinDirectionWidget(mode.getToolElement());
-                PinSwapLevelWidget pswW = new PinSwapLevelWidget(mode.getToolElement());
+//                PinRotationToggleWidget prW = new PinRotationToggleWidget(mode.getToolElement());
+//                PinFuncToggleWidget pfW = new PinFuncToggleWidget(mode.getToolElement());
+//                PinLengthToggleWidget plW = new PinLengthToggleWidget(mode.getToolElement());
+//                PinVisibilityToggleWidget pvW = new PinVisibilityToggleWidget(mode.getToolElement());
+//                PinDirectionWidget pdW = new PinDirectionWidget(mode.getToolElement());
+//                PinSwapLevelWidget pswW = new PinSwapLevelWidget(mode.getToolElement());
                 getChildren().addAll(
-                        paW,
-                        plW,
-                        pfW,
-                        prW,
-                        pvW,
-                        pdW,
-                        pswW
+                        paW
+                //                        plW,
+//                        pfW,
+//                        prW,
+//                        pvW,
+//                        pdW,
+//                        pswW
                 );
             }
             case LINE -> { // Line options
                 LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
-                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
+                //LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
+                //LineStyleWidget lsW = new LineStyleWidget(mode.getToolElement());
                 MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
-                getChildren().addAll(lbsW, lwW, lsW, mrW);
+                getChildren().addAll(lbsW, mrW);
             }
             case ARC -> { // Arc options
                 // Tool Element is null until user clicks to start new arc/line.
