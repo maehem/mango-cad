@@ -20,7 +20,6 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementValue;
 import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.RealValue;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
@@ -35,7 +34,7 @@ import javafx.scene.layout.Pane;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LocationXYWidget extends ToolModeWidget implements ElementValueListener {
+public class LocationXYWidget extends InspectorWidget implements ElementValueListener {
 
     private final RealValue xValue;
     private final RealValue yValue;

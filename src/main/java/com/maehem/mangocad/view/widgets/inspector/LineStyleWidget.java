@@ -19,7 +19,6 @@ package com.maehem.mangocad.view.widgets.inspector;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireStyle;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -31,7 +30,7 @@ import javafx.scene.control.ComboBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LineStyleWidget extends ToolModeWidget {
+public class LineStyleWidget extends InspectorWidget {
 
     private final ObservableList<WireStyle> options = FXCollections.observableArrayList(
             WireStyle.values()

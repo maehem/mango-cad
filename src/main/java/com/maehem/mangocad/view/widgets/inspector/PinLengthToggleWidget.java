@@ -22,7 +22,6 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import java.util.logging.Level;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -35,7 +34,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PinLengthToggleWidget extends ToolModeWidget {
+public class PinLengthToggleWidget extends InspectorWidget {
 
     private static final String ICON_PIN_POINT_PATH = "/icons/pin-point.png";
     private static final String ICON_PIN_SHORT_PATH = "/icons/pin-short.png";

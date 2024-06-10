@@ -22,7 +22,6 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import java.util.logging.Level;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -35,7 +34,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PinVisibilityToggleWidget extends ToolModeWidget {
+public class PinVisibilityToggleWidget extends InspectorWidget {
 
     private static final String ICON_PIN_NONE_PATH = "/icons/pin-vis-none.png";
     private static final String ICON_PIN_NAME_PATH = "/icons/pin-vis-name.png";

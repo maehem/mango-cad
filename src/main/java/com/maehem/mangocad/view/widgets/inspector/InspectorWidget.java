@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
@@ -31,7 +31,7 @@ import javafx.scene.layout.HBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public abstract class ToolModeWidget extends HBox implements ElementListener {
+public abstract class InspectorWidget extends HBox implements ElementListener {
     protected final ResourceBundle MSG; // Must be set in constructor or after.
     public static final double ICON_SIZE = 16;
     public static final double LABEL_PADDING = 8;
@@ -39,13 +39,13 @@ public abstract class ToolModeWidget extends HBox implements ElementListener {
     private static final double LABEL_AREA_WIDTH = 80;
     public static final boolean EDITABLE = true;
     private final Label label = new Label("");
-    //private final HBox labelBox = new HBox(label);
+    private final HBox labelBox = new HBox(label);
 
-    public ToolModeWidget() {
+    public InspectorWidget() {
         this(null);
     }
 
-    public ToolModeWidget(String msgBundleKey) {
+    public InspectorWidget(String msgBundleKey) {
         this.MSG = ResourceBundle.getBundle("i18n/Editor");
         if (msgBundleKey != null) {
             try {
@@ -57,19 +57,19 @@ public abstract class ToolModeWidget extends HBox implements ElementListener {
             }
         }
 
-        setId("tool-mode-widget");
+        setId("inspector-widget");
 
         setPadding(new Insets(4));
         //setSpacing(SPACING);
         setAlignment(Pos.BASELINE_LEFT);
 
-//        labelBox.setMinWidth(LABEL_AREA_WIDTH);
-//        labelBox.setMaxWidth(LABEL_AREA_WIDTH);
-//        labelBox.setPrefWidth(LABEL_AREA_WIDTH);
-//        labelBox.setAlignment(Pos.BASELINE_RIGHT);
-//        labelBox.setPadding(new Insets(0, LABEL_PADDING, 0, 0));
+        labelBox.setMinWidth(LABEL_AREA_WIDTH);
+        labelBox.setMaxWidth(LABEL_AREA_WIDTH);
+        labelBox.setPrefWidth(LABEL_AREA_WIDTH);
+        labelBox.setAlignment(Pos.BASELINE_RIGHT);
+        labelBox.setPadding(new Insets(0, LABEL_PADDING, 0, 0));
 
-        getChildren().add(label);
+        getChildren().add(labelBox);
     }
 
     public final void setLabel(String labelValue) {

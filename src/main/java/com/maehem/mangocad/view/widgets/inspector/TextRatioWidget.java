@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -33,7 +32,7 @@ import javafx.scene.control.Label;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextRatioWidget extends ToolModeWidget {
+public class TextRatioWidget extends InspectorWidget {
 
     // TODO:  Add Cell Renderer to add % sign.
     private final ObservableList<Integer> options
@@ -43,11 +42,9 @@ public class TextRatioWidget extends ToolModeWidget {
                     20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
                     30, 31
             );
-    @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
+    private final ComboBox<Integer> comboBox = new ComboBox<>(options);
     private final ElementText text;
 
-    @SuppressWarnings("unchecked")
     public TextRatioWidget(Element e) {
         if (e instanceof ElementText p) {
             this.text = p;
@@ -71,7 +68,6 @@ public class TextRatioWidget extends ToolModeWidget {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void updateComboState(int pl) {
         for (Integer t : options) {
             if (t == pl) {

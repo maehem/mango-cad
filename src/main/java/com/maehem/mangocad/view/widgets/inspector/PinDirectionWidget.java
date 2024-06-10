@@ -20,7 +20,6 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -33,7 +32,7 @@ import javafx.scene.control.ComboBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PinDirectionWidget extends ToolModeWidget {
+public class PinDirectionWidget extends InspectorWidget {
 
     private final ObservableList<PinDirection> options = FXCollections.observableArrayList(
             PinDirection.values()

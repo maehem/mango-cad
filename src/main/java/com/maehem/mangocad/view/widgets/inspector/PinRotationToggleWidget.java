@@ -21,7 +21,6 @@ import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import java.util.logging.Level;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -34,7 +33,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PinRotationToggleWidget extends ToolModeWidget {
+public class PinRotationToggleWidget extends InspectorWidget {
 
     private static final String ICON_PIN_PATH = "/icons/pin-long.png";
 

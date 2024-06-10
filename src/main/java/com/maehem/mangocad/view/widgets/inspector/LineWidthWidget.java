@@ -19,7 +19,6 @@ package com.maehem.mangocad.view.widgets.inspector;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
 import com.maehem.mangocad.model.element.property.WidthProperty;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -36,7 +35,7 @@ import javafx.scene.input.KeyEvent;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LineWidthWidget extends ToolModeWidget {
+public class LineWidthWidget extends InspectorWidget {
 
     private final ObservableList<Double> options
             = FXCollections.observableArrayList(

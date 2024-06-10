@@ -19,7 +19,6 @@ package com.maehem.mangocad.view.widgets.inspector;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinField;
-import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -30,7 +29,7 @@ import javafx.scene.control.Spinner;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class PinSwapLevelWidget extends ToolModeWidget {
+public class PinSwapLevelWidget extends InspectorWidget {
 
     @SuppressWarnings("unchecked")
     private final Spinner spinner = new Spinner(0, 255, 0);
