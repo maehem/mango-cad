@@ -36,7 +36,7 @@ public abstract class ToolModeWidget extends HBox implements ElementListener {
     public static final double ICON_SIZE = 16;
     public static final double LABEL_PADDING = 8;
     //public static final double SPACING = 8;
-    private static final double LABEL_AREA_WIDTH = 80;
+    //private static final double LABEL_AREA_WIDTH = 80;
     public static final boolean EDITABLE = true;
     private final Label label = new Label("");
     //private final HBox labelBox = new HBox(label);
@@ -59,15 +59,8 @@ public abstract class ToolModeWidget extends HBox implements ElementListener {
 
         setId("tool-mode-widget");
 
-        setPadding(new Insets(4));
-        //setSpacing(SPACING);
+        setPadding(new Insets(2)); // Do in CSS
         setAlignment(Pos.BASELINE_LEFT);
-
-//        labelBox.setMinWidth(LABEL_AREA_WIDTH);
-//        labelBox.setMaxWidth(LABEL_AREA_WIDTH);
-//        labelBox.setPrefWidth(LABEL_AREA_WIDTH);
-//        labelBox.setAlignment(Pos.BASELINE_RIGHT);
-//        labelBox.setPadding(new Insets(0, LABEL_PADDING, 0, 0));
 
         getChildren().add(label);
     }

@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
@@ -96,8 +97,8 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
             );
 
     private int layer;
-    private double x;
-    private double y;
+    public final RealValue xProperty = new RealValue(0);
+    public final RealValue yProperty = new RealValue(0);
     private double size = 1.778; // 0.7 inch
     private boolean selected = false;
     private ElementText snapshot = null;
@@ -127,7 +128,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     @Override
     public double getX() {
-        return x;
+        return xProperty.get();
     }
 
     /**
@@ -135,10 +136,10 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     @Override
     public void setX(double x) {
-        if (this.x != x) {
-            double oldValue = this.x;
-            this.x = x;
-            notifyListeners(LocationXYProperty.Field.X, oldValue, this.x);
+        if (getX() != x) {
+            double oldValue = getX();
+            xProperty.set(x);
+            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
         }
     }
 
@@ -147,7 +148,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     @Override
     public double getY() {
-        return y;
+        return yProperty.get();
     }
 
     /**
@@ -155,10 +156,10 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     @Override
     public void setY(double y) {
-        if (this.y != y) {
-            double oldValue = this.y;
-            this.y = y;
-            notifyListeners(LocationXYProperty.Field.Y, oldValue, this.y);
+        if (getY() != y) {
+            double oldValue = getY();
+            yProperty.set(y);
+            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
         }
     }
 
@@ -443,8 +444,8 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     public ElementText copy() {
         ElementText copy = new ElementText();
 
-        copy.setX(x);
-        copy.setY(y);
+        copy.setX(getX());
+        copy.setY(getY());
         copy.setAlign(align);
         copy.setAllowMirror(isMirrorAllowed());
         copy.setAllowSpin(isSpinAllowed());

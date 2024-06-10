@@ -23,24 +23,20 @@ import com.maehem.mangocad.model.element.property.GridUnitProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.ARC;
+import com.maehem.mangocad.view.widgets.inspector.LineWidthWidget;
+import com.maehem.mangocad.view.widgets.inspector.MirrorToggleWidget;
+import com.maehem.mangocad.view.widgets.inspector.RotationWidget;
+import com.maehem.mangocad.view.widgets.inspector.TextSizeWidget;
 import com.maehem.mangocad.view.widgets.toolmode.ArcClockwiseToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.DimensionTypeToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.GridUnitListWidget;
 import com.maehem.mangocad.view.widgets.toolmode.IntegerListWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineBendStyleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.LineCapWidget;
-import com.maehem.mangocad.view.widgets.inspector.LineWidthWidget;
-import com.maehem.mangocad.view.widgets.toolmode.MirrorToggleWidget;
 import com.maehem.mangocad.view.widgets.toolmode.MiterRadiusWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PinArrayWidget;
 import com.maehem.mangocad.view.widgets.toolmode.PolygonFillWidget;
 import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget2;
-import com.maehem.mangocad.view.widgets.toolmode.RotationWidget;
-import com.maehem.mangocad.view.widgets.toolmode.TextAlignWidget;
-import com.maehem.mangocad.view.widgets.toolmode.TextDistanceWidget;
-import com.maehem.mangocad.view.widgets.toolmode.TextFontWidget;
-import com.maehem.mangocad.view.widgets.inspector.TextRatioWidget;
-import com.maehem.mangocad.view.widgets.toolmode.TextSizeWidget;
 import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
@@ -74,19 +70,19 @@ public class ToolModeWidgetBox extends HBox {
         switch (mode) {
             case MOVE -> {
                 // alignment options
-                RotationWidget rW = new RotationWidget(mode.getToolElement());
-                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
+                RotationWidget rW = new RotationWidget(mode.getToolElement(), "ROTATION");
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement(), "MIRROR");
                 getChildren().addAll(rW, new Region(), mW);
             }
             case ROTATE -> {
                 // alignment options
-                RotationWidget rW = new RotationWidget(mode.getToolElement());
-                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
+                RotationWidget rW = new RotationWidget(mode.getToolElement(), "ROTATION");
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement(), "MIRROR");
                 getChildren().addAll(rW, new Region(), mW);
             }
             case MIRROR -> {
                 // alignment options
-                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
+                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement(), "MIRROR");
                 getChildren().addAll(mW);
             }
             case PIN -> {
@@ -127,14 +123,14 @@ public class ToolModeWidgetBox extends HBox {
                 }
             }
             case TEXT -> {  // Text options
-                RotationWidget rW = new RotationWidget(mode.getToolElement());
-                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
-                TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement()); // Upgrade to EditableDoubleListWidget
-                TextRatioWidget trW = new TextRatioWidget(mode.getToolElement());
-                TextFontWidget tfW = new TextFontWidget(mode.getToolElement());
-                TextAlignWidget taW = new TextAlignWidget(mode.getToolElement());
-                TextDistanceWidget tdW = new TextDistanceWidget(mode.getToolElement());
-                getChildren().addAll(rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
+//                RotationWidget rW = new RotationWidget(mode.getToolElement());
+//                MirrorToggleWidget mW = new MirrorToggleWidget(mode.getToolElement());
+//                TextSizeWidget tsW = new TextSizeWidget(mode.getToolElement()); // Upgrade to EditableDoubleListWidget
+//                TextRatioWidget trW = new TextRatioWidget(mode.getToolElement());
+//                TextFontWidget tfW = new TextFontWidget(mode.getToolElement());
+//                TextAlignWidget taW = new TextAlignWidget(mode.getToolElement());
+//                TextDistanceWidget tdW = new TextDistanceWidget(mode.getToolElement());
+//                getChildren().addAll(rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
             }
             case SPLIT -> { // Split options
                 LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
@@ -163,7 +159,7 @@ public class ToolModeWidgetBox extends HBox {
 
                     // Dim Style
                     DimensionTypeToggleWidget dimTypeWidget = new DimensionTypeToggleWidget(d);
-                    TextSizeWidget textSizeWidget = new TextSizeWidget(d);
+                    TextSizeWidget textSizeWidget = new TextSizeWidget(d, "TEXT_SIZE");
                     IntegerListWidget textRatioWidget = new IntegerListWidget(
                             d.getTextRatioProperty(), ElementText.Field.RATIO,
                             "TEXT_RATIO", "%",

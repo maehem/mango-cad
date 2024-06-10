@@ -14,15 +14,13 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.application.Platform;
 import javafx.scene.control.Spinner;
 
 /**
@@ -30,31 +28,32 @@ import javafx.scene.control.Spinner;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextDistanceWidget extends ToolModeWidget {
+public class TextDistanceWidget extends InspectorWidget {
 
-    @SuppressWarnings("unchecked")
     // TODO: Cell renderer for adding percent to value displayed.
-    private final Spinner spinner = new Spinner(0, 250, 0);
+    private final Spinner<Integer> spinner = new Spinner<>(0, 250, 0);
     private final ElementText text;
 
-    @SuppressWarnings({"unchecked", "unchecked"})
-    public TextDistanceWidget(Element e) {
+    public TextDistanceWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof ElementText p) {
             this.text = p;
-            this.text.addListener(this);
+            Platform.runLater(() -> {
+                this.text.addListener(this);
+            });
         } else {
             this.text = null;
             LOGGER.log(Level.SEVERE, "TextSwapLevelWidget: element is not of type Pin!");
         }
 
         spinner.setPrefWidth(70);
-        Label iconLabel = new Label(MSG.getString("TEXT_DISTANCE"));
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
+//        Label iconLabel = new Label(MSG.getString("TEXT_DISTANCE"));
+//        iconLabel.setPadding(new Insets(4));
+//        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
         updateSpinnerState(0);
 
-        getChildren().addAll(iconLabel, spinner);
+        getChildren().addAll(spinner);
 
         spinner.valueProperty().addListener((obsVal, oldValue, newValue) -> {
             text.setDistance((int) newValue);

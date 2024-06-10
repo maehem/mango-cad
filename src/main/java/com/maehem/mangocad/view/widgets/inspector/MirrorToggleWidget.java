@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.property.RotationProperty;
@@ -33,7 +33,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class MirrorToggleWidget extends ToolModeWidget {
+public class MirrorToggleWidget extends InspectorWidget {
 
     private static final String ICON_PATH = "/icons/flip-horizontal.png";
 
@@ -41,7 +41,8 @@ public class MirrorToggleWidget extends ToolModeWidget {
     private final Element element;
     private final RotationProperty rotation;
 
-    public MirrorToggleWidget(Element e) {
+    public MirrorToggleWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof RotationProperty p) {
             this.element = e;
             this.rotation = p;

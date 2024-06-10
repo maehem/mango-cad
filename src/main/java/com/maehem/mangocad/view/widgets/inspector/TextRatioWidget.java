@@ -22,10 +22,7 @@ import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 
 /**
  * Settings for element angle rotations.
@@ -45,7 +42,8 @@ public class TextRatioWidget extends InspectorWidget {
     private final ComboBox<Integer> comboBox = new ComboBox<>(options);
     private final ElementText text;
 
-    public TextRatioWidget(Element e) {
+    public TextRatioWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof ElementText p) {
             this.text = p;
             this.text.addListener(this);
@@ -54,13 +52,13 @@ public class TextRatioWidget extends InspectorWidget {
             LOGGER.log(Level.SEVERE, "TextRatioWidget: element is not of type Text!");
         }
 
-        Label iconLabel = new Label(MSG.getString("TEXT_RATIO"));
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
+//        Label iconLabel = new Label(MSG.getString("TEXT_RATIO"));
+//        iconLabel.setPadding(new Insets(4));
+//        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
         updateComboState(8);
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             text.setRatio((int) comboBox.getSelectionModel().getSelectedItem());

@@ -17,21 +17,14 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
-import com.maehem.mangocad.view.widgets.inspector.LineStyleWidget;
-import com.maehem.mangocad.view.widgets.inspector.LineWidthWidget;
-import com.maehem.mangocad.view.widgets.inspector.LocationXYWidget;
-import com.maehem.mangocad.view.widgets.inspector.PinDirectionWidget;
-import com.maehem.mangocad.view.widgets.inspector.PinFuncToggleWidget;
-import com.maehem.mangocad.view.widgets.inspector.PinLengthToggleWidget;
-import com.maehem.mangocad.view.widgets.inspector.PinRotationToggleWidget;
-import com.maehem.mangocad.view.widgets.inspector.PinSwapLevelWidget;
-import com.maehem.mangocad.view.widgets.inspector.PinVisibilityToggleWidget;
-import com.maehem.mangocad.view.widgets.inspector.StringValueWidget;
+import com.maehem.mangocad.view.widgets.inspector.*;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 /**
@@ -95,6 +88,18 @@ public class SymbolEditorPropertiesListTab extends Tab {
                 //MiterRadiusWidget mrW = new MiterRadiusWidget(w);
 
                 propertyNodes.getChildren().addAll(lxy1, lxy2, lwW, lsW);
+            }
+            case ElementText t -> {
+                LocationXYWidget lxy = new LocationXYWidget(t.xProperty, t.yProperty, "TEXT_LOCATION");
+                RotationWidget rW = new RotationWidget(t, "ROTATION");
+                MirrorToggleWidget mW = new MirrorToggleWidget(t, "MIRROR");
+                TextSizeWidget tsW = new TextSizeWidget(t, "TEXT_SIZE"); // Upgrade to EditableDoubleListWidget
+                TextRatioWidget trW = new TextRatioWidget(t, "TEXT_RATIO");
+                TextFontWidget tfW = new TextFontWidget(t, "TEXT_FONT");
+                TextAlignWidget taW = new TextAlignWidget(t, "TEXT_ALIGN");
+                TextDistanceWidget tdW = new TextDistanceWidget(t, "TEXT_DISTANCE");
+                propertyNodes.getChildren().addAll(rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
+
             }
             default -> {
             }

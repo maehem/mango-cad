@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Dimension;
@@ -23,11 +23,8 @@ import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -38,7 +35,7 @@ import javafx.scene.input.KeyEvent;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextSizeWidget extends ToolModeWidget {
+public class TextSizeWidget extends InspectorWidget {
 
     private final ObservableList<Double> options
             = FXCollections.observableArrayList(
@@ -56,14 +53,13 @@ public class TextSizeWidget extends ToolModeWidget {
                     0.09,
                     1.0
             );
-    @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
+    private final ComboBox<Double> comboBox = new ComboBox<>(options);
     private final ElementText text;
     private final Element element;
     private final Dimension dimension;
 
-    @SuppressWarnings({"unchecked"})
-    public TextSizeWidget(Element e) {
+    public TextSizeWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof ElementText p) {
             this.text = p;
             this.element = e;
@@ -80,25 +76,27 @@ public class TextSizeWidget extends ToolModeWidget {
             LOGGER.log(Level.SEVERE, "TextSizeWidget: element is not of type ElementText!");
         }
 
-        setPrefWidth(170);
-        Label iconLabel = new Label(MSG.getString("TEXT_SIZE") + ":");
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
-        double labelWidth = 55;
-        iconLabel.setMinWidth(labelWidth);
-        iconLabel.setPrefWidth(labelWidth);
+//        setPrefWidth(170);
+//        Label iconLabel = new Label(MSG.getString("TEXT_SIZE") + ":");
+//        iconLabel.setPadding(new Insets(4));
+//        iconLabel.setAlignment(Pos.BASELINE_CENTER);
+//        double labelWidth = 55;
+//        iconLabel.setMinWidth(labelWidth);
+//        iconLabel.setPrefWidth(labelWidth);
 
-        comboBox.setButtonCell(new EditableItemCell());
+        comboBox.setButtonCell(new EditableItemCell<>());
         comboBox.setEditable(true);
         comboBox.getSelectionModel().selectFirst();
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             if (text != null) {
-                text.setSize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+                //text.setSize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+                text.setSize(comboBox.getSelectionModel().getSelectedItem());
             } else if (dimension != null) {
-                dimension.setTextsize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+                //dimension.setTextsize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
+                dimension.setTextsize(comboBox.getSelectionModel().getSelectedItem());
             }
             t.consume();
         });

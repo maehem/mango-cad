@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.property.RotationProperty;
@@ -23,11 +23,7 @@ import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -36,7 +32,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class RotationWidget extends ToolModeWidget {
+public class RotationWidget extends InspectorWidget {
 
     private static final String ICON_PATH = "/icons/rotate.png";
 
@@ -52,7 +48,8 @@ public class RotationWidget extends ToolModeWidget {
     private final Element element;
     private final RotationProperty rotation;
 
-    public RotationWidget(Element e) {
+    public RotationWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof RotationProperty p) {
             this.element = e;
             this.rotation = p;
@@ -65,14 +62,14 @@ public class RotationWidget extends ToolModeWidget {
 
         Image img = ViewUtils.getImage(ICON_PATH);
         ImageView icon = ViewUtils.createIcon(img, 20);
-        Label iconLabel = new Label("", icon);
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
-        iconLabel.setTooltip(new Tooltip(MSG.getString("TOOL_ICON_ROTATE")));
+//        Label iconLabel = new Label("", icon);
+//        iconLabel.setPadding(new Insets(4));
+//        iconLabel.setAlignment(Pos.BASELINE_CENTER);
+//        iconLabel.setTooltip(new Tooltip(MSG.getString("TOOL_ICON_ROTATE")));
 
         updateRotation(rotation.getRot());
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             rotation.setRot((double) comboBox.getSelectionModel().getSelectedItem());
@@ -103,7 +100,7 @@ public class RotationWidget extends ToolModeWidget {
         // Qualitfy what we can rotate.
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
-        if ( //!field.equals(ElementText.Field.ROTATION) && 
+        if ( //!field.equals(ElementText.Field.ROTATION) &&
                 !field.equals(RotationProperty.Field.VALUE)
                 && !field.equals(RotationProperty.Field.MIRROR)) {
             LOGGER.log(Level.SEVERE, "The Rotation Field is not an expected type: " + field.name());

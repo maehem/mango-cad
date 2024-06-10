@@ -14,52 +14,50 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 
 /**
  * Settings for element angle rotations.
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class TextAlignWidget extends ToolModeWidget {
+public class TextAlignWidget extends InspectorWidget {
 
     private final ObservableList<TextAlign> options = FXCollections.observableArrayList(
             TextAlign.values()
     );
 
-    @SuppressWarnings("unchecked")
-    private final ComboBox comboBox = new ComboBox(options);
+    private final ComboBox<TextAlign> comboBox = new ComboBox<>(options);
     private final ElementText text;
 
-    @SuppressWarnings("unchecked")
-    public TextAlignWidget(Element e) {
+    public TextAlignWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof ElementText w) {
             this.text = w;
-            this.text.addListener(this);
+            Platform.runLater(() -> {
+                this.text.addListener(this);
+            });
         } else {
             this.text = null;
             LOGGER.log(Level.SEVERE, "TextAlignWidget: element is not of type ElementText!");
         }
 
-        Label iconLabel = new Label(MSG.getString("TEXT_ALIGN") + ":");
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
+//        Label iconLabel = new Label(MSG.getString("TEXT_ALIGN") + ":");
+//        iconLabel.setPadding(new Insets(4));
+//        iconLabel.setAlignment(Pos.BASELINE_CENTER);
+        updateComboState(text.getAlign());
 
-        updateComboState(TextAlign.BOTTOM_LEFT);
-
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             text.setAlign((TextAlign) comboBox.getSelectionModel().getSelectedItem());
