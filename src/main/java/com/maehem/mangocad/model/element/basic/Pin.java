@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.StringValue;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
@@ -55,7 +56,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     public static final String SWAPLEVEL_KEY = "swaplevel"; // TODO Use PinField enum.
     public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
-    private String name = "A";
+    private StringValue nameProperty = new StringValue("A");
     private double x;
     private double y;
     private boolean selected = false;
@@ -84,18 +85,22 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      * @return the name
      */
     public String getName() {
-        return name;
+        return nameProperty.get();
     }
 
     /**
      * @param name the name to set
      */
     public void setName(String name) {
-        if (this.name == null || !this.name.equals(name)) {
-            String oldName = this.name;
-            this.name = name;
+        if (this.nameProperty.get() == null || !this.nameProperty.get().equals(name)) {
+            String oldName = this.nameProperty.get();
+            this.nameProperty.set(name);
             notifyListeners(PinField.NAME, oldName, name);
         }
+    }
+
+    public StringValue getNameProperty() {
+        return nameProperty;
     }
 
     /**
