@@ -16,10 +16,19 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.view.widgets.toolmode.PinDirectionWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinFuncToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinLengthToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinRotationToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinSwapLevelWidget;
+import com.maehem.mangocad.view.widgets.toolmode.PinVisibilityToggleWidget;
+import com.maehem.mangocad.view.widgets.toolmode.StringValueWidget;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -27,10 +36,10 @@ import javafx.scene.text.Text;
  */
 public class SymbolEditorPropertiesListTab extends Tab {
 
-    private final LibraryElement element;
+    private Element element;
     private final VBox propertyNodes = new VBox();
 
-    public SymbolEditorPropertiesListTab(LibraryElement item) {
+    public SymbolEditorPropertiesListTab(Element item) {
         super("Inspector");
         this.setContent(propertyNodes);
 
@@ -39,14 +48,43 @@ public class SymbolEditorPropertiesListTab extends Tab {
         updateContent(item);
     }
 
-    protected void updateContent(LibraryElement item) {
+    protected void updateContent(Element item) {
+        this.element = item;
+
         propertyNodes.getChildren().clear();
         if (item != null) {
-            propertyNodes.getChildren().add(new Text("Symbol: " + element.getName()));
+            Label label = new Label(item.getElementName());
+            label.setId("properties-list-heading");
+            label.setPadding(new Insets(10));
+            propertyNodes.getChildren().add(label);
+            generatePropertyNodes();
         } else {
-            propertyNodes.getChildren().add(new Text("Nothing selected."));
+            Label label = new Label("Nothing Selected");
+            label.setId("properties-list-heading-nothing");
+            label.setPadding(new Insets(10));
+            propertyNodes.getChildren().add(label);
         }
 
+    }
+
+    private void generatePropertyNodes() {
+        switch (element) {
+            case Pin p -> {
+                // name
+                // XY location
+                StringValueWidget xyw = new StringValueWidget(p.getNameProperty(), "PIN_NAME");
+                PinRotationToggleWidget prw = new PinRotationToggleWidget(p);
+                PinDirectionWidget pdw = new PinDirectionWidget(p);
+                PinSwapLevelWidget psw = new PinSwapLevelWidget(p);
+                PinLengthToggleWidget plw = new PinLengthToggleWidget(p);
+                PinFuncToggleWidget pfw = new PinFuncToggleWidget(p);
+                PinVisibilityToggleWidget pvw = new PinVisibilityToggleWidget(p);
+
+                propertyNodes.getChildren().addAll(xyw, prw, pdw, psw, plw, pfw, pvw);
+            }
+            default -> {
+            }
+        }
     }
 
 }
