@@ -111,7 +111,7 @@ public class SymbolEditorPropertiesListTab extends Tab {
                 IntegerListWidget textRatioWidget = new IntegerListWidget(
                         d.getTextRatioProperty(), ElementText.Field.RATIO,
                         "TEXT_RATIO", "%",
-                        ElementText.TEXT_RATIO_DEFAULT_OPTIONS);
+                        ElementText.RATIO_DEFAULT_OPTIONS);
                 GridUnitListWidget unitWidget = new GridUnitListWidget(
                         d.getUnitProperty(), "UNIT", GridUnitProperty.Unit.MM);
                 IntegerListWidget precisionWidget = new IntegerListWidget(
