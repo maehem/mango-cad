@@ -272,3 +272,9 @@
 #location-xy-field {
     -fx-font-size: 80%;
 }
+
+#location-xy-label {
+    -fx-font-size: 80%;
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+}

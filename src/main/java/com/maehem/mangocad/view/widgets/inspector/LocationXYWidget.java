@@ -51,7 +51,9 @@ public class LocationXYWidget extends InspectorWidget implements ElementValueLis
         this.yValue = yValue;
 
         Label xLabel = new Label("x:");
+        xLabel.setId("location-xy-label");
         Label yLabel = new Label("y:");
+        yLabel.setId("location-xy-label");
         Pane spacer = new Pane();
         spacer.setPrefSize(8, 8);
 

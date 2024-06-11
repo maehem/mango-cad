@@ -59,7 +59,8 @@ public abstract class InspectorWidget extends HBox implements ElementListener {
 
         setId("inspector-widget");
 
-        setPadding(new Insets(4));
+        //setPadding(new Insets(4));
+        //setPadding(new Insets(0, 0, 0, 4));
         //setSpacing(SPACING);
         setAlignment(Pos.BASELINE_LEFT);
 

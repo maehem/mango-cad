@@ -1296,6 +1296,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 movingElements.add(pin);
                 this.toolMode.setToolElement(pin);
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(pin);
             }
             case TEXT -> {
                 ElementText text = initiateNewText();
@@ -1314,8 +1315,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     movingMouseStartY = 0;
                     movingElements.add(text);
                     this.toolMode.setToolElement(text);
+                    parentEditor.setElementFocus(text);
                 } else {
                     parentEditor.setToolMode(SELECT);
+                    parentEditor.setElementFocus(null);
                 }
             }
             case EditorTool.LINE -> {
@@ -1327,13 +1330,16 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     Wire tempWire = new Wire();
                     lastElementAdded = tempWire;
                     LOGGER.log(Level.SEVERE, "Add temp wire. It is the lastAdded.");
+                    parentEditor.setElementFocus(tempWire);
                 }
 
                 if (ephemeralNode == null) {
                     this.toolMode.setToolElement(lastElementAdded);
                     LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                    parentEditor.setElementFocus(null);
                 } else {
                     this.toolMode.setToolElement(ephemeralNode.getElement());
+                    parentEditor.setElementFocus(ephemeralNode.getElement());
                 }
                 parentEditor.setToolMode(toolMode);
             }
@@ -1351,8 +1357,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 if (ephemeralNode == null) {
                     this.toolMode.setToolElement(lastElementAdded);
                     LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                    parentEditor.setElementFocus(lastElementAdded);
                 } else {
                     this.toolMode.setToolElement(ephemeralNode.getElement());
+                    parentEditor.setElementFocus(ephemeralNode.getElement());
                 }
                 parentEditor.setToolMode(toolMode);
             }
@@ -1370,8 +1378,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 if (ephemeralNode == null) {
                     this.toolMode.setToolElement(lastElementAdded);
                     LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                    parentEditor.setElementFocus(lastElementAdded);
                 } else {
                     this.toolMode.setToolElement(ephemeralNode.getElement());
+                    parentEditor.setElementFocus(ephemeralNode.getElement());
                 }
                 parentEditor.setToolMode(toolMode);
             }
@@ -1389,11 +1399,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 if (ephemeralNode == null) {
                     this.toolMode.setToolElement(lastElementAdded);
                     LOGGER.log(Level.SEVERE, "Assign lastAdded to the toolElement.");
+                    parentEditor.setElementFocus(lastElementAdded);
                 } else {
                     LOGGER.log(Level.SEVERE, "Assign ephemeral node element to the toolElement.");
                     this.toolMode.setToolElement(ephemeralNode.getElement());
+                    parentEditor.setElementFocus(ephemeralNode.getElement());
                 }
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(null);
             }
             case EditorTool.MOVE -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Move' EditorTool...");
@@ -1406,10 +1419,13 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 if (ephemeralNode == null) {
                     this.toolMode.setToolElement(lastElementAdded);
                     LOGGER.log(Level.SEVERE, "Set tool element to last added.");
+                    parentEditor.setElementFocus(lastElementAdded);
                 } else {
                     this.toolMode.setToolElement(ephemeralNode.getElement());
+                    parentEditor.setElementFocus(ephemeralNode.getElement());
                 }
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(null);
             }
             case EditorTool.ROTATE -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Rotate' EditorTool...");
@@ -1418,6 +1434,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(null);
             }
             case EditorTool.MIRROR -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Mirror' EditorTool...");
@@ -1426,10 +1443,12 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(null);
             }
             case EditorTool.NAME -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Name' EditorTool...");
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(null);
             }
             case EditorTool.DIMENSION -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Dimension' EditorTool...");
@@ -1437,9 +1456,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 lastElementAdded = e;
                 this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);
+                parentEditor.setElementFocus(e);
             }
         }
-        parentEditor.setElementFocus(toolMode.getToolElement());
 
     }
 

@@ -29,7 +29,6 @@ import java.util.MissingResourceException;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -45,7 +44,7 @@ import javafx.util.Callback;
  */
 public class RealValueListWidget2 extends InspectorWidget implements ElementValueListener {
 
-    private final double PREF_WIDTH = 160;
+    //private final double PREF_WIDTH = 160;
     private final ObservableList<Double> options;
     private final ComboBox<Double> comboBox;
     private final RealValue realValue;
@@ -63,15 +62,15 @@ public class RealValueListWidget2 extends InspectorWidget implements ElementValu
             boolean allowEdit,
             RealValue autoValue, double multiplier,
             ObservableList<Double> options) {
+        super(msgKeyBase);
         this.realValue = rv;
         this.field = f;
         this.options = options;
         comboBox = new ComboBox<>(options);
         this.unitDisplay = unit;
 
-        setPrefWidth(PREF_WIDTH);
-        setSpacing(4);
-        setPadding(new Insets(0, 0, 0, 4));
+        //setPrefWidth(PREF_WIDTH);
+        //setSpacing(4);
         // TODO: Icon as Label
         //String labelStr = "";
         Tooltip tt = new Tooltip();

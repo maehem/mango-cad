@@ -24,8 +24,6 @@ import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.GridUnitProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.widgets.inspector.*;
-import com.maehem.mangocad.view.widgets.inspector.IntegerListWidget;
-import com.maehem.mangocad.view.widgets.inspector.RealValueListWidget2;
 import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -118,7 +116,7 @@ public class SymbolEditorPropertiesListTab extends Tab {
                         d.getUnitProperty(), "UNIT", GridUnitProperty.Unit.MM);
                 IntegerListWidget precisionWidget = new IntegerListWidget(
                         d.getPrecisionProperty(), Dimension.Field.PRECISION,
-                        "PRECISION", null,
+                        "DIM_PRECISION", null,
                         Dimension.PRECISION_OPTIONS);
                 // Show
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
@@ -130,21 +128,21 @@ public class SymbolEditorPropertiesListTab extends Tab {
                 // Ext. Width (with auto)
                 RealValueListWidget2 extWidthWidget = new RealValueListWidget2(
                         d.getExtWidthProperty(), WidthProperty.Field.WIDTH,
-                        "EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
+                        "DIM_EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         d.getWidthProperty(), 1.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Length (with auto)  Auto = 10x width
                 RealValueListWidget2 extLengthWidget = new RealValueListWidget2(
                         d.getExtLengthProperty(), WidthProperty.Field.WIDTH,
-                        "EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
+                        "DIM_EXT_LINE_LENGTH", null, ToolModeWidget.EDITABLE,
                         d.getWidthProperty(), 10.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Offset (with auto)  Auto = 10x width
                 RealValueListWidget2 extOffsetWidget = new RealValueListWidget2(
                         d.getExtOffsetProperty(), WidthProperty.Field.WIDTH,
-                        "EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
+                        "DIM_EXT_LINE_OFFSET", null, ToolModeWidget.EDITABLE,
                         d.getWidthProperty(), 10.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );

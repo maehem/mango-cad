@@ -66,7 +66,7 @@ public class IntegerListWidget extends InspectorWidget implements ElementValueLi
         //this.allowEdit = allowEdit;
 
         //setPrefWidth(PREF_WIDTH);
-        setSpacing(4);
+        //setSpacing(4);
         //setPadding(new Insets(0, 0, 0, 4));
         // TODO: Icon as Label
         Tooltip tt = new Tooltip();

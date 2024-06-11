@@ -27,10 +27,7 @@ import java.util.MissingResourceException;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 
 /**
@@ -61,7 +58,6 @@ public class GridUnitListWidget extends InspectorWidget implements ElementValueL
         }
         this.field = f;
 
-        String labelStr = "???";
         Tooltip tt = new Tooltip();
         comboBox.setTooltip(tt);
 
@@ -76,14 +72,9 @@ public class GridUnitListWidget extends InspectorWidget implements ElementValueL
             }
         }
 
-        Label iconLabel = new Label(labelStr + ":");
-
-        iconLabel.setPadding(new Insets(4));
-        iconLabel.setAlignment(Pos.BASELINE_CENTER);
-
         updateComboState(GridUnitProperty.Unit.MM);
 
-        getChildren().addAll(iconLabel, comboBox);
+        getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             unit.set(comboBox.getSelectionModel().getSelectedItem());
