@@ -59,9 +59,9 @@ public class PinRotationToggleWidget extends InspectorWidget {
         ImageView pinRot180 = ViewUtils.createIcon(imgPin, ICON_SIZE);
         ImageView pinRot270 = ViewUtils.createIcon(imgPin, ICON_SIZE);
 
-        pinRot90.setRotate(90);
+        pinRot90.setRotate(-90);
         pinRot180.setRotate(180);
-        pinRot270.setRotate(270);
+        pinRot270.setRotate(-270);
 
         ToggleButton rot0Button = new ToggleButton("", pinRot0); // TODO MSG Tooltip
         ToggleButton rot90Button = new ToggleButton("", pinRot90);
