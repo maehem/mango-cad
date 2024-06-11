@@ -17,12 +17,13 @@
 package com.maehem.mangocad.view.utils;
 
 import com.maehem.mangocad.model.element.basic.ElementText;
-import com.maehem.mangocad.view.TextEditPanel;
-import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 /**
  *
@@ -53,6 +54,14 @@ public class TextEditDialog extends Dialog<ButtonType> {
         textEditPanel = new TextEditPanel(text.getValue());
         getDialogPane().setContent(textEditPanel);
         ViewUtils.applyAppStylesheet(getDialogPane().getStylesheets());
+
+        textEditPanel.textArea.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
+            if (!keyEvent.isShiftDown() && keyEvent.getCode().equals(KeyCode.ENTER)) {
+                //LOGGER.log(Level.SEVERE, "Enter Pressed.");
+                setResult(okButtonType);
+                close();
+            }
+        });
         showAndWait().ifPresent(response -> {
             if (response == okButtonType) {
                 textElement.setValue(textEditPanel.getValue());

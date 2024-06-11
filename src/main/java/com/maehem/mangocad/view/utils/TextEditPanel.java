@@ -14,10 +14,11 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view;
+package com.maehem.mangocad.view.utils;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 /**
@@ -26,12 +27,17 @@ import javafx.scene.layout.VBox;
  */
 public class TextEditPanel extends VBox {
 
-    private final TextArea textArea;
+    protected final TextArea textArea;
 
     public TextEditPanel(String text) {
         textArea = new TextArea(text);
         Label label = new Label("Shift+Enter to add a new line.");
 
+        textArea.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.isShiftDown() && keyEvent.getCode().equals(KeyCode.ENTER)) {
+                textArea.appendText("\n");
+            }
+        });
         getChildren().addAll(textArea, label);
     }
 
