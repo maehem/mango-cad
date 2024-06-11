@@ -40,13 +40,12 @@ import javafx.scene.layout.Region;
  */
 public class ToolModeWidgetBox extends HBox {
 
-    private EditorTool mode;
+    //private EditorTool mode;
 
     public ToolModeWidgetBox() {
 
         setHeight(24);
         setSpacing(2);
-
     }
 
     public void setMode(EditorTool mode) {
@@ -55,7 +54,7 @@ public class ToolModeWidgetBox extends HBox {
                 w.stopListening();
             }
         }
-        this.mode = mode;
+        //this.mode = mode;
         getChildren().clear();
         switch (mode) {
             case MOVE -> {
