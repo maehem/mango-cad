@@ -37,22 +37,24 @@ import javafx.scene.input.KeyEvent;
  */
 public class TextSizeWidget extends InspectorWidget {
 
-    private final ObservableList<Double> options
-            = FXCollections.observableArrayList(
-                    0.01,
-                    0.012,
-                    0.016,
-                    0.024,
-                    0.032,
-                    0.04,
-                    0.05,
-                    0.056,
-                    0.066,
-                    0.07,
-                    0.08,
-                    0.09,
-                    1.0
-            );
+//    private final ObservableList<Double> options
+//            = FXCollections.observableArrayList(
+//                    0.01,
+//                    0.012,
+//                    0.016,
+//                    0.024,
+//                    0.032,
+//                    0.04,
+//                    0.05,
+//                    0.056,
+//                    0.066,
+//                    0.07,
+//                    0.08,
+//                    0.09,
+//                    1.0
+//            );
+    private final ObservableList<Double> options = FXCollections.observableArrayList(
+            ElementText.SIZE_DEFAULT_OPTIONS);
     private final ComboBox<Double> comboBox = new ComboBox<>(options);
     private final ElementText text;
     private final Element element;
@@ -94,18 +96,17 @@ public class TextSizeWidget extends InspectorWidget {
             if (text != null) {
                 //text.setSize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
                 Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
-                if ( selectedItem instanceof String ) {
-                    text.setSize(Double.parseDouble((String) selectedItem));
+                if (selectedItem instanceof String string) {
+                    text.setSize(Double.parseDouble(string));
                 } else {
                     text.setSize((Double) selectedItem);
-
                 }
             } else if (dimension != null) {
                 //dimension.setTextsize(Double.parseDouble((String) comboBox.getSelectionModel().getSelectedItem()));
                 //dimension.setTextsize(comboBox.getSelectionModel().getSelectedItem());
                 Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
-                if (selectedItem instanceof String) {
-                    dimension.setTextsize(Double.parseDouble((String) selectedItem));
+                if (selectedItem instanceof String string) {
+                    dimension.setTextsize(Double.parseDouble(string));
                 } else {
                     dimension.setTextsize((Double) selectedItem);
 
@@ -115,7 +116,6 @@ public class TextSizeWidget extends InspectorWidget {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void updateComboState(double pl) {
         for (Double t : options) {
             if (t == pl) {
