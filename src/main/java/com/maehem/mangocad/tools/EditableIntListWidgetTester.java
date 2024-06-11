@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.widgets.toolmode.IntegerListWidget;
+import com.maehem.mangocad.view.widgets.inspector.IntegerListWidget;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import javafx.application.Application;

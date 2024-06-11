@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementValue;
@@ -31,11 +31,11 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 /**
@@ -43,7 +43,7 @@ import javafx.util.Callback;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class RealValueListWidget2 extends ToolModeWidget implements ElementValueListener {
+public class RealValueListWidget2 extends InspectorWidget implements ElementValueListener {
 
     private final double PREF_WIDTH = 160;
     private final ObservableList<Double> options;
@@ -73,18 +73,18 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
         setSpacing(4);
         setPadding(new Insets(0, 0, 0, 4));
         // TODO: Icon as Label
-        String labelStr = "";
+        //String labelStr = "";
         Tooltip tt = new Tooltip();
         comboBox.setTooltip(tt);
 
         if (msgKeyBase != null) {
-            try {
-                labelStr = MSG.getString(msgKeyBase + "_LABEL");
-            } catch (MissingResourceException ex) {
-                labelStr = "???";
-                LOGGER.log(Level.SEVERE, "Couldn''t find requested i18n: {0}_LABEL", msgKeyBase);
-            }
-
+//            try {
+//                labelStr = MSG.getString(msgKeyBase + "_LABEL");
+//            } catch (MissingResourceException ex) {
+//                labelStr = "???";
+//                LOGGER.log(Level.SEVERE, "Couldn''t find requested i18n: {0}_LABEL", msgKeyBase);
+//            }
+//
             // Set the tooltip
             try {
                 String string = MSG.getString(msgKeyBase + "_TOOLTIP");
@@ -94,17 +94,14 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
                 // tt can remain blank.
             }
         }
-        if (unitDisplay != null && !unitDisplay.isEmpty()) {
-            labelStr += " (" + unitDisplay + ")";
-        }
-        if (!labelStr.isEmpty()) {
-            labelStr += ":";
-        }
+//        if (!labelStr.isEmpty()) {
+//            labelStr += ":";
+//        }
 
-        Text iconLabel; // TODO: try as Label again and set tooltip.
-        iconLabel = new Text(labelStr);
-        iconLabel.setId("widget-label");
-        getChildren().add(iconLabel);
+//        Label iconLabel; // TODO: try as Label again and set tooltip.
+//        iconLabel = new Label(labelStr);
+//        iconLabel.setId("widget-label");
+//        getChildren().add(iconLabel);
 
         Platform.runLater(() -> {
             realValue.addListener(this);
@@ -114,6 +111,11 @@ public class RealValueListWidget2 extends ToolModeWidget implements ElementValue
         comboBox.setCellFactory(new ListCellFactory(multiplier, autoValue != null));
         comboBox.setEditable(false);
         getChildren().add(comboBox);
+
+        if (unitDisplay != null && !unitDisplay.isEmpty()) {
+            Label unitLabel = new Label(unitDisplay); // TODO: try as Label again and set tooltip.
+            getChildren().add(unitLabel);
+        }
 
         // Set the element value to the selected comboBox item.
         comboBox.setOnAction((event) -> {

@@ -1439,6 +1439,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.setToolMode(toolMode);
             }
         }
+        parentEditor.setElementFocus(toolMode.getToolElement());
 
     }
 

@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementValue;
@@ -28,20 +28,19 @@ import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
-import javafx.scene.text.Text;
 
 /**
  * Settings for element angle rotations.
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class IntegerListWidget extends ToolModeWidget implements ElementValueListener {
+public class IntegerListWidget extends InspectorWidget implements ElementValueListener {
 
-    private final double PREF_WIDTH = 130;
+    //private final double PREF_WIDTH = 130;
     private final ObservableList<Integer> options;
     private final ComboBox<Integer> comboBox;
     private final IntValue intValue;
@@ -58,6 +57,7 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
     public IntegerListWidget(IntValue rv, ElementField f,
             String msgKeyBase, String unit, boolean allowEdit,
             ObservableList<Integer> options) {
+        super(msgKeyBase);
         this.intValue = rv;
         this.field = f;
         this.options = options;
@@ -65,20 +65,12 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
         this.unitDisplay = unit;
         //this.allowEdit = allowEdit;
 
-        setPrefWidth(PREF_WIDTH);
+        //setPrefWidth(PREF_WIDTH);
         setSpacing(4);
-        setPadding(new Insets(0, 0, 0, 4));
+        //setPadding(new Insets(0, 0, 0, 4));
         // TODO: Icon as Label
-        String labelStr = "";
         Tooltip tt = new Tooltip();
         if (msgKeyBase != null) {
-            try {
-                labelStr = MSG.getString(msgKeyBase + "_LABEL");
-            } catch (MissingResourceException ex) {
-                labelStr = "???";
-                LOGGER.log(Level.SEVERE, "Couldn''t find requested i18n: {0}_LABEL", msgKeyBase);
-            }
-
             // Set the tooltip
             try {
                 String string = MSG.getString(msgKeyBase + "_TOOLTIP");
@@ -88,23 +80,19 @@ public class IntegerListWidget extends ToolModeWidget implements ElementValueLis
                 // tt can remain blank.
             }
         }
-        if (unitDisplay != null && !unitDisplay.isEmpty()) {
-            labelStr += " (" + unitDisplay + ")";
-        }
-        if (!labelStr.isEmpty()) {
-            labelStr += ":";
-        }
-
-        Text iconLabel;
-        iconLabel = new Text(labelStr);
-        iconLabel.setId("widget-label");
-        getChildren().add(iconLabel);
 
         intValue.addListener(this);
         comboBox.setButtonCell(new TextFieldListCell<>());
         comboBox.setEditable(allowEdit);
         comboBox.getSelectionModel().selectFirst();
         getChildren().add(comboBox);
+
+        if (unitDisplay != null && !unitDisplay.isEmpty()) {
+            Label unitLabel;
+            unitLabel = new Label(unitDisplay);
+            unitLabel.setId("widget-label");
+            getChildren().add(unitLabel);
+        }
 
         // Set the element value to the selected comboBox item.
         comboBox.setOnAction((event) -> {

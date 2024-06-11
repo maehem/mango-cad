@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Dimension;
@@ -33,7 +33,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class DimensionTypeToggleWidget extends ToolModeWidget {
+public class DimensionTypeToggleWidget extends InspectorWidget {
 
     private static final String ICON_PARALLEL = "/icons/dim-parallel.png";
     private static final String ICON_HORIZ = "/icons/dim-horiz.png";
@@ -48,7 +48,8 @@ public class DimensionTypeToggleWidget extends ToolModeWidget {
 
     private final Dimension dimension;
 
-    public DimensionTypeToggleWidget(Element e) {
+    public DimensionTypeToggleWidget(Element e, String msgKeyBase) {
+        super(msgKeyBase);
         if (e instanceof Dimension p) {
             this.dimension = p;
             this.dimension.addListener(this);

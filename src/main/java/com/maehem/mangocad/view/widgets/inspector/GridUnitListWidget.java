@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.view.widgets.toolmode;
+package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementValue;
@@ -38,7 +38,7 @@ import javafx.scene.control.Tooltip;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class GridUnitListWidget extends ToolModeWidget implements ElementValueListener {
+public class GridUnitListWidget extends InspectorWidget implements ElementValueListener {
 
     private final ObservableList<GridUnitProperty.Unit> options
             = FXCollections.observableArrayList(
@@ -50,6 +50,8 @@ public class GridUnitListWidget extends ToolModeWidget implements ElementValueLi
     private final ElementField field;
 
     public GridUnitListWidget(UnitValue e, String msgKeyBase, ElementField f) {
+        super(msgKeyBase);
+
         if (e instanceof UnitValue w) {
             this.unit = w;
             this.unit.addListener(this); // platform.runLater()???
@@ -64,12 +66,6 @@ public class GridUnitListWidget extends ToolModeWidget implements ElementValueLi
         comboBox.setTooltip(tt);
 
         if (msgKeyBase != null) {
-            try {
-                labelStr = MSG.getString(msgKeyBase + "_LABEL");
-            } catch (MissingResourceException ex) {
-                LOGGER.log(Level.SEVERE, "Couldn''t find requested i18n: {0}_LABEL", msgKeyBase);
-            }
-
             // Set the tooltip
             try {
                 String string = MSG.getString(msgKeyBase + "_TOOLTIP");

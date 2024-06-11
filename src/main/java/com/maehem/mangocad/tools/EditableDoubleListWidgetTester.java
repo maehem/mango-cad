@@ -23,7 +23,7 @@ import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.widgets.toolmode.RealValueListWidget2;
+import com.maehem.mangocad.view.widgets.inspector.RealValueListWidget2;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import javafx.application.Application;
