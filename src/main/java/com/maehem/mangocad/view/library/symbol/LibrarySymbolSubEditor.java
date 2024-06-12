@@ -30,6 +30,7 @@ import com.maehem.mangocad.view.library.LibrarySubEditor;
 import com.maehem.mangocad.view.settings.GridSettingsDialog;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import javafx.event.Event;
 import javafx.geometry.Orientation;
@@ -151,6 +152,10 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
     public void setElementFocus(Element e) {
         propertiesTabPane.setPropertiesItem(e);
+    }
+
+    protected void setSelectedElements(List<Element> items) {
+        propertiesTabPane.setSelectionItems(items);
     }
 
     @Override

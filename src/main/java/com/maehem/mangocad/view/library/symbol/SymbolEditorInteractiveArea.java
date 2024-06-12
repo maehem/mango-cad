@@ -593,6 +593,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         switch (toolMode) {
                             case SELECT -> {
                                 LOGGER.log(Level.SEVERE, "Inspect: ");
+                                //parentEditor.setSelectedElements(selectedElements);
                             }
                             case INFO -> {  // Info and Look are the same.
                                 LOGGER.log(Level.SEVERE, " Edit Properties: ");
@@ -1053,6 +1054,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 mouseDownX = Double.MIN_VALUE;
                 mouseDownY = Double.MIN_VALUE;
                 LOGGER.log(Level.SEVERE, "Selected {0} elements.", selectedElements.size());
+                parentEditor.setSelectedElements(selectedElements);
             }
         });
     }

@@ -26,6 +26,7 @@ import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.widgets.inspector.*;
 import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Region;
@@ -35,12 +36,12 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SymbolEditorPropertiesListTab extends Tab {
+public class SymbolEditorInspectorTab extends Tab {
 
     private Element element;
     private final VBox propertyNodes = new VBox();
 
-    public SymbolEditorPropertiesListTab(Element item) {
+    public SymbolEditorInspectorTab(Element item) {
         super("Inspector");
         this.setContent(propertyNodes);
 
@@ -51,6 +52,12 @@ public class SymbolEditorPropertiesListTab extends Tab {
 
     protected final void updateContent(Element item) {
         this.element = item;
+
+        for (Node n : propertyNodes.getChildren()) {
+            if (n instanceof InspectorWidget w) {
+                w.stopListening();
+            }
+        }
 
         propertyNodes.getChildren().clear();
         if (item != null) {
@@ -94,6 +101,7 @@ public class SymbolEditorPropertiesListTab extends Tab {
                 propertyNodes.getChildren().addAll(lxy1, lxy2, lwW, lsW);
             }
             case ElementText t -> {
+                StringValueWidget valw = new StringValueWidget(t.valueProperty, "TEXT_VALUE");
                 LocationXYWidget lxy = new LocationXYWidget(t.xProperty, t.yProperty, "TEXT_LOCATION");
                 RotationWidget rW = new RotationWidget(t, "ROTATION");
                 MirrorToggleWidget mW = new MirrorToggleWidget(t, "MIRROR");
@@ -102,8 +110,8 @@ public class SymbolEditorPropertiesListTab extends Tab {
                 TextFontWidget tfW = new TextFontWidget(t, "TEXT_FONT");
                 TextAlignWidget taW = new TextAlignWidget(t, "TEXT_ALIGN");
                 TextDistanceWidget tdW = new TextDistanceWidget(t, "TEXT_DISTANCE");
-                propertyNodes.getChildren().addAll(lxy, rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
 
+                propertyNodes.getChildren().addAll(valw, lxy, rW, new Region(), mW, tsW, trW, tfW, taW, tdW);
             }
             case Dimension d -> {
                 DimensionTypeToggleWidget dimTypeWidget = new DimensionTypeToggleWidget(d, "DIM_TYPE");
