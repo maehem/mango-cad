@@ -25,6 +25,10 @@ public class StringValue extends ElementValue {
     private String value;
     private String oldValue;
 
+    public StringValue() {
+        this.value = "";
+    }
+
     public StringValue(String value) {
         this.value = value;
     }
