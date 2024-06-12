@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.StringValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
@@ -124,7 +125,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private int distance = 50;  // Line to line distance
 
-    private String value;  // #PCDATA Content
+    public final StringValue valueProperty = new StringValue();  // #PCDATA Content
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -308,16 +309,18 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      * @return the value
      */
     public String getValue() {
-        return value;
+        return valueProperty.get();
     }
 
     /**
      * @param value the value to set
      */
     public void setValue(String value) {
-        String oldValue = this.value;
-        this.value = value;
-        notifyListeners(ElementText.Field.VALUE, oldValue, this.value);
+        if (!getValue().equals(value)) {
+            String oldValue = getValue();
+            valueProperty.set(value);
+            notifyListeners(ElementText.Field.VALUE, oldValue, getValue());
+        }
     }
 
     /**
@@ -473,7 +476,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         copy.setRot(getRot());
         copy.setSize(size);
         copy.setSpin(isSpin());
-        copy.setValue(value);
+        copy.setValue(getValue());
 
         // Copy GroupRefs
         for (String ref : grouprefs) {
