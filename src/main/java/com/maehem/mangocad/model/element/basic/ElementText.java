@@ -245,7 +245,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      * @return the rotation
      */
     @Override
-    public Rotation getRotation() {
+    public Rotation getRotationProperty() {
         return rotation;
     }
 
@@ -256,8 +256,8 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     public void setRotation(Rotation r) {
         //Rotation oldValue = this.getRotation();
-        Rotation.copyValues(r, this.getRotation());
-        notifyListeners(ElementText.Field.ROTATION, null, this.getRotation());
+        Rotation.copyValues(r, this.getRotationProperty());
+        notifyListeners(ElementText.Field.ROTATION, null, this.getRotationProperty());
     }
 
     @Override
@@ -269,7 +269,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     public void setRot(double rot) {
         if (getRot() != rot) {
             double oldValue = this.getRot();
-            getRotation().setValue(rot);
+            getRotationProperty().setValue(rot);
             notifyListeners(ElementText.Field.ROTATION, oldValue, this.getRot());
         }
     }
@@ -382,7 +382,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     @Override
     public boolean isConstrained() {
-        return getRotation().isConstrained();
+        return getRotationProperty().isConstrained();
     }
 
     @Override
@@ -405,12 +405,12 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     @Override
     public boolean isMirrored() {
-        return getRotation().isMirror();
+        return getRotationProperty().isMirror();
     }
 
     @Override
     public boolean isMirrorAllowed() {
-        return getRotation().isAllowMirror();
+        return getRotationProperty().isAllowMirror();
     }
 
     @Override
@@ -480,7 +480,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         for (String ref : grouprefs) {
             copy.grouprefs.add(ref);
         }
-        Rotation.copyValues(getRotation(), copy.getRotation());
+        Rotation.copyValues(getRotationProperty(), copy.getRotationProperty());
 
         return copy;
     }
