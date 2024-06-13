@@ -49,7 +49,7 @@ public interface RotationProperty {
         }
     }
 
-    public Rotation getRotation();
+    public Rotation getRotationProperty();
 
     public double getRot();
 
