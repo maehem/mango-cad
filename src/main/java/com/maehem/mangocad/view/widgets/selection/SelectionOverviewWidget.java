@@ -191,6 +191,7 @@ public class SelectionOverviewWidget extends HBox {
                             .append(LF)
                             .append("*Function:* ").append(p.getFunction().code()).append(LF)
                             .append("*Direction:* ").append(p.getDirection().code()).append(LF)
+                            .append("*Visible:* ").append(p.getVisible().code()).append(LF)
                             .append("*Length:* ").append(p.getLength().code()).append(LF)
                             .append("*Swap Level:* ").append(String.valueOf(p.getSwapLevel())).append(LF)                            ;
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
@@ -274,7 +275,7 @@ public class SelectionOverviewWidget extends HBox {
                     .append("*Size:* ").append(et.sizeProperty.getPrecise(PRECISION)).append(LF)
                     .append("*Text Ratio:* ").append(et.ratioProperty.get()).append(LF)
                     .append("*Align:* ").append(et.getAlign().code()).append(LF)
-                    .append("*Font:* ").append(et.getFont().code())
+                    .append("*Font:* ").append(et.getFont().code()).append(LF)
                     .append("*Line Distance:* ").append(et.getDistance()).append(LF);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
