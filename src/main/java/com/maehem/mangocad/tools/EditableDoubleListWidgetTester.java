@@ -67,7 +67,7 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
     //private RealValue realValue = new RealValue(123.456);
     private final Dimension dimElement = new Dimension();
     private final RealValueListWidget2 listWidget = new RealValueListWidget2(
-            dimElement.getTextSizeProperty(),
+            dimElement.textsizeProperty,
             Dimension.Field.TEXTSIZE,
             "TEXT_SIZE", "mm",
             true, autoValue, 1.0,
@@ -111,7 +111,7 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
         });
 
         Symbol symbol = new Symbol();
-        dimElement.getTextSizeProperty().addListener(this);
+        dimElement.textsizeProperty.addListener(this);
 
 //        textField.setOnKeyPressed(event -> {
 //            if (event.getCode() == KeyCode.ENTER) {
@@ -148,7 +148,7 @@ public class EditableDoubleListWidgetTester extends Application implements Eleme
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(dimElement.getTextSizeProperty())) {
+        if (newVal.equals(dimElement.textsizeProperty)) {
             sampleText.setText(String.valueOf(dimElement.getTextsize()));
         }
     }
