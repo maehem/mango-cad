@@ -278,3 +278,12 @@
     -fx-font-style: italic;
     -fx-font-weight: bold;
 }
+
+#selection-overview-widget {
+    -fx-padding: 4; /* Right needs extra space for optional scroll bar. */
+    -fx-spacing: 8;
+    -fx-border-color: derive(-fx-base, 10%);
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+}
