@@ -27,6 +27,7 @@ import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.MarkdownUtils;
 import com.maehem.mangocad.view.ViewUtils;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -145,16 +146,35 @@ public class SelectionOverviewWidget extends HBox {
          */
         t.setText(item.getElementName());
         if (item instanceof Wire w) {
+            int PRECISION = 3;
             StringBuilder sb = new StringBuilder(" ####Wire").append(LF);
             sb.append("* on layer *").append(w.getLayerNum()).append("*").append(LF);
-            sb.append(LF);
-            sb.append("*x1:* ").append(w.getX1()).append("    *y1:* ").append(w.getY1()).append(LF);
-            sb.append("*x2:* ").append(w.getX2()).append("    *y2:* ").append(w.getY2()).append(LF);
-            sb.append(LF);
-            sb.append("Line Length: ").append(w.getLength()).append(LF);
-            sb.append(" Line Width: ").append(w.getWidth()).append(LF);
+            sb.append(LF)
+                    .append("*x1:* ")
+                    .append(w.x1Property.getPrecise(PRECISION))
+                    .append("    *y1:* ")
+                    .append(w.y1Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append("*x2:* ")
+                    .append(w.x2Property.getPrecise(PRECISION))
+                    .append("    *y2:* ")
+                    .append(w.y2Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append(LF);
+
+            // Length but pretty
+            StringBuilder pattern = new StringBuilder("#.");
+            for (int i = 0; i < PRECISION; i++) {
+                pattern.append("#");
+            }
+            DecimalFormat df = new DecimalFormat(pattern.toString());
+
+            sb.append("Line Length: ").append(df.format(w.getLength())).append(LF);
+            sb.append(" Line Width: ").append(w.widthProperty.getPrecise(PRECISION)).append(LF);
             sb.append(" Line Style: ").append(w.getStyle().code()).append(LF);
-            sb.append("      Curve: ").append(w.getCurve()).append(LF);
+            sb.append("      Curve: ")
+                    .append(w.curveProperty.getPrecise(PRECISION))
+                    .append(LF);
 
             //t.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
