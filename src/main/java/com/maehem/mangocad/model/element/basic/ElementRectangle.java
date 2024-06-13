@@ -31,7 +31,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty {
+public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty, RotationProperty, GrouprefsProperty {
 
     public static final String ELEMENT_NAME = "rectangle";
 
@@ -63,12 +63,18 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     public final RealValue y1Property = new RealValue(0);
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
-    private final Rotation rotation = new Rotation();
+    private final Rotation rotationProperty = new Rotation();
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
     private int selectedCorner = 0;
     private ElementRectangle snapshot = null;
+
+    public ElementRectangle() {
+        rotationProperty.setAllowSpin(false);
+        rotationProperty.setAllowMirror(true);
+        rotationProperty.setConstrained(true);
+    }
 
     @Override
     public String getElementName() {
@@ -147,15 +153,15 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         }
     }
 
-    public Rotation getRotation() {
-        return rotation;
+    public Rotation getRotationProperty() {
+        return rotationProperty;
     }
 
     /**
-     * @return the rotation
+     * @return the rotationProperty
      */
     public double getRot() {
-        return rotation.getValue();
+        return rotationProperty.getValue();
     }
 
     public void setAllXY(double x1, double y1, double x2, double y2) {
@@ -169,7 +175,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
 
     /**
      * Furnish a list of the polygon points with consideration for the current
-     * rotation/mirror of the shape.
+ rotationProperty/mirror of the shape.
      *
      * @return
      */
@@ -257,12 +263,12 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     }
 
     /**
-     * @param value the rotation to set
+     * @param value the rotationProperty to set
      */
     public void setRot(double value) {
         if (getRot() != value) {
             double oldValue = getRot();
-            this.rotation.setValue(value);
+            this.rotationProperty.setValue(value);
             notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
         }
     }
@@ -330,6 +336,59 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
+    }
+
+    @Override
+    public boolean isSpun() {
+        return false;
+    }
+
+    @Override
+    public void setSpin(boolean value) {
+    }
+
+    @Override
+    public boolean isSpin() {
+        return false;
+    }
+
+    @Override
+    public boolean isSpinAllowed() {
+        return false;
+    }
+
+    @Override
+    public void setAllowSpin(boolean value) {
+
+    }
+
+    @Override
+    public void setMirror(boolean value) {
+        rotationProperty.setMirror(value);
+    }
+
+    @Override
+    public boolean isMirrored() {
+        return rotationProperty.isMirror();
+    }
+
+    @Override
+    public boolean isMirrorAllowed() {
+        return rotationProperty.isAllowMirror();
+    }
+
+    @Override
+    public void setAllowMirror(boolean value) { // Not changable
+    }
+
+    @Override
+    public boolean isConstrained() {
+        return true;
+    }
+
+    @Override
+    public void setConstrained(boolean value) { // Not changable
+
     }
 
 }
