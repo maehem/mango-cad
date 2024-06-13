@@ -27,25 +27,25 @@ import javafx.scene.control.TabPane;
 public class SymbolEditorPropertiesTabPane extends TabPane {
 
     private final SymbolEditorInspectorTab propertiesTab;
-    private final SymbolEditorSelectionTab selectionTab;
+    //private final SymbolEditorSelectionTab selectionTab;
 
     public SymbolEditorPropertiesTabPane() {
-        propertiesTab = new SymbolEditorInspectorTab(null);
+        propertiesTab = new SymbolEditorInspectorTab();
         propertiesTab.setClosable(false);
 
-        selectionTab = new SymbolEditorSelectionTab(null);
-        selectionTab.setClosable(false);
+//        selectionTab = new SymbolEditorSelectionTab(null);
+//        selectionTab.setClosable(false);
 
-        getTabs().addAll(propertiesTab, selectionTab);
+        getTabs().addAll(propertiesTab);
     }
 
     public void setPropertiesItem(Element item) {
         getSelectionModel().select(propertiesTab);
-        propertiesTab.updateContent(item);
+        propertiesTab.updateFocusedElement(item);
     }
 
     protected void setSelectionItems(List<Element> items) {
-        getSelectionModel().select(selectionTab);
-        selectionTab.updateContent(items);
+        getSelectionModel().select(propertiesTab);
+        propertiesTab.updateSelectedItems(items);
     }
 }
