@@ -260,10 +260,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         this.widthProperty.set(width);
     }
 
-    public RealValue getWidthProperty() {
-        return widthProperty;
-    }
-
     /**
      * @return the extwidthProperty
      */
@@ -276,10 +272,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     public void setExtwidth(double extwidth) {
         this.extwidthProperty.set(extwidth);
-    }
-
-    public RealValue getExtWidthProperty() {
-        return extwidthProperty;
     }
 
     /**
@@ -296,10 +288,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         this.extlengthProperty.set(extlength);
     }
 
-    public RealValue getExtLengthProperty() {
-        return extlengthProperty;
-    }
-
     /**
      * @return the extoffsetProperty
      */
@@ -312,10 +300,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     public void setExtoffset(double extoffset) {
         this.extoffsetProperty.set(extoffset);
-    }
-
-    public RealValue getExtOffsetProperty() {
-        return extoffsetProperty;
     }
 
     /**
@@ -332,10 +316,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         this.textsizeProperty.set(textsize);
     }
 
-    public RealValue getTextSizeProperty() {
-        return textsizeProperty;
-    }
-
     /**
      * @return the textratioProperty
      */
@@ -348,10 +328,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     public void setTextratio(int textratio) {
         this.textratioProperty.set(textratio);
-    }
-
-    public IntValue getTextRatioProperty() {
-        return textratioProperty;
     }
 
     /**
@@ -368,10 +344,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
         this.unitProperty.set(unit);
     }
 
-    public UnitValue getUnitProperty() {
-        return unitProperty;
-    }
-
     /**
      * @return the precisionProperty
      */
@@ -384,10 +356,6 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     public void setPrecision(int precision) {
         this.precisionProperty.set(precision);
-    }
-
-    public IntValue getPrecisionProperty() {
-        return precisionProperty;
     }
 
     /**
