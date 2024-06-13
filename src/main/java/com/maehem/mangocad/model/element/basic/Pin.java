@@ -57,9 +57,9 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     public static final String SWAPLEVEL_KEY = "swaplevel"; // TODO Use PinField enum.
     public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
-    private final StringValue nameProperty = new StringValue("A");
-    private final RealValue xProperty = new RealValue(0);
-    private final RealValue yProperty = new RealValue(0);
+    public final StringValue nameProperty = new StringValue("A");
+    public final RealValue xProperty = new RealValue(0);
+    public final RealValue yProperty = new RealValue(0);
     private boolean selected = false;
     private Pin snapshot2 = null;
 
