@@ -288,3 +288,12 @@
     -fx-border-width: 1;
     -fx-border-radius: 2;
 }
+
+#selection-overview-widget-highlight {
+    -fx-padding: 4; /* Right needs extra space for optional scroll bar. */
+    -fx-spacing: 8;
+    -fx-border-color: -fx-accent;
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-border-radius: 2;
+}
