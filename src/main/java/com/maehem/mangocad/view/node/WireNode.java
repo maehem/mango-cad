@@ -198,7 +198,7 @@ public class WireNode extends ViewNode implements ElementListener {
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         //Wire.Field f = (Wire.Field) field;
 
-        LOGGER.log(Level.SEVERE,
+        LOGGER.log(Level.FINE,
                 "Wire properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
