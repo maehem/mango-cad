@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
@@ -35,7 +36,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
 
     public static final String ELEMENT_NAME = "circle";
 
-    public enum Field {
+    public enum Field implements ElementField {
         //X("x", Double.class), Y("y", Double.class),
         //SELECTED("selected", Boolean.class),
         RADIUS("raduis", Double.class),
@@ -49,10 +50,12 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
