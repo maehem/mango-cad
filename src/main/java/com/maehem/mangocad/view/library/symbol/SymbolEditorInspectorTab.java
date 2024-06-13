@@ -54,25 +54,6 @@ public class SymbolEditorInspectorTab extends Tab { // TODO: Move to view pkg.
         focusedPane.animatedProperty().set(false);
         selectionPane.animatedProperty().set(false);
 
-//        // Doesn't do anything?
-//        // Make sure the accordion can never be completely collapsed
-//        // Lifted from StackOverflow:
-//        // https://stackoverflow.com/questions/10403838/prevent-an-accordion-in-javafx-from-collapsing
-//        accordion.expandedPaneProperty().addListener((ObservableValue<? extends TitledPane> observable, TitledPane oldPane, TitledPane newPane) -> {
-//            Boolean expand = true; // This value will change to false if there's (at least) one pane that is in "expanded" state, so we don't have to expand anything manually
-//            for (TitledPane pane : accordion.getPanes()) {
-//                if (pane.isExpanded()) {
-//                    expand = false;
-//                }
-//            }
-//            /* Here we already know whether we need to expand the old pane again */
-//            if ((expand == true) && (oldPane != null)) {
-//                Platform.runLater(() -> {
-//                    accordion.setExpandedPane(oldPane);
-//                });
-//            }
-//        });
-
         propertyNodes.getChildren().addAll(focusedPane, selectionPane);
     }
 
