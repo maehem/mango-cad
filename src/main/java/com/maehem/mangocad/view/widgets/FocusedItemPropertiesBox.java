@@ -18,6 +18,8 @@ package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.basic.Dimension;
+import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
@@ -89,8 +91,8 @@ public class FocusedItemPropertiesBox extends VBox {
         switch (element) {
             case Pin p -> {
                 // XY location
-                StringValueWidget nw = new StringValueWidget(p.getNameProperty(), "PIN_NAME");
-                LocationXYWidget lxy = new LocationXYWidget(p.getXProperty(), p.getYProperty(), "PIN_LOCATION");
+                StringValueWidget nw = new StringValueWidget(p.nameProperty, "PIN_NAME");
+                LocationXYWidget lxy = new LocationXYWidget(p.xProperty, p.yProperty, "PIN_LOCATION");
                 PinRotationToggleWidget prw = new PinRotationToggleWidget(p);
                 PinDirectionWidget pdw = new PinDirectionWidget(p);
                 PinSwapLevelWidget psw = new PinSwapLevelWidget(p);
@@ -103,10 +105,8 @@ public class FocusedItemPropertiesBox extends VBox {
             case Wire w -> {
                 LocationXYWidget lxy1 = new LocationXYWidget(w.x1Property, w.y1Property, "LINE_LOCATION_1");
                 LocationXYWidget lxy2 = new LocationXYWidget(w.x2Property, w.y2Property, "LINE_LOCATION_2");
-                //LineBendStyleWidget lbsW = new LineBendStyleWidget(w);
                 LineWidthWidget lwW = new LineWidthWidget(w);
                 LineStyleWidget lsW = new LineStyleWidget(w);
-                //MiterRadiusWidget mrW = new MiterRadiusWidget(w);
 
                 getChildren().addAll(lxy1, lxy2, lwW, lsW);
             }
@@ -127,41 +127,41 @@ public class FocusedItemPropertiesBox extends VBox {
                 DimensionTypeToggleWidget dimTypeWidget = new DimensionTypeToggleWidget(d, "DIM_TYPE");
                 TextSizeWidget textSizeWidget = new TextSizeWidget(d, "TEXT_SIZE");
                 IntegerListWidget textRatioWidget = new IntegerListWidget(
-                        d.getTextRatioProperty(), ElementText.Field.RATIO,
+                        d.textratioProperty, ElementText.Field.RATIO,
                         "TEXT_RATIO", "%",
                         ElementText.RATIO_DEFAULT_OPTIONS);
                 GridUnitListWidget unitWidget = new GridUnitListWidget(
-                        d.getUnitProperty(), "UNIT", GridUnitProperty.Unit.MM);
+                        d.unitProperty, "UNIT", GridUnitProperty.Unit.MM);
                 IntegerListWidget precisionWidget = new IntegerListWidget(
-                        d.getPrecisionProperty(), Dimension.Field.PRECISION,
+                        d.precisionProperty, Dimension.Field.PRECISION,
                         "DIM_PRECISION", null,
                         Dimension.PRECISION_OPTIONS);
                 // Show
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
-                        d.getWidthProperty(), WidthProperty.Field.WIDTH,
+                        d.widthProperty, WidthProperty.Field.WIDTH,
                         "LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext. Width (with auto)
                 RealValueListWidget2 extWidthWidget = new RealValueListWidget2(
-                        d.getExtWidthProperty(), WidthProperty.Field.WIDTH,
+                        d.extwidthProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
-                        d.getWidthProperty(), 1.0,
+                        d.widthProperty, 1.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Length (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extLengthWidget = new RealValueListWidget2(
-                        d.getExtLengthProperty(), WidthProperty.Field.WIDTH,
+                        d.extlengthProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_LENGTH", null, ToolModeWidget.EDITABLE,
-                        d.getWidthProperty(), 10.0,
+                        d.widthProperty, 10.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Offset (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extOffsetWidget = new RealValueListWidget2(
-                        d.getExtOffsetProperty(), WidthProperty.Field.WIDTH,
+                        d.extoffsetProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_OFFSET", null, ToolModeWidget.EDITABLE,
-                        d.getWidthProperty(), 10.0,
+                        d.widthProperty, 10.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
                 getChildren().addAll(
@@ -170,6 +170,34 @@ public class FocusedItemPropertiesBox extends VBox {
                         unitWidget, precisionWidget,
                         lineWidthWidget,
                         extWidthWidget, extLengthWidget, extOffsetWidget
+                );
+            }
+            case ElementRectangle er -> {
+                LocationXYWidget lxy1 = new LocationXYWidget(er.x1Property, er.y1Property, "LINE_LOCATION_1");
+                LocationXYWidget lxy2 = new LocationXYWidget(er.x2Property, er.y2Property, "LINE_LOCATION_2");
+                RotationWidget rotW = new RotationWidget(er, "ROTATION");
+
+                getChildren().addAll(
+                        lxy1, lxy2, rotW
+                );
+            }
+            case ElementCircle ec -> {
+                LocationXYWidget lxy = new LocationXYWidget(ec.xProperty, ec.yProperty, "LOCATION");
+                RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
+                        ec.widthProperty, ElementCircle.Field.WIDTH,
+                        "CIRCLE_WIDTH", null, ToolModeWidget.EDITABLE,
+                        null, 1.0,
+                        Wire.WIDTH_DEFAULT_OPTIONS
+                );
+                RealValueListWidget2 radiusWidget = new RealValueListWidget2(
+                        ec.widthProperty, ElementCircle.Field.RADIUS,
+                        "CIRCLE_RADIUS", null, ToolModeWidget.EDITABLE,
+                        null, 10.0,
+                        Wire.WIDTH_DEFAULT_OPTIONS
+                );
+
+                getChildren().addAll(
+                        lxy, lineWidthWidget, radiusWidget
                 );
             }
             default -> {
