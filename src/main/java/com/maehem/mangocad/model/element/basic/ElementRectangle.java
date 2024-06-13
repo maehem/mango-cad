@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
@@ -58,10 +59,10 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     }
 
     private int layer;
-    private double x1;
-    private double y1;
-    private double x2;
-    private double y2;
+    public final RealValue x1Property = new RealValue(0);
+    public final RealValue y1Property = new RealValue(0);
+    public final RealValue x2Property = new RealValue(0);
+    public final RealValue y2Property = new RealValue(0);
     private final Rotation rotation = new Rotation();
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -78,17 +79,17 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @return the x1
      */
     public double getX1() {
-        return x1;
+        return x1Property.get();
     }
 
     /**
      * @param x1 the x1 to set
      */
     public void setX1(double x1) {
-        if (this.x1 != x1) {
-            double oldVal = this.x1;
-            this.x1 = x1;
-            notifyListeners(ElementRectangle.Field.X1, oldVal, this.x1);
+        if (getX1() != x1) {
+            double oldVal = getX1();
+            x1Property.set(x1);
+            notifyListeners(ElementRectangle.Field.X1, oldVal, getX1());
         }
     }
 
@@ -96,17 +97,17 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @return the y1
      */
     public double getY1() {
-        return y1;
+        return y1Property.get();
     }
 
     /**
      * @param y1 the y1 to set
      */
     public void setY1(double y1) {
-        if (this.y1 != y1) {
-            double oldVal = this.y1;
-            this.y1 = y1;
-            notifyListeners(ElementRectangle.Field.Y1, oldVal, this.y1);
+        if (getY1() != y1) {
+            double oldVal = getY1();
+            y1Property.set(y1);
+            notifyListeners(ElementRectangle.Field.Y1, oldVal, getY1());
         }
     }
 
@@ -114,17 +115,17 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @return the x2
      */
     public double getX2() {
-        return x2;
+        return x2Property.get();
     }
 
     /**
      * @param x2 the x2 to set
      */
     public void setX2(double x2) {
-        if (this.x2 != x2) {
-            double oldVal = this.x2;
-            this.x2 = x2;
-            notifyListeners(ElementRectangle.Field.X2, oldVal, this.x2);
+        if (getX2() != x2) {
+            double oldVal = getX2();
+            x2Property.set(x2);
+            notifyListeners(ElementRectangle.Field.X2, oldVal, getX2());
         }
     }
 
@@ -132,17 +133,17 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @return the y2
      */
     public double getY2() {
-        return y2;
+        return y2Property.get();
     }
 
     /**
      * @param y2 the y2 to set
      */
     public void setY2(double y2) {
-        if (this.y2 != y2) {
-            double oldVal = this.y2;
-            this.y2 = y2;
-            notifyListeners(ElementRectangle.Field.Y2, oldVal, this.y2);
+        if (getY2() != y2) {
+            double oldVal = getY2();
+            y2Property.set(y2);
+            notifyListeners(ElementRectangle.Field.Y2, oldVal, getY2());
         }
     }
 
@@ -158,10 +159,10 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     }
 
     public void setAllXY(double x1, double y1, double x2, double y2) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+        x1Property.set(x1);
+        y1Property.set(y1);
+        x2Property.set(x2);
+        y2Property.set(y2);
 
         notifyListeners(ElementRectangle.Field.ALL_XY, null, null);
     }
@@ -174,8 +175,8 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      */
     public double[] getPoints() {
         double points[] = {0, 0, 0, 0, 0, 0, 0, 0};
-        double w = Math.abs(x1 - x2);
-        double h = Math.abs(y1 - y2);
+        double w = Math.abs(getX1() - getX2());
+        double h = Math.abs(getY1() - getY2());
 
         switch ((int) getRot()) {
             case 90 -> {
@@ -231,7 +232,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
                 points[7] = getY2();
             }
         }
-        LOGGER.log(Level.SEVERE, "Points[{8}]: {0},{1}  {2},{3}  {4},{5}  {6},{7}",
+        LOGGER.log(Level.FINER, "Rectangle Points[{8}]: {0},{1}  {2},{3}  {4},{5}  {6},{7}",
                 new Object[]{
                     points[0], points[1],
                     points[2], points[3],
