@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.StringValue;
 import com.maehem.mangocad.model.element.ElementField;
@@ -115,12 +116,12 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     private int layer;
     public final RealValue xProperty = new RealValue(0);
     public final RealValue yProperty = new RealValue(0);
-    private double size = 1.778; // 0.7 inch
+    public final RealValue sizeProperty = new RealValue(1.778, 0.000001, 100000); // 0.7 inch
     private boolean selected = false;
     private ElementText snapshot = null;
 
     private TextFont font = TextFont.PROPORTIONAL;
-    private int ratio = 8;
+    public final IntValue ratioProperty = new IntValue(8, 0, 31);
     private final Rotation rotation = new Rotation();
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private int distance = 50;  // Line to line distance
@@ -183,7 +184,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      * @return the size
      */
     public double getSize() {
-        return size;
+        return sizeProperty.get();
     }
 
     /**
@@ -191,9 +192,9 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     public void setSize(double size) {
         if (getSize() != size) {
-            double oldValue = this.size;
-            this.size = size;
-            notifyListeners(ElementText.Field.SIZE, oldValue, this.size);
+            double oldValue = getSize();
+            sizeProperty.set(size);
+            notifyListeners(ElementText.Field.SIZE, oldValue, getSize());
         }
     }
 
@@ -219,7 +220,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      * @return the ratio
      */
     public int getRatio() {
-        return ratio;
+        return ratioProperty.get();
     }
 
     /**
@@ -229,12 +230,9 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     public void setRatio(int ratio) {
         if (getRatio() != ratio) {
-            if (ratio > 31) {
-                ratio = 31;
-            }
-            double oldValue = this.ratio;
-            this.ratio = ratio;
-            notifyListeners(ElementText.Field.RATIO, oldValue, this.ratio);
+            double oldValue = getRatio();
+            ratioProperty.set(ratio);
+            notifyListeners(ElementText.Field.RATIO, oldValue, getRatio());
         }
     }
 
@@ -472,9 +470,9 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         copy.setFont(font);
         copy.setLayerNum(getLayerNum());
         copy.setMirror(isMirrored());
-        copy.setRatio(ratio);
+        copy.setRatio(getRatio());
         copy.setRot(getRot());
-        copy.setSize(size);
+        copy.setSize(getSize());
         copy.setSpin(isSpin());
         copy.setValue(getValue());
 
