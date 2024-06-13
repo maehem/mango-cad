@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
@@ -59,10 +60,12 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     }
 
     private int layer;
-    private double x;
-    private double y;
-    private double radius = 2.54;
-    private double width = 0.254;
+    public final RealValue xProperty = new RealValue(0);
+    public final RealValue yProperty = new RealValue(0);
+
+    public final RealValue radiusProperty = new RealValue(2.54);
+    public final RealValue widthProperty = new RealValue(0.254);
+
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
@@ -77,16 +80,18 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      * @return the radius
      */
     public double getRadius() {
-        return radius;
+        return radiusProperty.get();
     }
 
     /**
      * @param radius the radius to set
      */
     public void setRadius(double radius) {
-        double oldValue = this.radius;
-        this.radius = radius;
-        notifyListeners(ElementCircle.Field.RADIUS, oldValue, this.radius);
+        if (getRadius() != radius) {
+            double oldValue = getRadius();
+            radiusProperty.set(radius);
+            notifyListeners(ElementCircle.Field.RADIUS, oldValue, getRadius());
+        }
     }
 
     /**
@@ -94,7 +99,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public double getWidth() {
-        return width;
+        return widthProperty.get();
     }
 
     /**
@@ -102,9 +107,11 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public void setWidth(double width) {
-        double oldValue = this.width;
-        this.width = width;
-        notifyListeners(ElementCircle.Field.WIDTH, oldValue, this.width);
+        if (getWidth() != width) {
+            double oldValue = getWidth();
+            widthProperty.set(width);
+            notifyListeners(ElementCircle.Field.WIDTH, oldValue, getWidth());
+        }
     }
 
     /**
@@ -112,7 +119,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public double getX() {
-        return x;
+        return xProperty.get();
     }
 
     /**
@@ -120,9 +127,11 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public void setX(double x) {
-        double oldValue = this.x;
-        this.x = x;
-        notifyListeners(LocationXYProperty.Field.X, oldValue, this.x);
+        if (getX() != x) {
+            double oldValue = getX();
+            xProperty.set(x);
+            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
+        }
     }
 
     /**
@@ -130,7 +139,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public double getY() {
-        return y;
+        return yProperty.get();
     }
 
     /**
@@ -138,9 +147,11 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public void setY(double y) {
-        double oldValue = this.y;
-        this.y = y;
-        notifyListeners(LocationXYProperty.Field.Y, oldValue, this.y);
+        if (getY() != y) {
+            double oldValue = getY();
+            yProperty.set(y);
+            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
+        }
     }
 
     /**
