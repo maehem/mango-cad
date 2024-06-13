@@ -280,7 +280,7 @@ public class TextNode extends ViewNode implements ElementListener {
     }
 
     private void updateSpin() {
-        Rotation rotation = textElement.getRotation();
+        Rotation rotation = textElement.getRotationProperty();
         double rot = rotation.getValue();
         boolean mir = rotation.isMirror();
         //boolean spin = rotation.isSpin();
@@ -326,7 +326,7 @@ public class TextNode extends ViewNode implements ElementListener {
         double textWidth = getTextWidth();
 
         double rot = textElement.getRot();
-        boolean mir = textElement.getRotation().isMirror();
+        boolean mir = textElement.getRotationProperty().isMirror();
         boolean spun = textElement.isSpun();
 
         double tw2 = textWidth / 2.0;

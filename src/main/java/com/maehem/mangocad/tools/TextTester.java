@@ -116,8 +116,8 @@ public class TextTester extends Application {
         et.setLayerNum(21);
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
-        et.getRotation().setMirror(false);
-        et.getRotation().setSpin(false);
+        et.getRotationProperty().setMirror(false);
+        et.getRotationProperty().setSpin(false);
 
         updateContent();
 

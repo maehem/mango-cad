@@ -123,8 +123,8 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
     }
 
     @Override
-    public Rotation getRotation() {
-        return rectangle.getRotation();
+    public Rotation getRotationProperty() {
+        return rectangle.getRotationProperty();
     }
 
     @Override
@@ -164,17 +164,17 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
 
     @Override
     public void setMirror(boolean value) {
-        rectangle.getRotation().setMirror(value);
+        rectangle.getRotationProperty().setMirror(value);
     }
 
     @Override
     public boolean isMirrored() {
-        return rectangle.getRotation().isMirror();
+        return rectangle.getRotationProperty().isMirror();
     }
 
     @Override
     public boolean isMirrorAllowed() {
-        return rectangle.getRotation().isAllowMirror(); // Should be true.
+        return rectangle.getRotationProperty().isAllowMirror(); // Should be true.
     }
 
     @Override
