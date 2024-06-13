@@ -118,8 +118,8 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
-    private double width = 0.254;
-    private double curve = 0.0;
+    public final RealValue widthProperty = new RealValue(0.254);
+    public final RealValue curveProperty = new RealValue(0.0);
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
     private WireCap cap = WireCap.ROUND;
@@ -227,7 +227,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      */
     @Override
     public double getWidth() {
-        return width;
+        return widthProperty.get();
     }
 
     /**
@@ -236,9 +236,9 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     @Override
     public void setWidth(double width) {
         if (getWidth() != width) {
-            double oldVal = this.width;
-            this.width = width;
-            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
+            double oldVal = getWidth();
+            widthProperty.set(width);
+            notifyListeners(WidthProperty.Field.WIDTH, oldVal, getWidth());
         }
     }
 
@@ -247,7 +247,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      */
     @Override
     public double getCurve() {
-        return curve;
+        return curveProperty.get();
     }
 
     /**
@@ -256,9 +256,9 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     @Override
     public void setCurve(double curve) {
         if (getCurve() != curve) {
-            double oldVal = this.curve;
-            this.curve = curve;
-            notifyListeners(CurveProperty.Field.CURVE, oldVal, this.curve);
+            double oldVal = getCurve();
+            curveProperty.set(curve);
+            notifyListeners(CurveProperty.Field.CURVE, oldVal, getCurve());
         }
     }
 
