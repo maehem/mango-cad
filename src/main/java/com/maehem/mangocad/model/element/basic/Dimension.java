@@ -94,21 +94,21 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     }
 
     private int layer;
-    private double x1;
-    private double y1;
-    private double x2;
-    private double y2;
-    private double x3;
-    private double y3;
+    public RealValue x1Property = new RealValue(0);
+    public RealValue y1Property = new RealValue(0);
+    public RealValue x2Property = new RealValue(0);
+    public RealValue y2Property = new RealValue(0);
+    public RealValue x3Property = new RealValue(0);
+    public RealValue y3Property = new RealValue(0);
     private DimensionType dtype = DimensionType.PARALLEL;
-    private final RealValue width = new RealValue(0.13, 0.0, 200.0);
-    private final RealValue extwidth = new RealValue(0, 0.0, 200.0);
-    private final RealValue extlength = new RealValue(0, 0.0, 200.0);
-    private final RealValue extoffset = new RealValue(0, 0.0, 200.0);
-    private final RealValue textsize = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from  a sample ElementText
-    private final IntValue textratio = new IntValue(8, 0, 31);
-    private final UnitValue unit = new UnitValue(GridUnitProperty.Unit.MM);
-    private final IntValue precision = new IntValue(2, 0, 6);
+    public final RealValue widthProperty = new RealValue(0.13, 0.0, 200.0);
+    public final RealValue extwidthProperty = new RealValue(0, 0.0, 200.0);
+    public final RealValue extlengthProperty = new RealValue(0, 0.0, 200.0);
+    public final RealValue extoffsetProperty = new RealValue(0, 0.0, 200.0);
+    public final RealValue textsizeProperty = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from  a sample ElementText
+    public final IntValue textratioProperty = new IntValue(8, 0, 31);
+    public final UnitValue unitProperty = new UnitValue(GridUnitProperty.Unit.MM);
+    public final IntValue precisionProperty = new IntValue(2, 0, 6);
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -126,84 +126,108 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      * @return the x1
      */
     public double getX1() {
-        return x1;
+        return x1Property.get();
     }
 
     /**
      * @param x1 the x1 to set
      */
     public void setX1(double x1) {
-        this.x1 = x1;
+        if (getX1() != x1) {
+            double oldVal = getX1();
+            x1Property.set(x1);
+            notifyListeners(Dimension.Field.X1, oldVal, getX1());
+        }
     }
 
     /**
      * @return the y1
      */
     public double getY1() {
-        return y1;
+        return y1Property.get();
     }
 
     /**
      * @param y1 the y1 to set
      */
     public void setY1(double y1) {
-        this.y1 = y1;
+        if (getY1() != y1) {
+            double oldVal = getY1();
+            y1Property.set(y1);
+            notifyListeners(Dimension.Field.Y1, oldVal, getY1());
+        }
     }
 
     /**
      * @return the x2
      */
     public double getX2() {
-        return x2;
+        return x2Property.get();
     }
 
     /**
      * @param x2 the x2 to set
      */
     public void setX2(double x2) {
-        this.x2 = x2;
+        if (getX2() != x2) {
+            double oldVal = getX2();
+            x2Property.set(x2);
+            notifyListeners(Dimension.Field.X2, oldVal, getX2());
+        }
     }
 
     /**
      * @return the y2
      */
     public double getY2() {
-        return y2;
+        return y2Property.get();
     }
 
     /**
      * @param y2 the y2 to set
      */
     public void setY2(double y2) {
-        this.y2 = y2;
+        if (getY2() != y2) {
+            double oldVal = getY2();
+            y2Property.set(y2);
+            notifyListeners(Dimension.Field.Y2, oldVal, getY2());
+        }
     }
 
     /**
      * @return the x3
      */
     public double getX3() {
-        return x3;
+        return x3Property.get();
     }
 
     /**
      * @param x3 the x3 to set
      */
     public void setX3(double x3) {
-        this.x3 = x3;
+        if (getX3() != x3) {
+            double oldVal = getX3();
+            x3Property.set(x3);
+            notifyListeners(Dimension.Field.X3, oldVal, getX3());
+        }
     }
 
     /**
      * @return the y3
      */
     public double getY3() {
-        return y3;
+        return y3Property.get();
     }
 
     /**
      * @param y3 the y3 to set
      */
     public void setY3(double y3) {
-        this.y3 = y3;
+        if (getY3() != y3) {
+            double oldVal = getY3();
+            y3Property.set(y3);
+            notifyListeners(Dimension.Field.Y3, oldVal, getY3());
+        }
     }
 
     /**
@@ -221,149 +245,149 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     }
 
     /**
-     * @return the width
+     * @return the widthProperty
      */
     @Override
     public double getWidth() {
-        return width.get();
+        return widthProperty.get();
     }
 
     /**
-     * @param width the width to set
+     * @param width the widthProperty to set
      */
     @Override
     public void setWidth(double width) {
-        this.width.set(width);
+        this.widthProperty.set(width);
     }
 
     public RealValue getWidthProperty() {
-        return width;
+        return widthProperty;
     }
 
     /**
-     * @return the extwidth
+     * @return the extwidthProperty
      */
     public double getExtwidth() {
-        return extwidth.get();
+        return extwidthProperty.get();
     }
 
     /**
-     * @param extwidth the extwidth to set
+     * @param extwidth the extwidthProperty to set
      */
     public void setExtwidth(double extwidth) {
-        this.extwidth.set(extwidth);
+        this.extwidthProperty.set(extwidth);
     }
 
     public RealValue getExtWidthProperty() {
-        return extwidth;
+        return extwidthProperty;
     }
 
     /**
-     * @return the extlength
+     * @return the extlengthProperty
      */
     public double getExtlength() {
-        return extlength.get();
+        return extlengthProperty.get();
     }
 
     /**
-     * @param extlength the extlength to set
+     * @param extlength the extlengthProperty to set
      */
     public void setExtlength(double extlength) {
-        this.extlength.set(extlength);
+        this.extlengthProperty.set(extlength);
     }
 
     public RealValue getExtLengthProperty() {
-        return extlength;
+        return extlengthProperty;
     }
 
     /**
-     * @return the extoffset
+     * @return the extoffsetProperty
      */
     public double getExtoffset() {
-        return extoffset.get();
+        return extoffsetProperty.get();
     }
 
     /**
-     * @param extoffset the extoffset to set
+     * @param extoffset the extoffsetProperty to set
      */
     public void setExtoffset(double extoffset) {
-        this.extoffset.set(extoffset);
+        this.extoffsetProperty.set(extoffset);
     }
 
     public RealValue getExtOffsetProperty() {
-        return extoffset;
+        return extoffsetProperty;
     }
 
     /**
-     * @return the textsize
+     * @return the textsizeProperty
      */
     public double getTextsize() {
-        return textsize.get();
+        return textsizeProperty.get();
     }
 
     /**
-     * @param textsize the textsize to set
+     * @param textsize the textsizeProperty to set
      */
     public void setTextsize(double textsize) {
-        this.textsize.set(textsize);
+        this.textsizeProperty.set(textsize);
     }
 
     public RealValue getTextSizeProperty() {
-        return textsize;
+        return textsizeProperty;
     }
 
     /**
-     * @return the textratio
+     * @return the textratioProperty
      */
     public int getTextratio() {
-        return textratio.get();
+        return textratioProperty.get();
     }
 
     /**
-     * @param textratio the textratio to set
+     * @param textratio the textratioProperty to set
      */
     public void setTextratio(int textratio) {
-        this.textratio.set(textratio);
+        this.textratioProperty.set(textratio);
     }
 
     public IntValue getTextRatioProperty() {
-        return textratio;
+        return textratioProperty;
     }
 
     /**
-     * @return the unit
+     * @return the unitProperty
      */
     public Unit getUnit() {
-        return unit.get();
+        return unitProperty.get();
     }
 
     /**
-     * @param unit the unit to set
+     * @param unit the unitProperty to set
      */
     public void setUnit(Unit unit) {
-        this.unit.set(unit);
+        this.unitProperty.set(unit);
     }
 
     public UnitValue getUnitProperty() {
-        return unit;
+        return unitProperty;
     }
 
     /**
-     * @return the precision
+     * @return the precisionProperty
      */
     public int getPrecision() {
-        return precision.get();
+        return precisionProperty.get();
     }
 
     /**
-     * @param precision the precision to set
+     * @param precision the precisionProperty to set
      */
     public void setPrecision(int precision) {
-        this.precision.set(precision);
+        this.precisionProperty.set(precision);
     }
 
     public IntValue getPrecisionProperty() {
-        return precision;
+        return precisionProperty;
     }
 
     /**
