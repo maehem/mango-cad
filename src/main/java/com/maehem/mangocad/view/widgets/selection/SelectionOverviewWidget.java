@@ -36,6 +36,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Window;
 
 /**
  *
@@ -124,29 +125,30 @@ public class SelectionOverviewWidget extends HBox {
         }
     }
 
+    //For fixing tooltip stage pop issue:
+    public class FixedTooltip extends Tooltip {
+
+        public FixedTooltip() {
+            super();
+        }
+
+        @Override
+        protected void show() {
+            Window owner = getOwnerWindow();
+            if (owner.isFocused()) {
+                super.show();
+            }
+        }
+
+    }
+
     private Tooltip generateTooltip(Element item) {
-        Tooltip t = new Tooltip();
+        Tooltip t = new FixedTooltip();
+        int PRECISION = 3;
+        DecimalFormat df = new DecimalFormat("#");
 
-        /*
-        For fixing tooltip stage pop issue:
-                public class FixedTooltip extends Tooltip {
-
-                    public FixedTooltip(String string) {
-                        super(string);
-                    }
-
-                    @Override
-                    protected void show() {
-                        Window owner = getOwnerWindow();
-                        if (owner.isFocused())
-                            super.show();
-                    }
-
-                }
-         */
         t.setText(item.getElementName());
         if (item instanceof Wire w) {
-            int PRECISION = 3;
             StringBuilder sb = new StringBuilder(" ####Wire").append(LF);
             sb.append("* on layer *").append(w.getLayerNum()).append("*").append(LF);
             sb.append(LF)
@@ -167,19 +169,115 @@ public class SelectionOverviewWidget extends HBox {
             for (int i = 0; i < PRECISION; i++) {
                 pattern.append("#");
             }
-            DecimalFormat df = new DecimalFormat(pattern.toString());
 
-            sb.append("Line Length: ").append(df.format(w.getLength())).append(LF);
-            sb.append(" Line Width: ").append(w.widthProperty.getPrecise(PRECISION)).append(LF);
-            sb.append(" Line Style: ").append(w.getStyle().code()).append(LF);
-            sb.append("      Curve: ")
-                    .append(w.curveProperty.getPrecise(PRECISION))
-                    .append(LF);
+            sb.append("Line Length: ").append(df.format(w.getLength())).append(LF)
+                    .append(" Line Width: ").append(w.widthProperty.getPrecise(PRECISION)).append(LF)
+                    .append(" Line Style: ").append(w.getStyle().code()).append(LF)
+                    .append("      Curve: ").append(w.curveProperty.getPrecise(PRECISION)).append(LF);
 
-            //t.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
-
+        } else if (item instanceof Pin p) {
+            StringBuilder sb = new StringBuilder(" ####Pin").append(LF);
+                    sb.append("Name:  **").append(p.nameProperty.get()).append("** ")
+                    .append(LF)
+                    .append(LF)
+                    .append("*x:* ")
+                    .append(p.xProperty.getPrecise(PRECISION))
+                    .append("    *y:* ")
+                    .append(p.yProperty.getPrecise(PRECISION))
+                    .append(LF)
+                            .append("*Rotation:* ").append(df.format(p.getRot()))
+                            .append(LF)
+                            .append("*Function:* ").append(p.getFunction().code()).append(LF)
+                            .append("*Direction:* ").append(p.getDirection().code()).append(LF)
+                            .append("*Length:* ").append(p.getLength().code()).append(LF)
+                            .append("*Swap Level:* ").append(String.valueOf(p.getSwapLevel())).append(LF)                            ;
+            t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
+            t.setText(null);
+        } else if (item instanceof Dimension d) {
+            StringBuilder sb = new StringBuilder(" ####Dimension").append(LF);
+            sb.append(LF)
+                    .append("*x1:* ")
+                    .append(d.x1Property.getPrecise(PRECISION))
+                    .append("    *y1:* ")
+                    .append(d.y1Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append("*x2:* ")
+                    .append(d.x2Property.getPrecise(PRECISION))
+                    .append("    *y2:* ")
+                    .append(d.y2Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append("*x3:* ")
+                    .append(d.x3Property.getPrecise(PRECISION))
+                    .append("    *y3:* ")
+                    .append(d.y3Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append(LF)
+                    .append("*Width:* ").append(d.widthProperty.getPrecise(PRECISION)).append(LF)
+                    .append("*Units:* ").append(d.getUnit().code()).append(LF)
+                    .append("*Ext. Width:* ").append(d.extwidthProperty.getPrecise(PRECISION)).append(LF)
+                    .append("*Ext. Length:* ").append(d.extlengthProperty.getPrecise(PRECISION)).append(LF)
+                    .append("*Ext. Offset:* ").append(d.extoffsetProperty.getPrecise(PRECISION)).append(LF)
+                    .append(LF)
+                    .append("*Text Size:* ").append(d.textsizeProperty.getPrecise(PRECISION)).append(LF)
+                    .append("*Text Ratio:* ").append(d.textratioProperty.get())
+                    .append(LF);
+            t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
+            t.setText(null);
+        } else if (item instanceof ElementCircle c) {
+            StringBuilder sb = new StringBuilder(" ####Pin").append(LF);
+            sb.append(LF)
+                    .append(LF)
+                    .append("*x:* ")
+                    .append(c.xProperty.getPrecise(PRECISION))
+                    .append("    *y:* ")
+                    .append(c.yProperty.getPrecise(PRECISION))
+                    .append(LF)
+                    .append("*Radius:* ").append(c.radiusProperty.getPrecise(PRECISION)).append(LF)
+                    .append("*Width:* ").append(c.widthProperty.getPrecise(PRECISION)).append(LF);
+            t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
+            t.setText(null);
+        } else if (item instanceof ElementRectangle er) {
+            StringBuilder sb = new StringBuilder(" ####Dimension").append(LF);
+            sb.append("* on layer *").append(er.getLayerNum()).append("*").append(LF);
+            sb.append(LF)
+                    .append("*x1:* ")
+                    .append(er.x1Property.getPrecise(PRECISION))
+                    .append("    *y1:* ")
+                    .append(er.y1Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append("*x2:* ")
+                    .append(er.x2Property.getPrecise(PRECISION))
+                    .append("    *y2:* ")
+                    .append(er.y2Property.getPrecise(PRECISION))
+                    .append(LF)
+                    .append(LF)
+                    .append("*Rotation:* ").append(df.format(er.getRot())).append(LF);
+            t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
+            t.setText(null);
+        } else if (item instanceof ElementText et) {
+            StringBuilder sb = new StringBuilder(" ####Text").append(LF);
+            sb.append("* on layer *").append(et.getLayerNum()).append("*").append(LF);
+            sb.append("Value:  **").append(et.valueProperty.get()).append("** ")
+                    .append(LF)
+                    .append(LF)
+                    .append("*x:* ")
+                    .append(et.xProperty.getPrecise(PRECISION))
+                    .append("    *y:* ")
+                    .append(et.yProperty.getPrecise(PRECISION))
+                    .append(LF)
+                    .append("*Rotation:* ").append(df.format(et.getRot())).append(LF)
+                    .append("*Constrained:* ").append((et.isConstrained()?"YES":"NO")).append(LF)
+                    .append("*Mirror:* ").append((et.isMirrored()?"YES":"NO")).append(LF)
+                    .append("*Spin:* ").append((et.isSpin()?"YES":"NO")).append(LF).append(LF)
+                    .append("*Size:* ").append(et.sizeProperty.getPrecise(PRECISION)).append(LF)
+                    .append("*Text Ratio:* ").append(et.ratioProperty.get()).append(LF)
+                    .append("*Align:* ").append(et.getAlign().code()).append(LF)
+                    .append("*Font:* ").append(et.getFont().code())
+                    .append("*Line Distance:* ").append(et.getDistance()).append(LF);
+            t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
+            t.setText(null);
         }
 
         return t;
