@@ -60,9 +60,10 @@ public class SelectionOverviewWidget extends HBox {
     private final Label valueLabel = new Label();
     private final Label nameLabel = new Label();
     private final Label layerlabel = new Label();
+    public final Element element;
 
     public SelectionOverviewWidget(Element item) {
-        setId("selection-overview-widget");
+        this.element = item;
         nameLabel.setMinWidth(NAME_LABEL_WIDTH);
         nameLabel.setPrefWidth(NAME_LABEL_WIDTH);
         nameLabel.setMaxWidth(NAME_LABEL_WIDTH);
@@ -70,6 +71,7 @@ public class SelectionOverviewWidget extends HBox {
         valueLabel.setPrefWidth(VALUE_LABEL_WIDTH);
         valueLabel.setMaxWidth(VALUE_LABEL_WIDTH);
 
+        highlight(false);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         spacer.setMinWidth(ICON_SIZE);
@@ -123,6 +125,10 @@ public class SelectionOverviewWidget extends HBox {
         } else {
             LOGGER.log(Level.SEVERE, "SelectionOverviewWidget: Item is null!!!  But why?");
         }
+    }
+
+    public void highlight(boolean highlight) {
+        setId(highlight ? "selection-overview-widget-highlight" : "selection-overview-widget");
     }
 
     //For fixing tooltip stage pop issue:
