@@ -74,7 +74,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     private String padValue = null;
 
     public Pin() {
-        getRotation().setConstrained(true);
+        getRotationProperty().setConstrained(true);
     }
 
     @Override
@@ -100,10 +100,6 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
-    public StringValue getNameProperty() {
-        return nameProperty;
-    }
-
     /**
      * @return the x
      */
@@ -124,10 +120,6 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
-    public RealValue getXProperty() {
-        return xProperty;
-    }
-
     /**
      * @return the y
      */
@@ -146,10 +138,6 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
             yProperty.set(y);
             notifyListeners(LocationXYProperty.Field.Y, oldY, y);
         }
-    }
-
-    public RealValue getYProperty() {
-        return yProperty;
     }
 
     /**
@@ -264,7 +252,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     }
 
     @Override
-    public final Rotation getRotation() {
+    public final Rotation getRotationProperty() {
         return rotation;
     }
 
