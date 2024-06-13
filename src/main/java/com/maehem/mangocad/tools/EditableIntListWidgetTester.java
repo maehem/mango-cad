@@ -51,7 +51,7 @@ public class EditableIntListWidgetTester extends Application implements ElementV
     private final Text sampleText = new Text("Hello");
     //private RealValue realValue = new RealValue(123.456);
     private final Dimension dimElement = new Dimension();
-    private final IntValue valueProperty = dimElement.getTextRatioProperty();
+    private final IntValue valueProperty = dimElement.textratioProperty;
     private final IntegerListWidget listWidget = new IntegerListWidget(
             valueProperty,
             Dimension.Field.TEXTRATIO,
