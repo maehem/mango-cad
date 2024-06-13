@@ -34,7 +34,7 @@ public class SymbolEditorInspectorTab extends Tab { // TODO: Move to view pkg.
     //private Element element;
     private final VBox propertyNodes = new VBox();
     private final FocusedItemPropertiesBox focusedItemBox = new FocusedItemPropertiesBox();
-    private final SelectedItemsOverviewBox selectedItemsBox = new SelectedItemsOverviewBox();
+    private final SelectedItemsOverviewBox selectedItemsBox = new SelectedItemsOverviewBox(focusedItemBox);
     private final TitledPane focusedPane;
     private final TitledPane selectionPane;
     //private final Accordion accordion;

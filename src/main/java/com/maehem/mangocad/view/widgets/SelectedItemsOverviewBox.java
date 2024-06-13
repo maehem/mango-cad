@@ -17,7 +17,9 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.view.ElementSelectionListener;
 import com.maehem.mangocad.view.widgets.selection.SelectionOverviewWidget;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -29,7 +31,10 @@ import javafx.scene.layout.VBox;
  */
 public class SelectedItemsOverviewBox extends VBox {
 
-    public SelectedItemsOverviewBox() {
+    private final ArrayList<ElementSelectionListener> listeners = new ArrayList<>();
+
+    public SelectedItemsOverviewBox(ElementSelectionListener listener) {
+        listeners.add(listener);
         setSpacing(2);
         setFillWidth(true);
     }
@@ -43,6 +48,7 @@ public class SelectedItemsOverviewBox extends VBox {
 //        }
 
         getChildren().clear();
+
         if (items != null) {
 //            Label label = new Label("Selected Objects");
 //            label.setId("properties-list-heading");
@@ -65,10 +71,24 @@ public class SelectedItemsOverviewBox extends VBox {
                     default -> {
                         SelectionOverviewWidget widget = new SelectionOverviewWidget(element);
                         getChildren().add(widget);
+                        widget.setOnMouseClicked((t) -> {
+                            listeners.forEach((l) -> {
+                                l.elementSelected(element);
+                                highlightElement(element);
+                            });
+                        });
                     }
                 }
             }
         }
+    }
+
+    private void highlightElement(Element e) {
+        getChildren().forEach((chld) -> {
+            if (chld instanceof SelectionOverviewWidget widget) {
+                widget.highlight(widget.element.equals(e));
+            }
+        });
     }
 
 }

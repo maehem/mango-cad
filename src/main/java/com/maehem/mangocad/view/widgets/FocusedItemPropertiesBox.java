@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.GridUnitProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.view.ElementSelectionListener;
 import com.maehem.mangocad.view.widgets.inspector.DimensionTypeToggleWidget;
 import com.maehem.mangocad.view.widgets.inspector.GridUnitListWidget;
 import com.maehem.mangocad.view.widgets.inspector.InspectorWidget;
@@ -58,7 +59,7 @@ import javafx.scene.layout.VBox;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class FocusedItemPropertiesBox extends VBox {
+public class FocusedItemPropertiesBox extends VBox implements ElementSelectionListener {
 
     public FocusedItemPropertiesBox() {
         updateContent(null);
@@ -203,5 +204,10 @@ public class FocusedItemPropertiesBox extends VBox {
             default -> {
             }
         }
+    }
+
+    @Override
+    public void elementSelected(Element e) {
+        updateContent(e);
     }
 }
