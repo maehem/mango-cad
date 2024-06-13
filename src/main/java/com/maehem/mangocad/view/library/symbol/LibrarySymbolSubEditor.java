@@ -45,7 +45,7 @@ import javafx.scene.layout.HBox;
  */
 public class LibrarySymbolSubEditor extends LibrarySubEditor {
 
-    private static final double DIVIDER_POS = 0.8;
+    private static final double DIVIDER_POS = 0.75;
     //private final LibraryEditor parent;
     private final ArrayList<EditorOption> options = new ArrayList<>(Arrays.asList(
             EditorOption.LAYER_SETTINGS,
