@@ -239,6 +239,7 @@
 #inspector-widget {
     -fx-border-color:derive(-fx-base, 35%);
     -fx-border-width:1px;
+    -fx-padding: 4,0,4,0;
     /*-fx-border-radius:3px; */
 }
 
