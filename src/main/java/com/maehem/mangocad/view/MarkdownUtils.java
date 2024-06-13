@@ -43,6 +43,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -61,12 +62,12 @@ public class MarkdownUtils {
     public static Node markdownNode(double scale, String text, String urlBase) {
         String content = text;
         VBox node = new VBox();
+        // Can't put a VBox into a Tooltip. Must be wrapped in something Pane-like.
+        Pane pane = new Pane(node);
         node.setSpacing(0);
         node.setPadding(new Insets(6));
-        node.setFillWidth(true);
-        node.setPrefWidth(WRAP);
         if (content == null) {
-            return node;
+            return pane;
         }
 
         LOGGER.log(Level.FINER, "Process: " + text);
@@ -86,9 +87,9 @@ public class MarkdownUtils {
         // parse thngs.
 
         content = content.translateEscapes(); // Was fun figuring out this one.
-        if (!content.startsWith("#")) {
-            content = "#" + content; // First line is always heading.
-        }
+//        if (!content.startsWith("#")) {
+//            content = "#" + content; // First line is always heading.
+//        }
         String[] lines = content.split("\n");
 
         final String H6 = "######";
@@ -111,7 +112,7 @@ public class MarkdownUtils {
                     String s = m.group(1);
                     String ss = m.group(2);
                     // s now contains "BAR"
-                    LOGGER.log(Level.SEVERE, "Pattern: " + s + " ==> " + ss);
+                    LOGGER.log(Level.FINER, "Pattern: {0} ==> {1}", new Object[]{s, ss});
                 }
 
             } catch (PatternSyntaxException ex) {
@@ -168,7 +169,7 @@ public class MarkdownUtils {
             }
         }
 
-        return node;
+        return pane;
     }
 
     public static boolean hasImageLink(String str) {
@@ -203,45 +204,45 @@ public class MarkdownUtils {
         }
 
         String linkPhrase = str.substring(idx1 + (isImage ? 1 : 1), idx2);
-        LOGGER.log(Level.SEVERE, "LinkPhrase: " + linkPhrase);
+        LOGGER.log(Level.FINER, "LinkPhrase: {0}", linkPhrase);
         if (hasImageLink(linkPhrase)) {
-            LOGGER.log(Level.SEVERE, "LinkPhrase has image.");
+            LOGGER.log(Level.FINER, "LinkPhrase has image.");
 
         }
 
         String settings[] = {};
         String lURL = str.substring(idx3 + 1, idx4);
-        LOGGER.log(Level.SEVERE, "LURL: " + lURL);
+        LOGGER.log(Level.SEVERE, "LURL: {0}", lURL);
         if (lURL.contains("\"")) {
             // Has old style Link Phrase, remove it.
             lURL = lURL.substring(0, lURL.indexOf(" \""));
         }
         if (lURL.contains("|")) {
-            LOGGER.log(Level.SEVERE, "Link has settings. Maybe width or height?");
+            LOGGER.log(Level.FINER, "Link has settings. Maybe width or height?");
             String split[] = lURL.split("\\|");
             lURL = split[0].trim(); // Pass on URL portion.
-            LOGGER.log(Level.SEVERE, "LURL(2): " + lURL);
+            LOGGER.log(Level.FINER, "LURL(2): {0}", lURL);
             if (split.length > 1) {
                 settings = split[1].split(" ");
                 for (int i = 0; i < settings.length; i++) {
-                    LOGGER.log(Level.SEVERE, "Process Setting: " + settings[i]);
+                    LOGGER.log(Level.FINER, "Process Setting: {0}", settings[i]);
                 }
             }
         }
         final String linkURL = lURL;
-        LOGGER.log(Level.SEVERE, "LinkURL: " + linkURL);
+        LOGGER.log(Level.FINER, "LinkURL: {0}", linkURL);
         String preString = "";
         if (idx1 > 0) {
             preString = str.substring(0, idx1 - 1);
         }
-        LOGGER.log(Level.SEVERE, "PreString: " + preString);
+        LOGGER.log(Level.FINER, "PreString: {0}", preString);
         flow.getChildren().addAll(processWords(preString, styleClass));
         if (isImage) {
             //URL url;
             if (urlbase == null) {
                 LOGGER.log(Level.SEVERE, "URL Base is NULL.");
             } else {
-                LOGGER.log(Level.SEVERE, "URL BASE is " + urlbase);
+                LOGGER.log(Level.FINER, "URL BASE is {0}", urlbase);
             }
             try {
                 if (urlbase != null && urlbase.startsWith("http")) {
@@ -370,7 +371,7 @@ public class MarkdownUtils {
         if (idx4 < str.length() - 1) {
             postString = str.substring(idx4 + 1, str.length() - 1);
         }
-        LOGGER.log(Level.SEVERE, "Post String: " + postString);
+        LOGGER.log(Level.FINER, "Post String: {0}", postString);
         flow.getChildren().addAll(processWords(postString, styleClass));
     }
 
@@ -401,7 +402,6 @@ public class MarkdownUtils {
         LOGGER.log(Level.FINE, "styleLine(): {0}", text.getText());
         TextFlow flow = new TextFlow();
         String str = text.getText();
-        //LOGGER.log(Level.SEVERE, "String to style: \"" + str + "\"");
 
         if (hasImageLink(str)) {
             getImageNode(str, urlbase, flow, text.getStyleClass());
