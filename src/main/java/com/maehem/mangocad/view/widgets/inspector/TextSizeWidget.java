@@ -62,15 +62,19 @@ public class TextSizeWidget extends InspectorWidget {
 
     public TextSizeWidget(Element e, String msgKeyBase) {
         super(msgKeyBase);
+        comboBox.setButtonCell(new EditableItemCell<>());
+        comboBox.setEditable(true);
         if (e instanceof ElementText p) {
             this.text = p;
             this.element = e;
             this.dimension = null;
             this.text.addListener(this);
+            updateComboState(text.getSize());
         } else if (e instanceof Dimension d) {
             this.element = e;
             this.dimension = d;
             this.text = null;
+            updateComboState(dimension.getTextsize());
         } else {
             this.element = null;
             this.text = null;
@@ -86,9 +90,6 @@ public class TextSizeWidget extends InspectorWidget {
 //        iconLabel.setMinWidth(labelWidth);
 //        iconLabel.setPrefWidth(labelWidth);
 
-        comboBox.setButtonCell(new EditableItemCell<>());
-        comboBox.setEditable(true);
-        comboBox.getSelectionModel().selectFirst();
 
         getChildren().addAll(comboBox);
 
@@ -120,9 +121,13 @@ public class TextSizeWidget extends InspectorWidget {
         for (Double t : options) {
             if (t == pl) {
                 comboBox.getSelectionModel().select(t);
-                break;
+                return;
             }
         }
+        // value was not in list. Add and select.
+        options.add(pl);
+
+        comboBox.getSelectionModel().select(pl);
     }
 
     @Override
@@ -159,7 +164,6 @@ public class TextSizeWidget extends InspectorWidget {
                 }
             });
             textField.setOnAction(e -> {
-                //getItem().setName(textField.getText());
                 setText(textField.getText());
                 setContentDisplay(ContentDisplay.TEXT_ONLY);
             });
