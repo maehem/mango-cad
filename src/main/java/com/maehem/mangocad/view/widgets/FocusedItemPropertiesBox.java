@@ -150,14 +150,14 @@ public class FocusedItemPropertiesBox extends VBox {
                         d.getWidthProperty(), 1.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
-                // Ext Length (with auto)  Auto = 10x width
+                // Ext Length (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extLengthWidget = new RealValueListWidget2(
                         d.getExtLengthProperty(), WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_LENGTH", null, ToolModeWidget.EDITABLE,
                         d.getWidthProperty(), 10.0,
                         Wire.WIDTH_DEFAULT_OPTIONS
                 );
-                // Ext Offset (with auto)  Auto = 10x width
+                // Ext Offset (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extOffsetWidget = new RealValueListWidget2(
                         d.getExtOffsetProperty(), WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_OFFSET", null, ToolModeWidget.EDITABLE,
