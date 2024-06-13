@@ -72,7 +72,7 @@ public class GridUnitListWidget extends InspectorWidget implements ElementValueL
             }
         }
 
-        updateComboState(GridUnitProperty.Unit.MM);
+        updateComboState(unit.get());
 
         getChildren().addAll(comboBox);
 

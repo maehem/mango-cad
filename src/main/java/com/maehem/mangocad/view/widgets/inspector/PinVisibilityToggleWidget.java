@@ -88,7 +88,7 @@ public class PinVisibilityToggleWidget extends InspectorWidget {
         visBothButton.setUserData(PinVisible.BOTH);
         visBothButton.setSelected(false);
 
-        updateToggleState(PinVisible.BOTH);
+        updateToggleState(pin.getVisible());
         currentToggle = visNumButton;
         //group.selectToggle(lenMidButton);
 
@@ -96,7 +96,7 @@ public class PinVisibilityToggleWidget extends InspectorWidget {
             if (newToggle == null) { // If newToggle is null, reselect it.
                 currentToggle.setSelected(true); // user action might have un-toggled it.
             } else {
-                LOGGER.log(Level.SEVERE, "Change PinVisible toggle to:{0}", newToggle.getUserData().toString());
+                LOGGER.log(Level.FINER, "Change PinVisible toggle to:{0}", newToggle.getUserData().toString());
                 currentToggle = newToggle;
                 pin.setVisible((PinVisible) newToggle.getUserData());
             }
@@ -128,7 +128,7 @@ public class PinVisibilityToggleWidget extends InspectorWidget {
         if (newVal == null) {
             return;
         }
-        LOGGER.log(Level.SEVERE, "PinVisiblehWidget: Pin vis: ==> {0}", newVal.toString());
+        LOGGER.log(Level.FINER, "PinVisiblehWidget: Pin vis: ==> {0}", newVal.toString());
 
         if (newVal instanceof PinVisible pl) {
             updateToggleState(pl);

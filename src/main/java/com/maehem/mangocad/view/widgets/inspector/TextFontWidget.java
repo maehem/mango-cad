@@ -56,7 +56,7 @@ public class TextFontWidget extends InspectorWidget {
 //        iconLabel.setPadding(new Insets(4));
 //        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
-        updateComboState(TextFont.VECTOR);
+        updateComboState(text.getFont());
 
         getChildren().addAll(comboBox);
 

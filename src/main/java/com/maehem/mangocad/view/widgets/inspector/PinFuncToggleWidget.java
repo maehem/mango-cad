@@ -90,7 +90,7 @@ public class PinFuncToggleWidget extends InspectorWidget {
         funcDotClkButton.setUserData(PinFunction.DOTCLK);
         funcDotClkButton.setSelected(false);
 
-        updateToggleState(PinFunction.NONE);
+        updateToggleState(pin.getFunction());
         currentToggle = funcClkButton;
         //group.selectToggle(currentToggle);
 

@@ -50,7 +50,7 @@ public class PinSwapLevelWidget extends InspectorWidget {
 
         spinner.setPrefWidth(70);
 
-        updateSpinnerState(0);
+        updateSpinnerState(pin.getSwapLevel());
 
         getChildren().addAll(spinner);
 

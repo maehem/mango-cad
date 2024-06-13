@@ -51,7 +51,7 @@ public class TextDistanceWidget extends InspectorWidget {
 //        iconLabel.setPadding(new Insets(4));
 //        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
-        updateSpinnerState(0);
+        updateSpinnerState(text.getDistance());
 
         getChildren().addAll(spinner);
 

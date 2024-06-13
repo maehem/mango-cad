@@ -53,7 +53,7 @@ public class PinDirectionWidget extends InspectorWidget {
             LOGGER.log(Level.SEVERE, "PinDirectionWidget: element is not of type Pin!");
         }
 
-        updateComboState(PinDirection.IO);
+        updateComboState(pin.getDirection());
 
         getChildren().addAll(comboBox);
 

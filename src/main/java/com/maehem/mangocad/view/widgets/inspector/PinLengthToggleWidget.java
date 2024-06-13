@@ -88,7 +88,7 @@ public class PinLengthToggleWidget extends InspectorWidget {
         lenLongButton.setUserData(PinLength.LONG);
         lenLongButton.setSelected(false);
 
-        updateToggleState(PinLength.MIDDLE);
+        updateToggleState(pin.getLength());
         currentToggle = lenMidButton;
         //group.selectToggle(lenMidButton);
 

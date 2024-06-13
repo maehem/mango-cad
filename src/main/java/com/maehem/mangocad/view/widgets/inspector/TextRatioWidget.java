@@ -56,7 +56,7 @@ public class TextRatioWidget extends InspectorWidget {
 //        iconLabel.setPadding(new Insets(4));
 //        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 
-        updateComboState(8);
+        updateComboState(text.getRatio());
 
         getChildren().addAll(comboBox);
 
