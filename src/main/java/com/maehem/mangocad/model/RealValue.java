@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.model;
 
+import java.text.DecimalFormat;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
@@ -39,6 +41,16 @@ public class RealValue extends ElementValue {
 
     public double get() {
         return value;
+    }
+
+    public String getPrecise(int precision) {
+        StringBuilder pattern = new StringBuilder("#.");
+        for (int i = 0; i < precision; i++) {
+            pattern.append("#");
+        }
+        DecimalFormat df = new DecimalFormat(pattern.toString());
+
+        return df.format(get());
     }
 
     public void set(double value) {
