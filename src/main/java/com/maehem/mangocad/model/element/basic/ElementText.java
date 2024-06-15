@@ -68,7 +68,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         LAYER("layer", Integer.class),
         FONT("font", String.class),
         RATIO("ratio", Integer.class),
-        ROTATION("rotation", String.class),
+        //ROTATION("rotation", String.class),
         ALIGN("align", TextAlign.class),
         DISTANCE("distance", Integer.class),
         VALUE("value", String.class);
@@ -257,7 +257,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     public void setRotation(Rotation r) {
         //Rotation oldValue = this.getRotation();
         Rotation.copyValues(r, this.getRotationProperty());
-        notifyListeners(ElementText.Field.ROTATION, null, this.getRotationProperty());
+        notifyListeners(RotationProperty.Field.VALUE, null, this.getRotationProperty());
     }
 
     @Override
@@ -270,7 +270,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         if (getRot() != rot) {
             double oldValue = this.getRot();
             getRotationProperty().setValue(rot);
-            notifyListeners(ElementText.Field.ROTATION, oldValue, this.getRot());
+            notifyListeners(RotationProperty.Field.VALUE, oldValue, this.getRot());
         }
     }
 
