@@ -33,7 +33,6 @@ import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.ViewUtils;
 import static com.maehem.mangocad.view.ViewUtils.FONT_SCALE;
 import java.util.logging.Level;
-import javafx.application.Platform;
 import javafx.geometry.VPos;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -69,6 +68,7 @@ public class TextNode extends ViewNode implements ElementListener {
     private final Translate textTranslate = new Translate();
     private final Translate parentMirrorTranslate = new Translate();
     private final Translate ratioTranslate = new Translate();
+    private final Translate ascendTranslate = new Translate();
 
     private final Scale mirrorTransform = new Scale(1.0, 1.0);
     private final Rotate rTTG = new Rotate(); // Text rotate
@@ -91,6 +91,8 @@ public class TextNode extends ViewNode implements ElementListener {
     private final ColorPalette palette;
     private final Rotation parentRotation;
     private boolean showCrosshair;  // TODO Implement!
+
+    private double ascend = 0.0; // Used for DimensionNode. Ascend text above xy3 point.
 
     public TextNode(ElementText et, String altText, Layers layers, ColorPalette palette, Rotation parentRotation, boolean showCrossHair, PickListener pickListener) {
         super(et, pickListener);
@@ -126,12 +128,13 @@ public class TextNode extends ViewNode implements ElementListener {
         text.setStrokeLineJoin(StrokeLineJoin.ROUND);
         text.setTextOrigin(VPos.BASELINE);
         text.getTransforms().addAll(
-                textAlignTransform,
+                textAlignTransform, // Last applied
                 textTranslate,
                 ratioTranslate,
                 rTTG,
                 tR,
-                parentMirrorTranslate
+                ascendTranslate,
+                parentMirrorTranslate // First applied
         );
 
         updateValue();
@@ -161,9 +164,9 @@ public class TextNode extends ViewNode implements ElementListener {
 //            }
 //        });
 
-        Platform.runLater(() -> {
+        //Platform.runLater(() -> {
             textElement.addListener(this);
-        });
+        //});
     }
 
     public String getValue() {
@@ -516,6 +519,15 @@ public class TextNode extends ViewNode implements ElementListener {
         text.setLineSpacing(lineSpaceFx); // Convert mm to  pixels.
     }
 
+    public void setAscend( double ascend ) {
+        this.ascend = ascend;
+        ascendTranslate.setY(-this.ascend);
+    }
+
+    public double getAscend() {
+        return ascend;
+    }
+
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         LOGGER.log(Level.SEVERE,
@@ -525,6 +537,7 @@ public class TextNode extends ViewNode implements ElementListener {
         switch (field) {
             case ElementText.Field.VALUE, ElementText.Field.DISTANCE -> {
                 updateValue();
+                updateAlignRotation();
                 updateDistance();
                 updateDebugBox();
             }
@@ -564,7 +577,7 @@ public class TextNode extends ViewNode implements ElementListener {
         }
         if (field instanceof RotationProperty.Field rf) {
             switch (rf) {
-                case MIRROR, SPIN -> {
+                case MIRROR, SPIN, VALUE -> {
                     updateLocation();
                     updateDistance();
                     updateAlignRotation();
