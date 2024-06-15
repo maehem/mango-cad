@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.model.util;
 
+import com.maehem.mangocad.model.RealValue;
+
 /**
  * <pre>
  * Rotation -- rotation of an object; allowed range: [MSR]0..359.9
@@ -36,16 +38,17 @@ public class Rotation {
     public static final String COMMAND_SETTING = "orientation";
     public static final String XML_SETTING = "rot";
 
-    private double value = 0.0;
+    private RealValue valueProperty = new RealValue(0);
     private boolean constrained = false;
     private boolean spin = false;
     private boolean allowSpin = false;
     private boolean mirror = false;
     private boolean allowMirror = false;
 
-    public Rotation() {}
+    public Rotation() {
+    }
 
-    public Rotation( boolean constrained ) {
+    public Rotation(boolean constrained) {
         this.constrained = constrained;
     }
 
@@ -53,19 +56,19 @@ public class Rotation {
      * @return the value
      */
     public double getValue() {
-        return value;
+        return valueProperty.get();
     }
 
-    public void setValue( String strValue ) {
-        if ( strValue.startsWith("MR")) {
+    public void setValue(String strValue) {
+        if (strValue.startsWith("MR")) {
             // Mirror
             setMirror(true);
             setValue(Double.parseDouble(strValue.substring(2)));
-        } else if ( strValue.startsWith("SR") ) {
+        } else if (strValue.startsWith("SR")) {
             // Spin
             setSpin(true);
             setValue(Double.parseDouble(strValue.substring(2)));
-        } else if ( strValue.startsWith("SMR") ) {
+        } else if (strValue.startsWith("SMR")) {
             // Spin
             setSpin(true);
             setMirror(true);
@@ -81,20 +84,24 @@ public class Rotation {
      */
     public void setValue(double value) {
         value %= 360.0;// Over-range limiting.
+        if (getValue() != value) {
+            double oldValue = getValue();
 
-        if (constrained) {  // Round to nearest 90 degree angle.
-            if (value >= 45.0 && value < 135.0) {
-                this.value = 90;
-            } else if (value >= 135.0 && value < 225.0) {
-                this.value = 180;
-            } else if (value >= 225.0 && value < 315.0) {
-                this.value = 270;
+            if (constrained) {  // Round to nearest 90 degree angle.
+                if (value >= 45.0 && value < 135.0) {
+                    valueProperty.set(90.0);
+                } else if (value >= 135.0 && value < 225.0) {
+                    valueProperty.set(180.0);
+                } else if (value >= 225.0 && value < 315.0) {
+                    valueProperty.set(270.0);
+                } else {
+                    valueProperty.set(0.0);
+                }
             } else {
-                this.value = 0;
+                valueProperty.set(value);
             }
-        } else {
-            this.value = value;
         }
+        // TODO: Notify
     }
 
     /**
@@ -154,7 +161,7 @@ public class Rotation {
     }
 
     public boolean isSpun() {
-        return !spin && (value > 90.0 && value <= 270.0);
+        return !spin && (getValue() > 90.0 && getValue() <= 270.0);
     }
 
     /**
