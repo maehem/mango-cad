@@ -98,7 +98,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     public RealValue y1Property = new RealValue(0);
     public RealValue x2Property = new RealValue(0);
     public RealValue y2Property = new RealValue(0);
-    public RealValue x3Property = new RealValue(0);
+    public RealValue x3Property = new RealValue(0); // Text placement.
     public RealValue y3Property = new RealValue(0);
     private DimensionType dtype = DimensionType.PARALLEL;
     public final RealValue widthProperty = new RealValue(0.13, 0.0, 200.0);
@@ -371,7 +371,11 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     @Override
     public void setVisible(boolean visible) {
-        this.visible = visible;
+        if (isVisible() != visible) {
+            boolean oldVal = isVisible();
+            this.visible = visible;
+            notifyListeners(VisibleProperty.Field.VISIBLE, oldVal, isVisible());
+        }
     }
 
     /**
