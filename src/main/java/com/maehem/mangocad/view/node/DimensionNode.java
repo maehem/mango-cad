@@ -35,10 +35,7 @@ import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
@@ -52,16 +49,13 @@ import javafx.scene.transform.Rotate;
  */
 public class DimensionNode extends ViewNode implements ElementListener {
 
-    private static final double SIN90 = Math.sin(Math.toRadians(90.0));
-
-    private final double WIRE_STROKE_WIDTH = 0.1524; // 6 mil
+    private static final double CROSSHAIR_EXT = 2.54;
 
     private final Dimension dimension;
-    //ElementText et = new ElementText();
 
-    private final MoveTo start = new MoveTo();
-    private final ArcTo arcTo = new ArcTo();
-    private final Path wireCurve = new Path(start, arcTo);
+    //private final MoveTo start = new MoveTo();
+    //private final ArcTo arcTo = new ArcTo();
+    //private final Path wireCurve = new Path(start, arcTo);
     private final Layers layers;
     private final ColorPalette palette;
 
@@ -76,10 +70,14 @@ public class DimensionNode extends ViewNode implements ElementListener {
     private final Rotate dimLineRotate = new Rotate();
 
     private final Polygon dimArrow1 = new Polygon();
-    private final Polygon dimArrow2 = new Polygon(0, 0, -2.54, 0.625, -2.54, -0.625);
+    private final Polygon dimArrow2 = new Polygon();
+
+    Line chH = new Line();
+    Line chW = new Line();
 
     private final Text displayValue = new Text("0.0000000 mm");
     private final TextNode textNode;
+    private final ElementText et = new ElementText();
 
     public DimensionNode(Dimension d, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(d, pickListener);
@@ -98,7 +96,6 @@ public class DimensionNode extends ViewNode implements ElementListener {
         displayValue.setTextAlignment(TextAlignment.CENTER);
         displayValue.getTransforms().add(dimLineRotate);
 
-        ElementText et = new ElementText();
         et.setAlign(TextAlign.BOTTOM_CENTER);
         et.setValue("???");
         et.setSize(dimension.getTextsize());
@@ -129,6 +126,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
         double hyp13 = Math.hypot(x3 - x1, y3 - y1);
         double hyp12 = Math.hypot(x2 - x1, y2 - y1);
+        double hyp23 = Math.hypot(x2 - x3, y2 - y3);
         double hh12 = hyp12 / 2.0;
         double arrowGap = dimension.getWidth() * 3; // A little space between ext. and arrow point.
         double extLineLen = Math.sqrt(hyp13 * hyp13 - hh12 * hh12);
@@ -197,21 +195,16 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 displayValue.setLayoutX(x3);
                 displayValue.setLayoutY(-y3);
 
-                if (textNode.getElement() instanceof ElementText et) {
-                    double tOff = 0.254;
-                    et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
-                    et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                    et.setRot(-textAngle);
-                    String unitLabel = "";
-                    if (dimension.isVisible()) { // show inits label
-                        unitLabel = dimension.getUnit().label;
-                    }
-                    BigDecimal bd = BigDecimal.valueOf(hyp12);
-                    bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                    et.setValue(bd.toString() + unitLabel);
-                } else {
-                    LOGGER.log(Level.SEVERE, "Dimension's text element isn't type ElementText! But why?");
+                et.setX(x3);
+                et.setY(y3);
+                et.setRot(-textAngle);
+                String unitLabel = "";
+                if (dimension.isVisible()) { // show inits label
+                    unitLabel = dimension.getUnit().label;
                 }
+                BigDecimal bd = BigDecimal.valueOf(hyp12);
+                bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
+                et.setValue(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
@@ -271,20 +264,16 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 displayValue.setLayoutX(x3);
                 displayValue.setLayoutY(-y3);
 
-                if (textNode.getElement() instanceof ElementText et) {
-                    et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
-                    et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                    et.setRot(0);
-                    String unitLabel = "";
-                    if (dimension.isVisible()) { // show inits label
-                        unitLabel = dimension.getUnit().label;
-                    }
-                    BigDecimal bd = BigDecimal.valueOf(Math.abs(x1 - x2));
-                    bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                    et.setValue(bd.toString() + unitLabel);
-                } else {
-                    LOGGER.log(Level.SEVERE, "Dimension's text element isn't type ElementText! But why?");
+                et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
+                et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
+                et.setRot(0);
+                String unitLabel = "";
+                if (dimension.isVisible()) { // show inits label
+                    unitLabel = dimension.getUnit().label;
                 }
+                BigDecimal bd = BigDecimal.valueOf(Math.abs(x1 - x2));
+                bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
+                et.setValue(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
@@ -351,20 +340,16 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 displayValue.setLayoutX(x3);
                 displayValue.setLayoutY(-y3);
 
-                if (textNode.getElement() instanceof ElementText et) {
-                    et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
-                    et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                    et.setRot(90);
-                    String unitLabel = "";
-                    if (dimension.isVisible()) { // show inits label
-                        unitLabel = dimension.getUnit().label;
-                    }
-                    BigDecimal bd = BigDecimal.valueOf(Math.abs(y1 - y2));
-                    bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                    et.setValue(bd.toString() + unitLabel);
-                } else {
-                    LOGGER.log(Level.SEVERE, "Dimension's text element isn't type ElementText! But why?");
+                et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
+                et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
+                et.setRot(90);
+                String unitLabel = "";
+                if (dimension.isVisible()) { // show inits label
+                    unitLabel = dimension.getUnit().label;
                 }
+                BigDecimal bd = BigDecimal.valueOf(Math.abs(y1 - y2));
+                bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
+                et.setValue(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
@@ -374,6 +359,84 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 add(dimLine);
                 add(dimArrow1);
                 add(dimArrow2);
+                addAll(textNode);
+            }
+            case RADIUS -> {
+                // Crosshair at 1.
+                chH.setLayoutX(x1); // TODO: This trick wih arrows?
+                chH.setLayoutY(-y1);
+                chW.setLayoutX(x1);
+                chW.setLayoutY(-y1);
+
+                LOGGER.log(Level.SEVERE, "hyp12: " + hyp12 + "   hyp13: " + hyp13);
+                Double[] arrowPoints;
+                if (hyp13 < hyp12) { // hyp12 < hyp13,  line on inside.
+                    dimLine.setStartX(0);
+                    dimLine.setStartY(0);
+                    dimLine.setEndX(hyp12);
+                    dimLine.setEndY(0);
+                    dimLineRotate.setAngle(angle);
+                    dimLine.setTranslateX(x1);
+                    dimLine.setTranslateY(-y1);
+
+                    arrowPoints = new Double[]{
+                        0.0, 0.0,
+                        -2.54, -0.625,
+                        -2.54, 0.625
+                    };
+                    dimArrow2.getPoints().clear();
+                    dimArrow2.getPoints().addAll(Arrays.asList(arrowPoints));
+
+                    dimArrow2.setTranslateX(x2);
+                    dimArrow2.setTranslateY(-y2);
+                    add(dimArrow2);
+                } else { // hyp12 > hyp13,  line on outside with etc.length.
+                    LOGGER.log(Level.SEVERE, "Outside dimLine.");
+                    //double len = dimension.getTextsize() * 5.0;
+
+                    dimLine.setStartX(x2);
+                    dimLine.setStartY(-y2);
+                    dimLine.setEndX(x2 + hyp23);
+                    dimLine.setEndY(-y2);
+                    dimLineRotate.setPivotX(x2);
+                    dimLineRotate.setPivotY(-y2);
+                    dimLineRotate.setAngle(angle);
+                    dimLine.setTranslateX(0);
+                    dimLine.setTranslateY(0);
+
+                    arrowPoints = new Double[]{
+                        x2, -y2,
+                        x2 + 2.54, -y2 - 0.625,
+                        x2 + 2.54, -y2 + 0.625
+                    };
+                    dimArrow1.getPoints().clear();
+                    dimArrow1.getPoints().addAll(Arrays.asList(arrowPoints));
+
+                    dimArrow1.setTranslateX(0);
+                    dimArrow1.setTranslateY(0);
+                    add(dimArrow1);
+
+                    // TODO: What quaadrant is text? TL, TR, BL, BR?
+                    et.setAlign(TextAlign.BOTTOM_RIGHT);
+                }
+
+                et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
+                et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
+                et.setRot(-angle);
+                String unitLabel = "";
+                if (dimension.isVisible()) { // show inits label
+                    unitLabel = dimension.getUnit().label;
+                }
+                BigDecimal bd = BigDecimal.valueOf(Math.abs(y1 - y2));
+                bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
+                et.setValue(bd.toString() + unitLabel);
+
+                updateWidths();
+                updateLayer();
+
+                add(chH);
+                add(chW);
+                add(dimLine);
                 addAll(textNode);
             }
         }
@@ -389,6 +452,12 @@ public class DimensionNode extends ViewNode implements ElementListener {
         dimArrow2.setStrokeWidth(w);
         displayValue.setStrokeWidth(w * (dimension.getTextratio() / 100.0));
         displayValue.setFont(Font.font(dimension.getTextsize()));
+        chH.setStrokeWidth(w * 1.666);
+        chW.setStrokeWidth(w * 1.666);
+        chH.setStartX(-CROSSHAIR_EXT * w);
+        chH.setEndX(CROSSHAIR_EXT * w);
+        chW.setStartY(-CROSSHAIR_EXT * w);
+        chW.setEndY(CROSSHAIR_EXT * w);
     }
 
     private void updateLayer() {
@@ -405,9 +474,10 @@ public class DimensionNode extends ViewNode implements ElementListener {
         displayValue.setStroke(c);
         displayValue.setFill(c);
 
-        if (textNode.getElement() instanceof ElementText et) {
-            et.setLayerNum(dimension.getLayerNum());
-        }
+        chH.setStroke(c);
+        chW.setStroke(c);
+
+        et.setLayerNum(dimension.getLayerNum());
     }
 
     private WireEnd closestEnd(MouseEvent me) {
