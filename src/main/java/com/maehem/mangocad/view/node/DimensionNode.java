@@ -147,7 +147,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
         textNode.setAscend(dimension.getWidth() * 5.0);
 
 //        LOGGER.log(Level.SEVERE, "val: {4}   aaa = {0} deg:{1}  sinA = {2}  degrees: {3}",
-//                new Object[]{aaa, Math.toDegrees(aaa), sinA, Math.toDegrees(sinA), dimension.getWidth()}
+//                new Object[]{aaa, Math.toDegrees(aaa), sinA, Math.toDegrees(sinA), hyp12}
 //        );
         switch (dimension.getDtype()) {
             case PARALLEL -> {
@@ -362,6 +362,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 addAll(textNode);
             }
             case RADIUS -> {
+                double rot = angle;
                 // Crosshair at 1.
                 chH.setLayoutX(x1); // TODO: This trick wih arrows?
                 chH.setLayoutY(-y1);
@@ -375,9 +376,25 @@ public class DimensionNode extends ViewNode implements ElementListener {
                     dimLine.setStartY(0);
                     dimLine.setEndX(hyp12);
                     dimLine.setEndY(0);
-                    dimLineRotate.setAngle(angle);
                     dimLine.setTranslateX(x1);
                     dimLine.setTranslateY(-y1);
+
+                    if (x1 < x2) { // Right
+                        if (y1 < y2) { // Top
+                            dimLineRotate.setAngle(angle);
+                        } else { // Bottom
+                            dimLineRotate.setAngle(180.0 - angle);
+                            rot = 180.0 - angle;
+                        }
+                    } else {  // Left
+                        if (y1 < y2) { // Top
+                            dimLineRotate.setAngle(180.0 - angle);
+                            rot = 360 - angle;
+                        } else {
+                            dimLineRotate.setAngle(angle);
+                            rot = angle + 180;
+                        }
+                    }
 
                     arrowPoints = new Double[]{
                         0.0, 0.0,
@@ -422,12 +439,12 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
                 et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
                 et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                et.setRot(-angle);
+                et.setRot(-rot);
                 String unitLabel = "";
                 if (dimension.isVisible()) { // show inits label
                     unitLabel = dimension.getUnit().label;
                 }
-                BigDecimal bd = BigDecimal.valueOf(Math.abs(y1 - y2));
+                BigDecimal bd = BigDecimal.valueOf(Math.abs(hyp12));
                 bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
                 et.setValue(bd.toString() + unitLabel);
 
