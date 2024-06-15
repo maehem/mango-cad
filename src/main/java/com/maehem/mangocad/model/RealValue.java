@@ -16,6 +16,8 @@
  */
 package com.maehem.mangocad.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -28,6 +30,7 @@ public class RealValue extends ElementValue {
     private double oldValue;
     private double min = Double.MIN_VALUE;
     private double max = Double.MAX_VALUE;
+    private int prec = 6;
 
     public RealValue(double value) {
         this.value = value;
@@ -40,7 +43,7 @@ public class RealValue extends ElementValue {
     }
 
     public double get() {
-        return value;
+        return round(value, prec);
     }
 
     public String getPrecise(int precision) {
@@ -79,5 +82,15 @@ public class RealValue extends ElementValue {
 
     public boolean isInRange(double val) {
         return (val > getMin() && val < getMax());
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
