@@ -23,7 +23,6 @@ import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.TextAlign;
-import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -33,7 +32,6 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.logging.Level;
 import javafx.application.Platform;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -369,9 +367,9 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 chW.setLayoutX(x1);
                 chW.setLayoutY(-y1);
 
-                LOGGER.log(Level.SEVERE, "hyp12: " + hyp12 + "   hyp13: " + hyp13);
+                //LOGGER.log(Level.SEVERE, "hyp12: " + hyp12 + "   hyp13: " + hyp13);
                 Double[] arrowPoints;
-                if (hyp13 < hyp12) { // hyp12 < hyp13,  line on inside.
+                if (hyp13 < hyp12) { // Inside Dim Line
                     dimLine.setStartX(0);
                     dimLine.setStartY(0);
                     dimLine.setEndX(hyp12);
@@ -407,8 +405,8 @@ public class DimensionNode extends ViewNode implements ElementListener {
                     dimArrow2.setTranslateX(x2);
                     dimArrow2.setTranslateY(-y2);
                     add(dimArrow2);
-                } else { // hyp12 > hyp13,  line on outside with etc.length.
-                    LOGGER.log(Level.SEVERE, "Outside dimLine.");
+                } else { // hyp12 > hyp13,  Outside Dim Line
+                    //LOGGER.log(Level.SEVERE, "Outside dimLine.");
                     //double len = dimension.getTextsize() * 5.0;
 
                     dimLine.setStartX(x2);
@@ -421,6 +419,24 @@ public class DimensionNode extends ViewNode implements ElementListener {
                     dimLine.setTranslateX(0);
                     dimLine.setTranslateY(0);
 
+                    if (x1 < x2) { // Right
+                        et.setAlign(TextAlign.BOTTOM_RIGHT);
+                        if (y1 < y2) { // Top
+                            dimLineRotate.setAngle(angle);
+                        } else { // Bottom
+                            dimLineRotate.setAngle(180.0 - angle);
+                            rot = 180.0 - angle;
+                        }
+                    } else {  // Left
+                        et.setAlign(TextAlign.BOTTOM_LEFT);
+                        if (y1 < y2) { // Top
+                            dimLineRotate.setAngle(180.0 - angle);
+                            rot = 360 - angle;
+                        } else {
+                            dimLineRotate.setAngle(angle);
+                            rot = angle + 180;
+                        }
+                    }
                     arrowPoints = new Double[]{
                         x2, -y2,
                         x2 + 2.54, -y2 - 0.625,
@@ -433,8 +449,6 @@ public class DimensionNode extends ViewNode implements ElementListener {
                     dimArrow1.setTranslateY(0);
                     add(dimArrow1);
 
-                    // TODO: What quaadrant is text? TL, TR, BL, BR?
-                    et.setAlign(TextAlign.BOTTOM_RIGHT);
                 }
 
                 et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
@@ -495,41 +509,6 @@ public class DimensionNode extends ViewNode implements ElementListener {
         chW.setStroke(c);
 
         et.setLayerNum(dimension.getLayerNum());
-    }
-
-    private WireEnd closestEnd(MouseEvent me) {
-        // me Distance to start.
-        // me Distance to end.
-        LOGGER.log(Level.SEVERE, "Closest to end: m:{0},{1}  1:{2},{3}  2:{4},{5}",
-                new Object[]{me.getX(), me.getY(),
-                    dimension.getX1(), dimension.getY1(),
-                    dimension.getX2(), dimension.getY2()
-                });
-
-        double r = 1.27;
-        double xM = me.getX();
-        double yM = -me.getY();
-        double x1 = dimension.getX1();
-        double y1 = dimension.getY1();
-        double x2 = dimension.getX2();
-        double y2 = dimension.getY2();
-
-        double diffX1 = Math.abs(xM - x1);
-        double diffY1 = Math.abs(yM - y1);
-        double diffX2 = Math.abs(xM - x2);
-        double diffY2 = Math.abs(yM - y2);
-        LOGGER.log(Level.SEVERE,
-                "Diffs: 1:{0},{1}  2:{2},{3}",
-                new Object[]{diffX1, diffY1, diffX2, diffY2});
-
-        if (Math.abs(xM - x1) < r && Math.abs(yM - y1) < r) {
-            return WireEnd.ONE;
-        }
-        if (Math.abs(xM - x2) < r && Math.abs(yM - y2) < r) {
-            return WireEnd.TWO;
-        }
-
-        return WireEnd.NONE;
     }
 
     @Override
