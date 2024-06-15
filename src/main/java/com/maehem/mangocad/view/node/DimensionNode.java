@@ -109,7 +109,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 layers, palette,
                 null,
                 true, null);
-        textNode.setAscend(1.27);
+        //textNode.setAscend(0.625);  // 3x width?
 
         generateShapes();
 
@@ -141,11 +141,16 @@ public class DimensionNode extends ViewNode implements ElementListener {
             angle = 180.0 - angle;
             textAngle = angle + 180;
         }
+        double extLen = dimension.getExtlength();
+        if (extLen == 0.0) { // Auto == 10x width
+            extLen = dimension.getWidth() * 15.0;
+        }
+        double extOff = dimension.getExtoffset();
+        textNode.setAscend(dimension.getWidth() * 5.0);
 
 //        LOGGER.log(Level.SEVERE, "val: {4}   aaa = {0} deg:{1}  sinA = {2}  degrees: {3}",
 //                new Object[]{aaa, Math.toDegrees(aaa), sinA, Math.toDegrees(sinA), dimension.getWidth()}
 //        );
-
         switch (dimension.getDtype()) {
             case PARALLEL -> {
                 double h2 = hh12 - arrowGap;
@@ -153,14 +158,6 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 LOGGER.log(Level.SEVERE, "Ext.Len.:{0}  off: {1}",
                         new Object[]{dimension.getExtlength(), dimension.getExtoffset()}
                 );
-                double extLen = dimension.getExtlength();
-                if (extLen == 0.0) { // Auto == 10x width
-                    extLen = dimension.getWidth() * 15.0;
-                }
-                double extOff = dimension.getExtoffset();
-//                if (extOff == 0.0) {
-//                    extLen = dimension.getWidth() * 10.0;
-//                }
                 extLine1.setStartX(x1);
                 extLine1.setStartY(-y1 - extOff);
                 extLine1.setEndX(x1);
@@ -219,13 +216,164 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 updateWidths();
                 updateLayer();
 
-                //Line extLine2 = new Line(x2, y2, x2, y2 + extLineLen);
                 add(extLine1);
                 add(extLine2);
                 add(dimLine);
                 add(dimArrow1);
                 add(dimArrow2);
-                //add(displayValue);
+                addAll(textNode);
+            }
+            case HORIZONTAL -> { // Ext.Lines go up-down
+                double extLen1 = extLen;
+                double extLen2 = extLen;
+                if (y3 < y1) {
+                    extLen1 = -extLen1;
+                }
+                if (y3 < y2) {
+                    extLen2 = -extLen2;
+                }
+                extLine1.setStartX(x1);
+                extLine1.setStartY(-y1 - extOff);
+                extLine1.setEndX(x1);
+                extLine1.setEndY(-y3 - extLen1);
+                extLine1Rotate.setPivotX(x1);
+                extLine1Rotate.setPivotY(-y1);
+                extLine1Rotate.setAngle(0);
+
+                extLine2.setStartX(x2);
+                extLine2.setStartY(-y2 - extOff);
+                extLine2.setEndX(x2);
+                extLine2.setEndY(-y3 - extLen2);
+                extLine2Rotate.setPivotX(x2);
+                extLine2Rotate.setPivotY(-y2);
+                extLine2Rotate.setAngle(0);
+
+                dimLine.setStartX(x1);
+                dimLine.setStartY(-y3);
+                dimLine.setEndX(x2);
+                dimLine.setEndY(-y3);
+                dimLineRotate.setAngle(0);
+                dimLine.setTranslateX(0);
+                dimLine.setTranslateY(0);
+
+                dimArrow1.getPoints().clear();
+                Double[] d1 = new Double[]{x1, -y3, x1 + 2.54, -y3 + 0.625, x1 + 2.54, -y3 - 0.625};
+                dimArrow1.getPoints().addAll(Arrays.asList(d1));
+                dimArrow1.setTranslateX(0);
+                dimArrow1.setTranslateY(0);
+
+                dimArrow2.getPoints().clear();
+                Double[] d2 = new Double[]{x2, -y3, x2 - 2.54, -y3 + 0.625, x2 - 2.54, -y3 - 0.625};
+                dimArrow2.getPoints().addAll(Arrays.asList(d2));
+                dimArrow2.setTranslateX(0);
+                dimArrow2.setTranslateY(0);
+
+                displayValue.setLayoutX(x3);
+                displayValue.setLayoutY(-y3);
+
+                if (textNode.getElement() instanceof ElementText et) {
+                    et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
+                    et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
+                    et.setRot(0);
+                    String unitLabel = "";
+                    if (dimension.isVisible()) { // show inits label
+                        unitLabel = dimension.getUnit().label;
+                    }
+                    BigDecimal bd = BigDecimal.valueOf(Math.abs(x1 - x2));
+                    bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
+                    et.setValue(bd.toString() + unitLabel);
+                } else {
+                    LOGGER.log(Level.SEVERE, "Dimension's text element isn't type ElementText! But why?");
+                }
+
+                updateWidths();
+                updateLayer();
+
+                add(extLine1);
+                add(extLine2);
+                add(dimLine);
+                add(dimArrow1);
+                add(dimArrow2);
+                addAll(textNode);
+            }
+            case VERTICAL -> { // Ext.Lines go right-left
+                double extLen1 = extLen;
+                double extLen2 = extLen;
+                if (x3 < x1) {
+                    extLen1 = -extLen1;
+                }
+                if (x3 < x2) {
+                    extLen2 = -extLen2;
+                }
+                extLine1.setStartX(x1 + extOff);
+                extLine1.setStartY(-y1);
+                extLine1.setEndX(x3 + extLen1);
+                extLine1.setEndY(-y1);
+                extLine1Rotate.setPivotX(x1);
+                extLine1Rotate.setPivotY(-y1);
+                extLine1Rotate.setAngle(0);
+
+                extLine2.setStartX(x2 + extOff);
+                extLine2.setStartY(-y2);
+                extLine2.setEndX(x3 + extLen2);
+                extLine2.setEndY(-y2);
+                extLine2Rotate.setPivotX(x2);
+                extLine2Rotate.setPivotY(-y2);
+                extLine2Rotate.setAngle(0);
+
+                dimLine.setStartX(x3);
+                dimLine.setStartY(-y1);
+                dimLine.setEndX(x3);
+                dimLine.setEndY(-y2);
+                dimLineRotate.setAngle(0);
+                dimLine.setTranslateX(0);
+                dimLine.setTranslateY(0);
+
+                dimArrow1.getPoints().clear();
+                Double[] d1 = new Double[]{
+                    x3, -y1,
+                    x3 - 0.625, -y1 + 2.54,
+                    x3 + 0.625, -y1 + 2.54};
+                dimArrow1.getPoints().addAll(Arrays.asList(d1));
+                dimArrow1.setTranslateX(0);
+                dimArrow1.setTranslateY(0);
+
+                dimArrow2.getPoints().clear();
+                Double[] d2 = new Double[]{
+                    x3, -y2,
+                    x3 - 0.625, -y2 - 2.54,
+                    x3 + 0.625, -y2 - 2.54
+                };
+                dimArrow2.getPoints().addAll(Arrays.asList(d2));
+                dimArrow2.setTranslateX(0);
+                dimArrow2.setTranslateY(0);
+
+                displayValue.setLayoutX(x3);
+                displayValue.setLayoutY(-y3);
+
+                if (textNode.getElement() instanceof ElementText et) {
+                    et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
+                    et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
+                    et.setRot(90);
+                    String unitLabel = "";
+                    if (dimension.isVisible()) { // show inits label
+                        unitLabel = dimension.getUnit().label;
+                    }
+                    BigDecimal bd = BigDecimal.valueOf(Math.abs(y1 - y2));
+                    bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
+                    et.setValue(bd.toString() + unitLabel);
+                } else {
+                    LOGGER.log(Level.SEVERE, "Dimension's text element isn't type ElementText! But why?");
+                }
+
+                updateWidths();
+                updateLayer();
+
+                add(extLine1);
+                add(extLine2);
+                add(dimLine);
+                add(dimArrow1);
+                add(dimArrow2);
                 addAll(textNode);
             }
         }
