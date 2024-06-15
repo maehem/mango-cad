@@ -44,6 +44,7 @@ import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.node.CircleNode;
+import com.maehem.mangocad.view.node.DimensionNode;
 import com.maehem.mangocad.view.node.PinNode;
 import com.maehem.mangocad.view.node.PolygonNode;
 import com.maehem.mangocad.view.node.RectangleNode;
@@ -1172,6 +1173,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             this);
                     nodes.add(polyNode);
                     polyNode.addTo(workArea);
+                }
+                case Dimension d -> {
+                    DimensionNode dimNode = new DimensionNode(d,
+                            parentEditor.getDrawing().getLayers(),
+                            parentEditor.getDrawing().getPalette(),
+                            this
+                    );
+                    nodes.add(dimNode);
+                    dimNode.addTo(workArea);
                 }
                 default -> {
                 }
