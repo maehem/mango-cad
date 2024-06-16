@@ -141,7 +141,7 @@ public class EagleCADUtils {
 //        Library lib = new Library();
         String eagleVersion = element.getAttributes().getNamedItem("version").getNodeValue();
         //lib.addNote("Imported from EagleCAD LBR file version: " + eagleVersion);
-        LOGGER.log(Level.SEVERE, "Eagle file version: {0}\t\t\t\t\t", eagleVersion);
+        LOGGER.log(Level.CONFIG, "Eagle file version: {0}\t\t\t\t\t", eagleVersion);
 
         Eagle eagle = new Eagle();
 
