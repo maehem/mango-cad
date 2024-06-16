@@ -141,7 +141,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
         return getParentEditor().getLibrary().getParentDrawing();
     }
 
-    protected Symbol getSymbol() {
+    public Symbol getSymbol() {
         return symbol;
     }
 

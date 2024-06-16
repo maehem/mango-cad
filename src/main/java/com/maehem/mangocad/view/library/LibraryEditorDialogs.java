@@ -19,14 +19,25 @@ package com.maehem.mangocad.view.library;
 import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
+import com.maehem.mangocad.model.element.highlevel.Symbol;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ElementType;
+import static com.maehem.mangocad.view.ElementType.FOOTPRINT;
 import com.maehem.mangocad.view.ViewUtils;
+import com.maehem.mangocad.view.library.symbol.LibrarySymbolSubEditor;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 
 /**
  *
@@ -34,9 +45,9 @@ import javafx.scene.input.KeyEvent;
  */
 public class LibraryEditorDialogs {
 
-    private static final String DEV_NAME_MESSAGE = "Enter name for new Device.";
+    private static final String DEV_NAME_MESSAGE = "Enter name for new %s.";
 
-    public static final ChoiceDialog getDeviceChooserDialog(Library library, ArrayList<String> items) {
+    public static final ChoiceDialog getDeviceChooserDialogOld(Library library, ArrayList<String> items) {
         ChoiceDialog choiceDialog = new ChoiceDialog<>(items.get(0), items);
         ViewUtils.applyAppStylesheet(choiceDialog.getDialogPane().getStylesheets());
         //choiceDialog.getDialogPane().getStylesheets().add(this.getClass().getResource("/style/dark.css").toExternalForm());
@@ -47,6 +58,56 @@ public class LibraryEditorDialogs {
         choiceDialog.setGraphic(graphic);
 
         return choiceDialog;
+    }
+
+    public static final Dialog getSymbolChooserDialog(Library library, ArrayList<Symbol> items, ArrayList<LibrarySymbolSubEditor> openEditors) {
+        Dialog<Symbol> dialog = new Dialog<>();
+        ViewUtils.applyAppStylesheet(dialog.getDialogPane().getStylesheets());
+
+        dialog.setTitle("Edit/Create Symbol");
+        dialog.setHeaderText("Select a symbol or create a new one in " + library.getFile().getName());
+        ImageView graphic = ViewUtils.createIcon(LibraryEditor.SYMBOL_IMAGE, ViewUtils.DIALOG_GRAPHIC_SIZE);
+        dialog.setGraphic(graphic);
+        dialog.getDialogPane().getButtonTypes().addAll(
+                ButtonType.CANCEL, ButtonType.OK
+        );
+        // TEST ME!
+        ListView<Symbol> availableItemsListView = new ListView<>();
+        for (Symbol item : items) {
+            availableItemsListView.getItems().add(item);
+        }
+        availableItemsListView.setCellFactory((p) -> {
+            return new ListCell<>() {
+                @Override
+                public void updateItem(Symbol symbol, boolean empty) {
+                    super.updateItem(symbol, empty);
+                    if (empty || symbol == null) {
+                        setText(null);
+                    } else {
+                        setText(symbol.getName());
+                    }
+                }
+            };
+        });
+        availableItemsListView.setOnMouseClicked((me) -> {
+            if (me.getClickCount() == 2) {
+                Symbol selectedItem = availableItemsListView.getSelectionModel().getSelectedItem();
+                LOGGER.log(Level.SEVERE, "User double-clicked item: {0}", selectedItem.getName());
+                dialog.setResult(selectedItem);
+                dialog.close();
+            }
+        });
+
+        dialog.setResultConverter(param
+                -> ButtonType.OK.equals(param)
+                ? availableItemsListView.getSelectionModel().getSelectedItem()
+                : null
+        );
+
+        VBox content = new VBox(availableItemsListView);
+        dialog.getDialogPane().setContent(content);
+
+        return dialog;
     }
 
     public static final String presentNewLibElementNameDialog(Library library, ElementType type, String message) {
@@ -63,11 +124,35 @@ public class LibraryEditorDialogs {
             event.consume();
         });
 
+        String devMessage = String.format(DEV_NAME_MESSAGE, type.text());
         if (message != null) {
-            inputDialog.setHeaderText(DEV_NAME_MESSAGE + "\n " + message);
-        } else {
-            inputDialog.setHeaderText(DEV_NAME_MESSAGE);
+            devMessage += "\n" + message;
         }
+        inputDialog.setTitle("New " + type.text());
+        inputDialog.setHeaderText(devMessage);
+
+        Image img;
+        switch (type) {
+            case DEVICE -> {
+                img = LibraryEditor.DEVICE_IMAGE;
+            }
+            case FOOTPRINT -> {
+                img = LibraryEditor.DEVICE_IMAGE;
+            }
+            case PACKAGE3D -> {
+                img = LibraryEditor.PACKAGE_3D_IMAGE;
+            }
+            case SYMBOL -> {
+                img = LibraryEditor.SYMBOL_IMAGE;
+            }
+            default -> {
+                img = LibraryEditor.SYMBOL_IMAGE;
+            }
+        }
+        ImageView graphic = ViewUtils.createIcon(img, ViewUtils.DIALOG_GRAPHIC_SIZE);
+        inputDialog.setGraphic(graphic);
+        // TODO Graphic for type.
+
 
         inputDialog.showAndWait();
         String nameResult = inputDialog.getResult();

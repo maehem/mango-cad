@@ -115,6 +115,7 @@ public class TocElementListView extends VBox {
         listView.setOnMouseClicked((me) -> {
             if (me.getClickCount() == 2) {
                 String selectedItem = listView.getSelectionModel().getSelectedItem();
+                LOGGER.log(Level.SEVERE, "User double-clicked item: " + selectedItem);
                 listener.editItem(type, selectedItem);
             }
         });

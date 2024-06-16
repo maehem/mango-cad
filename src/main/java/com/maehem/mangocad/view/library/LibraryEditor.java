@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ElementType;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.device.LibraryDeviceSubEditor;
@@ -32,12 +33,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Separator;
@@ -76,6 +79,7 @@ public class LibraryEditor extends VBox {
     public static final Image DEVICE_IMAGE = ViewUtils.getImage("/icons/photo-album.png");
     public static final Image FOOTPRINT_IMAGE = ViewUtils.getImage("/icons/integrated-circuit.png");
     public static final Image SYMBOL_IMAGE = ViewUtils.getImage("/icons/logic-gate.png");
+    public static final Image PACKAGE_3D_IMAGE = ViewUtils.getImage("/icons/cube-isometric.png");
 
     private final File file;
     private final Library library;
@@ -109,8 +113,12 @@ public class LibraryEditor extends VBox {
     private LibrarySubEditor currentEditor;
     private LibrarySubEditor tocPane = null;
     private LibrarySubEditor devicePane = null;
-    private LibrarySubEditor symbolPane = null;
+    private LibrarySymbolSubEditor symbolPane = null;
     private LibrarySubEditor footprintPane = null;
+
+    private final ArrayList<LibrarySymbolSubEditor> symbolEditors = new ArrayList<>();
+    private final ArrayList<LibraryDeviceSubEditor> deviceEditors = new ArrayList<>();
+    private final ArrayList<LibraryFootprintSubEditor> footprintEditors = new ArrayList<>();
 
     public LibraryEditor(File file, Library library) {
         this.file = file;
@@ -157,12 +165,13 @@ public class LibraryEditor extends VBox {
         footprintButton.setToggleGroup(modeToggle);
         symbolButton.setToggleGroup(modeToggle);
 
-        tocButton.setSelected(true);
-        deviceButton.setSelected(false);
-        footprintButton.setSelected(false);
-        symbolButton.setSelected(false);
+        //tocButton.setSelected(true);
+        //deviceButton.setSelected(false);
+        //footprintButton.setSelected(false);
+        //symbolButton.setSelected(false);
+        modeToggle.selectToggle(tocButton);
 
-        editMessage.setText("Hello");
+        editMessage.setText("Table of Contents");
 
         /* Add toolbar buttons */
         ObservableList<Node> items = mainToolbar.getItems();
@@ -189,7 +198,25 @@ public class LibraryEditor extends VBox {
                 currentToggle.setSelected(true); // user action might have un-toggled it.
             } else {
                 currentToggle = newToggle;
-                initiateSwitchEditorAction();
+                LOGGER.log(Level.SEVERE, "modeToggle: set new toggle.  ==> initiateSwitchEditor");
+                initiateSwitchEditorAction(false);
+            }
+        });
+        symbolButton.setOnAction((eh) -> {
+            // TODO:
+            //
+            // Update dialog to include a list of open symbols and list
+            // them at the top.
+            // Clicking the symbol button will always open the dialog.
+            // Maybe the buttons are not toggles. Simply update the icon colors
+            // to match the current mode.
+            // Enhance the button with a number of open documents. Or a red dot.
+            // Maybe a number in a red circle for unsaved edits.
+            // Number in a green circle for normal viewed items.
+
+            if (modeToggle.getSelectedToggle().equals(symbolButton)) {
+                LOGGER.log(Level.FINER, "symbol button: clicked. ===> initiateSwitchEditor");
+                initiateSwitchEditorAction(true); // Pop up item selector.
             }
         });
     }
@@ -198,7 +225,7 @@ public class LibraryEditor extends VBox {
         return file;
     }
 
-    private void initiateSwitchEditorAction() {
+    private void initiateSwitchEditorAction(boolean choose) {
         // TOC, always there just switch back
         String togName = (String) currentToggle.getUserData();
         switch (togName) {
@@ -212,7 +239,11 @@ public class LibraryEditor extends VBox {
                 setSubEditor(ElementType.FOOTPRINT, null);
             }
             case SYM_STR -> {
-                setSubEditor(ElementType.SYMBOL, null);
+                String item = null;
+                if (!choose && symbolPane != null) {
+                    item = symbolPane.getSymbol().getName();
+                }
+                setSubEditor(ElementType.SYMBOL, item);
             }
         }
 
@@ -236,7 +267,7 @@ public class LibraryEditor extends VBox {
                             Collections.sort(list);
                             list.add(0, CREATE_NEW_MSG);
 
-                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialogOld(getLibrary(), list);
                             dialog.showAndWait(); // Present chooser
 
                             Object result = dialog.getResult();
@@ -274,7 +305,7 @@ public class LibraryEditor extends VBox {
                             Collections.sort(list);
                             list.add(0, CREATE_NEW_MSG);
 
-                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
+                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialogOld(getLibrary(), list);
                             dialog.showAndWait(); // Present chooser
 
                             Object result = dialog.getResult();
@@ -304,30 +335,39 @@ public class LibraryEditor extends VBox {
 
                 }
                 case SYMBOL -> {
-                    if (symbolPane == null) {
-                        Symbol symbol;
-                        if (item != null) {
-                            symbol = getLibrary().getSymbol(item);
+                    Symbol symbol;
+                    if (item != null) {
+                        symbol = getLibrary().getSymbol(item);
+                    } else {
+
+                        //  TODO: Supply list as Symbols.
+                        // Write a comparitor to compare symbols by name.
+//                        ArrayList<String> list = new ArrayList<>();
+//                        for (Symbol element : getLibrary().getSymbols()) {
+//                            list.add(element.getName());
+//                        }
+                        ArrayList<Symbol> symbols = new ArrayList<>(getLibrary().getSymbols());
+
+                        //Collections.sort(list);
+                        Collections.sort(symbols, (Symbol r1, Symbol r2)
+                                -> r1.getName().compareTo(r2.getName()));
+                        Symbol createNew = new Symbol();
+                        createNew.setName(CREATE_NEW_MSG);
+                        symbols.add(0, createNew);
+
+                        Dialog dialog = LibraryEditorDialogs.getSymbolChooserDialog(getLibrary(), symbols, symbolEditors);
+                        dialog.showAndWait(); // Present chooser
+
+                        Object result = dialog.getResult();
+                        if (result == null) { // User Canceled
+                            return;
                         } else {
-                            ArrayList<String> list = new ArrayList<>();
-                            for (Symbol element : getLibrary().getSymbols()) {
-                                list.add(element.getName());
-                            }
-                            Collections.sort(list);
-                            list.add(0, CREATE_NEW_MSG);
-
-                            ChoiceDialog dialog = LibraryEditorDialogs.getDeviceChooserDialog(getLibrary(), list);
-                            dialog.showAndWait(); // Present chooser
-
-                            Object result = dialog.getResult();
-                            if (result == null) { // User Canceled
-                                return;
-                            } else {
-                                item = (String) result;
-                                symbol = getLibrary().getSymbol(item);
-
-                            }
-                            if (item.equals(CREATE_NEW_MSG)) {
+                            //item = (String) result;
+                            //symbol = getLibrary().getSymbol(item);
+                            // Returns null for "Create New"
+                            symbol = (Symbol) result;
+                            //if (item.equals(CREATE_NEW_MSG)) {
+                            if (symbol.getName().equals(CREATE_NEW_MSG)) {
                                 //deviceSets.remove(CREATE_NEW_MSG);
                                 String newName = LibraryEditorDialogs.presentNewLibElementNameDialog(getLibrary(), type, null);
                                 if (newName == null) { // A valid new device was added, go edit it.
@@ -339,7 +379,21 @@ public class LibraryEditor extends VBox {
                                 }
                             }
                         }
+                    }
+                    LOGGER.log(Level.FINER, "Symbol is: {0}  Look for an existing editor...", symbol.getName());
+                    // Find editor for symbol in list. It might be null.
+                    symbolPane = null;
+                    for (LibrarySymbolSubEditor editor : symbolEditors) {
+                        if (editor.getSymbol().equals(symbol)) {
+                            LOGGER.log(Level.FINER, "Found matching editor for " + symbol.getName());
+                            symbolPane = editor;
+                            break;
+                        }
+                    }
+                    if (symbolPane == null) {
+                        LOGGER.log(Level.CONFIG, "Create new editor for: " + symbol.getName());
                         symbolPane = new LibrarySymbolSubEditor(this, symbol);
+                        symbolEditors.add(symbolPane);
                         editMessage.setText("Editing Symbol:  " + symbol.getName());
                     }
                     currentEditor = symbolPane;
