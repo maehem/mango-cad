@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.ElementListener;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
+import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
@@ -148,8 +149,60 @@ public class DimensionNode extends ViewNode implements ElementListener {
 //                new Object[]{aaa, Math.toDegrees(aaa), sinA, Math.toDegrees(sinA), hyp12}
 //        );
         switch (dimension.getDtype()) {
-            case PARALLEL -> {
+            case PARALLEL, DIAMETER -> {
+                //double textRot = angle;
+                double extLineRot = angle;
                 double h2 = hh12 - arrowGap;
+
+                if (dimension.getDtype() == DimensionType.DIAMETER) {
+                    // Crosshair at point between 1-2.
+                    double a2 = (y2 - y1) * 0.5;
+                    double b2 = (x2 - x1) * 0.5;
+
+                    chH.setLayoutX(x1 + b2); // TODO: This trick wih arrows?
+                    chH.setLayoutY(-y1 - a2);
+                    chW.setLayoutX(x1 + b2);
+                    chW.setLayoutY(-y1 - a2);
+
+                    add(chH);
+                    add(chW);
+                }
+
+                if (x1 < x2) { // TOP
+                    if (y1 > y2) { // Right
+                        if (y3 < y1 || y3 < y2) {
+                            extLineRot = 360.0 - angle;
+                            textAngle = 180.0 - angle;
+                        } else {
+                            extLineRot = angle;
+                        }
+                    } else { // Left
+                        if (y3 < y1 || y3 < y2) {
+                            extLineRot = 360.0 - angle;
+                            textAngle = 180.0 - angle;
+                        } else {
+                            extLineRot = angle;
+                        }
+                    }
+                } else {  // Left
+                    if (y1 > y2) { // Top
+                        if (y3 < y1 || y3 < y2) {
+                            extLineRot = angle;
+                            textAngle = 180.0 + angle;
+                        } else {
+                            extLineRot = -angle;
+                            textAngle = 360.0 - angle;
+                        }
+                    } else {
+                        if (y3 < y1 || y3 < y2) {
+                            extLineRot = angle;
+                            textAngle = 180.0 + angle;
+                        } else {
+                            extLineRot = 360.0 - angle;
+                            textAngle = 360.0 - angle;
+                        }
+                    }
+                }
 
                 LOGGER.log(Level.SEVERE, "Ext.Len.:{0}  off: {1}",
                         new Object[]{dimension.getExtlength(), dimension.getExtoffset()}
@@ -160,7 +213,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 extLine1.setEndY(-y1 - extLineLen - extLen);
                 extLine1Rotate.setPivotX(x1);
                 extLine1Rotate.setPivotY(-y1);
-                extLine1Rotate.setAngle(angle);
+                extLine1Rotate.setAngle(extLineRot);
 
                 extLine2.setStartX(x2);
                 extLine2.setStartY(-y2 - extOff);
@@ -168,13 +221,13 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 extLine2.setEndY(-y2 - extLineLen - extLen);
                 extLine2Rotate.setPivotX(x2);
                 extLine2Rotate.setPivotY(-y2);
-                extLine2Rotate.setAngle(angle);
+                extLine2Rotate.setAngle(extLineRot);
 
                 dimLine.setStartX(-h2);
                 dimLine.setEndX(h2);
                 dimLine.setStartY(0);
                 dimLine.setEndY(0);
-                dimLineRotate.setAngle(angle);
+                dimLineRotate.setAngle(extLineRot);
                 dimLine.setTranslateX(x3);
                 dimLine.setTranslateY(-y3);
 
@@ -470,6 +523,10 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 add(dimLine);
                 addAll(textNode);
             }
+            case LEADER -> {
+
+            }
+
         }
     }
 
