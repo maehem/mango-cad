@@ -15,8 +15,7 @@
 }
 
 .text {
-    /*-fx-fill: #CCCCE6*/
-    -fx-fill: #bbb;
+    -fx-fill: #ccc;
 }
 
 .label{
@@ -27,22 +26,23 @@
     -fx-prompt-text-fill: gray;
 }
 
-.titulo{
+.titulo{ /* what is this? */
     -fx-font-weight: bold;
     -fx-font-size: 18px;
 }
 
 .button{
     -fx-focus-traversable: false;
-    -fx-background-color: derive( -fx-base, 45% );
+    -fx-background-color: derive( -fx-accent, -40% );
 }
 
 .button:hover{
     -fx-text-fill: white;
 }
 
-.button:default {
-    -fx-base: -fx-accent ;
+.button:default { /* OK buttons */
+    /*-fx-base: derive(-fx-accent, -50%) ; */
+    -fx-background-color: -fx-accent;
 }
 
 .dialog-pane .header-panel {
