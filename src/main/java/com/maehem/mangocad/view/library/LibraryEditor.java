@@ -160,15 +160,10 @@ public class LibraryEditor extends VBox {
         mainToolbar.setPrefHeight(24);
 
         tocButton.setToggleGroup(modeToggle);
-
         deviceButton.setToggleGroup(modeToggle);
         footprintButton.setToggleGroup(modeToggle);
         symbolButton.setToggleGroup(modeToggle);
 
-        //tocButton.setSelected(true);
-        //deviceButton.setSelected(false);
-        //footprintButton.setSelected(false);
-        //symbolButton.setSelected(false);
         modeToggle.selectToggle(tocButton);
 
         editMessage.setText("Table of Contents");
