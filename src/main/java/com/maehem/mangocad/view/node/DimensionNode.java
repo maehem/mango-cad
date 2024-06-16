@@ -127,7 +127,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
         double hyp12 = Math.hypot(x2 - x1, y2 - y1);
         double hyp23 = Math.hypot(x2 - x3, y2 - y3);
         double hh12 = hyp12 / 2.0;
-        double arrowGap = dimension.getWidth() * 3; // A little space between ext. and arrow point.
+        double arrowGap = dimension.getWidth() * 2; // A little space between ext. and arrow point.
         double extLineLen = Math.sqrt(hyp13 * hyp13 - hh12 * hh12);
 
         double aaa = (y2 - y1) / hyp12;
@@ -524,7 +524,58 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 addAll(textNode);
             }
             case LEADER -> {
+                dimLine.setStartX(arrowGap);
+                dimLine.setStartY(0);
+                dimLine.setEndX(hyp12);
+                dimLine.setEndY(0);
+                dimLineRotate.setPivotX(0);
+                dimLineRotate.setPivotY(0);
+                //dimLineRotate.setAngle(angle);
+                dimLine.setTranslateX(x1);
+                dimLine.setTranslateY(-y1);
 
+                extLine1.setStartX(x1);
+                extLine1.setStartY(-y1);
+                extLine1.setEndX(x2);
+                extLine1.setEndY(-y2);
+                extLine1Rotate.setPivotX(0);
+                extLine1Rotate.setPivotY(0);
+                extLine1Rotate.setAngle(0);
+
+                extLine2.setStartX(x2);
+                extLine2.setStartY(-y2);
+                extLine2.setEndX(x3);
+                extLine2.setEndY(-y3);
+                extLine2Rotate.setPivotX(0);
+                extLine2Rotate.setPivotY(0);
+                extLine2Rotate.setAngle(0);
+
+                dimArrow1.getPoints().clear();
+                Double[] d1 = new Double[]{arrowGap, 0.0, 2.54, 0.625, 2.54, -0.625};
+                dimArrow1.getPoints().addAll(Arrays.asList(d1));
+                dimArrow1.setTranslateX(x1);
+                dimArrow1.setTranslateY(-y1);
+
+                if (x1 < x2) { // Right
+                    if (y1 < y2) { // Top
+                        dimLineRotate.setAngle(angle);
+                    } else { // Bottom
+                        dimLineRotate.setAngle(180.0 - angle);
+                    }
+                } else {  // Left
+                    if (y1 < y2) { // Top
+                        dimLineRotate.setAngle(180.0 - angle);
+                    } else {
+                        dimLineRotate.setAngle(angle);
+                    }
+                }
+
+                updateWidths();
+                updateLayer();
+
+                add(dimLine);
+                add(extLine2);
+                add(dimArrow1);
             }
 
         }
