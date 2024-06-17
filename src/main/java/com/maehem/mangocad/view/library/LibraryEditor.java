@@ -40,9 +40,11 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -84,11 +86,11 @@ public class LibraryEditor extends VBox {
     private final File file;
     private final Library library;
 
-    private final Menu fileMenu = new Menu("File");
-    private final Menu viewMenu = new Menu("View");
-    private final Menu optionsMenu = new Menu("Options");
-    private final Menu windowMenu = new Menu("Window");
-    private final Menu helpMenu = new Menu("Help");
+    private final Menu fileMenu = new Menu(MSG.getString("MENU_FILE"));
+    private final Menu viewMenu = new Menu(MSG.getString("MENU_VIEW"));
+    private final Menu optionsMenu = new Menu(MSG.getString("MENU_OPTIONS"));
+    private final Menu windowMenu = new Menu(MSG.getString("MENU_WINDOW"));
+    private final Menu helpMenu = new Menu(MSG.getString("MENU_HELP"));
 
     private final ToolBar mainToolbar = new ToolBar();
     private final Button openButton = ViewUtils.createIconButton("Open", FILE_IMAGE);
@@ -200,11 +202,6 @@ public class LibraryEditor extends VBox {
         symbolButton.setOnAction((eh) -> {
             // TODO:
             //
-            // Update dialog to include a list of open symbols and list
-            // them at the top.
-            // Clicking the symbol button will always open the dialog.
-            // Maybe the buttons are not toggles. Simply update the icon colors
-            // to match the current mode.
             // Enhance the button with a number of open documents. Or a red dot.
             // Maybe a number in a red circle for unsaved edits.
             // Number in a green circle for normal viewed items.
@@ -214,10 +211,37 @@ public class LibraryEditor extends VBox {
                 initiateSwitchEditorAction(true); // Pop up item selector.
             }
         });
+        symbolButton.setContextMenu(getOpenSymbolEditorsMenu());
     }
 
     public File getFile() {
         return file;
+    }
+
+    private ContextMenu getOpenSymbolEditorsMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getItems().add(new MenuItem("Empty"));
+        contextMenu.setOnShowing((t) -> {
+            contextMenu.getItems().clear();
+            if (symbolEditors.isEmpty()) {
+                MenuItem menuItem = new MenuItem("No recent edited Symbols.");
+                contextMenu.getItems().add(menuItem);
+            } else {
+                symbolEditors.forEach((editor) -> {
+                    MenuItem menuItem = new MenuItem(editor.getSymbol().getName());
+                    contextMenu.getItems().add(menuItem);
+                    menuItem.setOnAction((event) -> {
+                        LOGGER.log(Level.SEVERE, "Menu select: {0}", new Object[]{menuItem.getText()});
+                        currentEditor = editor;
+                        symbolPane = editor;
+                        modeToggle.selectToggle(symbolButton);
+                        initiateSwitchEditorAction(false);
+                    });
+                });
+            }
+
+        });
+        return contextMenu;
     }
 
     private void initiateSwitchEditorAction(boolean choose) {
@@ -241,7 +265,6 @@ public class LibraryEditor extends VBox {
                 setSubEditor(ElementType.SYMBOL, item);
             }
         }
-
     }
 
     public void setSubEditor(ElementType type, String item) {
@@ -380,13 +403,13 @@ public class LibraryEditor extends VBox {
                     symbolPane = null;
                     for (LibrarySymbolSubEditor editor : symbolEditors) {
                         if (editor.getSymbol().equals(symbol)) {
-                            LOGGER.log(Level.FINER, "Found matching editor for " + symbol.getName());
+                            LOGGER.log(Level.FINER, "Found matching editor for {0}", symbol.getName());
                             symbolPane = editor;
                             break;
                         }
                     }
                     if (symbolPane == null) {
-                        LOGGER.log(Level.CONFIG, "Create new editor for: " + symbol.getName());
+                        LOGGER.log(Level.CONFIG, "Create new editor for: {0}", symbol.getName());
                         symbolPane = new LibrarySymbolSubEditor(this, symbol);
                         symbolEditors.add(symbolPane);
                         editMessage.setText("Editing Symbol:  " + symbol.getName());
