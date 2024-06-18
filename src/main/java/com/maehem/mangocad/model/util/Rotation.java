@@ -30,78 +30,90 @@ import com.maehem.mangocad.model.RealValue;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Rotation {
+public class Rotation extends RealValue {
 
+    private static final double MIN = 0.0;
+    private static final double MAX = 360.0;
+
+    public static final boolean MIRROR_NOT_ALLOWED = false;
+    public static final boolean MIRROR_ALLOWED = true;
+    public static final boolean SPIN_NOT_ALLOWED = false;
+    public static final boolean SPIN_ALLOWED = true;
     public static final boolean CONSTRAINED = true;
-    public static final boolean UNCONSTRAINED = false;
+    //public static final boolean UNCONSTRAINED = false;
 
     public static final String COMMAND_SETTING = "orientation";
     public static final String XML_SETTING = "rot";
 
-    private RealValue valueProperty = new RealValue(0);
+    //private RealValue valueProperty = new RealValue(0);
     private boolean constrained = false;
     private boolean spin = false;
-    private boolean allowSpin = false;
     private boolean mirror = false;
-    private boolean allowMirror = false;
+
+    private boolean allowSpin = !SPIN_ALLOWED;
+    private boolean allowMirror = MIRROR_ALLOWED;
+
+    private int prec = 1;
 
     public Rotation() {
+        super(0.0, MIN, MAX);
     }
 
     public Rotation(boolean constrained) {
+        this();
         this.constrained = constrained;
     }
 
     /**
      * @return the value
      */
-    public double getValue() {
-        return valueProperty.get();
-    }
-
     public void setValue(String strValue) {
         if (strValue.startsWith("MR")) {
             // Mirror
             setMirror(true);
-            setValue(Double.parseDouble(strValue.substring(2)));
+            set(Double.parseDouble(strValue.substring(2)));
         } else if (strValue.startsWith("SR")) {
             // Spin
             setSpin(true);
-            setValue(Double.parseDouble(strValue.substring(2)));
+            set(Double.parseDouble(strValue.substring(2)));
         } else if (strValue.startsWith("SMR")) {
             // Spin
             setSpin(true);
             setMirror(true);
-            setValue(Double.parseDouble(strValue.substring(3)));
+            set(Double.parseDouble(strValue.substring(3)));
         } else {
             // Normal
-            setValue(Double.parseDouble(strValue.substring(1)));
+            set(Double.parseDouble(strValue.substring(1)));
         }
     }
 
     /**
      * @param value the value to set
      */
-    public void setValue(double value) {
-        value %= 360.0;// Over-range limiting.
-        if (getValue() != value) {
-            double oldValue = getValue();
+    @Override
+    public void set(double value) {
+        value %= MAX;// Over-range limiting.
+        if (value < 0) {
+            value += MAX;
+        }
+        if (get() != value) {
+            //double oldValue = get();
 
             if (constrained) {  // Round to nearest 90 degree angle.
                 if (value >= 45.0 && value < 135.0) {
-                    valueProperty.set(90.0);
+                    super.set(90.0);
                 } else if (value >= 135.0 && value < 225.0) {
-                    valueProperty.set(180.0);
+                    super.set(180.0);
                 } else if (value >= 225.0 && value < 315.0) {
-                    valueProperty.set(270.0);
+                    super.set(270.0);
                 } else {
-                    valueProperty.set(0.0);
+                    super.set(0.0);
                 }
             } else {
-                valueProperty.set(value);
+                super.set(value);
             }
         }
-        // TODO: Notify
+        notifyValueChange();
     }
 
     /**
@@ -129,7 +141,12 @@ public class Rotation {
      * @param spin the spin to set
      */
     public void setSpin(boolean spin) {
-        this.spin = spin;
+        if (isSpinAllowed() && isSpin() != spin) {
+            this.spin = spin;
+            notifyValueChange();
+        } else {
+            this.spin = false; // Ensure the rule.
+        }
     }
 
     /**
@@ -143,13 +160,18 @@ public class Rotation {
      * @param mirror the mirror to set
      */
     public void setMirror(boolean mirror) {
-        this.mirror = mirror;
+        if (isMirrorAllowed() && isMirror() != mirror) {
+            this.mirror = mirror;
+            notifyValueChange();
+        } else {
+            this.mirror = false; // Ensure the rule.
+        }
     }
 
     /**
      * @return the allowSpin
      */
-    public boolean isAllowSpin() {
+    public boolean isSpinAllowed() {
         return allowSpin;
     }
 
@@ -161,13 +183,13 @@ public class Rotation {
     }
 
     public boolean isSpun() {
-        return !spin && (getValue() > 90.0 && getValue() <= 270.0);
+        return !isSpin() && (get() > 90.0 && get() <= 270.0);
     }
 
     /**
      * @return the allowMirror
      */
-    public boolean isAllowMirror() {
+    public boolean isMirrorAllowed() {
         return allowMirror;
     }
 
@@ -179,11 +201,11 @@ public class Rotation {
     }
 
     static public Rotation copyValues(Rotation old, Rotation copy) {
-        copy.setValue(old.getValue());
+        copy.set(old.get());
         copy.setMirror(old.isMirror());
-        copy.setAllowMirror(old.isAllowMirror());
+        copy.setAllowMirror(old.isMirrorAllowed());
         copy.setSpin(old.isSpin());
-        copy.setAllowSpin(old.isAllowSpin());
+        copy.setAllowSpin(old.isSpinAllowed());
         copy.setConstrained(old.isConstrained());
 
         return copy;
@@ -191,7 +213,10 @@ public class Rotation {
 
     @Override
     public String toString() {
-        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + (int) getValue();
+        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + getPrecise(prec);
     }
 
+    public String xmlValue() {
+        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + getPrecise(prec);
+    }
 }
