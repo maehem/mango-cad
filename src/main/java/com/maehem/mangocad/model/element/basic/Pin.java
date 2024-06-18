@@ -28,6 +28,7 @@ import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -261,7 +262,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public double getRot() {
-        return rotation.getValue();
+        return rotation.get();
     }
 
     /**
@@ -269,10 +270,10 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public void setRot(double val) {
-        if (this.rotation.getValue() != val) {
+        if (this.rotation.get() != val) {
             double oldVal = this.getRot();
-            this.rotation.setValue(val);
-            notifyListeners(RotationProperty.Field.VALUE, oldVal, this.rotation.getValue());
+            this.rotation.set(val);
+            notifyListeners(RotationProperty.Field.VALUE, oldVal, this.rotation.get());
         }
     }
 
@@ -400,4 +401,37 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
+    /**
+     * <pre>
+     * <pin name="B1" x="12.7" y="12.7" length="middle" rot="R180"/>
+     * <pin name="A8" x="-12.7" y="-5.08" length="middle"/>
+     * <pin name="CLK" x="-10.16" y="2.54" length="short" function="clk"/>
+     * <pin name="VDD" x="-15.24" y="20.32" visible="pad" length="short" direction="pwr" rot="R270"/>
+     * <pin name="!CLK" x="-7.62" y="5.08" visible="pad" length="short" direction="in" function="dotclk"/>
+     * <pin name="A" x="-5.08" y="2.54" visible="pad" length="short" direction="in" swaplevel="1"/>
+     * <pin name="FOOBAR" x="-15.24" y="12.7" visible="off" length="short" direction="pwr" function="dotclk" swaplevel="3" rot="R90"/>
+     *
+     * </pre>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<pin {0}{1}{2}{3}{4}{5}{6}{7}</>");
+
+        String rotValue = rotation.xmlValue();
+
+        Object[] args = {
+            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
+            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            !visible.equals(PinVisible.OFF) ? " visible=\"" + visible.code() + "\"" : "", // 2
+            !getLength().equals(PinLength.LONG) ? " length=\"" + length.code() + "\"" : "", // 3
+            !getDirection().equals(PinDirection.IO) ? " direction=\"" + direction.code() + "\"" : "", // 4
+            !getFunction().equals(PinFunction.NONE) ? " function=\"" + function.code() + "\"" : "", // 5
+            getSwapLevel() > 0 ? " swaplevel=\"" + getSwapLevel() + "\"" : "", // 6
+            !rotValue.equals("R0") ? " rot=\"" + rotValue + "\"" : "" // 7
+        };
+
+        return mf.format(args);
+    }
 }
