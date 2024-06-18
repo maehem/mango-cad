@@ -174,7 +174,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
 
     @Override
     public boolean isMirrorAllowed() {
-        return rectangle.getRotationProperty().isAllowMirror(); // Should be true.
+        return rectangle.getRotationProperty().isMirrorAllowed(); // Should be true.
     }
 
     @Override
