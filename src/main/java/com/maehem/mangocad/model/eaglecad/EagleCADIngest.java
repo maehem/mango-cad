@@ -2499,6 +2499,9 @@ public class EagleCADIngest {
                 case "y3":
                     dim.setY3(Double.parseDouble(value));
                     break;
+                case "locked":
+                    dim.lockProperty.setLocked(value.equals("yes"));
+                    break;
                 case "layer":
                     dim.setLayerNum(Integer.parseInt(value));
                     break;
@@ -2535,7 +2538,7 @@ public class EagleCADIngest {
                     dim.getGrouprefs().addAll(Arrays.asList(value.split(" ")));
                     break;
                 default:
-                    throw new EagleCADLibraryFileException("Dimension has unknown attribute: [" + node.getNodeName() + "]");
+                    throw new EagleCADLibraryFileException("Dimension has unknown attribute: [" + it.getNodeName() + "]");
             }
 
         }
