@@ -124,14 +124,14 @@ public class PadSMD extends Element implements LayerNumberProperty {
      * @return the rotation
      */
     public double getRot() {
-        return rotation.getValue();
+        return rotation.get();
     }
 
     /**
      * @param val the rotation to set
      */
     public void setRot(double val) {
-        this.rotation.setValue(val);
+        this.rotation.set(val);
     }
 
     /**

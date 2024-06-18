@@ -134,7 +134,7 @@ public class ModuleInst extends Element {
      * @return the rot
      */
     public double getRot() {
-        return rotation.getValue();
+        return rotation.get();
     }
 
     /**
@@ -142,7 +142,7 @@ public class ModuleInst extends Element {
      * @param rot the rot to set Only 0, 90, 180 or 270
      */
     public void setRot(double rot) {
-        rotation.setValue(rot);
+        rotation.set(rot);
 //        // Range checking. Round to nearest 90 degree angle.
 //        if ( rot >= 45.0 && rot < 135.0 ) {
 //            this.rot = 90;

@@ -405,7 +405,7 @@ public class PinNode extends ViewNode implements ElementListener {
      * @param parentRot the parentRot to set
      */
     public final void setParentRot(Rotation parentRotation) {
-        this.parentRot = parentRotation == null ? 0.0 : parentRotation.getValue();
+        this.parentRot = parentRotation == null ? 0.0 : parentRotation.get();
         this.parentMir = parentRotation == null ? false : parentRotation.isMirror();
     }
 

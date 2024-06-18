@@ -48,7 +48,7 @@ public class Instance extends Element implements GrouprefsProperty {
     private double x;
     private double y;
     private boolean smashed = false;
-    private Rotation rotation = new Rotation(Rotation.CONSTRAINED);
+    private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
 
     @Override
     public String getElementName() {
@@ -77,7 +77,7 @@ public class Instance extends Element implements GrouprefsProperty {
      * @return the rot
      */
     public double getRot() {
-        return rotation.getValue();
+        return rotation.get();
     }
 
     /**
@@ -85,7 +85,7 @@ public class Instance extends Element implements GrouprefsProperty {
      * @param rot the rot to set Only 0, 90, 180 or 270
      */
     public void setRot(double rot) {
-        rotation.setValue(rot);
+        rotation.set(rot);
     }
 
     /**

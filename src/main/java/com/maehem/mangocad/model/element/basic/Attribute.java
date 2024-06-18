@@ -157,7 +157,7 @@ public class Attribute extends Element implements LayerNumberProperty, Grouprefs
      * @param value
      */
     public void setRotation(double value) {
-        this.rotation.setValue(value);
+        this.rotation.set(value);
     }
 
     /**

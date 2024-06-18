@@ -826,11 +826,11 @@ public class LibraryElementNode {
         double y = et.getY();
 
         Rotation rotation = et.getRotationProperty();
-        double rot = rotation.getValue();
+        double rot = rotation.get();
         boolean mir = rotation.isMirror();
         boolean spin = rotation.isSpin();
 
-        double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
+        double parentRot = parentRotation != null ? parentRotation.get() : 0.0;
         boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
 
         double stroke = et.getDerivedStroke();
@@ -989,8 +989,8 @@ public class LibraryElementNode {
         // Flip text 180 for certain rotations.
         // This won't work at all!
 //        if (rot == 180
-//                || (mir && rotation.getValue() == 90)
-//                || (!mir && rotation.getValue() == 270)) {
+//                || (mir && rotation.get() == 90)
+//                || (!mir && rotation.get() == 270)) {
 //            Rotate tR = new Rotate(180.0, textWidth / 2.0, -textHeight * FONT_ASC_PCT / 2.0);
 //            tt.getTransforms().add(tR);
 //        }
@@ -1471,7 +1471,7 @@ public class LibraryElementNode {
                 pivotX = 0;
                 pivotY = -transY;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = 0;
                     transY = sx3;
                     //pivotX = 0;
@@ -1485,7 +1485,7 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = -transY;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = 0;
                     transY = sx3;
                     //pivotX = 0;
@@ -1499,7 +1499,7 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = -transY;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = 0;
                     transY = stroke * 3.0;
                     //pivotX = 0;
@@ -1513,7 +1513,7 @@ public class LibraryElementNode {
                 pivotX = 0.0;
                 pivotY = -transY;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = -textWidth / 2.0;
                     transY = textHeight / 2.0 + sx3;
                     //pivotX = -transX;
@@ -1527,7 +1527,7 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = -transY;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = -textWidth / 2.0;
                     transY = textHeight / 2.0 + sx3;
                     //pivotX = -transX;
@@ -1541,7 +1541,7 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = -transY;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = -textWidth / 2.0;
                     transY = textHeight / 2.0 + sx3;
                     //pivotX = -transX;
@@ -1555,7 +1555,7 @@ public class LibraryElementNode {
                 pivotX = 0;
                 pivotY = 0;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     transX = 0;
                     transY = textHeight + stroke * 3.0;
                     //pivotX = 0;
@@ -1570,7 +1570,7 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = 0;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = -textWidth / 2.0;
                     transY = textHeight + stroke * 3.0;
                     //pivotX = -transX;
@@ -1585,7 +1585,7 @@ public class LibraryElementNode {
                 pivotX = -transX;
                 pivotY = 0;
 
-                if (!r.isSpin() && r.getValue() > 90 && r.getValue() <= 270) {
+                if (!r.isSpin() && r.get() > 90 && r.get() <= 270) {
                     //transX = 0;
                     transY = textHeight + stroke * 3.0;
 
@@ -1597,7 +1597,7 @@ public class LibraryElementNode {
         }
 
         l.getTransforms().add(new Translate(transX, transY));
-        l.getTransforms().add(new Rotate(-r.getValue(), pivotX, pivotY));
+        l.getTransforms().add(new Rotate(-r.get(), pivotX, pivotY));
     }
 
     public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
@@ -1605,10 +1605,10 @@ public class LibraryElementNode {
 
         Group g = new Group();
         Rotation rotation = et.getRotationProperty();
-        double rot = rotation.getValue();
+        double rot = rotation.get();
         boolean mir = rotation.isMirror();
 
-        double parentRot = parentRotation != null ? parentRotation.getValue() : 0.0;
+        double parentRot = parentRotation != null ? parentRotation.get() : 0.0;
         boolean parentMir = parentRotation != null ? parentRotation.isMirror() : false;
 
         //double fontSizeMult = 0.666; // INCH to Point ratio
@@ -1643,8 +1643,8 @@ public class LibraryElementNode {
 
         // Flip text 180 for certain rotations.
         if (rot == 180
-                || (mir && rotation.getValue() == 90)
-                || (!mir && rotation.getValue() == 270)) {
+                || (mir && rotation.get() == 90)
+                || (!mir && rotation.get() == 270)) {
             Rotate tR = new Rotate(180.0, textWidth / 2.0, -textHeight * FONT_ASC_PCT / 2.0);
             tt.getTransforms().add(tR);
         }
@@ -1830,7 +1830,7 @@ public class LibraryElementNode {
 
         boolean sideways = (rot > 45.0 && rot < 135.0)
                 || (rot > 225.0 && rot < 315.0);
-        boolean gt135 = et.getRotationProperty().getValue() > 135.0;
+        boolean gt135 = et.getRotationProperty().get() > 135.0;
 
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
@@ -2011,7 +2011,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(smd.getName());
-        et.getRotationProperty().setValue(smd.getRot());
+        et.getRotationProperty().set(smd.getRot());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(smd.getX());
@@ -2327,7 +2327,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(thd.getName());
-        et.getRotationProperty().setValue(thd.getRot());
+        et.getRotationProperty().set(thd.getRot());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(thd.getX());
@@ -2787,7 +2787,7 @@ public class LibraryElementNode {
     public static Node createPinNode(Pin p, Color c, Rotation parentRotation, boolean showDetails) {
         Group g = new Group();
 
-        double parentRot = parentRotation == null ? 0.0 : parentRotation.getValue();
+        double parentRot = parentRotation == null ? 0.0 : parentRotation.get();
         boolean parentMir = parentRotation == null ? false : parentRotation.isMirror();
 
         final Color ORIGIN_CIRCLE_COLOR = new Color(1.0, 1.0, 1.0, 0.2);
@@ -3121,7 +3121,7 @@ public class LibraryElementNode {
         Group g = new Group(elementGroup, textGroup);
 
         final Rotation rotation = inst == null ? null : inst.getRotation();
-        final int rot = (int) (inst == null ? 0.0 : rotation.getValue());
+        final int rot = (int) (inst == null ? 0.0 : rotation.get());
         final boolean mirror = inst == null ? false : inst.getRotation().isMirror();
 
         symbol.getElements().forEach((e) -> {

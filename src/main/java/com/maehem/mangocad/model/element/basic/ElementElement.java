@@ -72,7 +72,7 @@ public class ElementElement extends Element implements GrouprefsProperty {
     private boolean locked;
     private boolean populate;
     private boolean smashed;
-    private final Rotation rot = new Rotation(Rotation.UNCONSTRAINED);
+    private final Rotation rot = new Rotation();
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private final List<Attribute> attributes = new ArrayList<>();
@@ -251,14 +251,14 @@ public class ElementElement extends Element implements GrouprefsProperty {
      * @return the rot
      */
     public double getRot() {
-        return rot.getValue();
+        return rot.get();
     }
 
     /**
      * @param val the rot to set
      */
     public void setRot(double val) {
-        this.rot.setValue(val);
+        this.rot.set(val);
 
     }
 
