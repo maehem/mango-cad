@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.IntValue;
+import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.UnitValue;
 import com.maehem.mangocad.model.element.ElementField;
@@ -29,6 +30,7 @@ import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,6 +51,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     //          y2            %Coord;        #REQUIRED
     //          x3            %Coord;        #REQUIRED
     //          y3            %Coord;        #REQUIRED
+    //          locked        %Bool;         "no"     // Not in DTD
     //          layer         %Layer;        #REQUIRED
     //          dtype         %DimensionType; "parallel"
     //          width         %Dimension;    "0.13"
@@ -94,12 +97,13 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
     }
 
     private int layer;
-    public RealValue x1Property = new RealValue(0);
-    public RealValue y1Property = new RealValue(0);
-    public RealValue x2Property = new RealValue(0);
-    public RealValue y2Property = new RealValue(0);
-    public RealValue x3Property = new RealValue(0); // Text placement.
-    public RealValue y3Property = new RealValue(0);
+    public final RealValue x1Property = new RealValue(0);
+    public final RealValue y1Property = new RealValue(0);
+    public final RealValue x2Property = new RealValue(0);
+    public final RealValue y2Property = new RealValue(0);
+    public final RealValue x3Property = new RealValue(0); // Text placement.
+    public final RealValue y3Property = new RealValue(0);
+    public final LockValue lockProperty = new LockValue();
     private DimensionType dtype = DimensionType.PARALLEL;
     public final RealValue widthProperty = new RealValue(0.13, 0.0, 200.0);
     public final RealValue extwidthProperty = new RealValue(0, 0.0, 200.0);
@@ -399,4 +403,43 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
     }
+
+    /**
+     * <pre>
+     * <dimension x1="22.86" y1="-7.62" x2="48.26" y2="2.54" x3="35.56" y3="10.16" textsize="1.778" layer="94" dtype="horizontal"/>
+     * <dimension x1="68.58" y1="10.16" x2="58.42" y2="2.54" x3="78.74" y3="6.35" textsize="1.778" layer="94" dtype="vertical"/>
+     * <dimension x1="22.86" y1="-10.16" x2="48.26" y2="-20.32" x3="35.56" y3="-15.24" textsize="1.778" layer="94" dtype="horizontal"/>
+     * <dimension x1="25.4" y1="17.78" x2="30.48" y2="20.32" x3="33.02" y3="20.32" textsize="1.778" layer="94" dtype="leader" extlength="127"/>
+     * <dimension x1="38.1" y1="2.54" x2="63.5" y2="2.54" x3="50.8" y3="15.24" locked="yes" textsize="1.778" layer="94" extwidth="0.127" extlength="2.54" extoffset="1.27" unit="mil" precision="6" visible="yes"/>
+     * </pre>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<dimension {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}/>");
+
+        Object[] args = {
+            " x1=\"" + x1Property.getPrecise(6) + "\"", // 0
+            " y1=\"" + y1Property.getPrecise(6) + "\"", // 1
+            " x2=\"" + x2Property.getPrecise(6) + "\"", // 2
+            " y2=\"" + y2Property.getPrecise(6) + "\"", // 3
+            " x3=\"" + x3Property.getPrecise(6) + "\"", // 4
+            " y3=\"" + y3Property.getPrecise(6) + "\"", // 5
+            lockProperty.xmlValue(), // 6
+            " textsize=\"" + textsizeProperty.getPrecise(3) + "\"", // 7
+            " layer=\"" + getLayerNum() + "\"", // 8
+            getTextratio() != 15 ? " textratio=\"" + getTextratio() + "\"" : "", // 9
+            getExtwidth() != 0.0 ? " extwidth=\"" + extwidthProperty.getPrecise(6) + "\"" : "", // 10
+            getExtlength() != 0.0 ? " extwidth=\"" + extlengthProperty.getPrecise(6) + "\"" : "", // 11
+            getExtoffset() != 0.0 ? " extwidth=\"" + extoffsetProperty.getPrecise(6) + "\"" : "", // 12
+            !getUnit().equals(Unit.MM) ? " unit=\"" + getUnit().code() + "\"" : "", // 13
+            getPrecision() != 2 ? " precision=\"" + getPrecision() + "\"" : "", // 14
+            isVisible() ? " visible=\"yes\"" : "", // 15
+            !getDtype().equals(DimensionType.PARALLEL) ? " dtype=\"" + getDtype().code() + "\"" : "" // 16
+        };
+
+        return mf.format(args);
+    }
+
 }
