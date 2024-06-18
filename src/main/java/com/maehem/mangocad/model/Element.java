@@ -62,4 +62,9 @@ public abstract class Element {
             l.elementChanged(this, field, oldVal, newVal);
         }
     }
+
+    public String toXML() {
+        return "";
+    }
+
 }
