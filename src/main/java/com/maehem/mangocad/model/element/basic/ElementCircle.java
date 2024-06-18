@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
@@ -25,6 +26,7 @@ import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -66,6 +68,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     public final RealValue xProperty = new RealValue(0);
     public final RealValue yProperty = new RealValue(0);
 
+    public final LockValue lockProperty = new LockValue();
     public final RealValue radiusProperty = new RealValue(2.54);
     public final RealValue widthProperty = new RealValue(0.254);
 
@@ -230,4 +233,28 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
         }
     }
 
+    /**
+     *
+     * <circle x="-6.096" y="-7.62" radius="0.762" width="0.3048" layer="94"/>
+     * <circle x="-19.558" y="5.08" radius="0.762" width="0.3048" layer="94"/>
+     * <circle x="-12.7" y="-7.62" radius="0.254" width="0.381" layer="94"/>
+     * <circle x="6.096" y="-7.62" radius="0.762" width="0.3048" layer="94"/>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<circle {0}{1}{2}{3}{4}</>");
+
+        Object[] args = {
+            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
+            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            lockProperty.xmlValue(), // 2
+            " radius=\"" + radiusProperty.getPrecise(6) + "\"", // 3
+            " width=\"" + widthProperty.getPrecise(6) + "\"", // 4
+            " layer=\"" + getLayerNum() + "\"" // 5
+        };
+
+        return mf.format(args);
+    }
 }

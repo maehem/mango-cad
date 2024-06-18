@@ -21,11 +21,13 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementListener;
+import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -90,6 +92,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         }
 
     }
+    public final LockValue lockProperty = new LockValue();
     private int layer;
     private double width = 0.254;
     private PolygonPour pour = PolygonPour.SOLID;
@@ -439,4 +442,40 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         return grouprefs;
     }
 
+    /**
+     * <pre>
+     * <polygon width="0.254" layer="94" spacing="1.381759375" pour="hatch">
+     * <vertex x="50.8" y="-15.24"/>
+     * <vertex x="71.12" y="-15.24"/>
+     * <vertex x="71.12" y="-5.08"/>
+     * <vertex x="50.8" y="-5.08"/>
+     * <vertex x="48.26" y="-5.08"/>
+     * <vertex x="48.26" y="-10.16"/>
+     * <vertex x="40.64" y="-10.16" curve="60"/>
+     * <vertex x="40.64" y="-15.24"/>
+     * </polygon>
+     * </pre>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<polygon {0}{1}{2}{3}{4}>\n{5}<polygon/>");
+
+        StringBuilder vertSb = new StringBuilder();
+        vertices.forEach(v -> {
+            vertSb.append(v.toXML()).append("\n");
+        });
+
+        Object[] args = {
+            " width=\"" + width + "\"", // 0
+            " layer=\"" + getLayerNum() + "\"", // 1
+            lockProperty.xmlValue(), // 2
+            getSpacing() != 0.127 ? " spacing=\"" + getSpacing() + "\"" : "", // 3
+            !pour.equals(PolygonPour.SOLID) ? " pour=\"" + pour.code() + "\"" : "", // 4
+            vertSb.toString() // 5
+        };
+
+        return mf.format(args);
+    }
 }
