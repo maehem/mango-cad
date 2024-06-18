@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.IntValue;
+import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.StringValue;
 import com.maehem.mangocad.model.element.ElementField;
@@ -29,6 +30,7 @@ import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,6 +118,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
     private int layer;
     public final RealValue xProperty = new RealValue(0);
     public final RealValue yProperty = new RealValue(0);
+    public final LockValue lockProperty = new LockValue();
     public final RealValue sizeProperty = new RealValue(1.778, 0.000001, 100000); // 0.7 inch
     private boolean selected = false;
     private ElementText snapshot = null;
@@ -262,14 +265,14 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     @Override
     public double getRot() {
-        return rotation.getValue();
+        return rotation.get();
     }
 
     @Override
     public void setRot(double rot) {
         if (getRot() != rot) {
             double oldValue = this.getRot();
-            getRotationProperty().setValue(rot);
+            getRotationProperty().set(rot);
             notifyListeners(RotationProperty.Field.VALUE, oldValue, this.getRot());
         }
     }
@@ -377,7 +380,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     @Override
     public boolean isSpinAllowed() {
-        return rotation.isAllowSpin();
+        return rotation.isSpinAllowed();
     }
 
     @Override
@@ -410,7 +413,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     @Override
     public boolean isMirrorAllowed() {
-        return getRotationProperty().isAllowMirror();
+        return getRotationProperty().isMirrorAllowed();
     }
 
     @Override
@@ -513,4 +516,66 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
         }
     }
 
+    /**
+     * <pre>
+     * <text x="1.27" y="0" size="1.778" layer= "95" align="center"> & gt;NAME</text>
+     * <text x="-1.27" y="-5.08" size="0.8128" layer= "96" align="center-left"> & gt;VALUE</text>
+     * <text x="33.02" y="-2.54" locked="yes" size="1.778" layer="94" ratio="16" distance="55">HELLO</text>
+     * <text x="33.02" y="-2.54" locked="yes" size="1.778" layer="94" ratio="16" distance="55" align="center">HELLO</text>
+     *
+     * </pre>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<text {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}>{10}<text/>");
+        String rotStrValue = rotation.xmlValue();
+
+        Object[] args = {
+            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
+            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            lockProperty.xmlValue(), // 2
+            " size=\"" + sizeProperty.getPrecise(6) + "\"", // 3
+            " layer=\"" + getLayerNum() + "\"", // 4
+            getRatio() != 15 ? " ratio=\"" + getRatio() + "\"" : "", // 5
+            getDistance() != 50 ? " distance=\"" + getDistance() + "\"" : "", // 6
+            !getAlign().equals(TextAlign.BOTTOM_LEFT) ? " align=\"" + getAlign().code() + "\"" : "", // 7
+            !getFont().equals(TextFont.VECTOR) ? " font=\"" + getFont().code() + "\"" : "", // 8
+            !rotStrValue.equals("R0") ? " rot=\"" + rotStrValue + "\"" : "", // 9
+            // TODO Group Refs
+            getValue() // 10  // TODO Format >  &  < and other XML symbols!
+        };
+
+        return mf.format(args);
+
+//        StringBuilder sb = new StringBuilder("<text");
+//        sb.append(" x=\"").append(xProperty.getPrecise(6)).append("\"").
+//                append(" y=\"").append(yProperty.getPrecise(6)).append("\"");
+//        if (isLocked()) {
+//            sb.append(" locked=\"").append("yes").append("\"");
+//        }
+//        sb.append(" size=\"").append(sizeProperty.getPrecise(6)).
+//                append(" layer=\"").append(getLayerNum());
+//        if (getRatio() != 15) {
+//            sb.append(" ratio=\"").append(getRatio());
+//        }
+//        if (getDistance() != 50) {
+//            sb.append(" distance=\"").append(getDistance());
+//        }
+//
+//        if (!getAlign().equals(TextAlign.BOTTOM_LEFT)) {
+//            sb.append(" align=\"").append(getAlign().code()).append("\"");
+//        }
+//        if (!getFont().equals(TextFont.VECTOR)) {
+//            sb.append(" font=\"").append(getFont().code()).append("\"");
+//        }
+//        if (getRot() != 0.0) {
+//            sb.append(" rot=\"").append((int) getRot()).append("\"");
+//        }
+//        // TODO: GrouRefs
+//
+//        sb.append("/>");
+//        return sb.toString();
+    }
 }
