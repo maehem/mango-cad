@@ -414,4 +414,29 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         }
     }
 
+    /**
+     * <pre>
+     * <wire x1="-3.048" y1="3.81" x2="-3.048" y2="-3.81" width="0.6096" layer="94" curve="-60"/>
+     * <wire x1="-3.048" y1="-3.81" x2="0" y2="-3.81" width="0.6096" layer="94"/>
+<wire x1="1.016" y1="-16.51" x2="16.256" y2="-16.51" width="0.254" layer="97" style="shortdash"/>
+     * </pre>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        StringBuilder sb = new StringBuilder("<wire");
+        sb.append(" x1=\"").append(x1Property.getPrecise(3)).
+                append(" y1=\"").append(y1Property.getPrecise(3)).
+                append(" x2=\"").append(x2Property.getPrecise(3)).
+                append(" y2=\"").append(y2Property.getPrecise(3)).
+                append(" width=\"").append(widthProperty.getPrecise(4)).
+                append(" layer=\"").append(getLayerNum());
+        if (getCurve() != 0.0) {
+            sb.append(" curve=\"").append(curveProperty.getPrecise(3));
+        }
+        sb.append("/>");
+        return sb.toString();
+    }
+
 }
