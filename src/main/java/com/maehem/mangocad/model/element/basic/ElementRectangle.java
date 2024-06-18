@@ -17,6 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
@@ -24,6 +25,7 @@ import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.util.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -63,7 +65,8 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     public final RealValue y1Property = new RealValue(0);
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
-    private final Rotation rotationProperty = new Rotation();
+    public final LockValue lockProperty = new LockValue();
+    private final Rotation rotationProperty = new Rotation(Rotation.CONSTRAINED);
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
@@ -161,7 +164,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @return the rotationProperty
      */
     public double getRot() {
-        return rotationProperty.getValue();
+        return rotationProperty.get();
     }
 
     public void setAllXY(double x1, double y1, double x2, double y2) {
@@ -268,7 +271,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     public void setRot(double value) {
         if (getRot() != value) {
             double oldValue = getRot();
-            this.rotationProperty.setValue(value);
+            this.rotationProperty.set(value);
             notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
         }
     }
@@ -374,7 +377,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
 
     @Override
     public boolean isMirrorAllowed() {
-        return rotationProperty.isAllowMirror();
+        return rotationProperty.isMirrorAllowed();
     }
 
     @Override
@@ -391,4 +394,26 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
 
     }
 
+    /**
+     * <pre>
+     * <rectangle x1="15.24" y1="10.16" x2="25.4" y2="17.78" locked="yes" layer="94" rot="R90"/>
+     * </pre> @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<rectangle {0}{1}{2}{3}{4}{5}{6}</>");
+        String rotValue = rotationProperty.xmlValue();
+
+        Object[] args = {
+            " x1=\"" + x1Property.getPrecise(6) + "\"", // 0
+            " y1=\"" + y1Property.getPrecise(6) + "\"", // 1
+            " x2=\"" + x2Property.getPrecise(6) + "\"", // 2
+            " y2=\"" + y2Property.getPrecise(6) + "\"", // 3
+            lockProperty.xmlValue(), // 4
+            " layer=\"" + getLayerNum() + "\"", // 5
+            !rotValue.equals("R0") ? " rot=\"" + rotValue + "\"" : "" // 6
+        };
+
+        return mf.format(args);
+    }
 }
