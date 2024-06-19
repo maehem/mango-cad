@@ -417,7 +417,7 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
      */
     @Override
     public String toXML() {
-        MessageFormat mf = new MessageFormat("<dimension {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}/>");
+        MessageFormat mf = new MessageFormat("<dimension{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}/>");
 
         Object[] args = {
             " x1=\"" + x1Property.getPrecise(6) + "\"", // 0
@@ -429,14 +429,14 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
             lockProperty.xmlValue(), // 6
             " textsize=\"" + textsizeProperty.getPrecise(3) + "\"", // 7
             " layer=\"" + getLayerNum() + "\"", // 8
-            getTextratio() != 15 ? " textratio=\"" + getTextratio() + "\"" : "", // 9
+            !getDtype().equals(DimensionType.PARALLEL) ? " dtype=\"" + getDtype().code() + "\"" : "", // 16
+            getTextratio() != 8 ? " textratio=\"" + getTextratio() + "\"" : "", // 9
             getExtwidth() != 0.0 ? " extwidth=\"" + extwidthProperty.getPrecise(6) + "\"" : "", // 10
-            getExtlength() != 0.0 ? " extwidth=\"" + extlengthProperty.getPrecise(6) + "\"" : "", // 11
-            getExtoffset() != 0.0 ? " extwidth=\"" + extoffsetProperty.getPrecise(6) + "\"" : "", // 12
+            getExtlength() != 0.0 ? " extlength=\"" + extlengthProperty.getPrecise(6) + "\"" : "", // 11
+            getExtoffset() != 0.0 ? " extoffset=\"" + extoffsetProperty.getPrecise(6) + "\"" : "", // 12
             !getUnit().equals(Unit.MM) ? " unit=\"" + getUnit().code() + "\"" : "", // 13
             getPrecision() != 2 ? " precision=\"" + getPrecision() + "\"" : "", // 14
-            isVisible() ? " visible=\"yes\"" : "", // 15
-            !getDtype().equals(DimensionType.PARALLEL) ? " dtype=\"" + getDtype().code() + "\"" : "" // 16
+            isVisible() ? " visible=\"yes\"" : "" // 15
         };
 
         return mf.format(args);
