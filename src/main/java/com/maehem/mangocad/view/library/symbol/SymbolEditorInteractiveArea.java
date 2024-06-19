@@ -805,7 +805,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         wire.setLayerNum(94);  // TODO needs enum
         if (lastElementAdded != null && lastElementAdded instanceof Wire lastWire) {
             wire.setWidth(lastWire.getWidth());
-            wire.setCurve(lastWire.getCurve());
+            wire.setCurve(lastWire.curveProperty.get());
             wire.setStyle(lastWire.getStyle());
             LOGGER.log(Level.SEVERE, "I see a last added element.");
         }
