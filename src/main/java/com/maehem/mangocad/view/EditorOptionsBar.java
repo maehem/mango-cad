@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -92,6 +93,15 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
 //                }
                 case CONTEXT_MESSAGE -> {
                     //getItems().add(editMessage);
+                }
+                case XML -> {
+                    Button xmlButton = new Button("XML");
+                    getItems().add(xmlButton);
+                    xmlButton.setOnAction((ev) -> {
+                        listeners.forEach((l) -> {
+                            l.editorOptionBarWidgetAction(EditorOption.XML, ev);
+                        });
+                    });
                 }
                 default -> {
                     LOGGER.log(Level.SEVERE, "Unknown EditorOption in List: " + option.name());

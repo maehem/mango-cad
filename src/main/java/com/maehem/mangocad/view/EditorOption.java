@@ -31,6 +31,7 @@ public enum EditorOption {
     // TODO: Maybe current document name?
     CONTEXT_MESSAGE(null, null),
     TOOL_MODE_SETTINGS(null, null),
+    XML(null, null),
     SEPARATOR(null, null);
 
     private static final ResourceBundle MSG = ResourceBundle.getBundle("i18n/Editor");
