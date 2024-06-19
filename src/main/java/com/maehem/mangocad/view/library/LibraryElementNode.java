@@ -160,7 +160,7 @@ public class LibraryElementNode {
             strokeWidth = 0.03; // 6mil
         }
         Shape s;
-        if (w.getCurve() != 0.0) {
+        if (w.curveProperty.get() != 0.0) {
             Path path = new Path();
 
             MoveTo moveTo = new MoveTo();
@@ -173,12 +173,12 @@ public class LibraryElementNode {
             arc.setY(-y2);
 
             // SWEEP on negative curve value.
-            arc.setSweepFlag(w.getCurve() < 0.0);
+            arc.setSweepFlag(w.curveProperty.get() < 0.0);
 
             double sin90 = Math.sin(Math.toRadians(90.0));
             double dist = distance(x1, -y1, x2, -y2);
             double radius = (sin90 * dist / 2.0)
-                    / Math.sin(Math.toRadians(w.getCurve() / 2.0));
+                    / Math.sin(Math.toRadians(w.curveProperty.get() / 2.0));
             arc.setRadiusX(radius);
             arc.setRadiusY(radius);
 
@@ -386,7 +386,7 @@ public class LibraryElementNode {
 
         boolean hasCurvedLines = false;
         for (Vertex vv : vertices) {
-            hasCurvedLines = (vv.getCurve() != 0.0);
+            hasCurvedLines = (vv.curveProperty.get() != 0.0);
             if (hasCurvedLines) {
                 break;
             }
@@ -404,7 +404,7 @@ public class LibraryElementNode {
                 if (isFirst) {
                     lastX = v.getX();
                     lastY = v.getY();
-                    arc = v.getCurve();
+                    arc = v.curveProperty.get();
                     isFirst = false;
                     MoveTo mt = new MoveTo(lastX, -lastY);
                     path.getElements().add(mt);
@@ -414,7 +414,7 @@ public class LibraryElementNode {
                 double y1 = v.getY();
 
                 addPathEdge(path, arc, lastX, lastY, x1, y1);
-                arc = v.getCurve();
+                arc = v.curveProperty.get();
                 lastX = x1;
                 lastY = y1;
             }
@@ -491,18 +491,18 @@ public class LibraryElementNode {
                 isFirst = false;
             }
 
-            if (w.getCurve() != 0.0) {
+            if (w.curveProperty.get() != 0.0) {
                 ArcTo arcTo = new ArcTo();
                 arcTo.setX(w.getX2());
                 arcTo.setY(-w.getY2());
 
                 // SWEEP on negative curve value.
-                arcTo.setSweepFlag(w.getCurve() < 0.0);
+                arcTo.setSweepFlag(w.curveProperty.get() < 0.0);
 
                 double sin90 = Math.sin(Math.toRadians(90.0));
                 double dist = distance(w.getX1(), -w.getY1(), w.getX2(), -w.getY2());
                 double radius = (sin90 * dist / 2.0)
-                        / Math.sin(Math.toRadians(w.getCurve() / 2.0));
+                        / Math.sin(Math.toRadians(w.curveProperty.get() / 2.0));
                 arcTo.setRadiusX(radius);
                 arcTo.setRadiusY(radius);
                 path.getElements().add(arcTo);
