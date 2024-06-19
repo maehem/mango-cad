@@ -161,4 +161,5 @@ public abstract class LibraryElement {
 //    public void setElements(List<_AQuantum> elements) {
 //        this.elements = elements;
 //    }
+    public abstract String toXML();
 }
