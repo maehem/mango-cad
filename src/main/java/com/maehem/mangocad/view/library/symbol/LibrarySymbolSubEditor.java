@@ -55,6 +55,8 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
             EditorOption.SEPARATOR,
             EditorOption.GRID_MOUSE_INFO,
             EditorOption.SEPARATOR,
+            EditorOption.XML,
+            EditorOption.SEPARATOR,
             //EditorOption.COMMAND_LINE, // Move to parent toolbar
             //EditorOption.SEPARATOR,
             EditorOption.TOOL_MODE_SETTINGS
@@ -203,6 +205,9 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
                         //        parent.setCurrentLayerElement( le );
                     }
                 }
+            }
+            case XML -> {
+                LOGGER.log(Level.SEVERE, "\n{0}\n", symbol.toXML());
             }
         }
     }
