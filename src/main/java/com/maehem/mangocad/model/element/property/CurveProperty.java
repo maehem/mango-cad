@@ -16,14 +16,24 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.RealValue;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface CurveProperty {
+public class CurveProperty extends RealValue {
+
+    public static final double MIN = -359.9;
+    public static final double MAX = 359.9;
+
+
+    public CurveProperty(double value) {
+        super(value, MIN, MAX);
+    }
 
     public enum Field {
-        CURVE("curve", Double.class);
+        VALUE("value", Double.class);
 
         private final String fName;
         private final Class clazz;
@@ -43,8 +53,7 @@ public interface CurveProperty {
 
     }
 
-    public double getCurve();
-
-    public void setCurve(double x);
-
+    public String toXML() {
+        return get() != 0.0 ? " curve=\"" + getPrecise(1) + "\"" : "";
+    }
 }
