@@ -56,7 +56,7 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, WidthProperty, CurveProperty {
+public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, WidthProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -119,7 +119,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
     public final RealValue widthProperty = new RealValue(0.254);
-    public final RealValue curveProperty = new RealValue(0.0);
+    public final CurveProperty curveProperty = new CurveProperty(0.0);
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
     private WireCap cap = WireCap.ROUND;
@@ -243,22 +243,13 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     }
 
     /**
-     * @return the curve
-     */
-    @Override
-    public double getCurve() {
-        return curveProperty.get();
-    }
-
-    /**
      * @param curve the curve to set
      */
-    @Override
     public void setCurve(double curve) {
-        if (getCurve() != curve) {
-            double oldVal = getCurve();
+        if (curveProperty.get() != curve) {
+            double oldVal = curveProperty.get();
             curveProperty.set(curve);
-            notifyListeners(CurveProperty.Field.CURVE, oldVal, getCurve());
+            notifyListeners(CurveProperty.Field.VALUE, oldVal, curveProperty.get());
         }
     }
 
@@ -361,7 +352,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
             setLayerNum(snapshot.getLayerNum());
             setWidth(snapshot.getWidth());
             setStyle(snapshot.getStyle());
-            setCurve(snapshot.getCurve());
+            setCurve(snapshot.curveProperty.get());
             setCap(snapshot.getCap());
 
             snapshot = null;
@@ -395,7 +386,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         copyWire.setLayerNum(getLayerNum());
         copyWire.setWidth(getWidth());
         copyWire.setStyle(getStyle());
-        copyWire.setCurve(getCurve());
+        copyWire.setCurve(curveProperty.get());
 
         return copyWire;
     }
@@ -425,18 +416,19 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      */
     @Override
     public String toXML() {
-        StringBuilder sb = new StringBuilder("<wire");
-        sb.append(" x1=\"").append(x1Property.getPrecise(3)).
-                append(" y1=\"").append(y1Property.getPrecise(3)).
-                append(" x2=\"").append(x2Property.getPrecise(3)).
-                append(" y2=\"").append(y2Property.getPrecise(3)).
-                append(" width=\"").append(widthProperty.getPrecise(4)).
-                append(" layer=\"").append(getLayerNum());
-        if (getCurve() != 0.0) {
-            sb.append(" curve=\"").append(curveProperty.getPrecise(3));
-        }
-        sb.append("/>");
-        return sb.toString();
+        MessageFormat mf = new MessageFormat("<wire{0}{1}{2}{3}{4}{5}{6}/>");
+
+        Object[] args = {
+            " x1=\"" + x1Property.getPrecise(6) + "\"", // 0
+            " y1=\"" + y1Property.getPrecise(6) + "\"", // 1
+            " x2=\"" + x2Property.getPrecise(6) + "\"", // 2
+            " y2=\"" + y2Property.getPrecise(6) + "\"", // 3
+            " width=\"" + widthProperty.getPrecise(6) + "\"", // 4
+            " layer=\"" + getLayerNum() + "\"", // 5
+            curveProperty.get() != 0.0 ? " curve=\"" + curveProperty.getPrecise(6) + "\"" : "" // 6
+        };
+
+        return mf.format(args);
     }
 
 }
