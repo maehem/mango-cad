@@ -69,7 +69,7 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
     public final RealValue yProperty = new RealValue(0);
 
     public final LockValue lockProperty = new LockValue();
-    public final RealValue radiusProperty = new RealValue(2.54);
+    public final RealValue radiusProperty = new RealValue(2.54, 0.0, Double.MAX_VALUE, 9);
     public final RealValue widthProperty = new RealValue(0.254);
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
@@ -244,13 +244,13 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
      */
     @Override
     public String toXML() {
-        MessageFormat mf = new MessageFormat("<circle {0}{1}{2}{3}{4}</>");
+        MessageFormat mf = new MessageFormat("<circle{0}{1}{2}{3}{4}{5}/>");
 
         Object[] args = {
             " x=\"" + xProperty.getPrecise(6) + "\"", // 0
             " y=\"" + yProperty.getPrecise(6) + "\"", // 1
             lockProperty.xmlValue(), // 2
-            " radius=\"" + radiusProperty.getPrecise(6) + "\"", // 3
+            " radius=\"" + radiusProperty.getPrecise(9) + "\"", // 3
             " width=\"" + widthProperty.getPrecise(6) + "\"", // 4
             " layer=\"" + getLayerNum() + "\"" // 5
         };

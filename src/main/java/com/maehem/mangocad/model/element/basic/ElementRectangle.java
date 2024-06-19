@@ -401,7 +401,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      */
     @Override
     public String toXML() {
-        MessageFormat mf = new MessageFormat("<rectangle {0}{1}{2}{3}{4}{5}{6}</>");
+        MessageFormat mf = new MessageFormat("<rectangle{0}{1}{2}{3}{4}{5}{6}/>");
         String rotValue = rotationProperty.xmlValue();
 
         Object[] args = {

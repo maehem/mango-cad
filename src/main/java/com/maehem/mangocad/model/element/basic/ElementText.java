@@ -529,7 +529,7 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
      */
     @Override
     public String toXML() {
-        MessageFormat mf = new MessageFormat("<text {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}>{10}<text/>");
+        MessageFormat mf = new MessageFormat("<text{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}>{10}</text>");
         String rotStrValue = rotation.xmlValue();
 
         Object[] args = {
@@ -538,13 +538,13 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
             lockProperty.xmlValue(), // 2
             " size=\"" + sizeProperty.getPrecise(6) + "\"", // 3
             " layer=\"" + getLayerNum() + "\"", // 4
-            getRatio() != 15 ? " ratio=\"" + getRatio() + "\"" : "", // 5
+            getRatio() != 8 ? " ratio=\"" + getRatio() + "\"" : "", // 5
             getDistance() != 50 ? " distance=\"" + getDistance() + "\"" : "", // 6
             !getAlign().equals(TextAlign.BOTTOM_LEFT) ? " align=\"" + getAlign().code() + "\"" : "", // 7
-            !getFont().equals(TextFont.VECTOR) ? " font=\"" + getFont().code() + "\"" : "", // 8
+            !getFont().equals(TextFont.PROPORTIONAL) ? " font=\"" + getFont().code() + "\"" : "", // 8
             !rotStrValue.equals("R0") ? " rot=\"" + rotStrValue + "\"" : "", // 9
             // TODO Group Refs
-            getValue() // 10  // TODO Format >  &  < and other XML symbols!
+            escapeHTML(getValue()) // 10  // TODO Format >  &  < and other XML symbols!
         };
 
         return mf.format(args);

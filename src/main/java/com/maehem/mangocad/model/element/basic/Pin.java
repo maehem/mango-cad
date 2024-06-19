@@ -417,19 +417,20 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
      */
     @Override
     public String toXML() {
-        MessageFormat mf = new MessageFormat("<pin {0}{1}{2}{3}{4}{5}{6}{7}</>");
+        MessageFormat mf = new MessageFormat("<pin name=\"{0}\"{1}{2}{3}{4}{5}{6}{7}{8}/>");
 
         String rotValue = rotation.xmlValue();
 
         Object[] args = {
-            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
-            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
-            !visible.equals(PinVisible.OFF) ? " visible=\"" + visible.code() + "\"" : "", // 2
-            !getLength().equals(PinLength.LONG) ? " length=\"" + length.code() + "\"" : "", // 3
-            !getDirection().equals(PinDirection.IO) ? " direction=\"" + direction.code() + "\"" : "", // 4
-            !getFunction().equals(PinFunction.NONE) ? " function=\"" + function.code() + "\"" : "", // 5
-            getSwapLevel() > 0 ? " swaplevel=\"" + getSwapLevel() + "\"" : "", // 6
-            !rotValue.equals("R0") ? " rot=\"" + rotValue + "\"" : "" // 7
+            nameProperty.get(), // 0
+            " x=\"" + xProperty.getPrecise(6) + "\"", // 1
+            " y=\"" + yProperty.getPrecise(6) + "\"", // 2
+            !visible.equals(PinVisible.BOTH) ? " visible=\"" + visible.code() + "\"" : "", // 3
+            !getLength().equals(PinLength.LONG) ? " length=\"" + length.code() + "\"" : "", // 4
+            !getDirection().equals(PinDirection.IO) ? " direction=\"" + direction.code() + "\"" : "", // 5
+            !getFunction().equals(PinFunction.NONE) ? " function=\"" + function.code() + "\"" : "", // 6
+            getSwapLevel() > 0 ? " swaplevel=\"" + getSwapLevel() + "\"" : "", // 7
+            !rotValue.equals("R0") ? " rot=\"" + rotValue + "\"" : "" // 8
         };
 
         return mf.format(args);

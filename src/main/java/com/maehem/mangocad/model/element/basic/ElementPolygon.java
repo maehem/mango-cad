@@ -460,7 +460,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
      */
     @Override
     public String toXML() {
-        MessageFormat mf = new MessageFormat("<polygon {0}{1}{2}{3}{4}>\n{5}<polygon/>");
+        MessageFormat mf = new MessageFormat("<polygon{0}{1}{2}{3}{4}>\n{5}</polygon>");
 
         StringBuilder vertSb = new StringBuilder();
         vertices.forEach(v -> {
@@ -471,8 +471,8 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
             " width=\"" + width + "\"", // 0
             " layer=\"" + getLayerNum() + "\"", // 1
             lockProperty.xmlValue(), // 2
-            getSpacing() != 0.127 ? " spacing=\"" + getSpacing() + "\"" : "", // 3
-            !pour.equals(PolygonPour.SOLID) ? " pour=\"" + pour.code() + "\"" : "", // 4
+            getSpacing() != 1.27 ? " spacing=\"" + getSpacing() + "\"" : "", // 3
+            " pour=\"" + pour.code() + "\"", // 4
             vertSb.toString() // 5
         };
 
