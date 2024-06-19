@@ -148,18 +148,5 @@ public abstract class LibraryElement {
         this.descriptions = descriptions;
     }
 
-//    /**
-//     * @return the elements
-//     */
-//    public List<_AQuantum> getElements() {
-//        return elements;
-//    }
-//
-//    /**
-//     * @param elements the elements to set
-//     */
-//    public void setElements(List<_AQuantum> elements) {
-//        this.elements = elements;
-//    }
     public abstract String toXML();
 }
