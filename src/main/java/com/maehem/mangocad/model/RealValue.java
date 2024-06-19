@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
  */
 public class RealValue extends ElementValue {
 
+    public static final int DEFAULT_PREC = 6;
+
     private double value;
     private double oldValue;
     private double min = Double.MIN_VALUE;
@@ -33,11 +35,22 @@ public class RealValue extends ElementValue {
     private int prec = 6;
 
     public RealValue(double value) {
+        this(value, DEFAULT_PREC);
+    }
+
+    public RealValue(double value, int precision) {
         this.value = value;
+        this.prec = precision;
     }
 
     public RealValue(double value, double min, double max) {
         this(value);
+        this.min = min;
+        this.max = max;
+    }
+
+    public RealValue(double value, double min, double max, int precision) {
+        this(value, precision);
         this.min = min;
         this.max = max;
     }
@@ -78,6 +91,10 @@ public class RealValue extends ElementValue {
 
     public void setMax(double val) {
         this.max = val;
+    }
+
+    public int getPrecision() {
+        return this.prec;
     }
 
     public boolean isInRange(double val) {
