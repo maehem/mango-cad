@@ -162,7 +162,7 @@ public class WireNode extends ViewNode implements ElementListener {
     }
 
     private void updateCurve() {
-        double curve = wire.getCurve();
+        double curve = wire.curveProperty.get();
 
         // SWEEP on negative curve value.
         arcTo.setSweepFlag(curve < 0.0);
@@ -212,7 +212,7 @@ public class WireNode extends ViewNode implements ElementListener {
             case Wire.Field.CAP -> {
                 updateCap();
             }
-            case CurveProperty.Field.CURVE -> {
+            case CurveProperty.Field.VALUE -> {
                 updateCurve();
             }
             case LayerNumberProperty.Field.LAYER -> {
