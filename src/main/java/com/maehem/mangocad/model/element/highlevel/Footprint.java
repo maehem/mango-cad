@@ -16,8 +16,8 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.misc.Description;
@@ -147,6 +147,11 @@ public class Footprint extends LibraryElement { // class name "Package" is reser
             }
         }
         return null;
+    }
+
+    @Override
+    public String toXML() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
