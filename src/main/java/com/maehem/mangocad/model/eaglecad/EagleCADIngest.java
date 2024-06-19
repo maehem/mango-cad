@@ -876,23 +876,23 @@ public class EagleCADIngest {
                 case "layer" ->
                     poly.setLayerNum(Integer.parseInt(value));
                 case "spacing" -> {
+                    poly.setSpacing(Double.parseDouble(value));
                 } // Non-signal polygon
-//                    poly.setSpacing(Double.parseDouble(value));
-                case "pour" -> {
-                }  // Non-signal polygon
-//                    poly.setPour(value);
+                case "pour" -> {  // Non-signal polygon
+                    poly.setPour(value);
+                }
                 case "isolate" -> {
+                    poly.setIsolate(Double.parseDouble(value));
                 } // Non-signal polygon
-//                    poly.setIsolate(Double.parseDouble(value));
                 case "orphans" -> {
+                    poly.setOrphans(value.equals("yes"));
                 }  // Non-signal polygon
-//                    poly.setOrphans(value.equals("yes"));
                 case "thermals" -> {
+                    poly.setThermals(value.equals("yes"));
                 } // Non-signal polygon
-//                    poly.setThermals(value.equals("yes"));
                 case "rank" -> {
+                    poly.setRank(Integer.parseInt(value));
                 }  // Non-signal polygon
-//                    poly.setRank(Integer.parseInt(value));
                 default ->
                     throw new EagleCADLibraryFileException("Polygon has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -967,6 +967,8 @@ public class EagleCADIngest {
                     rect.setY1(Double.parseDouble(value));
                 case "y2" ->
                     rect.setY2(Double.parseDouble(value));
+                case "locked" ->
+                    rect.lockProperty.setLocked(value.equals("yes"));
                 case "rot" ->
                     rect.getRotationProperty().setValue(value);
                 default ->
@@ -2883,7 +2885,6 @@ public class EagleCADIngest {
 
             }
         }
-
 
         elements.add(element);
     }
