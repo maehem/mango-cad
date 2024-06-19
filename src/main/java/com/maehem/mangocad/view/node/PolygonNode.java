@@ -104,7 +104,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
             if (isFirst) {
                 lastX = v.getX();
                 lastY = v.getY();
-                arc = v.getCurve(); // Arc/Curve is applied to (n+1) element.
+                arc = v.curveProperty.get(); // Arc/Curve is applied to (n+1) element.
                 isFirst = false;
                 MoveTo mt = new MoveTo(lastX, -lastY);
                 path.getElements().add(mt);
@@ -115,7 +115,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
             double y1 = v.getY();
 
             addPathEdge(path, arc, lastX, lastY, x1, y1);
-            arc = v.getCurve(); // Apply to next leg.
+            arc = v.curveProperty.get(); // Apply to next leg.
             lastX = x1;
             lastY = y1;
         }
@@ -262,7 +262,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
     public String toString() {
         StringBuilder sb = new StringBuilder("PolygonNode with " + polygonElement.getVertices().size() + " Vertices:\n          ");
         for (Vertex v : polygonElement.getVertices()) {
-            sb.append(v.getX()).append(",").append(v.getY()).append("crv(").append(v.getCurve()).append(")");
+            sb.append(v.getX()).append(",").append(v.getY()).append("crv(").append(v.curveProperty.get()).append(")");
             sb.append("   ");
         }
 
