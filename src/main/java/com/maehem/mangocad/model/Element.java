@@ -23,6 +23,7 @@ import java.util.ArrayList;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public abstract class Element {
+
     private int layer;
 
     private ArrayList<ElementListener> listeners = new ArrayList<>();
@@ -67,4 +68,11 @@ public abstract class Element {
         return "";
     }
 
+    public static String escapeHTML(String str) {
+        return str
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+;
+    }
 }
