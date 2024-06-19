@@ -17,21 +17,25 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
+import java.text.MessageFormat;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Vertex extends Element implements LocationXYProperty, SelectableProperty, CurveProperty {
+public class Vertex extends Element implements LocationXYProperty, SelectableProperty {
 
     public static final String ELEMENT_NAME = "vertex";
 
-    private double x;
-    private double y;
-    private double curve = 0;
+    public final RealValue xProperty = new RealValue(0);
+    public final RealValue yProperty = new RealValue(0);
+
+    public final CurveProperty curveProperty = new CurveProperty(0);
+
     private boolean selected = false;
     private Vertex snapshot = null;
 
@@ -45,7 +49,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
      */
     @Override
     public double getX() {
-        return x;
+        return xProperty.get();
     }
 
     /**
@@ -53,10 +57,10 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
      */
     @Override
     public void setX(double x) {
-        if (this.x != x) {
-            double oldVal = this.x;
-            this.x = x;
-            notifyListeners(LocationXYProperty.Field.X, oldVal, this.x);
+        if (xProperty.get() != x) {
+            double oldVal = xProperty.get();
+            xProperty.set(x);
+            notifyListeners(LocationXYProperty.Field.X, oldVal, xProperty.get());
         }
     }
 
@@ -65,7 +69,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
      */
     @Override
     public double getY() {
-        return y;
+        return yProperty.get();
     }
 
     /**
@@ -73,31 +77,21 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
      */
     @Override
     public void setY(double y) {
-        if (this.y != y) {
-            double oldVal = this.y;
-            this.y = y;
-            notifyListeners(LocationXYProperty.Field.Y, oldVal, this.y);
+        if (yProperty.get() != y) {
+            double oldVal = yProperty.get();
+            yProperty.set(y);
+            notifyListeners(LocationXYProperty.Field.Y, oldVal, yProperty.get());
         }
-    }
-
-    /**
-     * @return the curve
-     */
-    @Override
-    public double getCurve() {
-        return curve;
     }
 
     /**
      * @param curve the curve to set
      */
-    @Override
     public void setCurve(double curve) {
-        this.curve = curve;
-        if (this.curve != curve) {
-            double oldVal = this.curve;
-            this.curve = curve;
-            notifyListeners(CurveProperty.Field.CURVE, oldVal, this.curve);
+        if (curveProperty.get() != curve) {
+            double oldVal = curveProperty.get();
+            curveProperty.set(curve);
+            notifyListeners(CurveProperty.Field.VALUE, oldVal, curveProperty.get());
         }
     }
 
@@ -131,7 +125,7 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
     public void restoreSnapshot() {
         setX(snapshot.getX());
         setY(snapshot.getY());
-        setCurve(snapshot.getCurve());
+        setCurve(snapshot.curveProperty.get());
     }
 
     @Override
@@ -143,8 +137,22 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
         Vertex copyVertex = new Vertex();
         copyVertex.setX(getX());
         copyVertex.setY(getY());
-        copyVertex.setCurve(getCurve());
+        copyVertex.setCurve(curveProperty.get());
 
         return copyVertex;
     }
+
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<vertex{0}{1}{2}/>");
+
+        Object[] args = {
+            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
+            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            curveProperty.toXML() // 2
+        };
+
+        return mf.format(args);
+    }
+
 }
