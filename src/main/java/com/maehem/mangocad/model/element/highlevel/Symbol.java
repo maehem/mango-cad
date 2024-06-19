@@ -16,14 +16,16 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.LibraryElement;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <code>
  * symbol ( description?, (polygon | wire | text | dimension | pin | circle | rectangle | frame)* )
  *   attributes
  *         name          %String;       #REQUIRED
@@ -33,6 +35,7 @@ import java.util.List;
  *         library_locally_modified %Bool; "no"
  *
  *         library_version and library_locally_modified: Only in managed libraries inside boards or schematics
+ * </code>
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
@@ -59,11 +62,11 @@ public class Symbol extends LibraryElement {
      * @return VALUE of pin if Supply or null if symbol is not a Supply pin.
      */
     public String supplyPin() {
-        List<Element> list = elements.stream().filter((el) -> ( el instanceof Pin)  ).toList();
+        List<Element> list = elements.stream().filter((el) -> (el instanceof Pin)).toList();
 
-        if ( list.size() == 1 ) {
-            Pin pin = (Pin)(list.get(0));
-            if ( pin.getDirection().equals(PinDirection.SUPPLY) ) {
+        if (list.size() == 1) {
+            Pin pin = (Pin) (list.get(0));
+            if (pin.getDirection().equals(PinDirection.SUPPLY)) {
                 return pin.getName();
             }
         }
@@ -74,4 +77,33 @@ public class Symbol extends LibraryElement {
     public int getLayerNum() {
         return LAYER_NUMBER;
     }
+
+    /**
+     * <pre>
+     * <symbol name="AND">
+     * <description>AND Gate</description>
+     * </pre>
+     *
+     * @return
+     */
+    @Override
+    public String toXML() {
+        MessageFormat mf = new MessageFormat("<symbol name=\"{0}\">\n{1}</symbol>");
+
+        StringBuilder subItems = new StringBuilder();
+        getDescriptions().forEach((desc) -> {
+            subItems.append(desc.toXML()).append("\n");
+        });
+        getElements().forEach((item) -> {
+            subItems.append(item.toXML()).append("\n");
+        });
+
+        Object[] args = {
+            getName(), // 0
+            subItems.toString() // 1
+        };
+
+        return mf.format(args);
+    }
+
 }
