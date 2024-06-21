@@ -65,6 +65,7 @@ import javafx.scene.Group;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
 import static javafx.scene.input.MouseButton.MIDDLE;
 import static javafx.scene.input.MouseButton.PRIMARY;
 import static javafx.scene.input.MouseButton.SECONDARY;
@@ -115,6 +116,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private final Rectangle background;
 
     private ViewNode ephemeralNode;
+    private ViewNode directPickedNode;
     private Element lastElementAdded = null;
     private double mouseDownX = Double.MIN_VALUE;
     private double mouseDownY = Double.MIN_VALUE;
@@ -125,6 +127,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     // TODO get from control panel settings.
     private final Color selectionRectangleColor = new Color(1.0, 1.0, 1.0, 0.5);
     private EditorTool toolMode = EditorTool.SELECT;
+    private boolean cmdKeyMode;
 
     public SymbolEditorInteractiveArea(LibrarySymbolSubEditor parentEditor) {
         this.parentEditor = parentEditor;
@@ -198,12 +201,27 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             event.consume();
         });
 
-//        setOnKeyPressed((ke) -> {
+        this.parentEditor.getParentEditor().setOnKeyPressed((ke) -> {
 //            if (ke.getCode() == ESCAPE) {
 //                abandonOperation();
 //                ke.consume();
 //            }
-//        });
+            LOGGER.log(Level.SEVERE, "KeyPresed: " + ke.getCode());
+            if (ke.getCode().equals(KeyCode.COMMAND)) {
+                cmdKeyMode = true;
+                LOGGER.log(Level.SEVERE, "Command Key Pressed.");
+                ke.consume();
+            }
+        });
+        this.parentEditor.getParentEditor().setOnKeyReleased((ke) -> {
+            if (ke.getCode().equals(KeyCode.COMMAND)) {
+                cmdKeyMode = false;
+                LOGGER.log(Level.SEVERE, "Command Key Released.");
+                //movingElements.clear();
+                ke.consume();
+            }
+        });
+
         // Toggle CrossHair
         setOnMouseEntered((t) -> {
             getScene().setCursor(Cursor.CROSSHAIR); //Change cursor to crosshair
@@ -317,6 +335,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         case WireEnd.TWO -> {
                                             exy.setX2(snapXY.getX2() + moveDistSnappedX);
                                             exy.setY2(snapXY.getY2() + moveDistSnappedY);
+                                        }
+                                        case WireEnd.NONE -> {
+                                            double mX = me.getX();
+                                            double mY = me.getY();
+                                            double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
+                                            double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
+                                            double c = snapXY.getLength();
+
+                                            LOGGER.log(Level.SEVERE,
+                                                    "    m:{0},{1}     a={2}   b={3}  c={4}",
+                                                    new Object[]{mX, mY, a, b, c}
+                                            );
+                                            double lawCosCurve = Math.toDegrees(Math.acos(
+                                                    (a * a + b * b - c * c) / (2 * a * b)
+                                            )) % 180.0;
+                                            double curve = 360.0 - 2.0 * lawCosCurve;
+
+                                            LOGGER.log(Level.SEVERE, "Curve: raw: {0}, set: {1}", new Object[]{lawCosCurve, curve});
+                                            exy.setCurve(curve);
                                         }
                                         default -> {
                                         }
@@ -588,206 +625,225 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     }
                 });
                 LOGGER.log(Level.SEVERE, "Pick count: {0}", picks.size());
+                if (picks.isEmpty() && directPickedNode != null) {
+                    LOGGER.log(Level.SEVERE, "Process direct picked node: " + directPickedNode.getElement().getElementName());
+                    if (cmdKeyMode) {
+                        LOGGER.log(Level.SEVERE, "Command Key active.");
+                        if (directPickedNode instanceof WireNode) {
+                            LOGGER.log(Level.SEVERE, "  ===> Wire Node with command key.");
+                            if (toolMode.equals(EditorTool.MOVE)) {
+                                LOGGER.log(Level.SEVERE, "    ==> Mode is MOVE");
+                                if (directPickedNode.getElement() instanceof Wire wire) {
+                                    movingElements.add(wire);
+                                    wire.setSelectedEnd(WireEnd.NONE);
+                                    movingMouseStartX = me.getX();
+                                    movingMouseStartY = me.getY();
+                                    if (directPickedNode.getElement() instanceof SelectableProperty es) {
+                                        es.createSnapshot();
+                                    }
+                                    LOGGER.log(Level.SEVERE, "    ======> Command-Click Wire Node. Move to affect curve.");
 
-                switch (me.getButton()) {
-                    case PRIMARY -> { // Move or choose what to move.
-                        switch (toolMode) {
-                            case SELECT -> {
-                                LOGGER.log(Level.SEVERE, "Inspect: ");
-                                //parentEditor.setSelectedElements(selectedElements);
-                            }
-                            case INFO -> {  // Info and Look are the same.
-                                LOGGER.log(Level.SEVERE, " Edit Properties: ");
-                                if (picks.size() == 1) {
-                                    parentEditor.setElementFocus(picks.getFirst());
                                 }
                             }
-                            case LOOK -> {
-                                LOGGER.log(Level.SEVERE, " Highlight: ");
-                                if (picks.size() == 1) {
-                                    parentEditor.setElementFocus(picks.getFirst());
-                                }
-                            }
-                            case TRASH -> {
-                                LOGGER.log(Level.SEVERE, " Trash: ");
-                                if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
-                                    initiateTrashElement(picks.getFirst(), me.getX(), me.getY());
-                                } else { // Picks was a different size. Popup selector?
-                                    if (picks.isEmpty()) {
-                                        contextMenu.hide();
+                        }
+                    } else {
+                        LOGGER.log(Level.SEVERE, "Nothing to do.");
+                    }
+                } else {
+                    switch (me.getButton()) {
+                        case PRIMARY -> { // Move or choose what to move.
+                            contextMenu.hide();
+
+                            switch (toolMode) {
+                                case SELECT -> {
+                                    LOGGER.log(Level.SEVERE, "Select: ");
+                                    if (picks.size() == 1) {
+                                        parentEditor.setElementFocus(picks.getFirst());
                                     }
                                 }
-                            }
-                            case LINE -> {
-                                initiateNewLineSegment(me,
-                                        getSnappedLocation(me.getX(), 0),
-                                        getSnappedLocation(me.getY(), 0)
-                                );
-                                toolMode.setToolElement(ephemeralNode.getElement());
-                                Platform.runLater(() -> {
-                                    setEditorTool(toolMode);
-                                });
-                            }
-                            case ARC -> {
-                                initiateNewLineSegment(me,
-                                        getSnappedLocation(me.getX(), 0),
-                                        getSnappedLocation(me.getY(), 0)
-                                );
-                                toolMode.setToolElement(ephemeralNode.getElement());
-                                Platform.runLater(() -> {
-                                    setEditorTool(toolMode);
-                                });
-                            }
-                            case CIRCLE -> {
-                                LOGGER.log(Level.SEVERE, " Circle: ");
-                                initiateNewCircle(me,
-                                        getSnappedLocation(me.getX(), 0),
-                                        getSnappedLocation(me.getY(), 0)
-                                );
-                                toolMode.setToolElement(ephemeralNode.getElement());
-                                Platform.runLater(() -> {
-                                    setEditorTool(toolMode);
-                                });
-                            }
-                            case RECTANGLE -> {
-                                LOGGER.log(Level.SEVERE, " Rectangle: ");
-                                initiateNewRectangle(me,
-                                        getSnappedLocation(me.getX(), 0),
-                                        getSnappedLocation(me.getY(), 0)
-                                );
-                                toolMode.setToolElement(ephemeralNode.getElement());
-                                Platform.runLater(() -> {
-                                    setEditorTool(toolMode);
-                                });
-                            }
-                            case POLYGON -> {
-                                LOGGER.log(Level.SEVERE, " Create new Polygon: ");
-                                initiateNewPolygon(me,
-                                        getSnappedLocation(me.getX(), 0),
-                                        getSnappedLocation(me.getY(), 0)
-                                );
-                                toolMode.setToolElement(ephemeralNode.getElement());
-                                Platform.runLater(() -> {
-                                    setEditorTool(toolMode);
-                                });
-                            }
-                            case MOVE -> {
-                                // If one pick, pick it.
-                                if (picks.isEmpty()) {
-                                    contextMenu.hide();
-                                } else if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
-                                    initiateElementMove(picks, me.getX(), me.getY());
-                                } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
-                                    // If more than one pick,
-                                    // If all are wires, select them.
-                                    // Add all picks to moving list.
-                                    for (Element e : picks) {
-                                        movingElements.add(e);
-                                        if (e instanceof SelectableProperty es) {
-                                            es.createSnapshot();
+                                case INFO -> {  // Info and Look are the same.
+                                    LOGGER.log(Level.SEVERE, " Edit Properties: ");
+                                    if (picks.size() == 1) {
+                                        parentEditor.setElementFocus(picks.getFirst());
+                                    }
+                                }
+                                case LOOK -> {
+                                    LOGGER.log(Level.SEVERE, " Highlight: ");
+                                    if (picks.size() == 1) {
+                                        parentEditor.setElementFocus(picks.getFirst());
+                                    }
+                                }
+                                case TRASH -> {
+                                    LOGGER.log(Level.SEVERE, " Trash: ");
+                                    if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
+                                        initiateTrashElement(picks.getFirst(), me.getX(), me.getY());
+                                    }
+                                }
+                                case LINE -> {
+                                    initiateNewLineSegment(me,
+                                            getSnappedLocation(me.getX(), 0),
+                                            getSnappedLocation(me.getY(), 0)
+                                    );
+                                    toolMode.setToolElement(ephemeralNode.getElement());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
+                                }
+                                case ARC -> {
+                                    initiateNewLineSegment(me,
+                                            getSnappedLocation(me.getX(), 0),
+                                            getSnappedLocation(me.getY(), 0)
+                                    );
+                                    toolMode.setToolElement(ephemeralNode.getElement());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
+                                }
+                                case CIRCLE -> {
+                                    LOGGER.log(Level.SEVERE, " Circle: ");
+                                    initiateNewCircle(me,
+                                            getSnappedLocation(me.getX(), 0),
+                                            getSnappedLocation(me.getY(), 0)
+                                    );
+                                    toolMode.setToolElement(ephemeralNode.getElement());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
+                                }
+                                case RECTANGLE -> {
+                                    LOGGER.log(Level.SEVERE, " Rectangle: ");
+                                    initiateNewRectangle(me,
+                                            getSnappedLocation(me.getX(), 0),
+                                            getSnappedLocation(me.getY(), 0)
+                                    );
+                                    toolMode.setToolElement(ephemeralNode.getElement());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
+                                }
+                                case POLYGON -> {
+                                    LOGGER.log(Level.SEVERE, " Create new Polygon: ");
+                                    initiateNewPolygon(me,
+                                            getSnappedLocation(me.getX(), 0),
+                                            getSnappedLocation(me.getY(), 0)
+                                    );
+                                    toolMode.setToolElement(ephemeralNode.getElement());
+                                    Platform.runLater(() -> {
+                                        setEditorTool(toolMode);
+                                    });
+                                }
+                                case MOVE -> {
+                                    // If one pick, pick it.
+                                    if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
+                                        initiateElementMove(picks, me.getX(), me.getY());
+                                    } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
+                                        // If more than one pick,
+                                        // If all are wires, select them.
+                                        // Add all picks to moving list.
+                                        for (Element e : picks) {
+                                            movingElements.add(e);
+                                            if (e instanceof SelectableProperty es) {
+                                                es.createSnapshot();
+                                            }
                                         }
+                                        LOGGER.log(Level.SEVERE, "Moving some wires.");
+                                    } else {
+                                        // otherwise,  highlight first (grey out rest) and wait for either
+                                        // another click or right-click to highlight next item.
+                                        LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
                                     }
-                                    LOGGER.log(Level.SEVERE, "Moving some wires.");
-                                } else {
-                                    // otherwise,  highlight first (grey out rest) and wait for either
-                                    // another click or right-click to highlight next item.
-                                    LOGGER.log(Level.SEVERE, "Mixed items. need to choose item.");
+                                }
+                                case ROTATE -> {
+                                    LOGGER.log(Level.SEVERE, "Rotate: ");
+                                    if (picks.size() == 1) {
+                                        initiateElementRotate(picks.getFirst(), toolMode.getToolElement());
+                                        toolMode.setToolElement(picks.getFirst());
+                                        Platform.runLater(() -> {
+                                            setEditorTool(toolMode);
+                                        });
+                                    } else {
+                                        LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
+                                    }
+                                }
+                                case MIRROR -> {
+                                    LOGGER.log(Level.SEVERE, "Mirror: ");
+                                    if (picks.size() == 1) {
+                                        initiateElementMirror(picks.getFirst(), toolMode.getToolElement());
+                                        toolMode.setToolElement(picks.getFirst());
+                                        Platform.runLater(() -> {
+                                            setEditorTool(toolMode);
+                                        });
+                                    } else {
+                                        LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
+                                    }
+                                }
+                                case MITER ->
+                                    LOGGER.log(Level.SEVERE, " Miter: ");
+                                case SPLIT -> {  // If in between ends of wire then split at this location
+                                    // Add isInBetween() method to Wire.
+                                    LOGGER.log(Level.SEVERE, "Check for wire here to split.");
+                                }
+                                case NAME -> {
+                                    LOGGER.log(Level.SEVERE, " Name: ");
+                                    if (picks.size() == 1) {
+                                        if (picks.getFirst() instanceof Pin pin) {
+                                            // Show Pin name dialog
+                                            TextInputDialog td = new TextInputDialog(pin.getName());
+                                            ViewUtils.applyAppStylesheet(td.getDialogPane().getStylesheets());
+                                            td.setGraphic(null);
+                                            td.setTitle(MSG.getString("NAME_DIALOG_TITLE"));
+                                            td.setHeaderText(MSG.getString("NAME_PIN_DIALOG_HEADER"));
+                                            td.showAndWait();
+                                            pin.setName(td.getResult());
+                                        } // else ignore.
+                                        // TODO: Present multi pin dialog edit form.
+                                    }
+                                }
+                                default -> {
+                                    LOGGER.log(Level.SEVERE, "Tool not handled yet! ==> {0}", toolMode.name());
                                 }
                             }
-                            case ROTATE -> {
-                                LOGGER.log(Level.SEVERE, "Rotate: ");
-                                if (picks.isEmpty()) {
-                                    contextMenu.hide();
-                                } else if (picks.size() == 1) {
-                                    initiateElementRotate(picks.getFirst(), toolMode.getToolElement());
-                                    toolMode.setToolElement(picks.getFirst());
-                                    Platform.runLater(() -> {
-                                        setEditorTool(toolMode);
-                                    });
-                                } else {
-                                    LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
-                                }
+                            me.consume();
+                        } // end case PRIMARY
+
+                        case SECONDARY -> { // Present pop-up menu.
+                            contextMenu.getItems().forEach((menuItem) -> {
+                                menuItem.setVisible(false);
+                            });
+
+                            // TODO: Things in Group list?
+                            contextMenu.MOVE_GROUP.setDisable(true);
+
+                            // Always there.
+                            contextMenu.MOVE_GROUP.setVisible(true);
+
+                            if (!picks.isEmpty()) {
+                                contextMenu.COPY.setVisible(true);
+                                contextMenu.DELETE.setVisible(true);
+                                contextMenu.MIRROR.setVisible(true);
+                                contextMenu.MOVE.setVisible(true);
+                                contextMenu.NAME.setVisible(true);
+                                contextMenu.ROTATE.setVisible(true);
+                                contextMenu.SHOW.setVisible(true);
+                                contextMenu.SEP1.setVisible(true);
+                                contextMenu.SEP2.setVisible(true);
+                                contextMenu.PROPERTIES.setVisible(true);
                             }
-                            case MIRROR -> {
-                                LOGGER.log(Level.SEVERE, "Mirror: ");
-                                if (picks.isEmpty()) {
-                                    contextMenu.hide();
-                                } else if (picks.size() == 1) {
-                                    initiateElementMirror(picks.getFirst(), toolMode.getToolElement());
-                                    toolMode.setToolElement(picks.getFirst());
-                                    Platform.runLater(() -> {
-                                        setEditorTool(toolMode);
-                                    });
-                                } else {
-                                    LOGGER.log(Level.SEVERE, "TODO: Handle rotation of a selected group.");
-                                }
+
+                            if (picks.size() > 1) {
+                                // TODO: Highlight first item and present options menu with "next" option at top.
+                                contextMenu.NEXT.setVisible(true);
+                                contextMenu.NEXT_SEPARATOR.setVisible(true);
                             }
-                            case MITER ->
-                                LOGGER.log(Level.SEVERE, " Miter: ");
-                            case SPLIT -> {  // If in between ends of wire then split at this location
-                                // Add isInBetween() method to Wire.
-                                LOGGER.log(Level.SEVERE, "Check for wire here to split.");
-                            }
-                            case NAME -> {
-                                LOGGER.log(Level.SEVERE, " Name: ");
-                                if (picks.isEmpty()) {
-                                    contextMenu.hide();
-                                } else if (picks.size() == 1) {
-                                    if (picks.getFirst() instanceof Pin pin) {
-                                        // Show Pin name dialog
-                                        TextInputDialog td = new TextInputDialog(pin.getName());
-                                        ViewUtils.applyAppStylesheet(td.getDialogPane().getStylesheets());
-                                        td.setGraphic(null);
-                                        td.setTitle(MSG.getString("NAME_DIALOG_TITLE"));
-                                        td.setHeaderText(MSG.getString("NAME_PIN_DIALOG_HEADER"));
-                                        td.showAndWait();
-                                        pin.setName(td.getResult());
-                                    } // else ignore.
-                                    // TODO: Present multi pin dialog edit form.
-                                }
-                            }
-                            default -> {
-                                LOGGER.log(Level.SEVERE, "Tool not handled yet! ==> {0}", toolMode.name());
-                            }
-                        }
-                        me.consume();
-                    } // end case PRIMARY
 
-                    case SECONDARY -> { // Present pop-up menu.
-                        contextMenu.getItems().forEach((menuItem) -> {
-                            menuItem.setVisible(false);
-                        });
-
-                        // TODO: Things in Group list?
-                        contextMenu.MOVE_GROUP.setDisable(true);
-
-                        // Always there.
-                        contextMenu.MOVE_GROUP.setVisible(true);
-
-                        if (!picks.isEmpty()) {
-                            contextMenu.COPY.setVisible(true);
-                            contextMenu.DELETE.setVisible(true);
-                            contextMenu.MIRROR.setVisible(true);
-                            contextMenu.MOVE.setVisible(true);
-                            contextMenu.NAME.setVisible(true);
-                            contextMenu.ROTATE.setVisible(true);
-                            contextMenu.SHOW.setVisible(true);
-                            contextMenu.SEP1.setVisible(true);
-                            contextMenu.SEP2.setVisible(true);
-                            contextMenu.PROPERTIES.setVisible(true);
-                        }
-
-                        if (picks.size() > 1) {
-                            // TODO: Highlight first item and present options menu with "next" option at top.
-                            contextMenu.NEXT.setVisible(true);
-                            contextMenu.NEXT_SEPARATOR.setVisible(true);
-                        }
-
-                        contextMenu.show(workArea, me.getScreenX(), me.getScreenY());
-                        me.consume();
-                    } // end case SECONDARY
-                } // end switch()
+                            contextMenu.show(workArea, me.getScreenX(), me.getScreenY());
+                            me.consume();
+                        } // end case SECONDARY
+                    } // end switch()
+                }
             }
+            // Clear non-anchor node click
+            directPickedNode = null;
         }
         );
     }
@@ -1056,6 +1112,11 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 mouseDownY = Double.MIN_VALUE;
                 LOGGER.log(Level.SEVERE, "Selected {0} elements.", selectedElements.size());
                 parentEditor.setSelectedElements(selectedElements);
+                if (selectedElements.size() == 1) {
+                    parentEditor.setElementFocus(selectedElements.getFirst());
+                } else {
+                    parentEditor.setElementFocus(null);
+                }
             }
         });
     }
@@ -1264,6 +1325,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     }
 
     private boolean isOnlyWires(ArrayList<Element> picks) {
+        if (picks.isEmpty()) {
+            return false;
+        }
         for (Element e : picks) {
             if (!(e instanceof Wire)) {
                 return false;
@@ -1483,10 +1547,22 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         return null;
     }
 
+    /**
+     * Detect a direct click on a Shape in the work area. Most shapes are
+     * manipulated by their X/Y points but some shapes are further modified or
+     * moved by clicking anywhere on the shape.
+     *
+     * @param node
+     * @param me
+     */
     @Override
     public void nodePicked(ViewNode node, MouseEvent me) {
-
-        // TODO:  No more node picking.
+        LOGGER.log(Level.SEVERE, "Direct Node Picked: {0}", node.getElement().getElementName());
+        // Remember node and use it for some special operations
+        // ** wire/vertex curve (Move--> Command-Click)
+        // ** circle (Move)
+        // ** Rectangle (Move)
+        directPickedNode = node;
     }
 
     @Override
