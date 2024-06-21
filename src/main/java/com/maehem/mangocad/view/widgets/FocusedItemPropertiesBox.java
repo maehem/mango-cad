@@ -26,6 +26,7 @@ import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.GridUnitProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ElementSelectionListener;
+import com.maehem.mangocad.view.widgets.inspector.CurveValueWidget;
 import com.maehem.mangocad.view.widgets.inspector.DimensionTypeToggleWidget;
 import com.maehem.mangocad.view.widgets.inspector.GridUnitListWidget;
 import com.maehem.mangocad.view.widgets.inspector.InspectorWidget;
@@ -108,8 +109,11 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 LocationXYWidget lxy2 = new LocationXYWidget(w.x2Property, w.y2Property, "LINE_LOCATION_2");
                 LineWidthWidget lwW = new LineWidthWidget(w);
                 LineStyleWidget lsW = new LineStyleWidget(w);
+                // Cap
+                // Layer
+                CurveValueWidget cvW = new CurveValueWidget(w.curveProperty, "LINE_CURVE");
 
-                getChildren().addAll(lxy1, lxy2, lwW, lsW);
+                getChildren().addAll(lxy1, lxy2, lwW, lsW, cvW);
             }
             case ElementText t -> {
                 StringValueWidget valw = new StringValueWidget(t.valueProperty, "TEXT_VALUE");
