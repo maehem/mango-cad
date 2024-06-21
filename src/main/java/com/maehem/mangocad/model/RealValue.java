@@ -59,6 +59,10 @@ public class RealValue extends ElementValue {
         return round(value, prec);
     }
 
+    public String getPrecise() {
+        return getPrecise(prec);
+    }
+
     public String getPrecise(int precision) {
         StringBuilder pattern = new StringBuilder("#.");
         for (int i = 0; i < precision; i++) {
@@ -75,6 +79,10 @@ public class RealValue extends ElementValue {
         if (oldValue != this.value) {
             notifyValueChange();
         }
+    }
+
+    public double getOldValue() {
+        return oldValue;
     }
 
     public double getMin() {
@@ -110,4 +118,10 @@ public class RealValue extends ElementValue {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(getPrecise());
+    }
+
 }
