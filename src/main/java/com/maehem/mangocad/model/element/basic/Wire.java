@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.WireCap;
@@ -56,7 +58,7 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, WidthProperty {
+public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, WidthProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -128,6 +130,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     public Wire() {
+        curveProperty.addListener(this);
     }
 
     @Override
@@ -402,6 +405,13 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
             int oldVal = this.layer;
             this.layer = layer;
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal instanceof CurveProperty cp) {
+            notifyListeners(CurveProperty.Field.VALUE, newVal, cp.get());
         }
     }
 
