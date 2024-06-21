@@ -29,6 +29,7 @@ import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
@@ -60,6 +61,13 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
 
         updatePoints();
         updateLayer();
+
+        rectangleShape.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            if (listener != null) {
+                getPickListener().nodePicked(this, me);
+            }
+        });
 
         Platform.runLater(() -> {
             rectangle.addListener(this);

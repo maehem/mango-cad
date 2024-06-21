@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.LineTo;
@@ -78,15 +79,13 @@ public class PolygonNode extends ViewNode implements ElementListener {
         updateWidth();
         rebuildPath();
 
-        // Should have been done by ElementPolygon
-//        if (!er.getVertices().isEmpty()) {
-//            Platform.runLater(() -> {
-//                for (Vertex v : polygonElement.getVertices()) {
-//                    v.addListener(this);
-//                }
-//            });
-//
-//        }
+        path.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            if (listener != null) {
+                getPickListener().nodePicked(this, me);
+            }
+        });
+
         Platform.runLater(() -> {
             polygonElement.addListener(this);
         });

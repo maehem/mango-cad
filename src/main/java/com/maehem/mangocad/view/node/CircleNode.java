@@ -28,6 +28,7 @@ import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -55,6 +56,13 @@ public class CircleNode extends ViewNode implements ElementListener {
         updateWidth();
         updateRadius();
         updateLayer();
+
+        circleShape.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            if (listener != null) {
+                getPickListener().nodePicked(this, me);
+            }
+        });
 
         Platform.runLater(() -> {
             circle.addListener(this);
