@@ -19,13 +19,10 @@ package com.maehem.mangocad.view.widgets.inspector;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
-import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 /**
  * Settings for element angle rotations.
@@ -60,8 +57,8 @@ public class RotationWidget extends InspectorWidget {
             LOGGER.log(Level.SEVERE, "RotationWidget: element is not of type RotationProperty!");
         }
 
-        Image img = ViewUtils.getImage(ICON_PATH);
-        ImageView icon = ViewUtils.createIcon(img, 20);
+        //Image img = ViewUtils.getImage(ICON_PATH);
+        //ImageView icon = ViewUtils.createIcon(img, 20);
 //        Label iconLabel = new Label("", icon);
 //        iconLabel.setPadding(new Insets(4));
 //        iconLabel.setAlignment(Pos.BASELINE_CENTER);
@@ -103,7 +100,7 @@ public class RotationWidget extends InspectorWidget {
         if ( //!field.equals(ElementText.Field.ROTATION) &&
                 !field.equals(RotationProperty.Field.VALUE)
                 && !field.equals(RotationProperty.Field.MIRROR)) {
-            LOGGER.log(Level.SEVERE, "The Rotation Field is not an expected type: " + field.name());
+            //LOGGER.log(Level.SEVERE, "The Rotation Field is not an expected type: " + field.name());
             return;
         }
         if (newVal == null) {
