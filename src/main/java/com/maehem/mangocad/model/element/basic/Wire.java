@@ -310,6 +310,18 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         }
     }
 
+    public double getRadius() {
+        double radius;
+        if (curveProperty.get() == 0.0) {
+            radius = 10000.0; // Big number that makes it look straight.
+        } else {
+            radius = (getLength() * 0.5)
+                    / Math.sin(Math.toRadians(curveProperty.get() * 0.5));
+        }
+
+        return radius;
+    }
+
     /**
      * @return the grouprefs
      */
