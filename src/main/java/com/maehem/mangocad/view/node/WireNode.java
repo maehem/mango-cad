@@ -75,6 +75,12 @@ public class WireNode extends ViewNode implements ElementListener {
         updateCurve();
         updateLayer(); // Color
 
+        wireCurve.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+            PickListener listener = getPickListener();
+            if (listener != null) {
+                getPickListener().nodePicked(this, me);
+            }
+        });
 //        wireCurve.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 //            PickListener listener = getPickListener();
 //            LOGGER.log(Level.SEVERE, "Pin Picked..");
@@ -162,18 +168,23 @@ public class WireNode extends ViewNode implements ElementListener {
     }
 
     private void updateCurve() {
+        LOGGER.log(Level.SEVERE, "Update Curve");
         double curve = wire.curveProperty.get();
 
         // SWEEP on negative curve value.
         arcTo.setSweepFlag(curve < 0.0);
 
-        double radius;
-        if (curve == 0.0) {
-            radius = 10000.0; // Big number that makes it look straight.
-        } else {
-            radius = (SIN90 * wire.getLength() / 2.0)
-                    / Math.sin(Math.toRadians(curve / 2.0));
-        }
+//        double radius;
+//        if (curve == 0.0) {
+//            radius = 10000.0; // Big number that makes it look straight.
+//        } else {
+////            radius = (SIN90 * wire.getLength() / 2.0)
+////                    / Math.sin(Math.toRadians(curve / 2.0));
+//            radius = (wire.getLength() / 2.0)
+//                    / Math.sin(Math.toRadians(curve / 2.0));
+//        }
+        double radius = wire.getRadius();
+        arcTo.setLargeArcFlag(Math.abs(curve) > 180);
         arcTo.setRadiusX(radius);
         arcTo.setRadiusY(radius);
     }
@@ -198,8 +209,8 @@ public class WireNode extends ViewNode implements ElementListener {
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         //Wire.Field f = (Wire.Field) field;
 
-        LOGGER.log(Level.FINE,
-                "Wire properties have changed! {0}: {1} => {2}",
+        LOGGER.log(Level.FINER,
+                "WireNode:  Wire properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (field) {
