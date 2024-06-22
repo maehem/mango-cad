@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
@@ -57,7 +59,10 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element implements LayerNumberProperty, LocationXYProperty, RotationProperty, SelectableProperty, GrouprefsProperty {
+public class ElementText extends Element
+        implements
+        LayerNumberProperty, LocationXYProperty, RotationProperty,
+        SelectableProperty, GrouprefsProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -133,9 +138,14 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public ElementText() {
         rotation.setAllowMirror(true);
         rotation.setAllowSpin(true);
+
+        xProperty.addListener(this);
+        yProperty.addListener(this);
+        sizeProperty.addListener(this);
     }
 
     @Override
@@ -514,6 +524,18 @@ public class ElementText extends Element implements LayerNumberProperty, Locatio
             this.layer = layer;
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
         }
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(xProperty)) {
+            notifyListeners(LocationXYProperty.Field.X, xProperty.getOldValue(), xProperty.get());
+        } else if (newVal.equals(yProperty)) {
+            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        } else if (newVal.equals(sizeProperty)) {
+            notifyListeners(Field.SIZE, sizeProperty.getOldValue(), sizeProperty.get());
+        }
+
     }
 
     /**

@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
@@ -33,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty, RotationProperty, GrouprefsProperty {
+public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty, RotationProperty, GrouprefsProperty, ElementValueListener {
 
     public static final String ELEMENT_NAME = "rectangle";
 
@@ -178,7 +180,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
 
     /**
      * Furnish a list of the polygon points with consideration for the current
- rotationProperty/mirror of the shape.
+     * rotationProperty/mirror of the shape.
      *
      * @return
      */
@@ -392,6 +394,19 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     @Override
     public void setConstrained(boolean value) { // Not changable
 
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(x1Property)) {
+            notifyListeners(Field.X1, x1Property.getOldValue(), x1Property.get());
+        } else if (newVal.equals(y1Property)) {
+            notifyListeners(Field.Y1, y1Property.getOldValue(), y1Property.get());
+        } else if (newVal.equals(x2Property)) {
+            notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
+        } else if (newVal.equals(y2Property)) {
+            notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
+        }
     }
 
     /**

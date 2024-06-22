@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
@@ -39,7 +41,9 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Dimension extends Element implements LayerNumberProperty, GrouprefsProperty, WidthProperty, VisibleProperty {
+public class Dimension extends Element implements
+        LayerNumberProperty, GrouprefsProperty, WidthProperty, VisibleProperty,
+        ElementValueListener {
 
     public static final String ELEMENT_NAME = "dimension";
 
@@ -401,6 +405,31 @@ public class Dimension extends Element implements LayerNumberProperty, Grouprefs
             int oldVal = this.layer;
             this.layer = layer;
             notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        }
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(x1Property)) {
+            notifyListeners(Field.X1, x1Property.getOldValue(), x1Property.get());
+        } else if (newVal.equals(y1Property)) {
+            notifyListeners(Field.Y1, y1Property.getOldValue(), y1Property.get());
+        } else if (newVal.equals(x2Property)) {
+            notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
+        } else if (newVal.equals(y2Property)) {
+            notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
+        } else if (newVal.equals(x3Property)) {
+            notifyListeners(Field.X3, x3Property.getOldValue(), x3Property.get());
+        } else if (newVal.equals(y2Property)) {
+            notifyListeners(Field.Y3, y3Property.getOldValue(), y3Property.get());
+        } else if (newVal.equals(widthProperty)) {
+            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+        } else if (newVal.equals(textsizeProperty)) {
+            notifyListeners(Field.TEXTSIZE, textsizeProperty.getOldValue(), textsizeProperty.get());
+        } else if (newVal.equals(textratioProperty)) {
+            notifyListeners(Field.TEXTRATIO, textratioProperty.getOldValue(), textratioProperty.get());
+        } else if (newVal.equals(precisionProperty)) {
+            notifyListeners(Field.PRECISION, precisionProperty.getOldValue(), precisionProperty.get());
         }
     }
 

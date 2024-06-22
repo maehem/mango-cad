@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
@@ -27,7 +29,8 @@ import java.text.MessageFormat;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Vertex extends Element implements LocationXYProperty, SelectableProperty {
+public class Vertex extends Element implements
+        LocationXYProperty, SelectableProperty, ElementValueListener {
 
     public static final String ELEMENT_NAME = "vertex";
 
@@ -112,6 +115,17 @@ public class Vertex extends Element implements LocationXYProperty, SelectablePro
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(xProperty)) {
+            notifyListeners(LocationXYProperty.Field.X, xProperty.getOldValue(), xProperty.get());
+        } else if (newVal.equals(yProperty)) {
+            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        } else if (newVal.equals(curveProperty)) {
+            notifyListeners(CurveProperty.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         }
     }
 

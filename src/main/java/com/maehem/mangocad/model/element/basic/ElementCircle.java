@@ -17,6 +17,8 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
@@ -34,13 +36,13 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements LayerNumberProperty, LocationXYProperty, SelectableProperty, GrouprefsProperty, WidthProperty {
+public class ElementCircle extends Element implements
+        LayerNumberProperty, LocationXYProperty, SelectableProperty,
+        GrouprefsProperty, WidthProperty, ElementValueListener {
 
     public static final String ELEMENT_NAME = "circle";
 
     public enum Field implements ElementField {
-        //X("x", Double.class), Y("y", Double.class),
-        //SELECTED("selected", Boolean.class),
         RADIUS("raduis", Double.class),
         WIDTH("width", Double.class);
 
@@ -233,12 +235,26 @@ public class ElementCircle extends Element implements LayerNumberProperty, Locat
         }
     }
 
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(xProperty)) {
+            notifyListeners(LocationXYProperty.Field.X, xProperty.getOldValue(), xProperty.get());
+        } else if (newVal.equals(yProperty)) {
+            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        } else if (newVal.equals(radiusProperty)) {
+            notifyListeners(Field.RADIUS, radiusProperty.getOldValue(), radiusProperty.get());
+        } else if (newVal.equals(widthProperty)) {
+            notifyListeners(Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+        }
+    }
+
     /**
-     *
+     * <code>  Examples:
      * <circle x="-6.096" y="-7.62" radius="0.762" width="0.3048" layer="94"/>
      * <circle x="-19.558" y="5.08" radius="0.762" width="0.3048" layer="94"/>
      * <circle x="-12.7" y="-7.62" radius="0.254" width="0.381" layer="94"/>
      * <circle x="6.096" y="-7.62" radius="0.762" width="0.3048" layer="94"/>
+     * </code>
      *
      * @return
      */

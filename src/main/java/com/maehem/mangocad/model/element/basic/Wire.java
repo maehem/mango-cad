@@ -422,8 +422,18 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal instanceof CurveProperty cp) {
-            notifyListeners(CurveProperty.Field.VALUE, newVal, cp.get());
+        if (newVal.equals(x1Property)) {
+            notifyListeners(Field.X1, x1Property.getOldValue(), x1Property.get());
+        } else if (newVal.equals(y1Property)) {
+            notifyListeners(Field.Y1, y1Property.getOldValue(), y1Property.get());
+        } else if (newVal.equals(x2Property)) {
+            notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
+        } else if (newVal.equals(y2Property)) {
+            notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
+        } else if (newVal.equals(curveProperty)) {
+            notifyListeners(CurveProperty.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
+        } else if (newVal.equals(widthProperty)) {
+            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         }
     }
 
@@ -431,7 +441,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
      * <pre>
      * <wire x1="-3.048" y1="3.81" x2="-3.048" y2="-3.81" width="0.6096" layer="94" curve="-60"/>
      * <wire x1="-3.048" y1="-3.81" x2="0" y2="-3.81" width="0.6096" layer="94"/>
-<wire x1="1.016" y1="-16.51" x2="16.256" y2="-16.51" width="0.254" layer="97" style="shortdash"/>
+     * <wire x1="1.016" y1="-16.51" x2="16.256" y2="-16.51" width="0.254" layer="97" style="shortdash"/>
      * </pre>
      *
      * @return
