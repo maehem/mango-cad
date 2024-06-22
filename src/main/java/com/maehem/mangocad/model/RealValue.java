@@ -30,8 +30,8 @@ public class RealValue extends ElementValue {
 
     private double value;
     private double oldValue;
-    private double min = Double.MIN_VALUE;
-    private double max = Double.MAX_VALUE;
+    private double min = Double.NEGATIVE_INFINITY;
+    private double max = Double.POSITIVE_INFINITY;
     private int prec = 6;
 
     public RealValue(double value) {
@@ -75,7 +75,15 @@ public class RealValue extends ElementValue {
 
     public void set(double value) {
         oldValue = this.value;
+        if (value > getMax()) {
+            value = getMax();
+        }
+
+        if (value < getMin()) {
+            value = getMin();
+        }
         this.value = value;
+
         if (oldValue != this.value) {
             notifyValueChange();
         }
@@ -113,10 +121,13 @@ public class RealValue extends ElementValue {
         if (places < 0) {
             throw new IllegalArgumentException();
         }
-
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        if (value != Double.NaN) {
+            BigDecimal bd = BigDecimal.valueOf(value);
+            bd = bd.setScale(places, RoundingMode.HALF_UP);
+            return bd.doubleValue();
+        } else {
+            return Double.MAX_VALUE;
+        }
     }
 
     @Override
