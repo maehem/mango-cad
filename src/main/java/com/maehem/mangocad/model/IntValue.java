@@ -65,6 +65,10 @@ public class IntValue extends ElementValue {
         this.max = val;
     }
 
+    public int getOldValue() {
+        return oldValue;
+    }
+
     public boolean isInRange(int val) {
         return (val > getMin() && val < getMax());
     }
