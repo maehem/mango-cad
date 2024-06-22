@@ -337,8 +337,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                             exy.setY2(snapXY.getY2() + moveDistSnappedY);
                                         }
                                         case WireEnd.NONE -> {
-                                            double mX = me.getX();
-                                            double mY = me.getY();
+                                            double mX = moveDistSnappedX;
+                                            double mY = moveDistSnappedY;
                                             double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
                                             double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
                                             double c = snapXY.getLength();
@@ -351,9 +351,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                                     (a * a + b * b - c * c) / (2 * a * b)
                                             )) % 180.0;
                                             double curve = 360.0 - 2.0 * lawCosCurve;
-
-                                            LOGGER.log(Level.SEVERE, "Curve: raw: {0}, set: {1}", new Object[]{lawCosCurve, curve});
-                                            exy.setCurve(curve);
+                                            double div = 360.0 / snapXY.getLength();
+                                            double curve2 = mY * div;
+                                            double curve3 = mX * div;
+                                            double curve4 = Math.hypot(curve2, curve3);
+                                            if (curve > -340 && curve < 340) {
+                                                LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve: {1}", new Object[]{div, -curve});
+                                                exy.setCurve(-curve);
+                                            }
                                         }
                                         default -> {
                                         }
@@ -449,6 +454,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         nodes.add(ephemeralNode);
                                         lastElementAdded = text;
                                         ephemeralNode = null;
+                                        LOGGER.log(Level.SEVERE, "Clear movingElements. 78230");
                                         movingElements.clear();
                                         //text = initiateNewText();  // Initiate new text.
                                         setEditorTool(toolMode); // Reset widget.
@@ -1389,6 +1395,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     ephemeralNode = textNode;
                     movingMouseStartX = 0;
                     movingMouseStartY = 0;
+                    text.createSnapshot();
                     movingElements.add(text);
                     this.toolMode.setToolElement(text);
                     parentEditor.setElementFocus(text);
