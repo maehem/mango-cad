@@ -16,13 +16,33 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface WidthProperty {
+public class WidthProperty extends RealValue {
+
+    public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
+            = FXCollections.observableArrayList(
+                    -1.0,
+                    0.0,
+                    0.01,
+                    0.0125,
+                    0.025,
+                    0.03937008,
+                    0.05,
+                    0.10,
+                    0.5,
+                    1.0,
+                    2.0,
+                    5.0,
+                    10.0
+            );
 
     public enum Field implements ElementField {
         WIDTH("width", Double.class);
@@ -46,8 +66,14 @@ public interface WidthProperty {
         }
     }
 
-    public double getWidth();
+    public WidthProperty() {
+        super(0.254, 0, Double.POSITIVE_INFINITY);
+    }
 
-    public void setWidth(double x);
+    public WidthProperty(double val) {
+        super(val);
+    }
 
+    //public double getWidth();
+    //public void setWidth(double x);
 }
