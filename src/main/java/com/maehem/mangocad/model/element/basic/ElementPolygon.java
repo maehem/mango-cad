@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends Element implements LayerNumberProperty, ElementListener, SelectableProperty, WidthProperty, GrouprefsProperty {
+public class ElementPolygon extends Element implements LayerNumberProperty, ElementListener, SelectableProperty, GrouprefsProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
@@ -94,7 +94,9 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
     }
     public final LockValue lockProperty = new LockValue();
     private int layer;
-    private double width = 0.254;
+    //private double width = 0.254;
+    public WidthProperty widthProperty = new WidthProperty();
+
     private PolygonPour pour = PolygonPour.SOLID;
     private double spacing = 1.27;
     private double isolate;  // Not in symbol, footprint?
@@ -116,21 +118,21 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
     /**
      * @return the width
      */
-    @Override
+//    @Override
     public double getWidth() {
-        return width;
+        return widthProperty.get();
     }
 
     /**
      * @param width the width to set
      */
-    @Override
+//    @Override
     public void setWidth(double width) {
-        if (this.width != width) {
-            double oldVal = this.width;
-            this.width = width;
-            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
-        }
+//        if (this.width != width) {
+//            double oldVal = this.width;
+            widthProperty.set(width);
+//            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
+//        }
     }
 
     /**
@@ -468,7 +470,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         });
 
         Object[] args = {
-            " width=\"" + width + "\"", // 0
+            " width=\"" + widthProperty.get() + "\"", // 0
             " layer=\"" + getLayerNum() + "\"", // 1
             lockProperty.xmlValue(), // 2
             getSpacing() != 1.27 ? " spacing=\"" + getSpacing() + "\"" : "", // 3
