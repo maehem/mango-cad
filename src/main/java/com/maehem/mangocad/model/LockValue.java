@@ -23,6 +23,7 @@ package com.maehem.mangocad.model;
 public class LockValue extends ElementValue {
 
     private boolean value = false;
+    private boolean oldValue = false;
 
     public enum Field {
         LOCKED("locked", Boolean.class);
@@ -50,8 +51,13 @@ public class LockValue extends ElementValue {
     }
 
     public void setLocked(boolean locked) {
+        oldValue = locked;
         value = locked;
         notifyValueChange();
+    }
+
+    public boolean getOldValue() {
+        return oldValue;
     }
 
     public String xmlValue() {
