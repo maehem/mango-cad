@@ -14,8 +14,9 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model;
+package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.ElementValue;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

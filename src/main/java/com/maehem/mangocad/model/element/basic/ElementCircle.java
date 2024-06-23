@@ -20,7 +20,7 @@ import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementValue;
 import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.LockValue;
-import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;

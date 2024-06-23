@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.util;
 
-import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.element.property.RealValue;
 
 /**
  * <pre>

@@ -17,7 +17,6 @@
 package com.maehem.mangocad.model.element.property;
 
 import com.maehem.mangocad.model.ElementValue;
-import com.maehem.mangocad.model.element.property.GridUnitProperty;
 
 /**
  *

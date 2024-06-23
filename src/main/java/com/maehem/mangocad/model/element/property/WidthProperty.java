@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

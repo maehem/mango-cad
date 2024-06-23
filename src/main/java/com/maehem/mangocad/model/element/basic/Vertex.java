@@ -19,7 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.ElementValue;
 import com.maehem.mangocad.model.ElementValueListener;
-import com.maehem.mangocad.model.RealValue;
+import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;

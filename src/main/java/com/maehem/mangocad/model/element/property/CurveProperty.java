@@ -16,8 +16,6 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.RealValue;
-
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
