@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.IntValue;
 import com.maehem.mangocad.model.LockValue;
 import com.maehem.mangocad.model.RealValue;
-import com.maehem.mangocad.model.StringValue;
+import com.maehem.mangocad.model.element.property.StringValue;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
