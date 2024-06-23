@@ -33,8 +33,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  * <pre>
@@ -58,7 +56,7 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, WidthProperty, ElementValueListener {
+public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -95,22 +93,22 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     }
 
     // TODO: No JavaFX in model package!!!!
-    public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
-            = FXCollections.observableArrayList(
-                    -1.0,
-                    0.0,
-                    0.01,
-                    0.0125,
-                    0.025,
-                    0.03937008,
-                    0.05,
-                    0.10,
-                    0.5,
-                    1.0,
-                    2.0,
-                    5.0,
-                    10.0
-            );
+//    public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
+//            = FXCollections.observableArrayList(
+//                    -1.0,
+//                    0.0,
+//                    0.01,
+//                    0.0125,
+//                    0.025,
+//                    0.03937008,
+//                    0.05,
+//                    0.10,
+//                    0.5,
+//                    1.0,
+//                    2.0,
+//                    5.0,
+//                    10.0
+//            );
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
 
@@ -120,7 +118,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
-    public final RealValue widthProperty = new RealValue(0.254);
+    public final WidthProperty widthProperty = new WidthProperty(0.254);
     public final CurveProperty curveProperty = new CurveProperty(0.0);
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
@@ -129,7 +127,14 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public Wire() {
+
+        x1Property.addListener(this);
+        y1Property.addListener(this);
+        x2Property.addListener(this);
+        y2Property.addListener(this);
+        widthProperty.addListener(this);
         curveProperty.addListener(this);
     }
 
@@ -228,7 +233,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     /**
      * @return the width
      */
-    @Override
+    //@Override
     public double getWidth() {
         return widthProperty.get();
     }
@@ -236,13 +241,13 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     /**
      * @param width the width to set
      */
-    @Override
+    //@Override
     public void setWidth(double width) {
-        if (getWidth() != width) {
-            double oldVal = getWidth();
+//        if (getWidth() != width) {
+//            double oldVal = getWidth();
             widthProperty.set(width);
-            notifyListeners(WidthProperty.Field.WIDTH, oldVal, getWidth());
-        }
+//            notifyListeners(WidthProperty.Field.WIDTH, oldVal, getWidth());
+//        }
     }
 
     /**
