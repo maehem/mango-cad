@@ -17,6 +17,8 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
@@ -50,6 +52,8 @@ import com.maehem.mangocad.view.widgets.inspector.TextFontWidget;
 import com.maehem.mangocad.view.widgets.inspector.TextRatioWidget;
 import com.maehem.mangocad.view.widgets.inspector.TextSizeWidget;
 import com.maehem.mangocad.view.widgets.toolmode.ToolModeWidget;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -62,6 +66,9 @@ import javafx.scene.layout.VBox;
  */
 public class FocusedItemPropertiesBox extends VBox implements ElementSelectionListener {
 
+    private final Map<ElementValue, ElementValueListener> evListenerMap = new HashMap<>();
+
+    // TODO: arraylist that tracks elementValue and elementValueListener pairs.
     public FocusedItemPropertiesBox() {
         updateContent(null);
     }
@@ -72,14 +79,20 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 w.stopListening();
             }
         }
+        evListenerMap.forEach((ev, evl) -> {
+            ev.removeListener(evl);
+        });
+        evListenerMap.clear();
 
+        // TODO clear "this" listeners.
         getChildren().clear();
         if (item != null) {
-            Label label = new Label(item.getElementName());
-            label.setId("properties-list-heading");
-            label.setPadding(new Insets(10));
-            getChildren().add(label);
+//            Label label = new Label(item.getElementName());
+//            label.setId("properties-list-heading");
+//            label.setPadding(new Insets(10));
+//            getChildren().add(label);
             generatePropertyNodes(item);
+            //item.addListener(this);
         } else {
             Label label = new Label("Nothing Selected");
             label.setId("properties-list-heading-nothing");
@@ -107,7 +120,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
             case Wire w -> {
                 LocationXYWidget lxy1 = new LocationXYWidget(w.x1Property, w.y1Property, "LINE_LOCATION_1");
                 LocationXYWidget lxy2 = new LocationXYWidget(w.x2Property, w.y2Property, "LINE_LOCATION_2");
-                LineWidthWidget lwW = new LineWidthWidget(w);
+                LineWidthWidget lwW = new LineWidthWidget(w, w.widthProperty);
                 LineStyleWidget lsW = new LineStyleWidget(w);
                 // Cap
                 // Layer
@@ -146,28 +159,28 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         d.widthProperty, WidthProperty.Field.WIDTH,
                         "LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
-                        Wire.WIDTH_DEFAULT_OPTIONS
+                        WidthProperty.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext. Width (with auto)
                 RealValueListWidget2 extWidthWidget = new RealValueListWidget2(
                         d.extwidthProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 1.0,
-                        Wire.WIDTH_DEFAULT_OPTIONS
+                        WidthProperty.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Length (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extLengthWidget = new RealValueListWidget2(
                         d.extlengthProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_LENGTH", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 10.0,
-                        Wire.WIDTH_DEFAULT_OPTIONS
+                        WidthProperty.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Offset (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extOffsetWidget = new RealValueListWidget2(
                         d.extoffsetProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_OFFSET", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 10.0,
-                        Wire.WIDTH_DEFAULT_OPTIONS
+                        WidthProperty.WIDTH_DEFAULT_OPTIONS
                 );
                 getChildren().addAll(
                         dimTypeWidget,
@@ -182,6 +195,15 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 LocationXYWidget lxy2 = new LocationXYWidget(er.x2Property, er.y2Property, "LINE_LOCATION_2");
                 RotationWidget rotW = new RotationWidget(er, "ROTATION");
 
+                ElementValueListener evl = (newVal) -> {
+                    lxy1.setDisable(er.getRot() != 0.0);
+                    lxy2.setDisable(er.getRot() != 0.0);
+                };
+                evl.elementValueChanged(er.rotationProperty); // Set initial state.
+
+                er.rotationProperty.addListener(evl);
+                evListenerMap.put(er.rotationProperty, evl);
+
                 getChildren().addAll(
                         lxy1, lxy2, rotW
                 );
@@ -189,16 +211,16 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
             case ElementCircle ec -> {
                 LocationXYWidget lxy = new LocationXYWidget(ec.xProperty, ec.yProperty, "LOCATION");
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
-                        ec.widthProperty, ElementCircle.Field.WIDTH,
+                        ec.widthProperty, WidthProperty.Field.WIDTH,
                         "CIRCLE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
-                        Wire.WIDTH_DEFAULT_OPTIONS
+                        WidthProperty.WIDTH_DEFAULT_OPTIONS
                 );
                 RealValueListWidget2 radiusWidget = new RealValueListWidget2(
-                        ec.widthProperty, ElementCircle.Field.RADIUS,
+                        ec.radiusProperty, ElementCircle.Field.RADIUS,
                         "CIRCLE_RADIUS", null, ToolModeWidget.EDITABLE,
                         null, 10.0,
-                        Wire.WIDTH_DEFAULT_OPTIONS
+                        WidthProperty.WIDTH_DEFAULT_OPTIONS
                 );
 
                 getChildren().addAll(
@@ -214,4 +236,5 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
     public void elementSelected(Element e) {
         updateContent(e);
     }
+
 }
