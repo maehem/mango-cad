@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.ElementValue;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

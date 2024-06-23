@@ -16,8 +16,6 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.ElementValue;
-
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )

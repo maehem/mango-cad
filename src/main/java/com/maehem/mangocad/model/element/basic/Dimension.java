@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.ElementValueListener;
 import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LockValue;
