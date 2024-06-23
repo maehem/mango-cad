@@ -16,6 +16,9 @@
  */
 package com.maehem.mangocad.view.widgets;
 
+import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.ARC;
 import com.maehem.mangocad.view.widgets.inspector.LineWidthWidget;
@@ -41,7 +44,6 @@ import javafx.scene.layout.Region;
 public class ToolModeWidgetBox extends HBox {
 
     //private EditorTool mode;
-
     public ToolModeWidgetBox() {
 
         setHeight(24);
@@ -89,10 +91,12 @@ public class ToolModeWidgetBox extends HBox {
             case ARC -> { // Arc options
                 // Tool Element is null until user clicks to start new arc/line.
                 if (mode.getToolElement() != null) {
-                    ArcClockwiseToggleWidget acW = new ArcClockwiseToggleWidget(mode.getToolElement());
-                    LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                    LineCapWidget lcW = new LineCapWidget(mode.getToolElement());
-                    getChildren().addAll(acW, lwW, lcW);
+                    if (mode.getToolElement() instanceof Wire arc) {
+                        ArcClockwiseToggleWidget acW = new ArcClockwiseToggleWidget(mode.getToolElement());
+                        LineWidthWidget lwW = new LineWidthWidget(arc, arc.widthProperty);
+                        LineCapWidget lcW = new LineCapWidget(mode.getToolElement());
+                        getChildren().addAll(acW, lwW, lcW);
+                    }
                 }
             }
             case TEXT -> {  // Text options
@@ -107,16 +111,20 @@ public class ToolModeWidgetBox extends HBox {
                 getChildren().addAll(mrW);
             }
             case POLYGON -> { // Polygon options
-                LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
-                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                // Hatch Fill style with spacing
-                PolygonFillWidget pfW = new PolygonFillWidget(mode.getToolElement());
-                MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
-                getChildren().addAll(lbsW, lwW, pfW, mrW);
+                if (mode.getToolElement() instanceof ElementPolygon poly) {
+                    LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
+                    LineWidthWidget lwW = new LineWidthWidget(poly, poly.widthProperty);
+                    // Hatch Fill style with spacing
+                    PolygonFillWidget pfW = new PolygonFillWidget(mode.getToolElement());
+                    MiterRadiusWidget mrW = new MiterRadiusWidget(mode.getToolElement());
+                    getChildren().addAll(lbsW, lwW, pfW, mrW);
+                }
             }
             case CIRCLE -> { // Circle options
-                LineWidthWidget lwW = new LineWidthWidget(mode.getToolElement());
-                getChildren().addAll(lwW);
+                if (mode.getToolElement() instanceof ElementCircle ec) {
+                    LineWidthWidget lwW = new LineWidthWidget(ec, ec.widthProperty);
+                    getChildren().addAll(lwW);
+                }
             }
             case DIMENSION -> {
             }
