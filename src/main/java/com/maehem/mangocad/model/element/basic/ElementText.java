@@ -17,21 +17,21 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.ElementValueListener;
-import com.maehem.mangocad.model.element.property.IntValue;
-import com.maehem.mangocad.model.element.property.LockValue;
-import com.maehem.mangocad.model.element.property.RealValue;
-import com.maehem.mangocad.model.element.property.StringValue;
 import com.maehem.mangocad.model.element.ElementField;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
+import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.LockValue;
+import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.Rotation;
+import com.maehem.mangocad.model.element.property.StringValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,7 +130,7 @@ public class ElementText extends Element
 
     private TextFont font = TextFont.PROPORTIONAL;
     public final IntValue ratioProperty = new IntValue(8, 0, 31);
-    private final Rotation rotation = new Rotation();
+    public final Rotation rotation = new Rotation();
     private TextAlign align = TextAlign.BOTTOM_LEFT;
     private int distance = 50;  // Line to line distance
 
@@ -255,22 +255,14 @@ public class ElementText extends Element
     }
 
     /**
-     * @return the rotation
-     */
-    @Override
-    public Rotation getRotationProperty() {
-        return rotation;
-    }
-
-    /**
      * Copy the values of source rotation into our rotation.
      *
      * @param rotation
      */
     public void setRotation(Rotation r) {
         //Rotation oldValue = this.getRotation();
-        Rotation.copyValues(r, this.getRotationProperty());
-        notifyListeners(RotationProperty.Field.VALUE, null, this.getRotationProperty());
+        Rotation.copyValues(r, rotation);
+        notifyListeners(Rotation.Field.VALUE, null, rotation);
     }
 
     @Override
@@ -282,8 +274,8 @@ public class ElementText extends Element
     public void setRot(double rot) {
         if (getRot() != rot) {
             double oldValue = this.getRot();
-            getRotationProperty().set(rot);
-            notifyListeners(RotationProperty.Field.VALUE, oldValue, this.getRot());
+            rotation.set(rot);
+            notifyListeners(Rotation.Field.VALUE, oldValue, this.getRot());
         }
     }
 
@@ -370,7 +362,7 @@ public class ElementText extends Element
         if (this.isSpin() != spin) {
             boolean oldValue = isSpin();
             rotation.setSpin(spin);
-            notifyListeners(RotationProperty.Field.SPIN, oldValue, this.isSpin());
+            notifyListeners(Rotation.Field.SPIN, oldValue, this.isSpin());
         }
     }
 
@@ -384,7 +376,7 @@ public class ElementText extends Element
         if (this.isSpinAllowed() != allowSpin) {
             boolean oldValue = isSpinAllowed();
             rotation.setAllowSpin(allowSpin);
-            notifyListeners(RotationProperty.Field.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+            notifyListeners(Rotation.Field.ALLOW_SPIN, oldValue, this.isSpinAllowed());
         }
     }
 
@@ -395,7 +387,7 @@ public class ElementText extends Element
 
     @Override
     public boolean isConstrained() {
-        return getRotationProperty().isConstrained();
+        return rotation.isConstrained();
     }
 
     @Override
@@ -403,7 +395,7 @@ public class ElementText extends Element
         if (this.isConstrained() != value) {
             boolean oldValue = this.isConstrained();
             rotation.setConstrained(value);
-            notifyListeners(RotationProperty.Field.CONSTRAINED, oldValue, this.isConstrained());
+            notifyListeners(Rotation.Field.CONSTRAINED, oldValue, this.isConstrained());
         }
     }
 
@@ -412,18 +404,18 @@ public class ElementText extends Element
         if (this.isMirrored() != value) {
             boolean oldValue = this.isMirrored();
             rotation.setMirror(value);
-            notifyListeners(RotationProperty.Field.MIRROR, oldValue, this.isMirrored());
+            notifyListeners(Rotation.Field.MIRROR, oldValue, this.isMirrored());
         }
     }
 
     @Override
     public boolean isMirrored() {
-        return getRotationProperty().isMirror();
+        return rotation.isMirror();
     }
 
     @Override
     public boolean isMirrorAllowed() {
-        return getRotationProperty().isMirrorAllowed();
+        return rotation.isMirrorAllowed();
     }
 
     @Override
@@ -431,7 +423,7 @@ public class ElementText extends Element
         if (this.isMirrorAllowed() != value) {
             boolean oldValue = this.isMirrorAllowed();
             rotation.setAllowMirror(value);
-            notifyListeners(RotationProperty.Field.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+            notifyListeners(Rotation.Field.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
         }
     }
 
@@ -493,7 +485,7 @@ public class ElementText extends Element
         for (String ref : grouprefs) {
             copy.grouprefs.add(ref);
         }
-        Rotation.copyValues(getRotationProperty(), copy.getRotationProperty());
+        Rotation.copyValues(rotation, copy.rotation);
 
         return copy;
     }

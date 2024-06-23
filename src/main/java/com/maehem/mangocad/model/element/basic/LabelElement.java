@@ -49,7 +49,7 @@ public class LabelElement extends ElementText {
     private boolean xRef = false;
 
     public LabelElement() {
-        getRotationProperty().setConstrained(Rotation.CONSTRAINED);
+        rotation.setConstrained(Rotation.CONSTRAINED);
     }
 
     public boolean isXref() {

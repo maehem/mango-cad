@@ -128,8 +128,8 @@ public class PinTester extends Application implements ElementListener, PickListe
         pinElement.setX(0);
         pinElement.setY(0);
         pinElement.setName(pinName);
-        pinElement.getRotationProperty().setMirror(false);
-        pinElement.getRotationProperty().setSpin(false);
+        pinElement.rotation.setMirror(false);
+        pinElement.rotation.setSpin(false);
 
         pinElement.addListener(this);
 

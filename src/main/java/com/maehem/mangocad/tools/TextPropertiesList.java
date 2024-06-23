@@ -76,7 +76,7 @@ public class TextPropertiesList extends VBox implements WidgetListener {
             }
             case "Rotate" -> {
                 SliderWidget s = (SliderWidget) widget;
-                et.getRotationProperty().set(s.getSlider().getValue());
+                et.rotation.set(s.getSlider().getValue());
             }
             case "Alignment" -> {
                 ListSelectWidget s = (ListSelectWidget) widget;

@@ -25,9 +25,8 @@ import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
-import com.maehem.mangocad.model.element.property.RotationProperty;
-import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.ViewUtils;
@@ -283,7 +282,7 @@ public class TextNode extends ViewNode implements ElementListener {
     }
 
     private void updateSpin() {
-        Rotation rotation = textElement.getRotationProperty();
+        Rotation rotation = textElement.rotation;
         double rot = rotation.get();
         boolean mir = rotation.isMirror();
         //boolean spin = rotation.isSpin();
@@ -329,7 +328,7 @@ public class TextNode extends ViewNode implements ElementListener {
         double textWidth = getTextWidth();
 
         double rot = textElement.getRot();
-        boolean mir = textElement.getRotationProperty().isMirror();
+        boolean mir = textElement.rotation.isMirror();
         boolean spun = textElement.isSpun();
 
         double tw2 = textWidth / 2.0;
@@ -550,7 +549,7 @@ public class TextNode extends ViewNode implements ElementListener {
             case SelectableProperty.Field.SELECTED -> {
                 updateLayer();
             }
-//            case RotationProperty.Field.VALUE -> {
+//            case Rotation.Field.VALUE -> {
 //                updateLocation();
 //                updateAlignRotation();
 //                updateSpin();
@@ -575,7 +574,7 @@ public class TextNode extends ViewNode implements ElementListener {
             default -> {
             }
         }
-        if (field instanceof RotationProperty.Field rf) {
+        if (field instanceof Rotation.Field rf) {
             switch (rf) {
                 case MIRROR, SPIN, VALUE -> {
                     updateLocation();

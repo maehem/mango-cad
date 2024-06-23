@@ -734,7 +734,7 @@ public class LibraryElementNode {
         }
 
         double rot = -le.getRot();
-        if (le.getRotationProperty().isMirror() && (le.getRot() == 0 || le.getRot() == 180)) {
+        if (le.rotation.isMirror() && (le.getRot() == 0 || le.getRot() == 180)) {
             rot += 180.00;
             rot %= 360;
         }
@@ -825,7 +825,7 @@ public class LibraryElementNode {
         double x = et.getX();
         double y = et.getY();
 
-        Rotation rotation = et.getRotationProperty();
+        Rotation rotation = et.rotation;
         double rot = rotation.get();
         boolean mir = rotation.isMirror();
         boolean spin = rotation.isSpin();
@@ -1005,7 +1005,7 @@ public class LibraryElementNode {
         double sh2 = stackHeight / 2.0;
 
         if (barOver) {
-            barOver(list, x, y, et.getRotationProperty(), stroke, textWidth, size, et.getAlign(), color);
+            barOver(list, x, y, et.rotation, stroke, textWidth, size, et.getAlign(), color);
         }
 
         // Debug Box around tt
@@ -1604,7 +1604,7 @@ public class LibraryElementNode {
         boolean showBorder = false;
 
         Group g = new Group();
-        Rotation rotation = et.getRotationProperty();
+        Rotation rotation = et.rotation;
         double rot = rotation.get();
         boolean mir = rotation.isMirror();
 
@@ -1798,7 +1798,7 @@ public class LibraryElementNode {
         }
 
         // Apply parent mirror
-        boolean mir = leftIsRight ? !et.getRotationProperty().isMirror() : et.getRotationProperty().isMirror();
+        boolean mir = leftIsRight ? !et.rotation.isMirror() : et.rotation.isMirror();
 
         // jfxRot is the JavaFX rotation and is visually mirroed from EagleCAD rotation.
         double jfxRot = 360.0 - rot;
@@ -1830,7 +1830,7 @@ public class LibraryElementNode {
 
         boolean sideways = (rot > 45.0 && rot < 135.0)
                 || (rot > 225.0 && rot < 315.0);
-        boolean gt135 = et.getRotationProperty().get() > 135.0;
+        boolean gt135 = et.rotation.get() > 135.0;
 
         switch (et.getAlign()) {
             case BOTTOM_LEFT -> {
@@ -2011,7 +2011,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(smd.getName());
-        et.getRotationProperty().set(smd.getRot());
+        et.rotation.set(smd.getRot());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(smd.getX());
@@ -2327,7 +2327,7 @@ public class LibraryElementNode {
         // Name Text
         ElementText et = new ElementText();
         et.setValue(thd.getName());
-        et.getRotationProperty().set(thd.getRot());
+        et.rotation.set(thd.getRot());
         et.setAlign(TextAlign.CENTER);
         et.setSize(0.5);
         et.setX(thd.getX());
@@ -2811,7 +2811,7 @@ public class LibraryElementNode {
 
         double pX = p.getX();
         double pY = -p.getY();
-        boolean pinMirror = p.getRotationProperty().isMirror();
+        boolean pinMirror = p.rotation.isMirror();
         double rawPinLen = p.getLength().lenMM();
         double symbX = pX + (pinMirror ? -rawPinLen : rawPinLen); // Symbol Outline X
         // There might be a dot on pin.

@@ -17,17 +17,17 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.RealValue;
-import com.maehem.mangocad.model.element.property.StringValue;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.Rotation;
+import com.maehem.mangocad.model.element.property.StringValue;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -69,13 +69,13 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     private PinDirection direction = PinDirection.IO;
     private PinFunction function = PinFunction.NONE;
     private int swapLevel = 0;
-    private final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
+    public final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
 
     // Lookup
     private String padValue = null;
 
     public Pin() {
-        getRotationProperty().setConstrained(true);
+        rotation.setConstrained(true);
     }
 
     @Override
@@ -252,11 +252,6 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
-    @Override
-    public final Rotation getRotationProperty() {
-        return rotation;
-    }
-
     /**
      * @return the rotation
      */
@@ -273,7 +268,7 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         if (this.rotation.get() != val) {
             double oldVal = this.getRot();
             this.rotation.set(val);
-            notifyListeners(RotationProperty.Field.VALUE, oldVal, this.rotation.get());
+            notifyListeners(Rotation.Field.VALUE, oldVal, this.rotation.get());
         }
     }
 

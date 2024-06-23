@@ -17,15 +17,15 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
-import com.maehem.mangocad.model.element.property.LockValue;
-import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LockValue;
+import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -414,7 +414,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         } else if (newVal.equals(y2Property)) {
             notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
         } else if (newVal.equals(rotationProperty)) {
-            notifyListeners(RotationProperty.Field.VALUE, rotationProperty.getOldValue(), rotationProperty.get());
+            notifyListeners(Rotation.Field.VALUE, rotationProperty.getOldValue(), rotationProperty.get());
         } else if (newVal.equals(lockProperty)) {
             notifyListeners(LockValue.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
         }

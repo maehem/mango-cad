@@ -22,9 +22,9 @@ import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import java.util.logging.Level;
@@ -122,7 +122,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
             default -> {
             }
         }
-        if (field instanceof RotationProperty.Field) {
+        if (field instanceof Rotation.Field) {
             updatePoints();
         }
     }
@@ -130,11 +130,6 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
     @Override
     public String toString() {
         return "RectangleNode: Points:  x1:" + rectangle.getX1() + "," + rectangle.getY1() + "   " + rectangle.getX2() + "," + rectangle.getY2();
-    }
-
-    @Override
-    public Rotation getRotationProperty() {
-        return rectangle.getRotationProperty();
     }
 
     @Override

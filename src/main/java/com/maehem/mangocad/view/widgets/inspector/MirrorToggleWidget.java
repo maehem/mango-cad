@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -110,7 +111,7 @@ public class MirrorToggleWidget extends InspectorWidget {
         // Qualify what we can mirror.
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
-        if (!field.equals(RotationProperty.Field.MIRROR)) {
+        if (!field.equals(Rotation.Field.MIRROR)) {
             //LOGGER.log(Level.SEVERE, "The Rotation/Mirror Field is not an expected type: " + field.toString() + field.name());
             return;
         }

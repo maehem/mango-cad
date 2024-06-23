@@ -16,8 +16,6 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.element.property.RealValue;
-
 /**
  * <pre>
  * Rotation -- rotation of an object; allowed range: [MSR]0..359.9
@@ -31,6 +29,31 @@ import com.maehem.mangocad.model.element.property.RealValue;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class Rotation extends RealValue {
+
+    public enum Field {
+        SPIN("spin", Boolean.class),
+        CONSTRAINED("constrained", Boolean.class),
+        ALLOW_SPIN("allowSpin", Boolean.class),
+        MIRROR("mirror", Boolean.class),
+        ALLOW_MIRROR("allowMirror", Boolean.class),
+        VALUE("value", String.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+    }
 
     private static final double MIN = 0.0;
     private static final double MAX = 360.0;

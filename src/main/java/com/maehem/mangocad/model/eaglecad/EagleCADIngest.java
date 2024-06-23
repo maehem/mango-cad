@@ -842,7 +842,7 @@ public class EagleCADIngest {
                 case "align" ->
                     text.setAlign(TextAlign.fromCode(value));
                 case "rot" ->
-                    text.getRotationProperty().setValue(value);
+                    text.rotation.setValue(value);
                 case "distance" ->
                     text.setDistance(Integer.parseInt(value));
                 case "ratio" ->
@@ -970,7 +970,7 @@ public class EagleCADIngest {
                 case "locked" ->
                     rect.lockProperty.setLocked(value.equals("yes"));
                 case "rot" ->
-                    rect.getRotationProperty().setValue(value);
+                    rect.rotationProperty.setValue(value);
                 default ->
                     throw new EagleCADLibraryFileException("Rectangle has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -1099,7 +1099,7 @@ public class EagleCADIngest {
                 case "swaplevel" ->
                     pin.setSwapLevel(Integer.parseInt(value));
                 case "rot" ->
-                    pin.getRotationProperty().setValue(value);
+                    pin.rotation.setValue(value);
                 default ->
                     throw new EagleCADLibraryFileException("Pin has unknown attribute: [" + item.getNodeName() + "]");
             }
@@ -1143,7 +1143,7 @@ public class EagleCADIngest {
                 case "ratio" ->
                     label.setRatio(Integer.parseInt(value));
                 case "rot" ->
-                    label.getRotationProperty().setValue(value);
+                    label.rotation.setValue(value);
                 case "xref" ->
                     label.setXref(value.equalsIgnoreCase("yes"));
                 case "align" ->
@@ -1199,7 +1199,7 @@ public class EagleCADIngest {
                 case "ratio" ->
                     probe.setRatio(Integer.parseInt(value));
                 case "rot" ->
-                    probe.getRotationProperty().setValue(value);
+                    probe.rotation.setValue(value);
                 case "xref" ->
                     probe.setXref(value.equalsIgnoreCase("yes"));
                 case "probetype" ->
