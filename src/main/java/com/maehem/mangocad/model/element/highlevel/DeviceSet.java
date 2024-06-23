@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.basic.Gate;
 import java.util.ArrayList;
 import java.util.List;

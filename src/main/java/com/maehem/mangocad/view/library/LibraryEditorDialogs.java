@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library;
 
-import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Symbol;

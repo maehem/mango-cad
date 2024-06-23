@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.highlevel;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.LibraryElement;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import java.text.MessageFormat;
