@@ -384,24 +384,24 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         return rotationProperty.isMirror();
     }
 
-    @Override
-    public boolean isMirrorAllowed() {
-        return rotationProperty.isMirrorAllowed();
-    }
-
-    @Override
-    public void setAllowMirror(boolean value) { // Not changable
-    }
-
-    @Override
-    public boolean isConstrained() {
-        return true;
-    }
-
-    @Override
-    public void setConstrained(boolean value) { // Not changable
-
-    }
+//    @Override
+//    public boolean isMirrorAllowed() {
+//        return rotationProperty.isMirrorAllowed();
+//    }
+//
+//    @Override
+//    public void setAllowMirror(boolean value) { // Not changable
+//    }
+//
+//    @Override
+//    public boolean isConstrained() {
+//        return true;
+//    }
+//
+//    @Override
+//    public void setConstrained(boolean value) { // Not changable
+//
+//    }
 
     @Override
     public void elementValueChanged(ElementValue newVal) {

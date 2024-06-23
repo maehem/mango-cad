@@ -153,6 +153,11 @@ public class ElementText extends Element
         return ELEMENT_NAME;
     }
 
+    @Override
+    public Rotation getRotationProperty() {
+        return rotation;
+    }
+
     /**
      * @return the x
      */
@@ -385,19 +390,19 @@ public class ElementText extends Element
         return rotation.isSpinAllowed();
     }
 
-    @Override
-    public boolean isConstrained() {
-        return rotation.isConstrained();
-    }
-
-    @Override
-    public void setConstrained(boolean value) {
-        if (this.isConstrained() != value) {
-            boolean oldValue = this.isConstrained();
-            rotation.setConstrained(value);
-            notifyListeners(Rotation.Field.CONSTRAINED, oldValue, this.isConstrained());
-        }
-    }
+//    @Override
+//    public boolean isConstrained() {
+//        return rotation.isConstrained();
+//    }
+//
+//    @Override
+//    public void setConstrained(boolean value) {
+//        if (this.isConstrained() != value) {
+//            boolean oldValue = this.isConstrained();
+//            rotation.setConstrained(value);
+//            notifyListeners(Rotation.Field.CONSTRAINED, oldValue, this.isConstrained());
+//        }
+//    }
 
     @Override
     public void setMirror(boolean value) {
@@ -413,19 +418,19 @@ public class ElementText extends Element
         return rotation.isMirror();
     }
 
-    @Override
-    public boolean isMirrorAllowed() {
-        return rotation.isMirrorAllowed();
-    }
-
-    @Override
-    public void setAllowMirror(boolean value) {
-        if (this.isMirrorAllowed() != value) {
-            boolean oldValue = this.isMirrorAllowed();
-            rotation.setAllowMirror(value);
-            notifyListeners(Rotation.Field.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
-        }
-    }
+//    @Override
+//    public boolean isMirrorAllowed() {
+//        return rotation.isMirrorAllowed();
+//    }
+//
+//    @Override
+//    public void setAllowMirror(boolean value) {
+//        if (this.isMirrorAllowed() != value) {
+//            boolean oldValue = this.isMirrorAllowed();
+//            rotation.setAllowMirror(value);
+//            notifyListeners(Rotation.Field.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
+//        }
+//    }
 
     @Override
     public void createSnapshot() {
@@ -438,9 +443,9 @@ public class ElementText extends Element
             setX(snapshot.getX());
             setY(snapshot.getY());
             setAlign(snapshot.getAlign());
-            setAllowMirror(snapshot.isMirrorAllowed());
+            rotation.setAllowMirror(snapshot.rotation.isMirrorAllowed());
             setAllowSpin(snapshot.isSpinAllowed());
-            setConstrained(snapshot.isConstrained());
+            rotation.setConstrained(snapshot.rotation.isConstrained());
             setDistance(snapshot.getDistance());
             setFont(snapshot.getFont());
             setLayerNum(snapshot.getLayerNum());
@@ -468,9 +473,9 @@ public class ElementText extends Element
         copy.setX(getX());
         copy.setY(getY());
         copy.setAlign(align);
-        copy.setAllowMirror(isMirrorAllowed());
+        copy.rotation.setAllowMirror(rotation.isMirrorAllowed());
         copy.setAllowSpin(isSpinAllowed());
-        copy.setConstrained(isConstrained());
+        copy.rotation.setConstrained(rotation.isConstrained());
         copy.setDistance(distance);
         copy.setFont(font);
         copy.setLayerNum(getLayerNum());

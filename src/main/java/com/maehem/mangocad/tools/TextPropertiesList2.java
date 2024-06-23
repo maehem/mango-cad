@@ -102,7 +102,7 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
             }
             case "Constrained" -> {
                 ToggleWidget s = (ToggleWidget) widget;
-                et.setConstrained(s.getValue());
+                et.rotation.setConstrained(s.getValue());
                 if (s.getValue()) {
                     Slider slider = rotWidget.getSlider();
                     slider.setSnapToTicks(true);

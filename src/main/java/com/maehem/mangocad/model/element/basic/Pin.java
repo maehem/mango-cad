@@ -83,6 +83,11 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         return ELEMENT_NAME;
     }
 
+    @Override
+    public Rotation getRotationProperty() {
+        return rotation;
+    }
+
     /**
      * @return the name
      */
@@ -309,25 +314,25 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         return getRot() == 180 || getRot() == 270;
     }
 
-    @Override
-    public boolean isMirrorAllowed() {
-        return false;
-    }
-
-    @Override
-    public void setAllowMirror(boolean value) {
-        // Not applicable.
-    }
-
-    @Override
-    public boolean isConstrained() {
-        return true;
-    }
-
-    @Override
-    public void setConstrained(boolean value) {
-        // Only true allowed.
-    }
+//    @Override
+//    public boolean isMirrorAllowed() {
+//        return false;
+//    }
+//
+//    @Override
+//    public void setAllowMirror(boolean value) {
+//        // Not applicable.
+//    }
+//
+//    @Override
+//    public boolean isConstrained() {
+//        return true;
+//    }
+//
+//    @Override
+//    public void setConstrained(boolean value) {
+//        // Only true allowed.
+//    }
 
     @Override
     public void createSnapshot() {
@@ -337,10 +342,11 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     @Override
     public void restoreSnapshot() {
         if (snapshot2 != null) {
+            Rotation snapRotation = snapshot2.rotation;
             setX(snapshot2.getX());
             setY(snapshot2.getY());
-            setAllowMirror(snapshot2.isMirrorAllowed());
-            setConstrained(snapshot2.isConstrained());
+            rotation.setAllowMirror(snapRotation.isMirrorAllowed());
+            rotation.setConstrained(snapRotation.isConstrained());
             setDirection(snapshot2.getDirection());
             setFunction(snapshot2.getFunction());
             setLength(snapshot2.getLength());
@@ -370,8 +376,8 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         Pin copyPin = new Pin();
         copyPin.setX(getX());
         copyPin.setY(getY());
-        copyPin.setAllowMirror(isMirrorAllowed());
-        copyPin.setConstrained(isConstrained());
+        copyPin.rotation.setAllowMirror(rotation.isMirrorAllowed());
+        copyPin.rotation.setConstrained(rotation.isConstrained());
         copyPin.setDirection(getDirection());
         copyPin.setFunction(getFunction());
         copyPin.setLength(getLength());

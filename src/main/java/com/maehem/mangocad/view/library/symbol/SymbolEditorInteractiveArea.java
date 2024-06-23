@@ -1015,7 +1015,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private void initiateElementMirror(Element pick, Element copyRotFrom) {
         if (pick instanceof RotationProperty rotE) {
             if (copyRotFrom instanceof RotationProperty er) {
-                if (rotE.isMirrorAllowed()) {
+                if (rotE.getRotationProperty().isMirrorAllowed()) {
                     rotE.setMirror(er.isMirrored());
                 } else {
                     double angle = er.isMirrored() ? 180.0 : 0.0;

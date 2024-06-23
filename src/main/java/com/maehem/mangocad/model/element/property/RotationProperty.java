@@ -22,6 +22,8 @@ package com.maehem.mangocad.model.element.property;
  */
 public interface RotationProperty {
 
+    public Rotation getRotationProperty();
+
     public double getRot();
 
     public void setRot(double value);
@@ -40,12 +42,12 @@ public interface RotationProperty {
 
     public boolean isMirrored();
 
-    public boolean isMirrorAllowed();
-
-    public void setAllowMirror(boolean value);
-
-    public boolean isConstrained();
-
-    public void setConstrained(boolean value);
+//    public boolean isMirrorAllowed();
+//
+//    public void setAllowMirror(boolean value);
+//
+//    public boolean isConstrained();
+//
+//    public void setConstrained(boolean value);
 
 }

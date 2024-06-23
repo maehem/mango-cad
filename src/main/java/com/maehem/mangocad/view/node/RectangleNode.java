@@ -133,6 +133,11 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
     }
 
     @Override
+    public Rotation getRotationProperty() {
+        return rectangle.rotationProperty;
+    }
+
+    @Override
     public double getRot() {
         return rectangle.getRot();
     }
@@ -177,24 +182,24 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
         return rectangle.getRotationProperty().isMirror();
     }
 
-    @Override
-    public boolean isMirrorAllowed() {
-        return rectangle.getRotationProperty().isMirrorAllowed(); // Should be true.
-    }
-
-    @Override
-    public void setAllowMirror(boolean value) {
-        // Not an option in the UI.
-    }
-
-    @Override
-    public boolean isConstrained() {
-        return true;
-    }
-
-    @Override
-    public void setConstrained(boolean value) {
-        // Change not allowed. Always constrained.
-    }
+//    @Override
+//    public boolean isMirrorAllowed() {
+//        return rectangle.getRotationProperty().isMirrorAllowed(); // Should be true.
+//    }
+//
+//    @Override
+//    public void setAllowMirror(boolean value) {
+//        // Not an option in the UI.
+//    }
+//
+//    @Override
+//    public boolean isConstrained() {
+//        return true;
+//    }
+//
+//    @Override
+//    public void setConstrained(boolean value) {
+//        // Change not allowed. Always constrained.
+//    }
 
 }
