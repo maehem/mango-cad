@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.Element;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.ElementValueListener;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;

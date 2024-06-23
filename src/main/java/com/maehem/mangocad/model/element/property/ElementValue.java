@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.ElementValueListener;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import java.util.ArrayList;
 
 /**

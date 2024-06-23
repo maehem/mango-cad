@@ -18,7 +18,7 @@ package com.maehem.mangocad.tools;
 
 import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.ElementValueListener;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
