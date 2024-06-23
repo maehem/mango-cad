@@ -34,6 +34,10 @@ public class RealValue extends ElementValue {
     private double max = Double.POSITIVE_INFINITY;
     private int prec = 6;
 
+    public RealValue() {
+        this(0.0);
+    }
+
     public RealValue(double value) {
         this(value, DEFAULT_PREC);
     }
