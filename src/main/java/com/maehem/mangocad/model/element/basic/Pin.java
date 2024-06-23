@@ -27,7 +27,7 @@ import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;

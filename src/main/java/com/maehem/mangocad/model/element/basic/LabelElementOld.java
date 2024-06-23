@@ -19,7 +19,7 @@ package com.maehem.mangocad.model.element.basic;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import java.util.ArrayList;
 
 /**

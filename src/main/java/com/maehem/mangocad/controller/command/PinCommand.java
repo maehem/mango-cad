@@ -25,7 +25,7 @@ import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.ArrayList;
 import java.util.Arrays;

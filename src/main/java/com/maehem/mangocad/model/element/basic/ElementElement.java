@@ -20,7 +20,7 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.drawing.Library;
 import com.maehem.mangocad.model.element.highlevel.Footprint;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import java.util.ArrayList;
 import java.util.List;
 

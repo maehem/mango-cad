@@ -14,7 +14,7 @@
     License for the specific language governing permissions and limitations
     under the License.
  */
-package com.maehem.mangocad.model.util;
+package com.maehem.mangocad.model.element.property;
 
 import com.maehem.mangocad.model.element.property.RealValue;
 

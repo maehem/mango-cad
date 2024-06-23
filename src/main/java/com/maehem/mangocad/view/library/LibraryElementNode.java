@@ -55,7 +55,7 @@ import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.DesignRules;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.view.ColorUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

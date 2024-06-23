@@ -18,7 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import java.util.ArrayList;
 
 /**

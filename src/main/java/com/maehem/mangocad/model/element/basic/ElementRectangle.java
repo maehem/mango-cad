@@ -25,7 +25,7 @@ import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.util.Rotation;
+import com.maehem.mangocad.model.element.property.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.text.MessageFormat;
 import java.util.ArrayList;
