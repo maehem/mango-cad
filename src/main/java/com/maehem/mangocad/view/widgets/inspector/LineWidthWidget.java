@@ -47,35 +47,42 @@ public class LineWidthWidget extends InspectorWidget {
     private final WidthProperty widthElement;
 
     @SuppressWarnings({"unchecked"})
-    public LineWidthWidget(Element e) {
+    public LineWidthWidget(Element e, WidthProperty wp) {
         super("LINE_WIDTH");
-        if (e instanceof WidthProperty fw) {
-            this.element = e;
-            this.widthElement = fw;
-            this.element.addListener(this);
-        } else {
-            this.element = null;
-            this.widthElement = null;
-            if (e != null) {
-                LOGGER.log(Level.SEVERE, "LineWidthWidget: element is not of type Wire or Circle! type: {0}", e.getElementName());
-            } else {
-                LOGGER.log(Level.SEVERE, "LineWidthWidget: Element is null.");
-            }
+
+        if (e == null || wp == null) {
+            LOGGER.log(Level.SEVERE, "LineWidthWidget: Element/Property cannot be null.");
+            throw new NullPointerException("LineWidthWidget: Element/Property cannot be null.");
         }
+        this.widthElement = wp;
+
+//        if (e  instanceof WidthProperty fw) {
+//            this.widthElement = fw;
+//        } else {
+//            this.element = null;
+//            this.widthElement = null;
+//            if (e != null) {
+//                LOGGER.log(Level.SEVERE, "LineWidthWidget: element is not of type Wire or Circle! type: {0}", e.getElementName());
+//            } else {
+//                LOGGER.log(Level.SEVERE, "LineWidthWidget: Element is null.");
+//            }
+//        }
+        this.element = e;
+        this.element.addListener(this);
 
         //setPrefWidth(170);
         comboBox.setButtonCell(new EditableItemCell());
         comboBox.setEditable(true);
-        updateComboState(widthElement.getWidth());
+        updateComboState(widthElement.get());
 
         getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
             Object selectedItem = comboBox.getSelectionModel().getSelectedItem();
             if (selectedItem instanceof Double d) {
-                widthElement.setWidth(d);
+                widthElement.set(d);
             } else if (selectedItem instanceof String s) {
-                widthElement.setWidth(Double.parseDouble(s));
+                widthElement.set(Double.parseDouble(s));
             }
             t.consume();
         });
@@ -134,7 +141,7 @@ public class LineWidthWidget extends InspectorWidget {
                         options.add(dValue);
                     }
                     comboBox.getSelectionModel().select(dValue);
-                    widthElement.setWidth(dValue);
+                    widthElement.set(dValue);
                 }
             });
             textField.setOnAction(e -> {
@@ -147,7 +154,7 @@ public class LineWidthWidget extends InspectorWidget {
                 } catch (NumberFormatException ex) {
                     dValue = previousValue;
                 }
-                widthElement.setWidth(dValue);
+                widthElement.set(dValue);
                 setText(String.valueOf(dValue));
                 setContentDisplay(ContentDisplay.TEXT_ONLY);
             });
