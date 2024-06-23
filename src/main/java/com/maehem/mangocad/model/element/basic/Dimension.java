@@ -42,7 +42,7 @@ import javafx.collections.ObservableList;
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class Dimension extends Element implements
-        LayerNumberProperty, GrouprefsProperty, WidthProperty, VisibleProperty,
+        LayerNumberProperty, GrouprefsProperty, VisibleProperty,
         ElementValueListener {
 
     public static final String ELEMENT_NAME = "dimension";
@@ -74,6 +74,7 @@ public class Dimension extends Element implements
         X3("x3", Double.class), Y3("y3", Double.class),
         D_TYPE("dType", DimensionType.class),
         EXTWIDTH("extwidth", Double.class),
+        EXTLENGTH("extlength", Double.class),
         EXTOFFSET("extoffset", Double.class),
         TEXTSIZE("textsize", RealValue.class),
         TEXTRATIO("textratio", IntValue.class),
@@ -101,15 +102,15 @@ public class Dimension extends Element implements
     }
 
     private int layer;
-    public final RealValue x1Property = new RealValue(0);
-    public final RealValue y1Property = new RealValue(0);
-    public final RealValue x2Property = new RealValue(0);
-    public final RealValue y2Property = new RealValue(0);
-    public final RealValue x3Property = new RealValue(0); // Text placement.
-    public final RealValue y3Property = new RealValue(0);
+    public final RealValue x1Property = new RealValue();
+    public final RealValue y1Property = new RealValue();
+    public final RealValue x2Property = new RealValue();
+    public final RealValue y2Property = new RealValue();
+    public final RealValue x3Property = new RealValue();
+    public final RealValue y3Property = new RealValue();
     public final LockValue lockProperty = new LockValue();
     private DimensionType dtype = DimensionType.PARALLEL;
-    public final RealValue widthProperty = new RealValue(0.13, 0.0, 200.0);
+    public final WidthProperty widthProperty = new WidthProperty(0.13);
     public final RealValue extwidthProperty = new RealValue(0, 0.0, 200.0);
     public final RealValue extlengthProperty = new RealValue(0, 0.0, 200.0);
     public final RealValue extoffsetProperty = new RealValue(0, 0.0, 200.0);
@@ -124,6 +125,26 @@ public class Dimension extends Element implements
             = FXCollections.observableArrayList(
                     0, 1, 2, 3, 4, 5, 6
             );
+
+    @SuppressWarnings("LeakingThisInConstructor")
+    public Dimension() {
+
+        x1Property.addListener(this);
+        y1Property.addListener(this);
+        x2Property.addListener(this);
+        y2Property.addListener(this);
+        x3Property.addListener(this);
+        y3Property.addListener(this);
+        lockProperty.addListener(this);
+        widthProperty.addListener(this);
+        extwidthProperty.addListener(this);
+        extlengthProperty.addListener(this);
+        extoffsetProperty.addListener(this);
+        textratioProperty.addListener(this);
+        unitProperty.addListener(this);
+        precisionProperty.addListener(this);
+
+    }
 
     @Override
     public String getElementName() {
@@ -255,7 +276,7 @@ public class Dimension extends Element implements
     /**
      * @return the widthProperty
      */
-    @Override
+//    @Override
     public double getWidth() {
         return widthProperty.get();
     }
@@ -263,7 +284,7 @@ public class Dimension extends Element implements
     /**
      * @param width the widthProperty to set
      */
-    @Override
+//    @Override
     public void setWidth(double width) {
         this.widthProperty.set(width);
     }
@@ -424,6 +445,12 @@ public class Dimension extends Element implements
             notifyListeners(Field.Y3, y3Property.getOldValue(), y3Property.get());
         } else if (newVal.equals(widthProperty)) {
             notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+        } else if (newVal.equals(extwidthProperty)) {
+            notifyListeners(Field.EXTWIDTH, extwidthProperty.getOldValue(), extwidthProperty.get());
+        } else if (newVal.equals(extlengthProperty)) {
+            notifyListeners(Field.EXTLENGTH, extlengthProperty.getOldValue(), extlengthProperty.get());
+        } else if (newVal.equals(extoffsetProperty)) {
+            notifyListeners(Field.EXTOFFSET, extoffsetProperty.getOldValue(), extoffsetProperty.get());
         } else if (newVal.equals(textsizeProperty)) {
             notifyListeners(Field.TEXTSIZE, textsizeProperty.getOldValue(), textsizeProperty.get());
         } else if (newVal.equals(textratioProperty)) {
