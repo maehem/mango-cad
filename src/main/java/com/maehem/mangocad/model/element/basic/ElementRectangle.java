@@ -68,7 +68,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
     public final LockValue lockProperty = new LockValue();
-    private final Rotation rotationProperty = new Rotation(Rotation.CONSTRAINED);
+    public final Rotation rotationProperty = new Rotation(Rotation.CONSTRAINED);
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
@@ -79,6 +79,13 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         rotationProperty.setAllowSpin(false);
         rotationProperty.setAllowMirror(true);
         rotationProperty.setConstrained(true);
+
+        x1Property.addListener(this);
+        y1Property.addListener(this);
+        x2Property.addListener(this);
+        y2Property.addListener(this);
+        rotationProperty.addListener(this);
+        lockProperty.addListener(this);
     }
 
     @Override
@@ -97,11 +104,11 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @param x1 the x1 to set
      */
     public void setX1(double x1) {
-        if (getX1() != x1) {
-            double oldVal = getX1();
-            x1Property.set(x1);
-            notifyListeners(ElementRectangle.Field.X1, oldVal, getX1());
-        }
+//        if (getX1() != x1) {
+//            double oldVal = getX1();
+        x1Property.set(x1);
+//            notifyListeners(ElementRectangle.Field.X1, oldVal, getX1());
+//        }
     }
 
     /**
@@ -115,11 +122,11 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @param y1 the y1 to set
      */
     public void setY1(double y1) {
-        if (getY1() != y1) {
-            double oldVal = getY1();
-            y1Property.set(y1);
-            notifyListeners(ElementRectangle.Field.Y1, oldVal, getY1());
-        }
+//        if (getY1() != y1) {
+//            double oldVal = getY1();
+        y1Property.set(y1);
+//            notifyListeners(ElementRectangle.Field.Y1, oldVal, getY1());
+//        }
     }
 
     /**
@@ -133,11 +140,11 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @param x2 the x2 to set
      */
     public void setX2(double x2) {
-        if (getX2() != x2) {
-            double oldVal = getX2();
-            x2Property.set(x2);
-            notifyListeners(ElementRectangle.Field.X2, oldVal, getX2());
-        }
+//        if (getX2() != x2) {
+//            double oldVal = getX2();
+        x2Property.set(x2);
+//            notifyListeners(ElementRectangle.Field.X2, oldVal, getX2());
+//        }
     }
 
     /**
@@ -151,11 +158,11 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
      * @param y2 the y2 to set
      */
     public void setY2(double y2) {
-        if (getY2() != y2) {
-            double oldVal = getY2();
+//        if (getY2() != y2) {
+//            double oldVal = getY2();
             y2Property.set(y2);
-            notifyListeners(ElementRectangle.Field.Y2, oldVal, getY2());
-        }
+//            notifyListeners(ElementRectangle.Field.Y2, oldVal, getY2());
+//        }
     }
 
     public Rotation getRotationProperty() {
@@ -175,7 +182,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         x2Property.set(x2);
         y2Property.set(y2);
 
-        notifyListeners(ElementRectangle.Field.ALL_XY, null, null);
+        //notifyListeners(ElementRectangle.Field.ALL_XY, null, null);
     }
 
     /**
@@ -274,7 +281,7 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         if (getRot() != value) {
             double oldValue = getRot();
             this.rotationProperty.set(value);
-            notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
+            //notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
         }
     }
 
@@ -406,6 +413,10 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
             notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
         } else if (newVal.equals(y2Property)) {
             notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
+        } else if (newVal.equals(rotationProperty)) {
+            notifyListeners(RotationProperty.Field.VALUE, rotationProperty.getOldValue(), rotationProperty.get());
+        } else if (newVal.equals(lockProperty)) {
+            notifyListeners(LockValue.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
         }
     }
 

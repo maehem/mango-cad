@@ -38,13 +38,13 @@ import java.util.logging.Level;
  */
 public class ElementCircle extends Element implements
         LayerNumberProperty, LocationXYProperty, SelectableProperty,
-        GrouprefsProperty, WidthProperty, ElementValueListener {
+        GrouprefsProperty, ElementValueListener {
 
     public static final String ELEMENT_NAME = "circle";
 
     public enum Field implements ElementField {
-        RADIUS("raduis", Double.class),
-        WIDTH("width", Double.class);
+        RADIUS("raduis", Double.class);
+        //WIDTH("width", Double.class);
 
         private final String fName;
         private final Class clazz;
@@ -72,12 +72,21 @@ public class ElementCircle extends Element implements
 
     public final LockValue lockProperty = new LockValue();
     public final RealValue radiusProperty = new RealValue(2.54, 0.0, Double.MAX_VALUE, 9);
-    public final RealValue widthProperty = new RealValue(0.254);
+    public final WidthProperty widthProperty = new WidthProperty(0.254);
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
     private ElementCircle snapshot = null;
+
+    public ElementCircle() {
+
+        xProperty.addListener(this);
+        yProperty.addListener(this);
+        widthProperty.addListener(this);
+        radiusProperty.addListener(this);
+        lockProperty.addListener(this);
+    }
 
     @Override
     public String getElementName() {
@@ -105,7 +114,6 @@ public class ElementCircle extends Element implements
     /**
      * @return the width
      */
-    @Override
     public double getWidth() {
         return widthProperty.get();
     }
@@ -113,13 +121,12 @@ public class ElementCircle extends Element implements
     /**
      * @param width the width to set
      */
-    @Override
     public void setWidth(double width) {
-        if (getWidth() != width) {
-            double oldValue = getWidth();
-            widthProperty.set(width);
-            notifyListeners(ElementCircle.Field.WIDTH, oldValue, getWidth());
-        }
+//        if (getWidth() != width) {
+//            double oldValue = getWidth();
+        widthProperty.set(width);
+//            notifyListeners(ElementCircle.Field.WIDTH, oldValue, getWidth());
+//        }
     }
 
     /**
@@ -180,7 +187,7 @@ public class ElementCircle extends Element implements
         if (snapshot != null) {
             setX(snapshot.getX());
             setY(snapshot.getY());
-            setWidth(snapshot.getWidth());
+            setWidth(snapshot.widthProperty.get());
             setLayerNum(snapshot.getLayerNum());
             setRadius(snapshot.getRadius());
 
@@ -244,7 +251,9 @@ public class ElementCircle extends Element implements
         } else if (newVal.equals(radiusProperty)) {
             notifyListeners(Field.RADIUS, radiusProperty.getOldValue(), radiusProperty.get());
         } else if (newVal.equals(widthProperty)) {
-            notifyListeners(Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+        } else if (newVal.equals(lockProperty)) {
+            notifyListeners(LockValue.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
         }
     }
 
