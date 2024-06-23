@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.schematic;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.*;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;

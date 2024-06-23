@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.highlevel;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import java.util.ArrayList;
 
 /**

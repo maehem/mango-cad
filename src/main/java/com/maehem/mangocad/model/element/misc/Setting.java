@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.enums.VerticalText;
 
 

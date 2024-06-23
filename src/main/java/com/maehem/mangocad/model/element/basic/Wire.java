@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.property.RealValue;

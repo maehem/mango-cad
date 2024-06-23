@@ -18,7 +18,7 @@ package com.maehem.mangocad.controller.command;
 
 import com.maehem.mangocad.controller.command.exception.CommandException;
 import com.maehem.mangocad.controller.command.exception.PinCommandException;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinFunction;

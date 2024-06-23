@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.enums.PadShape;
 import static com.maehem.mangocad.model.element.enums.PadShape.ROUND;
 import com.maehem.mangocad.model.util.Rotation;

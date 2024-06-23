@@ -18,7 +18,7 @@ package com.maehem.mangocad.tools;
 
 import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;

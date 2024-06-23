@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.node;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.view.PickListener;
 import java.util.ArrayList;
 import java.util.logging.Level;

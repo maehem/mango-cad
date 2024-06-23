@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 
 /**
  * High level Drawing thing called 'Filter'.  No idea what it does or how to use it.

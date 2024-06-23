@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 
 /**
  *

@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.view.ElementSelectionListener;
 import com.maehem.mangocad.view.widgets.selection.SelectionOverviewWidget;
 import java.util.ArrayList;

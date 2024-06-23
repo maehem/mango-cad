@@ -19,7 +19,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.enums.PolygonPour;

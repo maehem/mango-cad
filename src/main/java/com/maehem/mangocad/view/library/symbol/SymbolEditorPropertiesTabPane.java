@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import java.util.List;
 import javafx.scene.control.TabPane;
 

@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets.inspector;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;

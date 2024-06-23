@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;

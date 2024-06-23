@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.StringValue;
 import com.maehem.mangocad.model.element.enums.PinDirection;

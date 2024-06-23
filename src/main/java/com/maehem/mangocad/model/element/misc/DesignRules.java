@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.util.DrcDefs;
 import java.util.ArrayList;
 import java.util.logging.Level;

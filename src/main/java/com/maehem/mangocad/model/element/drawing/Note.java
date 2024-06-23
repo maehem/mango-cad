@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.enums.Severity;
 
 /**

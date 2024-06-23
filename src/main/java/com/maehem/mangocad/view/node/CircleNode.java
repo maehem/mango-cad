@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.node;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.drawing.Layers;

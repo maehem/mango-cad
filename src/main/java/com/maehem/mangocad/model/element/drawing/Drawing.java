@@ -17,7 +17,7 @@
 package com.maehem.mangocad.model.element.drawing;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.misc.Setting;

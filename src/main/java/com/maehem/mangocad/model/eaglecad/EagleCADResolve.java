@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.eaglecad;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.ElementElement;
 import com.maehem.mangocad.model.element.drawing.Board;

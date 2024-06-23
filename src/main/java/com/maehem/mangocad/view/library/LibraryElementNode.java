@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Attribute;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;

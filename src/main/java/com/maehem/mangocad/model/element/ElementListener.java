@@ -16,8 +16,6 @@
  */
 package com.maehem.mangocad.model.element;
 
-import com.maehem.mangocad.model.Element;
-
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )

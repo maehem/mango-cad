@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.LayerElement;

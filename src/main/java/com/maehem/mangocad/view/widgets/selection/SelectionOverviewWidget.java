@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets.selection;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;

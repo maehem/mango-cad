@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.model.element.basic;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.highlevel.Device;
 import java.util.ArrayList;
 import java.util.Optional;

@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets.inspector;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinLength;

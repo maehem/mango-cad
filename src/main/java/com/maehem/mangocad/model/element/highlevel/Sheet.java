@@ -19,7 +19,7 @@ package com.maehem.mangocad.model.element.highlevel;
 import com.maehem.mangocad.model.element.basic.Instance;
 import com.maehem.mangocad.model.element.basic.ModuleInst;
 import com.maehem.mangocad.model.element.misc.Description;
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.drawing.Schematic;
 import java.util.ArrayList;

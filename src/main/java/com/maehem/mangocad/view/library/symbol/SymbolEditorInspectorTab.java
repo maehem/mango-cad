@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.library.symbol;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.view.widgets.FocusedItemPropertiesBox;
 import com.maehem.mangocad.view.widgets.SelectedItemsOverviewBox;
 import java.util.List;

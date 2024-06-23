@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets.toolmode;
 
-import com.maehem.mangocad.model.Element;
+import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
