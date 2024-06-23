@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementListener;
+import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.misc.Grid;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;

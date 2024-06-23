@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.node;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementListener;
+import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;

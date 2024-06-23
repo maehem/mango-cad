@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementListener;
+import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;

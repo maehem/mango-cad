@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.node;
 
 import com.maehem.mangocad.model.Element;
-import com.maehem.mangocad.model.ElementListener;
+import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
