@@ -62,6 +62,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
         updatePoints();
         updateLayer();
 
+        // rectShape?
         rectangleShape.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
             PickListener listener = getPickListener();
             if (listener != null) {
@@ -80,6 +81,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
         double x2 = rectangle.getX2();
         double y2 = -rectangle.getY2();
 
+        rectShape.setRotate(0);
         rectShape.getPoints().clear();
         rectShape.getPoints().addAll(
                 x1, y1,
