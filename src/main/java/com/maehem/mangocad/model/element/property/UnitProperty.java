@@ -20,7 +20,7 @@ package com.maehem.mangocad.model.element.property;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface GridUnitProperty { // TODO: rename to UnitProperty
+public interface UnitProperty { // TODO: rename to UnitProperty
 
     public UnitValue getUnitProperty();
 
