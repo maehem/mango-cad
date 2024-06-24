@@ -25,10 +25,13 @@ import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.UnitProperty;
 import com.maehem.mangocad.model.element.property.UnitValue;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ import javafx.collections.ObservableList;
  */
 public class Dimension extends Element implements
         LayerNumberProperty, GrouprefsProperty, VisibleProperty,
+        WidthProperty, UnitProperty, LockProperty,
         ElementValueListener {
 
     public static final String ELEMENT_NAME = "dimension";
@@ -147,6 +151,21 @@ public class Dimension extends Element implements
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public WidthValue getWidthProperty() {
+        return widthProperty;
+    }
+
+    @Override
+    public UnitValue getUnitProperty() {
+        return unitProperty;
+    }
+
+    @Override
+    public LockValue getLockProperty() {
+        return lockProperty;
     }
 
     /**

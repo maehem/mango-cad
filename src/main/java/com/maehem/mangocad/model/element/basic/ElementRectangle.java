@@ -21,6 +21,7 @@ import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.Rotation;
@@ -35,7 +36,10 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements LayerNumberProperty, SelectableProperty, RotationProperty, GrouprefsProperty, ElementValueListener {
+public class ElementRectangle extends Element implements
+        LayerNumberProperty, SelectableProperty, RotationProperty,
+        LockProperty,
+        GrouprefsProperty, ElementValueListener {
 
     public static final String ELEMENT_NAME = "rectangle";
 
@@ -91,6 +95,16 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LockValue getLockProperty() {
+        return lockProperty;
+    }
+
+    @Override
+    public Rotation getRotationProperty() {
+        return rotationProperty;
     }
 
     /**
@@ -163,10 +177,6 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
             y2Property.set(y2);
 //            notifyListeners(ElementRectangle.Field.Y2, oldVal, getY2());
 //        }
-    }
-
-    public Rotation getRotationProperty() {
-        return rotationProperty;
     }
 
     /**

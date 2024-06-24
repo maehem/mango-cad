@@ -29,6 +29,7 @@ import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -57,7 +58,10 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, SelectableProperty, CurveProperty, GrouprefsProperty, ElementValueListener {
+public class Wire extends Element implements
+        LayerNumberProperty, SelectableProperty, CurveProperty,
+        WidthProperty,
+        GrouprefsProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -142,6 +146,11 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public WidthValue getWidthProperty() {
+        return widthProperty;
     }
 
     /**

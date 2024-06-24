@@ -21,11 +21,13 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
-import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LockProperty;
+import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -58,7 +60,10 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends Element implements LayerNumberProperty, ElementListener, SelectableProperty, GrouprefsProperty {
+public class ElementPolygon extends Element implements
+        LayerNumberProperty, ElementListener, SelectableProperty,
+        WidthProperty, LockProperty,
+        GrouprefsProperty {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
@@ -92,10 +97,11 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
         }
 
     }
-    public final LockValue lockProperty = new LockValue();
+
     private int layer;
-    //private double width = 0.254;
-    public WidthValue widthProperty = new WidthValue();
+
+    public final LockValue lockProperty = new LockValue();
+    public final WidthValue widthProperty = new WidthValue();
 
     private PolygonPour pour = PolygonPour.SOLID;
     private double spacing = 1.27;
@@ -113,6 +119,16 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public WidthValue getWidthProperty() {
+        return widthProperty;
+    }
+
+    @Override
+    public LockValue getLockProperty() {
+        return lockProperty;
     }
 
     /**

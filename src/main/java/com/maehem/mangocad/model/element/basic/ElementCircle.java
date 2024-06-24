@@ -17,15 +17,17 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.ElementValueListener;
-import com.maehem.mangocad.model.element.property.LockValue;
-import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
+import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.LockProperty;
+import com.maehem.mangocad.model.element.property.LockValue;
+import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.text.MessageFormat;
@@ -38,7 +40,8 @@ import java.util.logging.Level;
  */
 public class ElementCircle extends Element implements
         LayerNumberProperty, LocationXYProperty, SelectableProperty,
-        GrouprefsProperty, ElementValueListener {
+        WidthProperty, LockProperty, GrouprefsProperty,
+        ElementValueListener {
 
     public static final String ELEMENT_NAME = "circle";
 
@@ -91,6 +94,16 @@ public class ElementCircle extends Element implements
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public WidthValue getWidthProperty() {
+        return widthProperty;
+    }
+
+    @Override
+    public LockValue getLockProperty() {
+        return lockProperty;
     }
 
     /**
