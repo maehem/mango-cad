@@ -29,7 +29,7 @@ import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.UnitValue;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
-import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.WidthValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
@@ -108,7 +108,7 @@ public class Dimension extends Element implements
     public final RealValue y3Property = new RealValue();
     public final LockValue lockProperty = new LockValue();
     private DimensionType dtype = DimensionType.PARALLEL;
-    public final WidthProperty widthProperty = new WidthProperty(0.13);
+    public final WidthValue widthProperty = new WidthValue(0.13);
     public final RealValue extwidthProperty = new RealValue(0, 0.0, 200.0);
     public final RealValue extlengthProperty = new RealValue(0, 0.0, 200.0);
     public final RealValue extoffsetProperty = new RealValue(0, 0.0, 200.0);
@@ -442,7 +442,7 @@ public class Dimension extends Element implements
         } else if (newVal.equals(y2Property)) {
             notifyListeners(Field.Y3, y3Property.getOldValue(), y3Property.get());
         } else if (newVal.equals(widthProperty)) {
-            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+            notifyListeners(WidthValue.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         } else if (newVal.equals(extwidthProperty)) {
             notifyListeners(Field.EXTWIDTH, extwidthProperty.getOldValue(), extwidthProperty.get());
         } else if (newVal.equals(extlengthProperty)) {

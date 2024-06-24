@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
-import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.WidthValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -44,10 +44,10 @@ public class LineWidthWidget extends InspectorWidget {
     @SuppressWarnings("unchecked")
     private final ComboBox<Double> comboBox = new ComboBox(options);
     private final Element element;
-    private final WidthProperty widthElement;
+    private final WidthValue widthElement;
 
     @SuppressWarnings({"unchecked"})
-    public LineWidthWidget(Element e, WidthProperty wp) {
+    public LineWidthWidget(Element e, WidthValue wp) {
         super("LINE_WIDTH");
 
         if (e == null || wp == null) {
@@ -56,7 +56,7 @@ public class LineWidthWidget extends InspectorWidget {
         }
         this.widthElement = wp;
 
-//        if (e  instanceof WidthProperty fw) {
+//        if (e  instanceof WidthValue fw) {
 //            this.widthElement = fw;
 //        } else {
 //            this.element = null;
@@ -110,7 +110,7 @@ public class LineWidthWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(WidthProperty.Field.WIDTH)) {
+        if (!field.equals(WidthValue.Field.WIDTH)) {
             return;
         }
         if (newVal == null) {

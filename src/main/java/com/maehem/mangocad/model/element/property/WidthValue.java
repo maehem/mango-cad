@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class WidthProperty extends RealValue {
+public class WidthValue extends RealValue {
 
     public static final ObservableList<Double> WIDTH_DEFAULT_OPTIONS
             = FXCollections.observableArrayList(
@@ -65,11 +65,11 @@ public class WidthProperty extends RealValue {
         }
     }
 
-    public WidthProperty() {
+    public WidthValue() {
         super(0.254, 0, Double.POSITIVE_INFINITY);
     }
 
-    public WidthProperty(double val) {
+    public WidthValue(double val) {
         super(val);
     }
 

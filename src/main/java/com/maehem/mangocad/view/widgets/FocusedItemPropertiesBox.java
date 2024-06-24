@@ -26,7 +26,7 @@ import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.UnitValue;
-import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.WidthValue;
 import com.maehem.mangocad.view.ElementSelectionListener;
 import com.maehem.mangocad.view.widgets.inspector.CurveValueWidget;
 import com.maehem.mangocad.view.widgets.inspector.DimensionTypeToggleWidget;
@@ -156,31 +156,31 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         Dimension.PRECISION_OPTIONS);
                 // Show
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
-                        d.widthProperty, WidthProperty.Field.WIDTH,
+                        d.widthProperty, WidthValue.Field.WIDTH,
                         "LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
-                        WidthProperty.WIDTH_DEFAULT_OPTIONS
+                        WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext. Width (with auto)
                 RealValueListWidget2 extWidthWidget = new RealValueListWidget2(
-                        d.extwidthProperty, WidthProperty.Field.WIDTH,
+                        d.extwidthProperty, WidthValue.Field.WIDTH,
                         "DIM_EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 1.0,
-                        WidthProperty.WIDTH_DEFAULT_OPTIONS
+                        WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Length (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extLengthWidget = new RealValueListWidget2(
-                        d.extlengthProperty, WidthProperty.Field.WIDTH,
+                        d.extlengthProperty, WidthValue.Field.WIDTH,
                         "DIM_EXT_LINE_LENGTH", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 10.0,
-                        WidthProperty.WIDTH_DEFAULT_OPTIONS
+                        WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Offset (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extOffsetWidget = new RealValueListWidget2(
-                        d.extoffsetProperty, WidthProperty.Field.WIDTH,
+                        d.extoffsetProperty, WidthValue.Field.WIDTH,
                         "DIM_EXT_LINE_OFFSET", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 10.0,
-                        WidthProperty.WIDTH_DEFAULT_OPTIONS
+                        WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 getChildren().addAll(
                         dimTypeWidget,
@@ -211,16 +211,16 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
             case ElementCircle ec -> {
                 LocationXYWidget lxy = new LocationXYWidget(ec.xProperty, ec.yProperty, "LOCATION");
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
-                        ec.widthProperty, WidthProperty.Field.WIDTH,
+                        ec.widthProperty, WidthValue.Field.WIDTH,
                         "CIRCLE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
-                        WidthProperty.WIDTH_DEFAULT_OPTIONS
+                        WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 RealValueListWidget2 radiusWidget = new RealValueListWidget2(
                         ec.radiusProperty, ElementCircle.Field.RADIUS,
                         "CIRCLE_RADIUS", null, ToolModeWidget.EDITABLE,
                         null, 10.0,
-                        WidthProperty.WIDTH_DEFAULT_OPTIONS
+                        WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
 
                 getChildren().addAll(

@@ -26,7 +26,7 @@ import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.WidthValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class ElementCircle extends Element implements
 
     public final LockValue lockProperty = new LockValue();
     public final RealValue radiusProperty = new RealValue(2.54, 0.0, Double.MAX_VALUE, 9);
-    public final WidthProperty widthProperty = new WidthProperty(0.254);
+    public final WidthValue widthProperty = new WidthValue(0.254);
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
@@ -251,7 +251,7 @@ public class ElementCircle extends Element implements
         } else if (newVal.equals(radiusProperty)) {
             notifyListeners(Field.RADIUS, radiusProperty.getOldValue(), radiusProperty.get());
         } else if (newVal.equals(widthProperty)) {
-            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+            notifyListeners(WidthValue.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         } else if (newVal.equals(lockProperty)) {
             notifyListeners(LockValue.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
         }

@@ -29,7 +29,7 @@ import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.WidthValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -119,7 +119,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
-    public final WidthProperty widthProperty = new WidthProperty(0.254);
+    public final WidthValue widthProperty = new WidthValue(0.254);
     public final CurveValue curveProperty = new CurveValue(0.0);
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
@@ -247,7 +247,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
 //        if (getWidth() != width) {
 //            double oldVal = getWidth();
             widthProperty.set(width);
-//            notifyListeners(WidthProperty.Field.WIDTH, oldVal, getWidth());
+//            notifyListeners(WidthValue.Field.WIDTH, oldVal, getWidth());
 //        }
     }
 
@@ -444,7 +444,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         } else if (newVal.equals(curveProperty)) {
             notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         } else if (newVal.equals(widthProperty)) {
-            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+            notifyListeners(WidthValue.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         }
     }
 

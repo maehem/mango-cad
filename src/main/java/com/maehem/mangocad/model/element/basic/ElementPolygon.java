@@ -26,7 +26,7 @@ import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.WidthProperty;
+import com.maehem.mangocad.model.element.property.WidthValue;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +95,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
     public final LockValue lockProperty = new LockValue();
     private int layer;
     //private double width = 0.254;
-    public WidthProperty widthProperty = new WidthProperty();
+    public WidthValue widthProperty = new WidthValue();
 
     private PolygonPour pour = PolygonPour.SOLID;
     private double spacing = 1.27;
@@ -131,7 +131,7 @@ public class ElementPolygon extends Element implements LayerNumberProperty, Elem
 //        if (this.width != width) {
 //            double oldVal = this.width;
             widthProperty.set(width);
-//            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
+//            notifyListeners(WidthValue.Field.WIDTH, oldVal, this.width);
 //        }
     }
 
