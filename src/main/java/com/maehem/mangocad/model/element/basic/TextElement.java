@@ -59,7 +59,7 @@ import javafx.collections.ObservableList;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementText extends Element
+public class TextElement extends Element
         implements
         LayerNumberProperty, LocationXYProperty, RotationProperty,
         SelectableProperty, GrouprefsProperty, ElementValueListener {
@@ -126,7 +126,7 @@ public class ElementText extends Element
     public final LockValue lockProperty = new LockValue();
     public final RealValue sizeProperty = new RealValue(1.778, 0.000001, 100000); // 0.7 inch
     private boolean selected = false;
-    private ElementText snapshot = null;
+    private TextElement snapshot = null;
 
     private TextFont font = TextFont.PROPORTIONAL;
     public final IntValue ratioProperty = new IntValue(8, 0, 31);
@@ -139,7 +139,7 @@ public class ElementText extends Element
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public ElementText() {
+    public TextElement() {
         rotation.setAllowMirror(true);
         rotation.setAllowSpin(true);
 
@@ -212,7 +212,7 @@ public class ElementText extends Element
         if (getSize() != size) {
             double oldValue = getSize();
             sizeProperty.set(size);
-            notifyListeners(ElementText.Field.SIZE, oldValue, getSize());
+            notifyListeners(TextElement.Field.SIZE, oldValue, getSize());
         }
     }
 
@@ -230,7 +230,7 @@ public class ElementText extends Element
         if (getDistance() != distance) {
             double oldValue = this.distance;
             this.distance = distance;
-            notifyListeners(ElementText.Field.DISTANCE, oldValue, this.distance);
+            notifyListeners(TextElement.Field.DISTANCE, oldValue, this.distance);
         }
     }
 
@@ -250,7 +250,7 @@ public class ElementText extends Element
         if (getRatio() != ratio) {
             double oldValue = getRatio();
             ratioProperty.set(ratio);
-            notifyListeners(ElementText.Field.RATIO, oldValue, getRatio());
+            notifyListeners(TextElement.Field.RATIO, oldValue, getRatio());
         }
     }
 
@@ -300,7 +300,7 @@ public class ElementText extends Element
             if (align != null) {
                 this.align = align;
             }
-            notifyListeners(ElementText.Field.ALIGN, oldValue, this.align);
+            notifyListeners(TextElement.Field.ALIGN, oldValue, this.align);
         }
     }
 
@@ -327,7 +327,7 @@ public class ElementText extends Element
         if (!getValue().equals(value)) {
             String oldValue = getValue();
             valueProperty.set(value);
-            notifyListeners(ElementText.Field.VALUE, oldValue, getValue());
+            notifyListeners(TextElement.Field.VALUE, oldValue, getValue());
         }
     }
 
@@ -345,7 +345,7 @@ public class ElementText extends Element
         if (!this.font.equals(font)) {
             TextFont oldValue = this.font;
             this.font = font;
-            notifyListeners(ElementText.Field.FONT, oldValue, this.font);
+            notifyListeners(TextElement.Field.FONT, oldValue, this.font);
         }
     }
 
@@ -463,12 +463,12 @@ public class ElementText extends Element
     }
 
     @Override
-    public ElementText getSnapshot() {
+    public TextElement getSnapshot() {
         return snapshot;
     }
 
-    public ElementText copy() {
-        ElementText copy = new ElementText();
+    public TextElement copy() {
+        TextElement copy = new TextElement();
 
         copy.setX(getX());
         copy.setY(getY());

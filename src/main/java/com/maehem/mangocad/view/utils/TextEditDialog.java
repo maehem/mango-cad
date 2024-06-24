@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.utils;
 
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -35,9 +35,9 @@ public class TextEditDialog extends Dialog<ButtonType> {
     private final ButtonType cancelButtonType = ButtonType.CANCEL;
 
     private final TextEditPanel textEditPanel;
-    private final ElementText textElement;
+    private final TextElement textElement;
 
-    public TextEditDialog(ElementText text) {
+    public TextEditDialog(TextElement text) {
         this.textElement = text;
 
         setTitle("Enter Text");

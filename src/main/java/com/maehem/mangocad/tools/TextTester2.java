@@ -20,7 +20,7 @@ import com.maehem.mangocad.logging.LoggingFormatter;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.misc.LayerElement;
@@ -56,7 +56,7 @@ public class TextTester2 extends Application implements ElementListener, PickLis
 
     public static final int WIDGET_WIDTH = 300;
     private final Menu fileMenu = new Menu("File");
-    private final ElementText et = new ElementText();
+    private final TextElement et = new TextElement();
     private final Group contentArea = new Group();
     private final PreviewContent previewContentPane = new PreviewContent();
     private final TextPropertiesList2 propertiesList = new TextPropertiesList2(this, et);

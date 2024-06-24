@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.collections.FXCollections;
@@ -54,9 +54,9 @@ public class TextSizeWidget extends InspectorWidget {
 //                    1.0
 //            );
     private final ObservableList<Double> options = FXCollections.observableArrayList(
-            ElementText.SIZE_DEFAULT_OPTIONS);
+            TextElement.SIZE_DEFAULT_OPTIONS);
     private final ComboBox<Double> comboBox = new ComboBox<>(options);
-    private final ElementText text;
+    private final TextElement text;
     private final Element element;
     private final Dimension dimension;
 
@@ -64,7 +64,7 @@ public class TextSizeWidget extends InspectorWidget {
         super(msgKeyBase);
         comboBox.setButtonCell(new EditableItemCell<>());
         comboBox.setEditable(true);
-        if (e instanceof ElementText p) {
+        if (e instanceof TextElement p) {
             this.text = p;
             this.element = e;
             this.dimension = null;
@@ -79,7 +79,7 @@ public class TextSizeWidget extends InspectorWidget {
             this.element = null;
             this.text = null;
             this.dimension = null;
-            LOGGER.log(Level.SEVERE, "TextSizeWidget: element is not of type ElementText!");
+            LOGGER.log(Level.SEVERE, "TextSizeWidget: element is not of type TextElement!");
         }
 
 //        setPrefWidth(170);
@@ -138,7 +138,7 @@ public class TextSizeWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         switch (field) {
-            case ElementText.Field.SIZE, Dimension.Field.TEXTSIZE -> {
+            case TextElement.Field.SIZE, Dimension.Field.TEXTSIZE -> {
                 if (newVal != null) {
                     LOGGER.log(Level.SEVERE, "TextSizeWidget: Text size: ==> {0}", newVal.toString());
 

@@ -20,10 +20,10 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.RectangleElement;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
@@ -448,7 +448,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     }
                                 } else if (toolMode.equals(EditorTool.TEXT)) {
                                     if (ephemeralNode instanceof TextNode tn) {
-                                        ElementText text = (ElementText) tn.getElement();
+                                        TextElement text = (TextElement) tn.getElement();
                                         Symbol symbol = parentEditor.getSymbol();
                                         symbol.getElements().add(text);
                                         nodes.add(ephemeralNode);
@@ -854,8 +854,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         );
     }
 
-    private ElementText initiateNewText() {
-        ElementText text = new ElementText();
+    private TextElement initiateNewText() {
+        TextElement text = new TextElement();
         text.setLayerNum(94);  // TODO needs enum.  Get from layer chooser.
 
         return text;
@@ -1206,7 +1206,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     nodes.add(wireNode);
                     wireNode.addTo(workArea);
                 }
-                case ElementText t -> {
+                case TextElement t -> {
                     TextNode textNode = new TextNode(t, null,
                             parentEditor.getDrawing().getLayers(),
                             parentEditor.getDrawing().getPalette(),
@@ -1381,7 +1381,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.setElementFocus(pin);
             }
             case TEXT -> {
-                ElementText text = initiateNewText();
+                TextElement text = initiateNewText();
                 // TODO: Dialog for new text value.
                 TextEditDialog editDialog = new TextEditDialog(text);
                 if (editDialog.getResult() == ButtonType.OK) {
@@ -1494,7 +1494,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             case EditorTool.MOVE -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Move' EditorTool...");
                 if (lastElementAdded == null || !(lastElementAdded instanceof RotationProperty)) {
-                    ElementText tempText = new ElementText();
+                    TextElement tempText = new TextElement();
                     lastElementAdded = tempText;
                     LOGGER.log(Level.SEVERE, "Add temp text(moveable/rotatable). It is the lastElementAdded.");
                 }
@@ -1512,7 +1512,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             case EditorTool.ROTATE -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Rotate' EditorTool...");
-                ElementText e = new ElementText();
+                TextElement e = new TextElement();
                 e.getRotationProperty().set(90.0);
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);
@@ -1521,7 +1521,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             case EditorTool.MIRROR -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Mirror' EditorTool...");
-                ElementText e = new ElementText();
+                TextElement e = new TextElement();
                 e.rotation.setMirror(true);
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);

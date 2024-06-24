@@ -18,12 +18,12 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.basic.CircleElement;
-import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Gate;
 import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.RectangleElement;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
@@ -181,7 +181,7 @@ public class DetailNodes {
                 g.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
             } else if (e instanceof RectangleElement elementRectangle) {
                 g.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
-            } else if (e instanceof ElementText elementText) {
+            } else if (e instanceof TextElement elementText) {
                 String gateName = null;
                 if (elementText.getValue().equals(">NAME")) {
                     gateName = gate.getName();

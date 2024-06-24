@@ -533,7 +533,7 @@ public class EagleCADIngest {
                     ingestPolygon(elements, node);
                 case "wire" -> // Wire
                     ingestWire(elements, node);
-                case "text" -> // ElementText
+                case "text" -> // TextElement
                     ingestText(elements, node);
                 case "dimension" ->
                     ingestDimension(elements, node);
@@ -829,7 +829,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestText(List<Element> elements, Node node) throws EagleCADLibraryFileException {
-        ElementText text = new ElementText();
+        TextElement text = new TextElement();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);

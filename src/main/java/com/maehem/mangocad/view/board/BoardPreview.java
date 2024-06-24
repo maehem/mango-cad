@@ -132,7 +132,7 @@ public class BoardPreview extends Group {
                 chld.add(LibraryElementNode.createPolygonCurved(e, c, false));
             } else if (element instanceof Wire e) {
                 chld.add(LibraryElementNode.createWireNode(e, c, false));
-            } else if (element instanceof ElementText e) {
+            } else if (element instanceof TextElement e) {
                 chld.addAll(LibraryElementNode.createText2(e, c));
             } else if (element instanceof Dimension e) {
                 chld.add(LibraryElementNode.createDimensionNode(
@@ -401,7 +401,7 @@ public class BoardPreview extends Group {
                     default -> {
                     }
                 }
-            } else if (element instanceof ElementText e) {
+            } else if (element instanceof TextElement e) {
                 switch (e.getLayerNum()) {
                     case 1 /*, 16 */ -> {
                         // Text in etch.
@@ -409,7 +409,7 @@ public class BoardPreview extends Group {
                         List<Shape> n = LibraryElementNode.createText2(e, null, copperColor, null, false);
                         rank.get(0).addAll(n);
 
-                        ElementText textIsolate = e.copy();
+                        TextElement textIsolate = e.copy();
                         int ratio = textIsolate.getRatio();
                         double size = textIsolate.getSize();
                         double stroke = textIsolate.getDerivedStroke();

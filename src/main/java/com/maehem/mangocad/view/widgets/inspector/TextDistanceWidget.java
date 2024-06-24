@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -32,11 +32,11 @@ public class TextDistanceWidget extends InspectorWidget {
 
     // TODO: Cell renderer for adding percent to value displayed.
     private final Spinner<Integer> spinner = new Spinner<>(0, 250, 0);
-    private final ElementText text;
+    private final TextElement text;
 
     public TextDistanceWidget(Element e, String msgKeyBase) {
         super(msgKeyBase);
-        if (e instanceof ElementText p) {
+        if (e instanceof TextElement p) {
             this.text = p;
             Platform.runLater(() -> {
                 this.text.addListener(this);
@@ -76,7 +76,7 @@ public class TextDistanceWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(ElementText.Field.DISTANCE)) {
+        if (!field.equals(TextElement.Field.DISTANCE)) {
             return;
         }
         if (newVal == null) {

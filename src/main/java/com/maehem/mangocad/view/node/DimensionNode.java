@@ -20,7 +20,7 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.TextAlign;
@@ -76,7 +76,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
     private final Text displayValue = new Text("0.0000000 mm");
     private final TextNode textNode;
-    private final ElementText et = new ElementText();
+    private final TextElement et = new TextElement();
 
     public DimensionNode(Dimension d, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(d, pickListener);

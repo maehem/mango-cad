@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.tools;
 
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.tools.widgets.ListSelectWidget;
 import com.maehem.mangocad.tools.widgets.SliderWidget;
@@ -33,7 +33,7 @@ import javafx.scene.layout.VBox;
  */
 public class TextPropertiesList2 extends VBox implements WidgetListener {
 
-    ElementText et;
+    TextElement et;
     TextTester2 parent;
 
     private final TextWidget textWidget = new TextWidget("Text", "Hello There.", this);
@@ -46,7 +46,7 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
     private final ToggleWidget spinWidget = new ToggleWidget("Spin", this);
     private final ToggleWidget mirrorWidget = new ToggleWidget("Mirror", this);
 
-    public TextPropertiesList2(TextTester2 parent, ElementText et) {
+    public TextPropertiesList2(TextTester2 parent, TextElement et) {
         this.parent = parent;
         this.et = et;
 

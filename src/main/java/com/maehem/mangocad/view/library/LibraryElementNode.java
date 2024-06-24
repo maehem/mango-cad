@@ -23,7 +23,6 @@ import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementElement;
-import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
 import com.maehem.mangocad.model.element.basic.Hole;
 import com.maehem.mangocad.model.element.basic.Instance;
@@ -37,6 +36,7 @@ import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Probe;
 import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.basic.Spline;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Via;
 import com.maehem.mangocad.model.element.basic.Wire;
@@ -684,7 +684,7 @@ public class LibraryElementNode {
         fontSize *= FONT_SCALE;
         Font font = Font.loadFont(LibraryElementNode.class.getResourceAsStream(FONT_PATH), fontSize);
 
-        ElementText et = new ElementText();
+        TextElement et = new TextElement();
         if (le.isXref()) {
             et.setX(x + size * 1.1);
             et.setAlign(CENTER_LEFT);
@@ -790,19 +790,19 @@ public class LibraryElementNode {
         return labelGroup;
     }
 
-    public static Node createText(ElementText et, Color color) {
+    public static Node createText(TextElement et, Color color) {
         return createText(et, null, color, null, true);
     }
 
-    public static Node createText(ElementText et, Color color, Rotation parentRotation) {
+    public static Node createText(TextElement et, Color color, Rotation parentRotation) {
         return createText(et, null, color, parentRotation, true);
     }
 
-    public static ArrayList<Shape> createText2(ElementText et, Color color) {
+    public static ArrayList<Shape> createText2(TextElement et, Color color) {
         return createText2(et, null, color, null, true);
     }
 
-    public static ArrayList<Shape> createText2(ElementText et, Color color, Rotation parentRotation) {
+    public static ArrayList<Shape> createText2(TextElement et, Color color, Rotation parentRotation) {
         return createText2(et, null, color, parentRotation, true);
     }
 
@@ -817,7 +817,7 @@ public class LibraryElementNode {
      * @param showCross display zero point anchor/marker.
      * @return
      */
-    public static ArrayList<Shape> createText2(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
+    public static ArrayList<Shape> createText2(TextElement et, String altText, Color color, Rotation parentRotation, boolean showCross) {
         boolean showBorder = false;
 
         ArrayList<Shape> list = new ArrayList<>();
@@ -1600,7 +1600,7 @@ public class LibraryElementNode {
         l.getTransforms().add(new Rotate(-r.get(), pivotX, pivotY));
     }
 
-    public static Node createText(ElementText et, String altText, Color color, Rotation parentRotation, boolean showCross) {
+    public static Node createText(TextElement et, String altText, Color color, Rotation parentRotation, boolean showCross) {
         boolean showBorder = false;
 
         Group g = new Group();
@@ -1767,7 +1767,7 @@ public class LibraryElementNode {
         return g;
     }
 
-    public static Node createTextOld(ElementText et, String altText, Color color, boolean leftIsRight, boolean upIsDown) {
+    public static Node createTextOld(TextElement et, String altText, Color color, boolean leftIsRight, boolean upIsDown) {
         boolean showBorder = false;
 
         double fontSizeMult = 0.72272; // INCH to Point ratio
@@ -2009,7 +2009,7 @@ public class LibraryElementNode {
         g.getChildren().add(createSmdMask(smd, maskColor, true));
 
         // Name Text
-        ElementText et = new ElementText();
+        TextElement et = new TextElement();
         et.setValue(smd.getName());
         et.rotation.set(smd.getRot());
         et.setAlign(TextAlign.CENTER);
@@ -2325,7 +2325,7 @@ public class LibraryElementNode {
         g.getChildren().add(createThdDrill(thd, drillColor));
 
         // Name Text
-        ElementText et = new ElementText();
+        TextElement et = new TextElement();
         et.setValue(thd.getName());
         et.rotation.set(thd.getRot());
         et.setAlign(TextAlign.CENTER);
@@ -2769,7 +2769,7 @@ public class LibraryElementNode {
         //      Normally: 1-16  Blind: ex. 2-4
         //
         // Name Text
-        ElementText et = new ElementText();
+        TextElement et = new TextElement();
         et.setValue(via.getExtent());
         et.setAlign(TextAlign.CENTER);
         et.setSize(via.getDrill() * 0.25);
@@ -3144,9 +3144,9 @@ public class LibraryElementNode {
                 elementGroup.getChildren().add(LibraryElementNode.createPolygonCurved(ep, c, false));
             } else if (e instanceof Wire w) {
                 elementGroup.getChildren().add(LibraryElementNode.createWireNode(w, c, false));
-            } else if (e instanceof ElementText et) {
+            } else if (e instanceof TextElement et) {
 
-                final ElementText proxyText;
+                final TextElement proxyText;
                 if (inst == null) {
                     proxyText = et;
                 } else {
@@ -3271,7 +3271,7 @@ public class LibraryElementNode {
                     n.toBack();
                 } else if (e instanceof Wire wire) {
                     p.getChildren().add(LibraryElementNode.createWireNode(wire, c, false));
-                } else if (e instanceof ElementText elementText) {
+                } else if (e instanceof TextElement elementText) {
                     ArrayList<Shape> textNode = LibraryElementNode.createText2(elementText, c);
                     p.getChildren().addAll(textNode);
                     // TODO: Get proper tOrigin/bOrigin layer info for crosshair color.
@@ -3409,14 +3409,14 @@ public class LibraryElementNode {
 //                    list.add(wireNode);
 //                }
 //            } else
-            if (e instanceof ElementText et) {
+            if (e instanceof TextElement et) {
                 // Package Text Element
                 // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
 
 //                if (et.getLayerNum() == layer) {
                 //Node textNode = LibraryElementNode.createText(et, null, c, null, false);
                 //p.getChildren().add(textNode);
-                final ElementText proxyText;
+                final TextElement proxyText;
                 proxyText = et.copy();
 
                 String attrName = null;
@@ -3562,16 +3562,16 @@ public class LibraryElementNode {
                     wireNode.getTransforms().add(new Rotate(-el.getRot()));
                     list.add(wireNode);
                 }
-            } else if (e instanceof ElementText) {  // Handled elsewhere!
+            } else if (e instanceof TextElement) {  // Handled elsewhere!
 
-//            } else if (e instanceof ElementText et) {
+//            } else if (e instanceof TextElement et) {
 //                // Package Text Element
 //                // <text x="1.524" y="0" size="0.8128" layer="25" font="vector" ratio="15" align="center-left">&gt;NAME</text>
 //
 ////                if (et.getLayerNum() == layer) {
 //                //Node textNode = LibraryElementNode.createText(et, null, c, null, false);
 //                //p.getChildren().add(textNode);
-//                final ElementText proxyText;
+//                final TextElement proxyText;
 //                proxyText = et.copy();
 //
 //                String attrName = null;

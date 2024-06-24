@@ -42,7 +42,7 @@ import com.maehem.mangocad.model.element.property.Rotation;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LabelElement extends ElementText {
+public class LabelElement extends TextElement {
 
     public static final String ELEMENT_NAME = "label";
 

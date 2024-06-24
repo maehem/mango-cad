@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -38,18 +38,18 @@ public class TextFontWidget extends InspectorWidget {
     );
 
     private final ComboBox<TextFont> comboBox = new ComboBox<>(options);
-    private final ElementText text;
+    private final TextElement text;
 
     public TextFontWidget(Element e, String msgKeyBase) {
         super(msgKeyBase);
-        if (e instanceof ElementText w) {
+        if (e instanceof TextElement w) {
             this.text = w;
             Platform.runLater(() -> {
                 this.text.addListener(this);
             });
         } else {
             this.text = null;
-            LOGGER.log(Level.SEVERE, "TextFontWidget: element is not of type ElementText!");
+            LOGGER.log(Level.SEVERE, "TextFontWidget: element is not of type TextElement!");
         }
 
 //        Label iconLabel = new Label(MSG.getString("TEXT_FONT") + ":");
@@ -84,7 +84,7 @@ public class TextFontWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(ElementText.Field.FONT)) {
+        if (!field.equals(TextElement.Field.FONT)) {
             return;
         }
         if (newVal == null) {

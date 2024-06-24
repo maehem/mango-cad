@@ -19,7 +19,7 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
@@ -58,7 +58,7 @@ public class TextNode extends ViewNode implements ElementListener {
     //private static final double FONT_ASC_PCT = 0.61; // 53%   (0.0 - 1.0)
     private static final double FONT_ASC_PCT = 0.47; // 53%   (0.0 - 1.0)  == 450/960 from font.
 
-    private ElementText textElement; // Holds the text data.
+    private TextElement textElement; // Holds the text data.
 
     // Text
     private final Text text = new Text();
@@ -93,7 +93,7 @@ public class TextNode extends ViewNode implements ElementListener {
 
     private double ascend = 0.0; // Used for DimensionNode. Ascend text above xy3 point.
 
-    public TextNode(ElementText et, String altText, Layers layers, ColorPalette palette, Rotation parentRotation, boolean showCrossHair, PickListener pickListener) {
+    public TextNode(TextElement et, String altText, Layers layers, ColorPalette palette, Rotation parentRotation, boolean showCrossHair, PickListener pickListener) {
         super(et, pickListener);
         this.textElement = et;
         this.altText = altText;
@@ -534,7 +534,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (field) {
-            case ElementText.Field.VALUE, ElementText.Field.DISTANCE -> {
+            case TextElement.Field.VALUE, TextElement.Field.DISTANCE -> {
                 updateValue();
                 updateAlignRotation();
                 updateDistance();
@@ -554,10 +554,10 @@ public class TextNode extends ViewNode implements ElementListener {
 //                updateAlignRotation();
 //                updateSpin();
 //            }
-            case ElementText.Field.ALIGN -> {
+            case TextElement.Field.ALIGN -> {
                 updateAlignRotation();
             }
-            case ElementText.Field.RATIO -> {
+            case TextElement.Field.RATIO -> {
                 updateRatio();
                 updateValue();
                 updateFont();
@@ -566,7 +566,7 @@ public class TextNode extends ViewNode implements ElementListener {
                 updateSpin();
                 updateDebugBox();
             }
-            case ElementText.Field.SIZE, ElementText.Field.FONT -> {
+            case TextElement.Field.SIZE, TextElement.Field.FONT -> {
                 updateFont();
                 updateDistance();
                 updateDebugBox();

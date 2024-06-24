@@ -19,9 +19,9 @@ package com.maehem.mangocad.view.widgets.selection;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.RectangleElement;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -92,7 +92,7 @@ public class SelectionOverviewWidget extends HBox {
                     nameLabel.setText(value);
                 }
                 icon = ViewUtils.createIcon(PIN_IMG, ICON_SIZE);
-            } else if (item instanceof ElementText et) {
+            } else if (item instanceof TextElement et) {
                 String value = et.getValue().lines().findFirst().get();
 
                 if (value.length() > 13) {
@@ -263,7 +263,7 @@ public class SelectionOverviewWidget extends HBox {
                     .append("*Rotation:* ").append(df.format(er.getRot())).append(LF);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
-        } else if (item instanceof ElementText et) {
+        } else if (item instanceof TextElement et) {
             StringBuilder sb = new StringBuilder(" ####Text").append(LF);
             sb.append("* on layer *").append(et.getLayerNum()).append("*").append(LF);
             sb.append("Value:  **").append(et.valueProperty.get()).append("** ")

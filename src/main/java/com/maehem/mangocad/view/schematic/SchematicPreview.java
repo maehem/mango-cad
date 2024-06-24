@@ -93,7 +93,7 @@ public class SchematicPreview extends Group {
                 getChildren().add(LibraryElementNode.createPolygonCurved(e, c, false));
             } else if (element instanceof Wire e) {
                 getChildren().add(LibraryElementNode.createWireNode(e, c, false));
-            } else if (element instanceof ElementText e) {
+            } else if (element instanceof TextElement e) {
                 getChildren().addAll(LibraryElementNode.createText2(e, c));
             } else if (element instanceof Dimension e) {
                 getChildren().add(LibraryElementNode.createDimensionNode(e, layers, palette));

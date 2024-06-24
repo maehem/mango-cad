@@ -17,7 +17,7 @@
 package com.maehem.mangocad.tools;
 
 import com.maehem.mangocad.logging.LoggingFormatter;
-import com.maehem.mangocad.model.element.basic.ElementText;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
@@ -47,7 +47,7 @@ public class TextTester extends Application {
 
     public static final int WIDGET_WIDTH = 300;
     private final Menu fileMenu = new Menu("File");
-    private final ElementText et = new ElementText();
+    private final TextElement et = new TextElement();
     private final Group contentArea = new Group();
     private final PreviewContent previewContentPane = new PreviewContent();
     private final TextPropertiesList propertiesList = new TextPropertiesList(this, et);

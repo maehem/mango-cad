@@ -20,9 +20,9 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.RectangleElement;
+import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.UnitValue;
@@ -128,7 +128,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
 
                 getChildren().addAll(lxy1, lxy2, lwW, lsW, cvW);
             }
-            case ElementText t -> {
+            case TextElement t -> {
                 StringValueWidget valw = new StringValueWidget(t.valueProperty, "TEXT_VALUE");
                 LocationXYWidget lxy = new LocationXYWidget(t.xProperty, t.yProperty, "TEXT_LOCATION");
                 RotationWidget rW = new RotationWidget(t, "ROTATION");
@@ -145,9 +145,9 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 DimensionTypeToggleWidget dimTypeWidget = new DimensionTypeToggleWidget(d, "DIM_TYPE");
                 TextSizeWidget textSizeWidget = new TextSizeWidget(d, "TEXT_SIZE");
                 IntegerListWidget textRatioWidget = new IntegerListWidget(
-                        d.textratioProperty, ElementText.Field.RATIO,
+                        d.textratioProperty, TextElement.Field.RATIO,
                         "TEXT_RATIO", "%",
-                        ElementText.RATIO_DEFAULT_OPTIONS);
+                        TextElement.RATIO_DEFAULT_OPTIONS);
                 GridUnitListWidget unitWidget = new GridUnitListWidget(
                         d.unitProperty, "UNIT", UnitValue.Unit.MM);
                 IntegerListWidget precisionWidget = new IntegerListWidget(
