@@ -20,13 +20,13 @@ package com.maehem.mangocad.model.element.property;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class CurveProperty extends RealValue {
+public class CurveValue extends RealValue {
 
     public static final double MIN = -359.9;
     public static final double MAX = 359.9;
 
 
-    public CurveProperty(double value) {
+    public CurveValue(double value) {
         super(value, MIN, MAX);
     }
 

@@ -20,7 +20,7 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.property.RealValue;
-import com.maehem.mangocad.model.element.property.CurveProperty;
+import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import java.text.MessageFormat;
@@ -37,7 +37,7 @@ public class Vertex extends Element implements
     public final RealValue xProperty = new RealValue(0);
     public final RealValue yProperty = new RealValue(0);
 
-    public final CurveProperty curveProperty = new CurveProperty(0);
+    public final CurveValue curveProperty = new CurveValue(0);
 
     private boolean selected = false;
     private Vertex snapshot = null;
@@ -94,7 +94,7 @@ public class Vertex extends Element implements
         if (curveProperty.get() != curve) {
             double oldVal = curveProperty.get();
             curveProperty.set(curve);
-            notifyListeners(CurveProperty.Field.VALUE, oldVal, curveProperty.get());
+            notifyListeners(CurveValue.Field.VALUE, oldVal, curveProperty.get());
         }
     }
 
@@ -125,7 +125,7 @@ public class Vertex extends Element implements
         } else if (newVal.equals(yProperty)) {
             notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
         } else if (newVal.equals(curveProperty)) {
-            notifyListeners(CurveProperty.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
+            notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         }
     }
 

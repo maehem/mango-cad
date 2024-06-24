@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireStyle;
-import com.maehem.mangocad.model.element.property.CurveProperty;
+import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -119,7 +119,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
     public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
     public final WidthProperty widthProperty = new WidthProperty(0.254);
-    public final CurveProperty curveProperty = new CurveProperty(0.0);
+    public final CurveValue curveProperty = new CurveValue(0.0);
     private String extent = "";  // TODO: Store as 'extent' object.
     private WireStyle style = WireStyle.CONTINUOUS;
     private WireCap cap = WireCap.ROUND;
@@ -257,7 +257,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         if (curveProperty.get() != curve) {
             double oldVal = curveProperty.get();
             curveProperty.set(curve);
-            notifyListeners(CurveProperty.Field.VALUE, oldVal, curveProperty.get());
+            notifyListeners(CurveValue.Field.VALUE, oldVal, curveProperty.get());
         }
     }
 
@@ -436,7 +436,7 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
         } else if (newVal.equals(y2Property)) {
             notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
         } else if (newVal.equals(curveProperty)) {
-            notifyListeners(CurveProperty.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
+            notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         } else if (newVal.equals(widthProperty)) {
             notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         }
