@@ -561,7 +561,7 @@ public class LibraryElementNode {
 
     public static Node createProbeNode(Probe le, Color color, Segment seg) {
         Group labelGroup = new Group();
-        int rot = (int) le.getRot();
+        int rot = (int) le.rotation.get();
         double dotRadius = 0.8;
         double lineW = 0.5;
 
@@ -621,7 +621,7 @@ public class LibraryElementNode {
             outline.setStroke(color);
             outline.setStrokeWidth(0.3);
             outline.setFill(Color.TRANSPARENT);
-            Transform rTf = new Rotate(-le.getRot(), x, y);
+            Transform rTf = new Rotate(-le.rotation.get(), x, y);
             outline.getTransforms().add(rTf);
             labelGroup.getChildren().add(outline);
         }
@@ -733,8 +733,8 @@ public class LibraryElementNode {
             labelGroup.getChildren().add(outline);
         }
 
-        double rot = -le.getRot();
-        if (le.rotation.isMirror() && (le.getRot() == 0 || le.getRot() == 180)) {
+        double rot = -le.rotation.get();
+        if (le.rotation.isMirror() && (le.rotation.get() == 0 || le.rotation.get() == 180)) {
             rot += 180.00;
             rot %= 360;
         }
@@ -746,7 +746,7 @@ public class LibraryElementNode {
 
     public static Node createLabelNodeOld(LabelElement le, Color color) {
         Group labelGroup = new Group();
-        int rot = (int) le.getRot();
+        int rot = (int) le.rotation.get();
 
         le.setAlign(le.isXref() ? CENTER_LEFT : BOTTOM_LEFT);
         Node textNode = createText(le, color);
@@ -782,7 +782,7 @@ public class LibraryElementNode {
             outline.setStroke(color);
             outline.setStrokeWidth(0.3);
             outline.setFill(Color.TRANSPARENT);
-            Transform rTf = new Rotate(-le.getRot(), x, y);
+            Transform rTf = new Rotate(-le.rotation.get(), x, y);
             outline.getTransforms().add(rTf);
             labelGroup.getChildren().add(outline);
         }
@@ -1760,7 +1760,7 @@ public class LibraryElementNode {
 
             g.getChildren().addAll(ch, cv);
         }
-        double rotG = mir ? et.getRot() : -et.getRot();
+        double rotG = mir ? et.rotation.get() : -et.rotation.get();
         Rotate rTTG = new Rotate(rotG, pivotX, -pivotY);
         ttG.getTransforms().add(rTTG);
 
@@ -1786,13 +1786,13 @@ public class LibraryElementNode {
         double fontAsc = height * 0.53; // Font ascends this much.
         //double fontDes = height * 0.27; // Font descends this much.
 
-        double rot = et.getRot();
+        double rot = et.rotation.get();
         tt.setLayoutY(fontAsc + borderW);
         if (upIsDown) {
             Rotate rT = new Rotate(180, width / 2.0, -fontAsc / 2.0);
             tt.getTransforms().add(rT);
         }
-        if (et.getRot() > 90.0 && et.getRot() <= 270.0) {
+        if (et.rotation.get() > 90.0 && et.rotation.get() <= 270.0) {
             Rotate rT = new Rotate(180, width / 2.0, -fontAsc / 2.0);
             tt.getTransforms().add(rT);
         }
@@ -2821,7 +2821,7 @@ public class LibraryElementNode {
         }
         double pinLen = rawPinLen - dotRadius * 2.0;
 
-        double vizPinRot = (p.getRot() + parentRot) % 360;
+        double vizPinRot = (p.rotation.get() + parentRot) % 360;
 
         // Draw pin wire
         Line pinLine = new Line(pX, pY, pX + (pinMirror ? -pinLen : pinLen), pY);
@@ -2971,8 +2971,8 @@ public class LibraryElementNode {
             g.getChildren().add(dirSwap);
         }
 
-        if (p.getRot() != 0) {
-            Rotate r = new Rotate(-p.getRot(), pX, pY);
+        if (p.rotation.get() != 0) {
+            Rotate r = new Rotate(-p.rotation.get(), pX, pY);
             g.getTransforms().add(r);
         }
         return g;

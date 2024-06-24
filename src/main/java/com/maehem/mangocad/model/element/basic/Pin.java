@@ -257,25 +257,25 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
-    /**
-     * @return the rotation
-     */
-    @Override
-    public double getRot() {
-        return rotation.get();
-    }
-
-    /**
-     * @param val the rotation to set
-     */
-    @Override
-    public void setRot(double val) {
-        if (this.rotation.get() != val) {
-            double oldVal = this.getRot();
-            this.rotation.set(val);
-            notifyListeners(Rotation.Field.VALUE, oldVal, this.rotation.get());
-        }
-    }
+//    /**
+//     * @return the rotation
+//     */
+//    @Override
+//    public double getRot() {
+//        return rotation.get();
+//    }
+//
+//    /**
+//     * @param val the rotation to set
+//     */
+//    @Override
+//    public void setRot(double val) {
+//        if (this.rotation.get() != val) {
+//            double oldVal = this.getRot();
+//            this.rotation.set(val);
+//            notifyListeners(Rotation.Field.VALUE, oldVal, this.rotation.get());
+//        }
+//    }
 
 //    @Override
 //    public boolean isSpun() {

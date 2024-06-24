@@ -298,8 +298,8 @@ public class PinNode extends ViewNode implements ElementListener {
     }
 
     private void updateRotation() {
-        double vizPinRot = (pin.getRot() + getParentRot()) % 360;
-        rotTransform.setAngle(-pin.getRot());
+        double vizPinRot = (pin.rotation.get() + getParentRot()) % 360;
+        rotTransform.setAngle(-pin.rotation.get());
 
         double rawPinLen = pin.getLength().lenMM();
         pinNameTranslate.setX(rawPinLen + PIN_NAME_MARGIN);

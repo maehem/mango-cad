@@ -90,8 +90,8 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
                 x1, y2
         );
 
-        double rot = getRot();
-        if (getRotationProperty().isMirror()) {
+        double rot = rectangle.rotationProperty.get();
+        if (rectangle.rotationProperty.isMirror()) {
             rot += 180;
         }
         rot %= 360;
@@ -136,70 +136,5 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
     public Rotation getRotationProperty() {
         return rectangle.rotationProperty;
     }
-
-    @Override
-    public double getRot() {
-        return rectangle.getRot();
-    }
-
-    @Override
-    public void setRot(double value) {
-        rectangle.setRot(value);
-    }
-
-//    @Override
-//    public boolean isSpun() {
-//        return false; // Spin not allowed for rectangles.
-//    }
-//
-//    @Override
-//    public void setSpin(boolean value) {
-//        // Does nothing.
-//    }
-//
-//    @Override
-//    public boolean isSpin() {
-//        return false;  // Never true.
-//    }
-//
-//    @Override
-//    public boolean isSpinAllowed() {
-//        return false;  // Not allowed.
-//    }
-//
-//    @Override
-//    public void setAllowSpin(boolean value) {
-//        // Nothing happens.
-//    }
-//
-//    @Override
-//    public void setMirror(boolean value) {
-//        rectangle.getRotationProperty().setMirror(value);
-//    }
-//
-//    @Override
-//    public boolean isMirrored() {
-//        return rectangle.getRotationProperty().isMirror();
-//    }
-
-//    @Override
-//    public boolean isMirrorAllowed() {
-//        return rectangle.getRotationProperty().isMirrorAllowed(); // Should be true.
-//    }
-//
-//    @Override
-//    public void setAllowMirror(boolean value) {
-//        // Not an option in the UI.
-//    }
-//
-//    @Override
-//    public boolean isConstrained() {
-//        return true;
-//    }
-//
-//    @Override
-//    public void setConstrained(boolean value) {
-//        // Change not allowed. Always constrained.
-//    }
 
 }

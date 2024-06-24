@@ -65,12 +65,12 @@ public class RotationWidget extends InspectorWidget {
 //        iconLabel.setAlignment(Pos.BASELINE_CENTER);
 //        iconLabel.setTooltip(new Tooltip(MSG.getString("TOOL_ICON_ROTATE")));
 
-        updateRotation(rotation.getRot());
+        updateRotation(rotation.getRotationProperty().get());
 
         getChildren().addAll(comboBox);
 
         comboBox.setOnAction((t) -> {
-            rotation.setRot((double) comboBox.getSelectionModel().getSelectedItem());
+            rotation.getRotationProperty().set((double) comboBox.getSelectionModel().getSelectedItem());
             t.consume();
         });
     }

@@ -24,30 +24,8 @@ public interface RotationProperty {
 
     public Rotation getRotationProperty();
 
-    public double getRot();
-
-    public void setRot(double value);
-
-//    public boolean isSpun();
+//    public double getRot();
 //
-//    public void setSpin(boolean value);
+//    public void setRot(double value);
 //
-//    public boolean isSpin();
-//
-//    public boolean isSpinAllowed();
-//
-//    public void setAllowSpin(boolean value);
-//
-//    public void setMirror(boolean value);
-//
-//    public boolean isMirrored();
-
-//    public boolean isMirrorAllowed();
-//
-//    public void setAllowMirror(boolean value);
-//
-//    public boolean isConstrained();
-//
-//    public void setConstrained(boolean value);
-
 }

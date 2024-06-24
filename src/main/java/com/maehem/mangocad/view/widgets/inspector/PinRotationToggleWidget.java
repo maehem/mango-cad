@@ -86,7 +86,7 @@ public class PinRotationToggleWidget extends InspectorWidget {
         rot270Button.setUserData(270.0);
         rot270Button.setSelected(false);
 
-        updateToggleState(pin.getRot());
+        updateToggleState(pin.rotation.get());
         currentToggle = group.getSelectedToggle();
         //group.selectToggle(currentToggle);
 
@@ -97,7 +97,7 @@ public class PinRotationToggleWidget extends InspectorWidget {
             } else if (oldToggle == null || !oldToggle.equals(newToggle)) {
                 LOGGER.log(Level.SEVERE, "Change PinRotation toggle to:{0}", newToggle.getUserData().toString());
                 currentToggle = newToggle;
-                pin.setRot((double) newToggle.getUserData());
+                pin.rotation.set((double) newToggle.getUserData());
             }
         });
 

@@ -327,7 +327,7 @@ public class TextNode extends ViewNode implements ElementListener {
 
         double textWidth = getTextWidth();
 
-        double rot = textElement.getRot();
+        double rot = textElement.rotation.get();
         boolean mir = textElement.rotation.isMirror();
         boolean spun = textElement.rotation.isSpun();
 

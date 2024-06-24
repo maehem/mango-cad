@@ -270,20 +270,20 @@ public class ElementText extends Element
         notifyListeners(Rotation.Field.VALUE, null, rotation);
     }
 
-    @Override
-    public double getRot() {
-        return rotation.get();
-    }
-
-    @Override
-    public void setRot(double rot) {
-        if (getRot() != rot) {
-            double oldValue = this.getRot();
-            rotation.set(rot);
-            notifyListeners(Rotation.Field.VALUE, oldValue, this.getRot());
-        }
-    }
-
+//    @Override
+//    public double getRot() {
+//        return rotation.get();
+//    }
+//
+//    @Override
+//    public void setRot(double rot) {
+//        if (getRot() != rot) {
+//            double oldValue = this.getRot();
+//            rotation.set(rot);
+//            notifyListeners(Rotation.Field.VALUE, oldValue, this.getRot());
+//        }
+//    }
+//
     /**
      * @return the align
      */
@@ -451,7 +451,7 @@ public class ElementText extends Element
             setLayerNum(snapshot.getLayerNum());
             rotation.setMirror(snapshot.rotation.isMirror());
             setRatio(snapshot.getRatio());
-            setRot(snapshot.getRot());
+            rotation.set(snapshot.rotation.get());
             setSize(snapshot.getSize());
             rotation.setSpin(snapshot.rotation.isSpin());
             setValue(snapshot.getValue());
@@ -481,7 +481,7 @@ public class ElementText extends Element
         copy.setLayerNum(getLayerNum());
         copy.rotation.setMirror(rotation.isMirror());
         copy.setRatio(getRatio());
-        copy.setRot(getRot());
+        copy.rotation.set(rotation.get());
         copy.setSize(getSize());
         copy.rotation.setSpin(rotation.isSpin());
         copy.setValue(getValue());

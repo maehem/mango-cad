@@ -59,7 +59,7 @@ public class TextPropertiesList extends VBox implements WidgetListener {
         textWidget.setText(et.getValue());
         posXWidget.getSlider().setValue(et.getX());
         posYWidget.getSlider().setValue(et.getY());
-        rotWidget.getSlider().setValue(et.getRot());
+        rotWidget.getSlider().setValue(et.rotation.get());
 
     }
 

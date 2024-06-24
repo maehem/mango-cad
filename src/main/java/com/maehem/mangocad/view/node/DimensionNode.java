@@ -248,7 +248,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
                 et.setX(x3);
                 et.setY(y3);
-                et.setRot(-textAngle);
+                et.rotation.set(-textAngle);
                 String unitLabel = "";
                 if (dimension.isVisible()) { // show inits label
                     unitLabel = dimension.getUnit().label;
@@ -317,7 +317,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
                 et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
                 et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                et.setRot(0);
+                et.rotation.set(0);
                 String unitLabel = "";
                 if (dimension.isVisible()) { // show inits label
                     unitLabel = dimension.getUnit().label;
@@ -393,7 +393,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
                 et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
                 et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                et.setRot(90);
+                et.rotation.set(90);
                 String unitLabel = "";
                 if (dimension.isVisible()) { // show inits label
                     unitLabel = dimension.getUnit().label;
@@ -506,7 +506,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
 
                 et.setX(x3);//- Math.asin(Math.toRadians(angle)) * tOff);
                 et.setY(y3);//+ Math.asin(Math.toRadians(90 - angle)) * tOff);
-                et.setRot(-rot);
+                et.rotation.set(-rot);
                 String unitLabel = "";
                 if (dimension.isVisible()) { // show inits label
                     unitLabel = dimension.getUnit().label;

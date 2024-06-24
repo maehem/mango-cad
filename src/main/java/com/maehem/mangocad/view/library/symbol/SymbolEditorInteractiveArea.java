@@ -553,7 +553,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             if (elementsCanRotate(movingElements)) {
                                 for (Element e : movingElements) {
                                     if (e instanceof RotationProperty er) {
-                                        er.setRot(er.getRot() + 90);
+                                        er.getRotationProperty().set(er.getRotationProperty().get() + 90);
                                     }
                                 }
                                 LOGGER.log(Level.SEVERE, "Rotate 90 Operation.");
@@ -911,7 +911,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     //LOGGER.log(Level.SEVERE, "    It's a RotationProperty.");
                     //LOGGER.log(Level.SEVERE, "    pickRot: r:{0}  mir:{1}", new Object[]{pickRot.getRot(), pickRot.isMirrored() ? "Y" : "N"});
                     //LOGGER.log(Level.SEVERE, "    New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
-                    pickRot.setRot(pickRot.getRot() + tmpRot.getRot());
+                    pickRot.getRotationProperty().set(pickRot.getRotationProperty().get() + tmpRot.getRotationProperty().get());
                     pickRot.getRotationProperty().setMirror(tmpRot.getRotationProperty().isMirror());
                 }
             }
@@ -1005,7 +1005,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private void initiateElementRotate(Element pick, Element copyRotFrom) {
         if (pick instanceof RotationProperty rotE) {
             if (copyRotFrom instanceof RotationProperty er) {
-                rotE.setRot(rotE.getRot() + er.getRot());
+                rotE.getRotationProperty().set(rotE.getRotationProperty().get() + er.getRotationProperty().get());
             } else {
                 LOGGER.log(Level.SEVERE, "Tried to copy rot value from a non-rotational element!");
             }
@@ -1019,7 +1019,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     rotE.getRotationProperty().setMirror(er.getRotationProperty().isMirror());
                 } else {
                     double angle = er.getRotationProperty().isMirror() ? 180.0 : 0.0;
-                    rotE.setRot(rotE.getRot() + angle);
+                    rotE.getRotationProperty().set(rotE.getRotationProperty().get() + angle);
                 }
             } else {
                 LOGGER.log(Level.SEVERE, "Tried to copy mir value from a non-rotational element!");
@@ -1359,7 +1359,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 // New Pin
                 Pin pin = new Pin();
                 if (lastElementAdded != null && lastElementAdded instanceof Pin lastP) {
-                    pin.setRot(lastP.getRot());
+                    pin.getRotationProperty().set(lastP.getRotationProperty().get());
                     pin.setDirection(lastP.getDirection());
                     pin.setLength(lastP.getLength());
                     pin.setFunction(lastP.getFunction());
@@ -1513,7 +1513,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             case EditorTool.ROTATE -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Rotate' EditorTool...");
                 ElementText e = new ElementText();
-                e.setRot(90.0);
+                e.getRotationProperty().set(90.0);
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);

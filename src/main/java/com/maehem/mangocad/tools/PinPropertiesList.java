@@ -73,7 +73,7 @@ public class PinPropertiesList extends VBox implements WidgetListener {
         nameWidget.setText(pinElement.getName());
         posXWidget.getSlider().setValue(pinElement.getX());
         posYWidget.getSlider().setValue(pinElement.getY());
-        rotWidget.getSlider().setValue(pinElement.getRot());
+        rotWidget.getSlider().setValue(pinElement.rotation.get());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class PinPropertiesList extends VBox implements WidgetListener {
             }
             case "Rotate" -> {
                 SliderWidget s = (SliderWidget) widget;
-                pinElement.setRot(s.getSlider().getValue());
+                pinElement.rotation.set(s.getSlider().getValue());
             }
             case "Direction" -> {
                 ListSelectWidget s = (ListSelectWidget) widget;
