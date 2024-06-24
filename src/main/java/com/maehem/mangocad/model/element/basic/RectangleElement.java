@@ -36,7 +36,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementRectangle extends Element implements
+public class RectangleElement extends Element implements
         LayerNumberProperty, SelectableProperty, RotationProperty,
         LockProperty,
         GrouprefsProperty, ElementValueListener {
@@ -77,9 +77,9 @@ public class ElementRectangle extends Element implements
 
     private boolean selected = false;
     private int selectedCorner = 0;
-    private ElementRectangle snapshot = null;
+    private RectangleElement snapshot = null;
 
-    public ElementRectangle() {
+    public RectangleElement() {
         rotationProperty.setAllowSpin(false);
         rotationProperty.setAllowMirror(true);
         rotationProperty.setConstrained(true);
@@ -121,7 +121,7 @@ public class ElementRectangle extends Element implements
 //        if (getX1() != x1) {
 //            double oldVal = getX1();
         x1Property.set(x1);
-//            notifyListeners(ElementRectangle.Field.X1, oldVal, getX1());
+//            notifyListeners(RectangleElement.Field.X1, oldVal, getX1());
 //        }
     }
 
@@ -139,7 +139,7 @@ public class ElementRectangle extends Element implements
 //        if (getY1() != y1) {
 //            double oldVal = getY1();
         y1Property.set(y1);
-//            notifyListeners(ElementRectangle.Field.Y1, oldVal, getY1());
+//            notifyListeners(RectangleElement.Field.Y1, oldVal, getY1());
 //        }
     }
 
@@ -157,7 +157,7 @@ public class ElementRectangle extends Element implements
 //        if (getX2() != x2) {
 //            double oldVal = getX2();
         x2Property.set(x2);
-//            notifyListeners(ElementRectangle.Field.X2, oldVal, getX2());
+//            notifyListeners(RectangleElement.Field.X2, oldVal, getX2());
 //        }
     }
 
@@ -175,7 +175,7 @@ public class ElementRectangle extends Element implements
 //        if (getY2() != y2) {
 //            double oldVal = getY2();
             y2Property.set(y2);
-//            notifyListeners(ElementRectangle.Field.Y2, oldVal, getY2());
+//            notifyListeners(RectangleElement.Field.Y2, oldVal, getY2());
 //        }
     }
 
@@ -192,7 +192,7 @@ public class ElementRectangle extends Element implements
         x2Property.set(x2);
         y2Property.set(y2);
 
-        //notifyListeners(ElementRectangle.Field.ALL_XY, null, null);
+        //notifyListeners(RectangleElement.Field.ALL_XY, null, null);
     }
 
     /**
@@ -310,7 +310,7 @@ public class ElementRectangle extends Element implements
     }
 
     @Override
-    public ElementRectangle getSnapshot() {
+    public RectangleElement getSnapshot() {
         return snapshot;
     }
 
@@ -328,8 +328,8 @@ public class ElementRectangle extends Element implements
         }
     }
 
-    public ElementRectangle copy() {
-        ElementRectangle rectCopy = new ElementRectangle();
+    public RectangleElement copy() {
+        RectangleElement rectCopy = new RectangleElement();
 
         rectCopy.setX1(getX1());
         rectCopy.setY1(getY1());

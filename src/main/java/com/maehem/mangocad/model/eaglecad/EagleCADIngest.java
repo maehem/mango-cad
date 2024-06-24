@@ -539,7 +539,7 @@ public class EagleCADIngest {
                     ingestDimension(elements, node);
                 case "circle" -> // ElementCircle
                     ingestCircle(elements, node);
-                case "rectangle" -> // ElementRectangle
+                case "rectangle" -> // RectangleElement
                     ingestRectangle(elements, node);
                 case "frame" ->
                     ingestFrame(elements, node);
@@ -951,7 +951,7 @@ public class EagleCADIngest {
     }
 
     private static void ingestRectangle(List<Element> elements, Node node) throws EagleCADLibraryFileException {
-        ElementRectangle rect = new ElementRectangle();
+        RectangleElement rect = new RectangleElement();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);

@@ -19,9 +19,9 @@ package com.maehem.mangocad.view.widgets.selection;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -101,7 +101,7 @@ public class SelectionOverviewWidget extends HBox {
                     valueLabel.setText(value);
                 }
                 icon = ViewUtils.createIcon(TEXT_IMG, ICON_SIZE);
-            } else if (item instanceof ElementRectangle r) {
+            } else if (item instanceof RectangleElement r) {
                 icon = ViewUtils.createIcon(RECT_IMG, ICON_SIZE);
             } else if (item instanceof CircleElement c) {
                 icon = ViewUtils.createIcon(CIRC_IMG, ICON_SIZE);
@@ -245,7 +245,7 @@ public class SelectionOverviewWidget extends HBox {
                     .append("*Width:* ").append(c.widthProperty.getPrecise(PRECISION)).append(LF);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
-        } else if (item instanceof ElementRectangle er) {
+        } else if (item instanceof RectangleElement er) {
             StringBuilder sb = new StringBuilder(" ####Dimension").append(LF);
             sb.append("* on layer *").append(er.getLayerNum()).append("*").append(LF);
             sb.append(LF)

@@ -20,10 +20,10 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.PolygonElement;
+import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
@@ -278,9 +278,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     circ.setY(circ.getY() + moveDistSnappedY);
                                 }
                             }
-                            case ElementRectangle rect -> {
+                            case RectangleElement rect -> {
                                 Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof ElementRectangle snapRect) {
+                                if (snapshot instanceof RectangleElement snapRect) {
                                     if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
                                         // New rect, not yet placed. Adjust Width and height.
                                         rect.setX2(rect.getX1() + moveDistSnappedX);
@@ -472,7 +472,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     }
                                 } else if (toolMode.equals(EditorTool.RECTANGLE)) { // Finish sizing a new Rectangle
                                     if (ephemeralNode instanceof RectangleNode wn) {
-                                        ElementRectangle rect = (ElementRectangle) wn.getElement();
+                                        RectangleElement rect = (RectangleElement) wn.getElement();
                                         Symbol symbol = parentEditor.getSymbol();
                                         symbol.getElements().add(rect);
                                         nodes.add(ephemeralNode);
@@ -587,7 +587,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 wire.setSelectedEnd(TWO);
                             }
                         }
-                        case ElementRectangle er -> {
+                        case RectangleElement er -> {
                             double[] p = er.getPoints();
 
                             if ((Math.abs(me.getX() - p[0]) < PICK_SIZE && Math.abs(-me.getY() - p[1]) < PICK_SIZE)) {
@@ -945,7 +945,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     private void initiateNewRectangle(MouseEvent me, double x, double y) {
         // Start new line at mouse.
-        ElementRectangle rect = new ElementRectangle();
+        RectangleElement rect = new RectangleElement();
         rect.setLayerNum(94);  // TODO needs enum. Read from Layer chooser.
         rect.setX1(x);
         rect.setY1(-y);
@@ -1093,7 +1093,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     selectedElements.add(element);
                                 }
                             }
-                            case ElementRectangle er -> {
+                            case RectangleElement er -> {
                                 // Check that at least one set of XY points are in selection.
                                 double[] p = er.getPoints();
                                 if (isInsideSelection(p[0], -p[1])
@@ -1224,7 +1224,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     nodes.add(circleNode);
                     circleNode.addTo(workArea);
                 }
-                case ElementRectangle c -> {
+                case RectangleElement c -> {
                     RectangleNode rectNode = new RectangleNode(c,
                             parentEditor.getDrawing().getLayers(),
                             parentEditor.getDrawing().getPalette(),
@@ -1453,7 +1453,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 // Create a placeholder Recangle to hold Widget settings that
                 // will be used once the user clicks in the workspace.
                 if (lastElementAdded == null || !(lastElementAdded instanceof CircleElement)) {
-                    ElementRectangle tempRect = new ElementRectangle();
+                    RectangleElement tempRect = new RectangleElement();
                     lastElementAdded = tempRect;
                     LOGGER.log(Level.SEVERE, "Add temp rectangle. It is the lastAdded.");
                 }

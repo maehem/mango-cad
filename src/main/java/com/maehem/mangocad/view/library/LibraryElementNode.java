@@ -23,7 +23,6 @@ import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementElement;
-import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
 import com.maehem.mangocad.model.element.basic.Hole;
@@ -36,6 +35,7 @@ import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Probe;
+import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.basic.Spline;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Via;
@@ -204,7 +204,7 @@ public class LibraryElementNode {
         return s;
     }
 
-    public static Shape createRectangle(ElementRectangle r, Color color, boolean mirror) {
+    public static Shape createRectangle(RectangleElement r, Color color, boolean mirror) {
         double x1 = r.getX1();
         double x2 = r.getX2();
 
@@ -3214,7 +3214,7 @@ public class LibraryElementNode {
                 elementGroup.getChildren().add(createPinNode(pin, c, rotation, inst == null));
             } else if (e instanceof CircleElement ec) {
                 elementGroup.getChildren().add(LibraryElementNode.createCircleNode(ec, c, false));
-            } else if (e instanceof ElementRectangle rect) {
+            } else if (e instanceof RectangleElement rect) {
                 elementGroup.getChildren().add(LibraryElementNode.createRectangle(rect, c, false));
             } else if (e instanceof FrameElement frm) {
                 elementGroup.getChildren().add(LibraryElementNode.createFrameNode(frm, c));
@@ -3276,7 +3276,7 @@ public class LibraryElementNode {
                     p.getChildren().addAll(textNode);
                     // TODO: Get proper tOrigin/bOrigin layer info for crosshair color.
                     p.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
-                } else if (e instanceof ElementRectangle elementRectangle) {
+                } else if (e instanceof RectangleElement elementRectangle) {
                     p.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
                 } else if (e instanceof PolygonElement elementPolygon) {
                     p.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
@@ -3463,7 +3463,7 @@ public class LibraryElementNode {
                         list.addAll(txtNode);
                     }
                 }
-//            } else if (e instanceof ElementRectangle elementRectangle) {
+//            } else if (e instanceof RectangleElement elementRectangle) {
 //                if (elementRectangle.getLayerNum() == layer) {
 //                    Shape s = LibraryElementNode.createRectangle(elementRectangle, c, false);
 //                    if (isolation > 0.0) {
@@ -3615,7 +3615,7 @@ public class LibraryElementNode {
 //                        list.add(txtNode);
 //                    }
 //                }
-            } else if (e instanceof ElementRectangle elementRectangle) {
+            } else if (e instanceof RectangleElement elementRectangle) {
                 if (elementRectangle.getLayerNum() == layer) {
                     Shape s = LibraryElementNode.createRectangle(elementRectangle, c, false);
                     if (isolation > 0.0) {

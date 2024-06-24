@@ -20,9 +20,9 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.UnitValue;
@@ -190,7 +190,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         extWidthWidget, extLengthWidget, extOffsetWidget
                 );
             }
-            case ElementRectangle er -> {
+            case RectangleElement er -> {
                 LocationXYWidget lxy1 = new LocationXYWidget(er.x1Property, er.y1Property, "LINE_LOCATION_1");
                 LocationXYWidget lxy2 = new LocationXYWidget(er.x2Property, er.y2Property, "LINE_LOCATION_2");
                 RotationWidget rotW = new RotationWidget(er, "ROTATION");

@@ -143,7 +143,7 @@ public class BoardPreview extends Group {
             } else if (element instanceof Spline) {
                 // Only the plain group can have Spline and the Spline can only
                 // be on the Dimension layer.
-            } else if (element instanceof ElementRectangle e) {
+            } else if (element instanceof RectangleElement e) {
                 chld.add(LibraryElementNode.createRectangle(e, c, false));
             } else if (element instanceof FrameElement e) {
                 chld.add(LibraryElementNode.createFrameNode(e, c));
@@ -463,7 +463,7 @@ public class BoardPreview extends Group {
             } else if (element instanceof Spline e) {
                 // Only the plain group can have Spline and the Spline can only
                 // be on the Dimension layer.
-            } else if (element instanceof ElementRectangle e) {
+            } else if (element instanceof RectangleElement e) {
                 switch (e.getLayerNum()) {
                     case 1 /*, 16 */ -> {
                         // Text in etch.

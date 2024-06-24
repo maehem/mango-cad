@@ -19,7 +19,7 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
-import com.maehem.mangocad.model.element.basic.ElementRectangle;
+import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.Rotation;
@@ -40,13 +40,13 @@ import javafx.scene.shape.Rectangle;
  */
 public class RectangleNode extends ViewNode implements RotationProperty, ElementListener {
 
-    private final ElementRectangle rectangle;
+    private final RectangleElement rectangle;
     private final Layers layers;
     private final ColorPalette palette;
     private final Rectangle rectangleShape = new Rectangle();
     private final Polygon rectShape = new Polygon();
 
-    public RectangleNode(ElementRectangle er, Layers layers, ColorPalette palette, PickListener pickListener) {
+    public RectangleNode(RectangleElement er, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(er, pickListener);
 
         this.rectangle = er;
@@ -113,7 +113,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
                 new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
 
         switch (field) {
-            case ElementRectangle.Field.X1, ElementRectangle.Field.Y1, ElementRectangle.Field.X2, ElementRectangle.Field.Y2, ElementRectangle.Field.ALL_XY -> {
+            case RectangleElement.Field.X1, RectangleElement.Field.Y1, RectangleElement.Field.X2, RectangleElement.Field.Y2, RectangleElement.Field.ALL_XY -> {
                 updatePoints();
             }
             case SelectableProperty.Field.SELECTED -> {
