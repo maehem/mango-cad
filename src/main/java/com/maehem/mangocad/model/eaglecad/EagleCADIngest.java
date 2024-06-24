@@ -23,7 +23,7 @@ import com.maehem.mangocad.model.element.drawing.*;
 import com.maehem.mangocad.model.element.enums.*;
 import com.maehem.mangocad.model.element.highlevel.*;
 import com.maehem.mangocad.model.element.misc.*;
-import com.maehem.mangocad.model.element.property.GridUnitProperty;
+import com.maehem.mangocad.model.element.property.UnitValue;
 import com.maehem.mangocad.view.ControlPanel;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -2529,7 +2529,7 @@ public class EagleCADIngest {
                     dim.setTextratio(Integer.parseInt(value));
                     break;
                 case "unit":
-                    dim.setUnit(GridUnitProperty.Unit.fromCode(value));
+                    dim.setUnit(UnitValue.Unit.fromCode(value));
                     break;
                 case "precision":
                     dim.setPrecision(Integer.parseInt(value));

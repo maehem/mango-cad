@@ -17,7 +17,6 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementCircle;
@@ -25,7 +24,8 @@ import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.basic.Wire;
-import com.maehem.mangocad.model.element.property.GridUnitProperty;
+import com.maehem.mangocad.model.element.property.ElementValue;
+import com.maehem.mangocad.model.element.property.UnitValue;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ElementSelectionListener;
 import com.maehem.mangocad.view.widgets.inspector.CurveValueWidget;
@@ -149,7 +149,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         "TEXT_RATIO", "%",
                         ElementText.RATIO_DEFAULT_OPTIONS);
                 GridUnitListWidget unitWidget = new GridUnitListWidget(
-                        d.unitProperty, "UNIT", GridUnitProperty.Unit.MM);
+                        d.unitProperty, "UNIT", UnitValue.Unit.MM);
                 IntegerListWidget precisionWidget = new IntegerListWidget(
                         d.precisionProperty, Dimension.Field.PRECISION,
                         "DIM_PRECISION", null,

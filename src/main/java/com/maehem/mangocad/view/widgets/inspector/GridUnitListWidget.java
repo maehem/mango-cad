@@ -17,11 +17,10 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.ElementValueListener;
-import com.maehem.mangocad.model.element.property.UnitValue;
 import com.maehem.mangocad.model.element.ElementField;
-import com.maehem.mangocad.model.element.property.GridUnitProperty;
+import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.ElementValue;
+import com.maehem.mangocad.model.element.property.UnitValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
@@ -37,12 +36,12 @@ import javafx.scene.control.Tooltip;
  */
 public class GridUnitListWidget extends InspectorWidget implements ElementValueListener {
 
-    private final ObservableList<GridUnitProperty.Unit> options
+    private final ObservableList<UnitValue.Unit> options
             = FXCollections.observableArrayList(
-                    GridUnitProperty.Unit.values()
+                    UnitValue.Unit.values()
             );
 
-    private final ComboBox<GridUnitProperty.Unit> comboBox = new ComboBox<>(options);
+    private final ComboBox<UnitValue.Unit> comboBox = new ComboBox<>(options);
     private final UnitValue unit;
     private final ElementField field;
 
@@ -82,8 +81,8 @@ public class GridUnitListWidget extends InspectorWidget implements ElementValueL
         });
     }
 
-    private void updateComboState(GridUnitProperty.Unit unitToSet) {
-        for (GridUnitProperty.Unit unitOption : options) {
+    private void updateComboState(UnitValue.Unit unitToSet) {
+        for (UnitValue.Unit unitOption : options) {
             if (unitOption.equals(unitToSet)) {
                 comboBox.getSelectionModel().select(unitOption);
                 break;

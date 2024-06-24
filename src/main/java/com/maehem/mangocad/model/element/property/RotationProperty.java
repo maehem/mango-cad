@@ -24,8 +24,4 @@ public interface RotationProperty {
 
     public Rotation getRotationProperty();
 
-//    public double getRot();
-//
-//    public void setRot(double value);
-//
 }
