@@ -18,8 +18,8 @@ package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -208,7 +208,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         lxy1, lxy2, rotW
                 );
             }
-            case ElementCircle ec -> {
+            case CircleElement ec -> {
                 LocationXYWidget lxy = new LocationXYWidget(ec.xProperty, ec.yProperty, "LOCATION");
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
                         ec.widthProperty, WidthValue.Field.WIDTH,
@@ -217,7 +217,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 RealValueListWidget2 radiusWidget = new RealValueListWidget2(
-                        ec.radiusProperty, ElementCircle.Field.RADIUS,
+                        ec.radiusProperty, CircleElement.Field.RADIUS,
                         "CIRCLE_RADIUS", null, ToolModeWidget.EDITABLE,
                         null, 10.0,
                         WidthValue.WIDTH_DEFAULT_OPTIONS

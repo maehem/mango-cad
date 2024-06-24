@@ -97,7 +97,7 @@ public class SchematicPreview extends Group {
                 getChildren().addAll(LibraryElementNode.createText2(e, c));
             } else if (element instanceof Dimension e) {
                 getChildren().add(LibraryElementNode.createDimensionNode(e, layers, palette));
-            } else if (element instanceof ElementCircle e) {
+            } else if (element instanceof CircleElement e) {
                 getChildren().add(LibraryElementNode.createCircleNode(e, c, false));
             } else if (element instanceof Spline e) {
                 //getChildren().add(LibraryElementNode.createSplineNode(e, c));

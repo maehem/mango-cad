@@ -19,7 +19,7 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
@@ -39,12 +39,12 @@ import javafx.scene.shape.Circle;
  */
 public class CircleNode extends ViewNode implements ElementListener {
 
-    private final ElementCircle circle;
+    private final CircleElement circle;
     private final Layers layers;
     private final ColorPalette palette;
     private final Circle circleShape = new Circle();
 
-    public CircleNode(ElementCircle ec, Layers layers, ColorPalette palette, PickListener pickListener) {
+    public CircleNode(CircleElement ec, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(ec, pickListener);
 
         this.circle = ec;
@@ -110,7 +110,7 @@ public class CircleNode extends ViewNode implements ElementListener {
             case SelectableProperty.Field.SELECTED -> {
                 updateLayer();
             }
-            case ElementCircle.Field.RADIUS -> {
+            case CircleElement.Field.RADIUS -> {
                 updateRadius();
             }
             case WidthValue.Field.WIDTH -> {

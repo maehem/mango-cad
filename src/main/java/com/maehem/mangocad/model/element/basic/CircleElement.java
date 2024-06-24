@@ -38,7 +38,7 @@ import java.util.logging.Level;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementCircle extends Element implements
+public class CircleElement extends Element implements
         LayerNumberProperty, LocationXYProperty, SelectableProperty,
         WidthProperty, LockProperty, GrouprefsProperty,
         ElementValueListener {
@@ -80,9 +80,9 @@ public class ElementCircle extends Element implements
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
-    private ElementCircle snapshot = null;
+    private CircleElement snapshot = null;
 
-    public ElementCircle() {
+    public CircleElement() {
 
         xProperty.addListener(this);
         yProperty.addListener(this);
@@ -120,7 +120,7 @@ public class ElementCircle extends Element implements
         if (getRadius() != radius) {
             double oldValue = getRadius();
             radiusProperty.set(radius);
-            notifyListeners(ElementCircle.Field.RADIUS, oldValue, getRadius());
+            notifyListeners(CircleElement.Field.RADIUS, oldValue, getRadius());
         }
     }
 
@@ -210,8 +210,8 @@ public class ElementCircle extends Element implements
         }
     }
 
-    public ElementCircle copy() {
-        ElementCircle copy = new ElementCircle();
+    public CircleElement copy() {
+        CircleElement copy = new CircleElement();
 
         copy.setX(getX());
         copy.setY(getY());
@@ -223,7 +223,7 @@ public class ElementCircle extends Element implements
     }
 
     @Override
-    public ElementCircle getSnapshot() {
+    public CircleElement getSnapshot() {
         return snapshot;
     }
 

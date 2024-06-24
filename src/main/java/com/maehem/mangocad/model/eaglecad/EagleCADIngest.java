@@ -996,7 +996,7 @@ public class EagleCADIngest {
      * @throws EagleCADLibraryFileException
      */
     private static void ingestCircle(List<Element> elements, Node node) throws EagleCADLibraryFileException {
-        ElementCircle circ = new ElementCircle();
+        CircleElement circ = new CircleElement();
         NamedNodeMap attributes = node.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);

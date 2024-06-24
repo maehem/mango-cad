@@ -18,8 +18,8 @@ package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
@@ -265,7 +265,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 for (Element e : movingElements) {
                     if (e instanceof SelectableProperty es) {
                         switch (es) {
-                            case ElementCircle circ -> {
+                            case CircleElement circ -> {
                                 Element snapshot = es.getSnapshot();
                                 if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
                                     // New circle, not yet placed. Adjust Radius
@@ -461,7 +461,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     }
                                 } else if (toolMode.equals(EditorTool.CIRCLE)) { // Finish sizing a new circle.
                                     if (ephemeralNode instanceof CircleNode cn) {
-                                        ElementCircle circ = (ElementCircle) cn.getElement();
+                                        CircleElement circ = (CircleElement) cn.getElement();
                                         Symbol symbol = parentEditor.getSymbol();
                                         symbol.getElements().add(circ);
                                         nodes.add(ephemeralNode);
@@ -922,9 +922,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     private void initiateNewCircle(MouseEvent me, double x, double y) {
         // Start new line at mouse.
-        ElementCircle circle = new ElementCircle();
+        CircleElement circle = new CircleElement();
         circle.setLayerNum(94);  // TODO needs enum. Read from Layer chooser.
-        if (lastElementAdded != null && lastElementAdded instanceof ElementCircle lastCircle) {
+        if (lastElementAdded != null && lastElementAdded instanceof CircleElement lastCircle) {
             circle.setWidth(lastCircle.getWidth());
             LOGGER.log(Level.SEVERE, "I see a last added circle element.");
         }
@@ -1215,7 +1215,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     nodes.add(textNode);
                     textNode.addTo(workArea);
                 }
-                case ElementCircle c -> {
+                case CircleElement c -> {
                     CircleNode circleNode = new CircleNode(c,
                             parentEditor.getDrawing().getLayers(),
                             parentEditor.getDrawing().getPalette(),
@@ -1431,8 +1431,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 LOGGER.log(Level.SEVERE, "    New Circle...");
                 // Create a placeholder Circle to hold Widget settings that
                 // will be used once the user clicks in the workspace.
-                if (lastElementAdded == null || !(lastElementAdded instanceof ElementCircle)) {
-                    ElementCircle tempCircle = new ElementCircle();
+                if (lastElementAdded == null || !(lastElementAdded instanceof CircleElement)) {
+                    CircleElement tempCircle = new CircleElement();
                     lastElementAdded = tempCircle;
                     LOGGER.log(Level.SEVERE, "Add temp circle. It is the lastAdded.");
                 }
@@ -1452,7 +1452,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 LOGGER.log(Level.SEVERE, "    New Rectangle...");
                 // Create a placeholder Recangle to hold Widget settings that
                 // will be used once the user clicks in the workspace.
-                if (lastElementAdded == null || !(lastElementAdded instanceof ElementCircle)) {
+                if (lastElementAdded == null || !(lastElementAdded instanceof CircleElement)) {
                     ElementRectangle tempRect = new ElementRectangle();
                     lastElementAdded = tempRect;
                     LOGGER.log(Level.SEVERE, "Add temp rectangle. It is the lastAdded.");

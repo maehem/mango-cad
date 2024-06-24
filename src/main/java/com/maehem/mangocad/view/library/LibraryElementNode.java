@@ -19,9 +19,9 @@ package com.maehem.mangocad.view.library;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Attribute;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementElement;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
@@ -2986,7 +2986,7 @@ public class LibraryElementNode {
      * @param mirror mirror circle about x-axis
      * @return
      */
-    public static Shape createCircleNode(ElementCircle ec, Color color, boolean mirror) {
+    public static Shape createCircleNode(CircleElement ec, Color color, boolean mirror) {
         Circle c = new Circle(mirror ? -ec.getX() : ec.getX(), -ec.getY(), ec.getRadius());
 
         c.setStroke(color);
@@ -3212,7 +3212,7 @@ public class LibraryElementNode {
                 }
                 //LOGGER.log(Level.SEVERE, "Pin: " + inst.getPart() + inst.getGate());
                 elementGroup.getChildren().add(createPinNode(pin, c, rotation, inst == null));
-            } else if (e instanceof ElementCircle ec) {
+            } else if (e instanceof CircleElement ec) {
                 elementGroup.getChildren().add(LibraryElementNode.createCircleNode(ec, c, false));
             } else if (e instanceof ElementRectangle rect) {
                 elementGroup.getChildren().add(LibraryElementNode.createRectangle(rect, c, false));
@@ -3280,7 +3280,7 @@ public class LibraryElementNode {
                     p.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
                 } else if (e instanceof ElementPolygon elementPolygon) {
                     p.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
-                } else if (e instanceof ElementCircle elementCircle) {
+                } else if (e instanceof CircleElement elementCircle) {
                     p.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
                 } else {
                     LOGGER.log(Level.SEVERE, "Encountered unhadled element: " + e.getElementName() + " @3054");
@@ -3643,7 +3643,7 @@ public class LibraryElementNode {
                     s.getTransforms().add(new Rotate(-el.getRot()));
                     list.add(s);
                 }
-            } else if (e instanceof ElementCircle elementCircle) {
+            } else if (e instanceof CircleElement elementCircle) {
                 if (elementCircle.getLayerNum() == layer) {
                     Shape s = LibraryElementNode.createCircleNode(elementCircle, c, false);
                     if (isolation > 0.0) {

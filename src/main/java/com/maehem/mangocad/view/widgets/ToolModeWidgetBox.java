@@ -16,7 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets;
 
-import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.view.EditorTool;
@@ -121,7 +121,7 @@ public class ToolModeWidgetBox extends HBox {
                 }
             }
             case CIRCLE -> { // Circle options
-                if (mode.getToolElement() instanceof ElementCircle ec) {
+                if (mode.getToolElement() instanceof CircleElement ec) {
                     LineWidthWidget lwW = new LineWidthWidget(ec, ec.widthProperty);
                     getChildren().addAll(lwW);
                 }

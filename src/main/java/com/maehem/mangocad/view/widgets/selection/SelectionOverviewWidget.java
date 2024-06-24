@@ -17,8 +17,8 @@
 package com.maehem.mangocad.view.widgets.selection;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -103,7 +103,7 @@ public class SelectionOverviewWidget extends HBox {
                 icon = ViewUtils.createIcon(TEXT_IMG, ICON_SIZE);
             } else if (item instanceof ElementRectangle r) {
                 icon = ViewUtils.createIcon(RECT_IMG, ICON_SIZE);
-            } else if (item instanceof ElementCircle c) {
+            } else if (item instanceof CircleElement c) {
                 icon = ViewUtils.createIcon(CIRC_IMG, ICON_SIZE);
             } else {
                 icon = new ImageView();
@@ -232,7 +232,7 @@ public class SelectionOverviewWidget extends HBox {
                     .append(LF);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
-        } else if (item instanceof ElementCircle c) {
+        } else if (item instanceof CircleElement c) {
             StringBuilder sb = new StringBuilder(" ####Pin").append(LF);
             sb.append(LF)
                     .append(LF)

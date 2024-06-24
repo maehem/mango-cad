@@ -138,7 +138,7 @@ public class BoardPreview extends Group {
                 chld.add(LibraryElementNode.createDimensionNode(
                         e, layers, palette)
                 );
-            } else if (element instanceof ElementCircle e) {
+            } else if (element instanceof CircleElement e) {
                 chld.add(LibraryElementNode.createCircleNode(e, c, false));
             } else if (element instanceof Spline) {
                 // Only the plain group can have Spline and the Spline can only
@@ -443,7 +443,7 @@ public class BoardPreview extends Group {
 //                chld.add(LibraryElementNode.createDimensionNode(
 //                        e, layers, palette)
 //                );
-            } else if (element instanceof ElementCircle e) {
+            } else if (element instanceof CircleElement e) {
                 switch (e.getLayerNum()) {
                     case 1 /*, 16 */ -> {
                         Node n = LibraryElementNode.createCircleNode(e, copperColor, false);

@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
-import com.maehem.mangocad.model.element.basic.ElementCircle;
+import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
@@ -193,7 +193,7 @@ public class DetailNodes {
                 g.getChildren().add(LibraryElementNode.createPolygonCurved(elementPolygon, c, false));
             } else if (e instanceof Pin pin) {
                 g.getChildren().add(LibraryElementNode.createPinNode(pin, c, null, false));
-            } else if (e instanceof ElementCircle elementCircle) {
+            } else if (e instanceof CircleElement elementCircle) {
                 g.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
             }
         });
