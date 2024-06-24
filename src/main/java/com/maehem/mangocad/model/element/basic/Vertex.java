@@ -17,11 +17,12 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
-import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import java.text.MessageFormat;
 
@@ -30,7 +31,8 @@ import java.text.MessageFormat;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Vertex extends Element implements
-        LocationXYProperty, SelectableProperty, ElementValueListener {
+        LocationXYProperty, SelectableProperty, CurveProperty,
+        ElementValueListener {
 
     public static final String ELEMENT_NAME = "vertex";
 
@@ -96,6 +98,11 @@ public class Vertex extends Element implements
             curveProperty.set(curve);
             notifyListeners(CurveValue.Field.VALUE, oldVal, curveProperty.get());
         }
+    }
+
+    @Override
+    public CurveValue getCurveProperty() {
+        return curveProperty;
     }
 
     /**

@@ -17,16 +17,17 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.ElementValueListener;
-import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.ElementField;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import java.text.MessageFormat;
@@ -56,7 +57,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Wire extends Element implements LayerNumberProperty, SelectableProperty, GrouprefsProperty, ElementValueListener {
+public class Wire extends Element implements LayerNumberProperty, SelectableProperty, CurveProperty, GrouprefsProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
@@ -259,6 +260,11 @@ public class Wire extends Element implements LayerNumberProperty, SelectableProp
             curveProperty.set(curve);
             notifyListeners(CurveValue.Field.VALUE, oldVal, curveProperty.get());
         }
+    }
+
+    @Override
+    public CurveValue getCurveProperty() {
+        return curveProperty;
     }
 
     /**
