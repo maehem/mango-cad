@@ -28,19 +28,19 @@ public interface RotationProperty {
 
     public void setRot(double value);
 
-    public boolean isSpun();
-
-    public void setSpin(boolean value);
-
-    public boolean isSpin();
-
-    public boolean isSpinAllowed();
-
-    public void setAllowSpin(boolean value);
-
-    public void setMirror(boolean value);
-
-    public boolean isMirrored();
+//    public boolean isSpun();
+//
+//    public void setSpin(boolean value);
+//
+//    public boolean isSpin();
+//
+//    public boolean isSpinAllowed();
+//
+//    public void setAllowSpin(boolean value);
+//
+//    public void setMirror(boolean value);
+//
+//    public boolean isMirrored();
 
 //    public boolean isMirrorAllowed();
 //

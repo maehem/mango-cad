@@ -76,8 +76,8 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
         posXWidget.getSlider().setValue(et.getX());
         posYWidget.getSlider().setValue(et.getY());
         rotWidget.getSlider().setValue(et.getRot());
-        spinWidget.getCheckBox().setSelected(et.isSpin());
-        mirrorWidget.getCheckBox().setSelected(et.isMirrored());
+        spinWidget.getCheckBox().setSelected(et.rotation.isSpin());
+        mirrorWidget.getCheckBox().setSelected(et.rotation.isMirror());
 
     }
 
@@ -121,11 +121,11 @@ public class TextPropertiesList2 extends VBox implements WidgetListener {
             }
             case "Spin" -> {
                 ToggleWidget s = (ToggleWidget) widget;
-                et.setSpin(s.getValue());
+                et.rotation.setSpin(s.getValue());
             }
             case "Mirror" -> {
                 ToggleWidget s = (ToggleWidget) widget;
-                et.setMirror(s.getValue());
+                et.rotation.setMirror(s.getValue());
             }
         }
 

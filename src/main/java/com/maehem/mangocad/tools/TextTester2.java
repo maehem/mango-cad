@@ -131,7 +131,7 @@ public class TextTester2 extends Application implements ElementListener, PickLis
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
         et.rotation.setAllowMirror(true);
-        et.setAllowSpin(true);
+        et.rotation.setAllowSpin(true);
         et.rotation.setMirror(false);
         et.rotation.setSpin(false);
 

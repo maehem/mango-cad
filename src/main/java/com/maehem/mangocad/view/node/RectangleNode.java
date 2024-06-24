@@ -91,7 +91,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
         );
 
         double rot = getRot();
-        if (isMirrored()) {
+        if (getRotationProperty().isMirror()) {
             rot += 180;
         }
         rot %= 360;
@@ -147,40 +147,40 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
         rectangle.setRot(value);
     }
 
-    @Override
-    public boolean isSpun() {
-        return false; // Spin not allowed for rectangles.
-    }
-
-    @Override
-    public void setSpin(boolean value) {
-        // Does nothing.
-    }
-
-    @Override
-    public boolean isSpin() {
-        return false;  // Never true.
-    }
-
-    @Override
-    public boolean isSpinAllowed() {
-        return false;  // Not allowed.
-    }
-
-    @Override
-    public void setAllowSpin(boolean value) {
-        // Nothing happens.
-    }
-
-    @Override
-    public void setMirror(boolean value) {
-        rectangle.getRotationProperty().setMirror(value);
-    }
-
-    @Override
-    public boolean isMirrored() {
-        return rectangle.getRotationProperty().isMirror();
-    }
+//    @Override
+//    public boolean isSpun() {
+//        return false; // Spin not allowed for rectangles.
+//    }
+//
+//    @Override
+//    public void setSpin(boolean value) {
+//        // Does nothing.
+//    }
+//
+//    @Override
+//    public boolean isSpin() {
+//        return false;  // Never true.
+//    }
+//
+//    @Override
+//    public boolean isSpinAllowed() {
+//        return false;  // Not allowed.
+//    }
+//
+//    @Override
+//    public void setAllowSpin(boolean value) {
+//        // Nothing happens.
+//    }
+//
+//    @Override
+//    public void setMirror(boolean value) {
+//        rectangle.getRotationProperty().setMirror(value);
+//    }
+//
+//    @Override
+//    public boolean isMirrored() {
+//        return rectangle.getRotationProperty().isMirror();
+//    }
 
 //    @Override
 //    public boolean isMirrorAllowed() {

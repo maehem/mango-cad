@@ -277,43 +277,43 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
-    @Override
-    public boolean isSpun() {
-        return false;
-    }
-
-    @Override
-    public void setSpin(boolean value) {
-        // Not applicable
-    }
-
-    @Override
-    public boolean isSpin() {
-        return false;
-    }
-
-    @Override
-    public boolean isSpinAllowed() {
-        return false;
-    }
-
-    @Override
-    public void setAllowSpin(boolean value) {
-        // Not applicable.
-    }
-
-    @Override
-    public void setMirror(boolean value) {
-        if (value) {
-            setRot(getRot() + 180);
-        }
-    }
-
-    @Override
-    public boolean isMirrored() {
-        return getRot() == 180 || getRot() == 270;
-    }
-
+//    @Override
+//    public boolean isSpun() {
+//        return false;
+//    }
+//
+//    @Override
+//    public void setSpin(boolean value) {
+//        // Not applicable
+//    }
+//
+//    @Override
+//    public boolean isSpin() {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isSpinAllowed() {
+//        return false;
+//    }
+//
+//    @Override
+//    public void setAllowSpin(boolean value) {
+//        // Not applicable.
+//    }
+//
+//    @Override
+//    public void setMirror(boolean value) {
+//        if (value) {
+//            setRot(getRot() + 180);
+//        }
+//    }
+//
+//    @Override
+//    public boolean isMirrored() {
+//        return getRot() == 180 || getRot() == 270;
+//    }
+//
 //    @Override
 //    public boolean isMirrorAllowed() {
 //        return false;

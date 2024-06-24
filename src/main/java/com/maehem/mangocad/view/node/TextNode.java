@@ -297,7 +297,7 @@ public class TextNode extends ViewNode implements ElementListener {
         double tw2 = textWidth / 2.0;
         double sh2 = stackHeight / 2.0;
 
-        boolean spinIt = textElement.isSpun()
+        boolean spinIt = textElement.rotation.isSpun()
                 || (mir && (rot >= 90 && rot < 180))
                 || (mir && (rot >= 270 && rot < 360));
 
@@ -329,7 +329,7 @@ public class TextNode extends ViewNode implements ElementListener {
 
         double rot = textElement.getRot();
         boolean mir = textElement.rotation.isMirror();
-        boolean spun = textElement.isSpun();
+        boolean spun = textElement.rotation.isSpun();
 
         double tw2 = textWidth / 2.0;
         double sh2 = stackHeight / 2.0;

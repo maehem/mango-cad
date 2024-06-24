@@ -357,38 +357,38 @@ public class ElementText extends Element
         return grouprefs;
     }
 
-    @Override
-    public boolean isSpun() {
-        return rotation.isSpun();
-    }
-
-    @Override
-    public void setSpin(boolean spin) {
-        if (this.isSpin() != spin) {
-            boolean oldValue = isSpin();
-            rotation.setSpin(spin);
-            notifyListeners(Rotation.Field.SPIN, oldValue, this.isSpin());
-        }
-    }
-
-    @Override
-    public boolean isSpin() {
-        return rotation.isSpin();
-    }
-
-    @Override
-    public void setAllowSpin(boolean allowSpin) {
-        if (this.isSpinAllowed() != allowSpin) {
-            boolean oldValue = isSpinAllowed();
-            rotation.setAllowSpin(allowSpin);
-            notifyListeners(Rotation.Field.ALLOW_SPIN, oldValue, this.isSpinAllowed());
-        }
-    }
-
-    @Override
-    public boolean isSpinAllowed() {
-        return rotation.isSpinAllowed();
-    }
+//    @Override
+//    public boolean isSpun() {
+//        return rotation.isSpun();
+//    }
+//
+//    @Override
+//    public void setSpin(boolean spin) {
+//        if (this.isSpin() != spin) {
+//            boolean oldValue = isSpin();
+//            rotation.setSpin(spin);
+//            notifyListeners(Rotation.Field.SPIN, oldValue, this.isSpin());
+//        }
+//    }
+//
+//    @Override
+//    public boolean isSpin() {
+//        return rotation.isSpin();
+//    }
+//
+//    @Override
+//    public void setAllowSpin(boolean allowSpin) {
+//        if (this.isSpinAllowed() != allowSpin) {
+//            boolean oldValue = isSpinAllowed();
+//            rotation.setAllowSpin(allowSpin);
+//            notifyListeners(Rotation.Field.ALLOW_SPIN, oldValue, this.isSpinAllowed());
+//        }
+//    }
+//
+//    @Override
+//    public boolean isSpinAllowed() {
+//        return rotation.isSpinAllowed();
+//    }
 
 //    @Override
 //    public boolean isConstrained() {
@@ -404,19 +404,19 @@ public class ElementText extends Element
 //        }
 //    }
 
-    @Override
-    public void setMirror(boolean value) {
-        if (this.isMirrored() != value) {
-            boolean oldValue = this.isMirrored();
-            rotation.setMirror(value);
-            notifyListeners(Rotation.Field.MIRROR, oldValue, this.isMirrored());
-        }
-    }
-
-    @Override
-    public boolean isMirrored() {
-        return rotation.isMirror();
-    }
+//    @Override
+//    public void setMirror(boolean value) {
+//        if (this.isMirrored() != value) {
+//            boolean oldValue = this.isMirrored();
+//            rotation.setMirror(value);
+//            notifyListeners(Rotation.Field.MIRROR, oldValue, this.isMirrored());
+//        }
+//    }
+//
+//    @Override
+//    public boolean isMirrored() {
+//        return rotation.isMirror();
+//    }
 
 //    @Override
 //    public boolean isMirrorAllowed() {
@@ -444,16 +444,16 @@ public class ElementText extends Element
             setY(snapshot.getY());
             setAlign(snapshot.getAlign());
             rotation.setAllowMirror(snapshot.rotation.isMirrorAllowed());
-            setAllowSpin(snapshot.isSpinAllowed());
+            rotation.setAllowSpin(snapshot.rotation.isSpinAllowed());
             rotation.setConstrained(snapshot.rotation.isConstrained());
             setDistance(snapshot.getDistance());
             setFont(snapshot.getFont());
             setLayerNum(snapshot.getLayerNum());
-            setMirror(snapshot.isMirrored());
+            rotation.setMirror(snapshot.rotation.isMirror());
             setRatio(snapshot.getRatio());
             setRot(snapshot.getRot());
             setSize(snapshot.getSize());
-            setSpin(snapshot.isSpin());
+            rotation.setSpin(snapshot.rotation.isSpin());
             setValue(snapshot.getValue());
 
             snapshot = null;
@@ -474,16 +474,16 @@ public class ElementText extends Element
         copy.setY(getY());
         copy.setAlign(align);
         copy.rotation.setAllowMirror(rotation.isMirrorAllowed());
-        copy.setAllowSpin(isSpinAllowed());
+        copy.rotation.setAllowSpin(rotation.isSpinAllowed());
         copy.rotation.setConstrained(rotation.isConstrained());
         copy.setDistance(distance);
         copy.setFont(font);
         copy.setLayerNum(getLayerNum());
-        copy.setMirror(isMirrored());
+        copy.rotation.setMirror(rotation.isMirror());
         copy.setRatio(getRatio());
         copy.setRot(getRot());
         copy.setSize(getSize());
-        copy.setSpin(isSpin());
+        copy.rotation.setSpin(rotation.isSpin());
         copy.setValue(getValue());
 
         // Copy GroupRefs

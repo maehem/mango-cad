@@ -350,39 +350,39 @@ public class ElementRectangle extends Element implements LayerNumberProperty, Se
         return grouprefs;
     }
 
-    @Override
-    public boolean isSpun() {
-        return false;
-    }
-
-    @Override
-    public void setSpin(boolean value) {
-    }
-
-    @Override
-    public boolean isSpin() {
-        return false;
-    }
-
-    @Override
-    public boolean isSpinAllowed() {
-        return false;
-    }
-
-    @Override
-    public void setAllowSpin(boolean value) {
-
-    }
-
-    @Override
-    public void setMirror(boolean value) {
-        rotationProperty.setMirror(value);
-    }
-
-    @Override
-    public boolean isMirrored() {
-        return rotationProperty.isMirror();
-    }
+//    @Override
+//    public boolean isSpun() {
+//        return false;
+//    }
+//
+//    @Override
+//    public void setSpin(boolean value) {
+//    }
+//
+//    @Override
+//    public boolean isSpin() {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isSpinAllowed() {
+//        return false;
+//    }
+//
+//    @Override
+//    public void setAllowSpin(boolean value) {
+//
+//    }
+//
+//    @Override
+//    public void setMirror(boolean value) {
+//        rotationProperty.setMirror(value);
+//    }
+//
+//    @Override
+//    public boolean isMirrored() {
+//        return rotationProperty.isMirror();
+//    }
 
 //    @Override
 //    public boolean isMirrorAllowed() {

@@ -541,7 +541,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             if (elementsCanRotate(movingElements)) {
                                 for (Element e : movingElements) {
                                     if (e instanceof RotationProperty er) {
-                                        er.setMirror(!er.isMirrored());
+                                        er.getRotationProperty().setMirror(!er.getRotationProperty().isMirror());
                                     }
                                 }                                //Rotation rotation = er.getRotation();
                                 LOGGER.log(Level.SEVERE, "Mirror/180 Operation.");
@@ -912,7 +912,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     //LOGGER.log(Level.SEVERE, "    pickRot: r:{0}  mir:{1}", new Object[]{pickRot.getRot(), pickRot.isMirrored() ? "Y" : "N"});
                     //LOGGER.log(Level.SEVERE, "    New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
                     pickRot.setRot(pickRot.getRot() + tmpRot.getRot());
-                    pickRot.setMirror(tmpRot.isMirrored());
+                    pickRot.getRotationProperty().setMirror(tmpRot.getRotationProperty().isMirror());
                 }
             }
 
@@ -1016,9 +1016,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         if (pick instanceof RotationProperty rotE) {
             if (copyRotFrom instanceof RotationProperty er) {
                 if (rotE.getRotationProperty().isMirrorAllowed()) {
-                    rotE.setMirror(er.isMirrored());
+                    rotE.getRotationProperty().setMirror(er.getRotationProperty().isMirror());
                 } else {
-                    double angle = er.isMirrored() ? 180.0 : 0.0;
+                    double angle = er.getRotationProperty().isMirror() ? 180.0 : 0.0;
                     rotE.setRot(rotE.getRot() + angle);
                 }
             } else {
@@ -1522,7 +1522,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             case EditorTool.MIRROR -> {
                 LOGGER.log(Level.SEVERE, "    Handle 'Mirror' EditorTool...");
                 ElementText e = new ElementText();
-                e.setMirror(true);
+                e.rotation.setMirror(true);
                 lastElementAdded = e; // Temp item for basis of rotations.
                 this.toolMode.setToolElement(lastElementAdded);
                 parentEditor.setToolMode(toolMode);

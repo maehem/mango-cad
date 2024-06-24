@@ -74,7 +74,7 @@ public class MirrorToggleWidget extends InspectorWidget {
         mirFlippedToggle.setUserData(Boolean.TRUE);
         //mirFlippedToggle.setSelected(false);
 
-        updateToggleState(rotation.isMirrored());
+        updateToggleState(rotation.getRotationProperty().isMirror());
 
         group.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) -> {
             if (newToggle == null) {
@@ -82,7 +82,7 @@ public class MirrorToggleWidget extends InspectorWidget {
                 group.selectToggle(mirNormalToggle);
             } else {
                 LOGGER.log(Level.SEVERE, "Change toggle to:{0}", newToggle.getUserData().toString());
-                rotation.setMirror((boolean) newToggle.getUserData());
+                rotation.getRotationProperty().setMirror((boolean) newToggle.getUserData());
                 //updateToggleState(rotation.isMirrored());
             }
         });
