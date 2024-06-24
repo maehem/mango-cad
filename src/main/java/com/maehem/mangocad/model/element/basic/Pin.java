@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.Rotation;
@@ -435,5 +436,10 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         };
 
         return mf.format(args);
+    }
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

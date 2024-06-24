@@ -18,6 +18,7 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
@@ -174,6 +175,11 @@ public class Vertex extends Element implements
         };
 
         return mf.format(args);
+    }
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

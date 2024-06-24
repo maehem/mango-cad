@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.enums.GridUnit;
 import com.maehem.mangocad.model.element.misc.DesignRules;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
 import com.maehem.mangocad.model.util.DrcDefs;
@@ -33,6 +34,11 @@ import java.util.logging.Logger;
 public class Hole extends Element implements LocationXYProperty, GrouprefsProperty {
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "hole";
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     public enum Field implements ElementField {
         DRILL("drill", Double.class);

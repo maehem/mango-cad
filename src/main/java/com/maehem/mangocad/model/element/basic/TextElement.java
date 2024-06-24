@@ -21,6 +21,7 @@ import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.IntValue;
@@ -67,6 +68,11 @@ public class TextElement extends Element
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
 
     public static final String ELEMENT_NAME = "text";
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     public enum Field implements ElementField {
         //X("x", Double.class), Y("y", Double.class),

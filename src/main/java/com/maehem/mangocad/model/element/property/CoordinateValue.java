@@ -16,13 +16,16 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.element.ElementField;
+import com.maehem.mangocad.model.element.ElementValueListener;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface LocationXYProperty {
+public class CoordinateValue extends ElementValue implements ElementValueListener {
 
-    public enum Field {
+    public enum Field implements ElementField {
         X("x", Double.class),
         Y("y", Double.class);
 
@@ -34,24 +37,53 @@ public interface LocationXYProperty {
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
-
     }
 
-    public CoordinateValue getCoordinateProperty();
+    public final RealValue x = new RealValue();
+    public final RealValue y = new RealValue();
 
-    public double getX();
+    public CoordinateValue() {
+        x.addListener(this);
+        y.addListener(this);
+    }
 
-    public double getY();
 
-    public void setX(double x);
+    public double getX() {
+        return x.get();
+    }
 
-    public void setY(double y);
+    public void setX(double val) {
+        x.set(val);
+    }
+
+    public double getY() {
+        return y.get();
+    }
+
+    public void setY(double val) {
+        y.set(val);
+    }
+
+    public RealValue getXProperty() {
+        return x;
+    }
+
+    public RealValue getYProperty() {
+        return y;
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        notifyValueChange();
+    }
 
 }
