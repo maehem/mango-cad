@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
@@ -64,17 +64,17 @@ public class PolygonFillWidget extends ToolModeWidget {
     private final Label spacingLabel = new Label(MSG.getString("POLYGON_SPACING") + ":");
     private final ComboBox<Double> spacingComboBox = new ComboBox<>(options);
     private final Element element;
-    private final ElementPolygon polygonElement;
+    private final PolygonElement polygonElement;
 
     public PolygonFillWidget(Element e) {
-        if (e instanceof ElementPolygon p) {
+        if (e instanceof PolygonElement p) {
             this.element = e;
             this.polygonElement = p;
             this.element.addListener(this);
         } else {
             this.element = null;
             this.polygonElement = null;
-            LOGGER.log(Level.SEVERE, "PolygonFillToggleWidget: element is not of type ElementPolygon!");
+            LOGGER.log(Level.SEVERE, "PolygonFillToggleWidget: element is not of type PolygonElement!");
         }
 
         setSpacing(0.0);
@@ -175,8 +175,8 @@ public class PolygonFillWidget extends ToolModeWidget {
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        if (!field.equals(ElementPolygon.Field.POUR)
-                && !field.equals(ElementPolygon.Field.SPACING)) {
+        if (!field.equals(PolygonElement.Field.POUR)
+                && !field.equals(PolygonElement.Field.SPACING)) {
             return;
         }
         if (newVal == null) {
@@ -187,7 +187,7 @@ public class PolygonFillWidget extends ToolModeWidget {
 
         if (newVal instanceof PolygonPour) {
             updateToggleState();
-        } else if (field.equals(ElementPolygon.Field.SPACING)) {
+        } else if (field.equals(PolygonElement.Field.SPACING)) {
             updateComboState((double) newVal);
         } else {
             LOGGER.log(Level.SEVERE, "Provded newVal was not a PolygonFill or Spacing!");

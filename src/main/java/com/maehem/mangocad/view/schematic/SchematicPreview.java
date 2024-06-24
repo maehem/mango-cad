@@ -89,7 +89,7 @@ public class SchematicPreview extends Group {
                 c = Color.GREY;
             }
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
-            if (element instanceof ElementPolygon e) {
+            if (element instanceof PolygonElement e) {
                 getChildren().add(LibraryElementNode.createPolygonCurved(e, c, false));
             } else if (element instanceof Wire e) {
                 getChildren().add(LibraryElementNode.createWireNode(e, c, false));

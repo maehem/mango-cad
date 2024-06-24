@@ -23,7 +23,6 @@ import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.ContactRef;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.ElementElement;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.FrameElement;
@@ -35,6 +34,7 @@ import com.maehem.mangocad.model.element.basic.PadSMD;
 import com.maehem.mangocad.model.element.basic.PadTHD;
 import com.maehem.mangocad.model.element.basic.Part;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Probe;
 import com.maehem.mangocad.model.element.basic.Spline;
 import com.maehem.mangocad.model.element.basic.Vertex;
@@ -359,7 +359,7 @@ public class LibraryElementNode {
      * @return @Shape of polygon
      */
     @Deprecated
-    public static Node createPolygon(ElementPolygon poly, Color color, boolean mirror) {
+    public static Node createPolygon(PolygonElement poly, Color color, boolean mirror) {
         List<Vertex> vertices = poly.getVertices();
         double verts[] = new double[vertices.size() * 2];
 
@@ -376,7 +376,7 @@ public class LibraryElementNode {
         return p;
     }
 
-    public static Shape createPolygonCurved(ElementPolygon poly, Color color, boolean mirror) {
+    public static Shape createPolygonCurved(PolygonElement poly, Color color, boolean mirror) {
         Shape shape;
         List<Vertex> vertices = poly.getVertices();
         if (vertices.isEmpty()) {
@@ -3140,7 +3140,7 @@ public class LibraryElementNode {
             }
 
             // (polygon | wire | text | dimension | pin | circle | rectangle | frame)
-            if (e instanceof ElementPolygon ep) {
+            if (e instanceof PolygonElement ep) {
                 elementGroup.getChildren().add(LibraryElementNode.createPolygonCurved(ep, c, false));
             } else if (e instanceof Wire w) {
                 elementGroup.getChildren().add(LibraryElementNode.createWireNode(w, c, false));
@@ -3278,7 +3278,7 @@ public class LibraryElementNode {
                     p.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
                 } else if (e instanceof ElementRectangle elementRectangle) {
                     p.getChildren().add(LibraryElementNode.createRectangle(elementRectangle, c, false));
-                } else if (e instanceof ElementPolygon elementPolygon) {
+                } else if (e instanceof PolygonElement elementPolygon) {
                     p.getChildren().add(LibraryElementNode.createPolygon(elementPolygon, c, false));
                 } else if (e instanceof CircleElement elementCircle) {
                     p.getChildren().add(LibraryElementNode.createCircleNode(elementCircle, c, false));
@@ -3477,7 +3477,7 @@ public class LibraryElementNode {
 //                    s.getTransforms().add(new Rotate(-el.getRot()));
 //                    list.add(s);
 //                }
-//            } else if (e instanceof ElementPolygon elementPolygon) {
+//            } else if (e instanceof PolygonElement elementPolygon) {
 //                if (elementPolygon.getLayerNum() == layer) {
 //                    Shape s = LibraryElementNode.createPolygonCurved(elementPolygon, c, false);
 //                    if (isolation > 0.0) {
@@ -3629,7 +3629,7 @@ public class LibraryElementNode {
                     s.getTransforms().add(new Rotate(-el.getRot()));
                     list.add(s);
                 }
-            } else if (e instanceof ElementPolygon elementPolygon) {
+            } else if (e instanceof PolygonElement elementPolygon) {
                 if (elementPolygon.getLayerNum() == layer) {
                     Shape s = LibraryElementNode.createPolygonCurved(elementPolygon, c, false);
                     if (isolation > 0.0) {

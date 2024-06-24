@@ -128,7 +128,7 @@ public class BoardPreview extends Group {
             }
 
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
-            if (element instanceof ElementPolygon e) {
+            if (element instanceof PolygonElement e) {
                 chld.add(LibraryElementNode.createPolygonCurved(e, c, false));
             } else if (element instanceof Wire e) {
                 chld.add(LibraryElementNode.createWireNode(e, c, false));
@@ -221,7 +221,7 @@ public class BoardPreview extends Group {
                             padColor, tm, bm,
                             board.getDesignRules()
                     ));
-                } else if (el instanceof ElementPolygon ep) {
+                } else if (el instanceof PolygonElement ep) {
                     int colorIndex = layers.get(ep.getLayerNum()).getColorIndex();
                     Color c = ColorUtils.getColor(palette.getHex(colorIndex));
                     chld.add(LibraryElementNode.createPolygonCurved(ep, c, false));
@@ -356,7 +356,7 @@ public class BoardPreview extends Group {
 //                continue; // Next element.
 //            }
             // polygon | wire | text | dimension | circle | spline | rectangle | frame | hole
-            if (element instanceof ElementPolygon e) {
+            if (element instanceof PolygonElement e) {
                 switch (e.getLayerNum()) {
                     case 21 /*, 22 */, 25 /*, 26 */ -> {
                         Node n = LibraryElementNode.createPolygonCurved(e, silkScreenColor, false);

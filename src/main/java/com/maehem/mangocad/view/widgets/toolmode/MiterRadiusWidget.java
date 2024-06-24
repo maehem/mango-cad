@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets.toolmode;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -70,7 +70,7 @@ public class MiterRadiusWidget extends ToolModeWidget {
     @SuppressWarnings("unchecked")
     private final ComboBox comboBox = new ComboBox(options);
     private final Wire wire;
-    private final ElementPolygon poly;
+    private final PolygonElement poly;
 
     @SuppressWarnings({"unchecked"})
     public MiterRadiusWidget(Element e) {
@@ -78,14 +78,14 @@ public class MiterRadiusWidget extends ToolModeWidget {
             this.wire = p;
             this.wire.addListener(this);
             this.poly = null;
-        } else if (e instanceof ElementPolygon p) {
+        } else if (e instanceof PolygonElement p) {
             this.poly = p;
             this.poly.addListener(this);
             this.wire = null;
         } else {
             this.wire = null;
             this.poly = null;
-            LOGGER.log(Level.SEVERE, "MiterRadiusWidget: element is not of type Wire or ElementPolygon! type:{0}", e.getElementName());
+            LOGGER.log(Level.SEVERE, "MiterRadiusWidget: element is not of type Wire or PolygonElement! type:{0}", e.getElementName());
         }
 
         Image imgBevel = ViewUtils.getImage(ICON_FILLET_PATH);
@@ -162,7 +162,7 @@ public class MiterRadiusWidget extends ToolModeWidget {
         // Update widgets.
 
         // TODO: Needs work!
-//        if (!field.equals(WireField.CURVE) && !field.equals(ElementPolygonField.VERTEX)) {
+//        if (!field.equals(WireField.CURVE) && !field.equals(PolygonElementField.VERTEX)) {
 //            return;
 //        }
 //        if (newVal == null) {

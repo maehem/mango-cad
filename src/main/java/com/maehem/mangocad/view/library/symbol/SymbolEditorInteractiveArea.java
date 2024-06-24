@@ -20,10 +20,10 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
@@ -296,9 +296,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     }
                                 }
                             }
-                            case ElementPolygon poly -> {
+                            case PolygonElement poly -> {
                                 Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof ElementPolygon snapPoly) {
+                                if (snapshot instanceof PolygonElement snapPoly) {
                                     if (ephemeralNode != null) {
                                         // Poly with new Vertex
                                         Vertex v0 = poly.getVertices().getFirst();
@@ -312,7 +312,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         LOGGER.log(Level.SEVERE, "Polygon: Move selected vertices. Not implemented yet!");
                                     }
                                 } else {
-                                    LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not ElementPolygon: " + snapshot.getElementName());
+                                    LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not PolygonElement: " + snapshot.getElementName());
                                 }
                             }
                             case LocationXYProperty exy -> {
@@ -485,7 +485,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     }
                                 } else if (toolMode.equals(EditorTool.POLYGON)) { // Finish adding vertices to new Polygon
                                     if (ephemeralNode instanceof PolygonNode wn) {
-                                        ElementPolygon poly = (ElementPolygon) wn.getElement();
+                                        PolygonElement poly = (PolygonElement) wn.getElement();
                                         List<Vertex> verts = poly.getVertices();
                                         Vertex last = verts.getLast();
                                         if (verts.size() > 3) {
@@ -502,7 +502,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                                 nodes.add(wn);
                                                 wn.setClosePath(true); // Close it up.
                                                 //wn.rebuildPath();
-                                                ElementPolygon lastPolygon = new ElementPolygon();
+                                                PolygonElement lastPolygon = new PolygonElement();
                                                 lastPolygon.setWidth(poly.getWidth());
                                                 lastElementAdded = lastPolygon;
                                                 ephemeralNode = null;
@@ -617,7 +617,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 //LOGGER.log(Level.SEVERE, "Selected Corner: {0}", er.getSelectedCorner());
                             }
                         }
-                        case ElementPolygon ep -> {
+                        case PolygonElement ep -> {
                             // Which vertex was selected?
                             // ep.setSelectedVertex.
                             ep.selectVerticesIn(me.getX(), -me.getY(), PICK_SIZE);
@@ -964,10 +964,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     private void initiateNewPolygon(MouseEvent me, double x, double y) {
         LOGGER.log(Level.SEVERE, "Initiate new Polygon.");
-        ElementPolygon poly = new ElementPolygon();
+        PolygonElement poly = new PolygonElement();
         //poly.setSelected(true);
         poly.setLayerNum(94);
-        if (lastElementAdded != null && lastElementAdded instanceof ElementPolygon lastPoly) {
+        if (lastElementAdded != null && lastElementAdded instanceof PolygonElement lastPoly) {
             poly.setWidth(lastPoly.getWidth());
             LOGGER.log(Level.SEVERE, "I see a last added element.");
         }
@@ -988,7 +988,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         node.rebuildPath();
     }
 
-    private void initiateNewPolygonSegment(MouseEvent me, double x, double y, ElementPolygon poly) {
+    private void initiateNewPolygonSegment(MouseEvent me, double x, double y, PolygonElement poly) {
         LOGGER.log(Level.SEVERE, "Initiate new Vertex for Polygon at: {0},{1}", new Object[]{x, y});
         // Start new line at mouse.
         Vertex vertex = new Vertex();
@@ -1233,7 +1233,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     nodes.add(rectNode);
                     rectNode.addTo(workArea);
                 }
-                case ElementPolygon p -> {
+                case PolygonElement p -> {
                     PolygonNode polyNode = new PolygonNode(p,
                             parentEditor.getDrawing().getLayers(),
                             parentEditor.getDrawing().getPalette(),
@@ -1473,8 +1473,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 LOGGER.log(Level.SEVERE, "    Editor Tool Polygon");
                 // Create a placeholder Wire to hold Widget settings that
                 // will be used once the user clicks in the workspace.
-                if (lastElementAdded == null || !(lastElementAdded instanceof ElementPolygon)) {
-                    ElementPolygon tempPoly = new ElementPolygon();
+                if (lastElementAdded == null || !(lastElementAdded instanceof PolygonElement)) {
+                    PolygonElement tempPoly = new PolygonElement();
                     lastElementAdded = tempPoly;
                     LOGGER.log(Level.SEVERE, "Add temp polygon. It is the lastAdded.");
                 }

@@ -19,7 +19,7 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
@@ -52,13 +52,13 @@ import javafx.scene.shape.StrokeType;
  */
 public class PolygonNode extends ViewNode implements ElementListener {
 
-    private final ElementPolygon polygonElement;
+    private final PolygonElement polygonElement;
     private final Layers layers;
     private final ColorPalette palette;
     private final Path path = new Path();
     private boolean closePath = false;
 
-    public PolygonNode(ElementPolygon er, Layers layers, ColorPalette palette, PickListener pickListener) {
+    public PolygonNode(PolygonElement er, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(er, pickListener);
 
         this.polygonElement = er;
@@ -212,7 +212,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
             case LayerNumberProperty.Field.LAYER -> {
                 updateLayer();
             }
-            case ElementPolygon.Field.VERTEX -> {
+            case PolygonElement.Field.VERTEX -> {
                 LOGGER.log(Level.SEVERE, "Polygon Vertex has changed.");
                 if ((oldVal == null && newVal != null) || (oldVal != null && newVal == null)) {
                     LOGGER.log(Level.SEVERE, "    Something was added or removed. Rebuild path.");
@@ -227,15 +227,15 @@ public class PolygonNode extends ViewNode implements ElementListener {
             default -> {
             }
         }
-//        if (field instanceof ElementPolygonField erf) {
+//        if (field instanceof PolygonElementField erf) {
 //            switch (erf) {
 //                case WidthValue.Field.WIDTH -> {
 //                    updateWidth();
 //                }
-//                case ElementPolygon.Field.LAYER -> {
+//                case PolygonElement.Field.LAYER -> {
 //                    updateLayer();
 //                }
-//                case ElementPolygon.Field.VERTEX -> {
+//                case PolygonElement.Field.VERTEX -> {
 //                    LOGGER.log(Level.SEVERE, "Polygon Vertex has changed.");
 //                    if ((oldVal == null && newVal != null) || (oldVal != null && newVal == null)) {
 //                        LOGGER.log(Level.SEVERE, "    Something was added or removed. Rebuild path.");

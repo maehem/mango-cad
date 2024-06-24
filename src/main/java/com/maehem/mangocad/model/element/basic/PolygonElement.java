@@ -60,7 +60,7 @@ import java.util.logging.Logger;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class ElementPolygon extends Element implements
+public class PolygonElement extends Element implements
         LayerNumberProperty, ElementListener, SelectableProperty,
         WidthProperty, LockProperty,
         GrouprefsProperty {
@@ -113,7 +113,7 @@ public class ElementPolygon extends Element implements
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     // Ephemaral data
-    private ElementPolygon snapshot = null;
+    private PolygonElement snapshot = null;
     private boolean selected = false;
 
     @Override
@@ -165,7 +165,7 @@ public class ElementPolygon extends Element implements
         if (this.pour != pour) {
             PolygonPour oldVal = this.pour;
             this.pour = pour;
-            notifyListeners(ElementPolygon.Field.POUR, oldVal, this.pour);
+            notifyListeners(PolygonElement.Field.POUR, oldVal, this.pour);
         }
     }
 
@@ -184,7 +184,7 @@ public class ElementPolygon extends Element implements
         if (this.spacing != val) {
             double oldVal = this.spacing;
             this.spacing = val;
-            notifyListeners(ElementPolygon.Field.SPACING, oldVal, this.spacing);
+            notifyListeners(PolygonElement.Field.SPACING, oldVal, this.spacing);
         }
     }
 
@@ -202,7 +202,7 @@ public class ElementPolygon extends Element implements
         if (this.isolate != isolate) {
             double oldVal = this.isolate;
             this.isolate = isolate;
-            notifyListeners(ElementPolygon.Field.ISOLATE, oldVal, this.isolate);
+            notifyListeners(PolygonElement.Field.ISOLATE, oldVal, this.isolate);
         }
     }
 
@@ -220,7 +220,7 @@ public class ElementPolygon extends Element implements
         if (this.orphans != orphans) {
             boolean oldVal = this.orphans;
             this.orphans = orphans;
-            notifyListeners(ElementPolygon.Field.ORPHANS, oldVal, this.orphans);
+            notifyListeners(PolygonElement.Field.ORPHANS, oldVal, this.orphans);
         }
     }
 
@@ -238,7 +238,7 @@ public class ElementPolygon extends Element implements
         if (this.thermals != thermals) {
             boolean oldVal = this.thermals;
             this.thermals = thermals;
-            notifyListeners(ElementPolygon.Field.THERMAL, oldVal, this.thermals);
+            notifyListeners(PolygonElement.Field.THERMAL, oldVal, this.thermals);
         }
     }
 
@@ -263,7 +263,7 @@ public class ElementPolygon extends Element implements
             } else {
                 this.rank = rank;
             }
-            notifyListeners(ElementPolygon.Field.RANK, oldVal, this.rank);
+            notifyListeners(PolygonElement.Field.RANK, oldVal, this.rank);
         }
     }
 
@@ -310,7 +310,7 @@ public class ElementPolygon extends Element implements
 //        }
 //        LOGGER.log(Level.SEVERE, sb.toString());
         vertNew.addListener(this);
-        notifyListeners(ElementPolygon.Field.VERTEX, null, vertNew);
+        notifyListeners(PolygonElement.Field.VERTEX, null, vertNew);
     }
 
     /**
@@ -325,7 +325,7 @@ public class ElementPolygon extends Element implements
         getVertices().add(verts.indexOf(before) + 1, vertNew);
 
         vertNew.addListener(this);
-        notifyListeners(ElementPolygon.Field.VERTEX, null, vertNew);
+        notifyListeners(PolygonElement.Field.VERTEX, null, vertNew);
     }
 
     public void removeVertex(Vertex v) {
@@ -333,7 +333,7 @@ public class ElementPolygon extends Element implements
         if (getVertices().contains(v)) {
             getVertices().remove(v);
             v.removeListener(this);
-            notifyListeners(ElementPolygon.Field.VERTEX, v, null);
+            notifyListeners(PolygonElement.Field.VERTEX, v, null);
         }
     }
 
@@ -380,8 +380,8 @@ public class ElementPolygon extends Element implements
         return found.toArray(Vertex[]::new);
     }
 
-    public ElementPolygon copy() {
-        ElementPolygon copy = new ElementPolygon();
+    public PolygonElement copy() {
+        PolygonElement copy = new PolygonElement();
 
         copy.setWidth(getWidth());
         copy.setLayerNum(getLayerNum());

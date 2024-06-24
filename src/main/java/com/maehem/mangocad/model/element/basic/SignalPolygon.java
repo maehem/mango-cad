@@ -23,7 +23,7 @@ package com.maehem.mangocad.model.element.basic;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class SignalPolygon extends ElementPolygon {
+public class SignalPolygon extends PolygonElement {
 
     //public static final String ELEMENT_NAME = "polygon";
 

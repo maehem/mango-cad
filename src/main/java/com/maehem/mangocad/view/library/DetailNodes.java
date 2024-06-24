@@ -18,12 +18,12 @@ package com.maehem.mangocad.view.library;
 
 import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.basic.CircleElement;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
 import com.maehem.mangocad.model.element.basic.ElementRectangle;
 import com.maehem.mangocad.model.element.basic.ElementText;
 import com.maehem.mangocad.model.element.basic.Gate;
 import com.maehem.mangocad.model.element.basic.Package3dInstance;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.drawing.Library;
@@ -189,7 +189,7 @@ public class DetailNodes {
                 //LOGGER.log(Level.SEVERE, "Gate: {0}  text: {1}", new Object[]{name, elementText.getValue()});
                 g.getChildren().addAll(LibraryElementNode.createText2(elementText, gateName, c, null, true));
                 //g.getChildren().add(LibraryElementNode.crosshairs(elementText.getX(), -elementText.getY(), 0.5, 0.04, Color.DARKGREY));
-            } else if (e instanceof ElementPolygon elementPolygon) {
+            } else if (e instanceof PolygonElement elementPolygon) {
                 g.getChildren().add(LibraryElementNode.createPolygonCurved(elementPolygon, c, false));
             } else if (e instanceof Pin pin) {
                 g.getChildren().add(LibraryElementNode.createPinNode(pin, c, null, false));

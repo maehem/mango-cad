@@ -17,7 +17,7 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.element.basic.CircleElement;
-import com.maehem.mangocad.model.element.basic.ElementPolygon;
+import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.view.EditorTool;
 import static com.maehem.mangocad.view.EditorTool.ARC;
@@ -111,7 +111,7 @@ public class ToolModeWidgetBox extends HBox {
                 getChildren().addAll(mrW);
             }
             case POLYGON -> { // Polygon options
-                if (mode.getToolElement() instanceof ElementPolygon poly) {
+                if (mode.getToolElement() instanceof PolygonElement poly) {
                     LineBendStyleWidget lbsW = new LineBendStyleWidget(mode.getToolElement());
                     LineWidthWidget lwW = new LineWidthWidget(poly, poly.widthProperty);
                     // Hatch Fill style with spacing
