@@ -63,8 +63,9 @@ public class Hole extends Element implements LocationXYProperty, GrouprefsProper
 
     }
 
-    private double x;
-    private double y;
+    public final CoordinateValue coordinate = new CoordinateValue();
+    //private double x;
+    //private double y;
     private double drill;
     private final ArrayList<String> groupRefs = new ArrayList<>();
 
@@ -77,33 +78,29 @@ public class Hole extends Element implements LocationXYProperty, GrouprefsProper
     /**
      * @return the x
      */
-    @Override
     public double getX() {
-        return x;
+        return coordinate.x.get();
     }
 
     /**
      * @param x the x to set
      */
-    @Override
-    public void setX(double x) {
-        this.x = x;
+    public void setX(double val) {
+        coordinate.x.set(val);
     }
 
     /**
      * @return the y
      */
-    @Override
     public double getY() {
-        return y;
+        return coordinate.y.get();
     }
 
     /**
-     * @param y the y to set
+     * @param val the y to set
      */
-    @Override
-    public void setY(double y) {
-        this.y = y;
+    public void setY(double val) {
+        coordinate.y.set(val);
     }
 
     /**

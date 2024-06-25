@@ -69,11 +69,6 @@ public class TextElement extends Element
 
     public static final String ELEMENT_NAME = "text";
 
-    @Override
-    public CoordinateValue getCoordinateProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     public enum Field implements ElementField {
         //X("x", Double.class), Y("y", Double.class),
         //SELECTED("selected", Boolean.class),
@@ -127,8 +122,9 @@ public class TextElement extends Element
             );
 
     private int layer;
-    public final RealValue xProperty = new RealValue(0);
-    public final RealValue yProperty = new RealValue(0);
+    //public final RealValue xProperty = new RealValue(0);
+    //public final RealValue yProperty = new RealValue(0);
+    public final CoordinateValue coordinate = new CoordinateValue();
     public final LockValue lockProperty = new LockValue();
     public final RealValue sizeProperty = new RealValue(1.778, 0.000001, 100000); // 0.7 inch
     private boolean selected = false;
@@ -149,14 +145,19 @@ public class TextElement extends Element
         rotation.setAllowMirror(true);
         rotation.setAllowSpin(true);
 
-        xProperty.addListener(this);
-        yProperty.addListener(this);
+        coordinate.addListener(this);
+        rotation.addListener(this);
         sizeProperty.addListener(this);
     }
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        return coordinate;
     }
 
     @Override
@@ -167,41 +168,37 @@ public class TextElement extends Element
     /**
      * @return the x
      */
-    @Override
     public double getX() {
-        return xProperty.get();
+        return coordinate.x.get();
     }
 
     /**
-     * @param x the x to set
+     * @param val the x to set
      */
-    @Override
-    public void setX(double x) {
-        if (getX() != x) {
-            double oldValue = getX();
-            xProperty.set(x);
-            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
-        }
+    public void setX(double val) {
+//        if (getX() != x) {
+//            double oldValue = getX();
+        coordinate.x.set(val);
+//            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
+//        }
     }
 
     /**
      * @return the y
      */
-    @Override
     public double getY() {
-        return yProperty.get();
+        return coordinate.y.get();
     }
 
     /**
-     * @param y the y to set
+     * @param val the y to set
      */
-    @Override
-    public void setY(double y) {
-        if (getY() != y) {
-            double oldValue = getY();
-            yProperty.set(y);
-            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
-        }
+    public void setY(double val) {
+//        if (getY() != y) {
+//            double oldValue = getY();
+        coordinate.y.set(val);
+//            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
+//        }
     }
 
     /**
@@ -363,81 +360,6 @@ public class TextElement extends Element
         return grouprefs;
     }
 
-//    @Override
-//    public boolean isSpun() {
-//        return rotation.isSpun();
-//    }
-//
-//    @Override
-//    public void setSpin(boolean spin) {
-//        if (this.isSpin() != spin) {
-//            boolean oldValue = isSpin();
-//            rotation.setSpin(spin);
-//            notifyListeners(Rotation.Field.SPIN, oldValue, this.isSpin());
-//        }
-//    }
-//
-//    @Override
-//    public boolean isSpin() {
-//        return rotation.isSpin();
-//    }
-//
-//    @Override
-//    public void setAllowSpin(boolean allowSpin) {
-//        if (this.isSpinAllowed() != allowSpin) {
-//            boolean oldValue = isSpinAllowed();
-//            rotation.setAllowSpin(allowSpin);
-//            notifyListeners(Rotation.Field.ALLOW_SPIN, oldValue, this.isSpinAllowed());
-//        }
-//    }
-//
-//    @Override
-//    public boolean isSpinAllowed() {
-//        return rotation.isSpinAllowed();
-//    }
-
-//    @Override
-//    public boolean isConstrained() {
-//        return rotation.isConstrained();
-//    }
-//
-//    @Override
-//    public void setConstrained(boolean value) {
-//        if (this.isConstrained() != value) {
-//            boolean oldValue = this.isConstrained();
-//            rotation.setConstrained(value);
-//            notifyListeners(Rotation.Field.CONSTRAINED, oldValue, this.isConstrained());
-//        }
-//    }
-
-//    @Override
-//    public void setMirror(boolean value) {
-//        if (this.isMirrored() != value) {
-//            boolean oldValue = this.isMirrored();
-//            rotation.setMirror(value);
-//            notifyListeners(Rotation.Field.MIRROR, oldValue, this.isMirrored());
-//        }
-//    }
-//
-//    @Override
-//    public boolean isMirrored() {
-//        return rotation.isMirror();
-//    }
-
-//    @Override
-//    public boolean isMirrorAllowed() {
-//        return rotation.isMirrorAllowed();
-//    }
-//
-//    @Override
-//    public void setAllowMirror(boolean value) {
-//        if (this.isMirrorAllowed() != value) {
-//            boolean oldValue = this.isMirrorAllowed();
-//            rotation.setAllowMirror(value);
-//            notifyListeners(Rotation.Field.ALLOW_MIRROR, oldValue, this.isMirrorAllowed());
-//        }
-//    }
-
     @Override
     public void createSnapshot() {
         snapshot = copy();
@@ -531,12 +453,14 @@ public class TextElement extends Element
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(xProperty)) {
-            notifyListeners(LocationXYProperty.Field.X, xProperty.getOldValue(), xProperty.get());
-        } else if (newVal.equals(yProperty)) {
-            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        if (newVal.equals(coordinate.x)) {
+            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
+        } else if (newVal.equals(coordinate.y)) {
+            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(sizeProperty)) {
             notifyListeners(Field.SIZE, sizeProperty.getOldValue(), sizeProperty.get());
+        } else if (newVal.equals(rotation)) {
+            notifyListeners(Rotation.Field.VALUE, rotation.getOldValue(), rotation.get());
         }
 
     }
@@ -558,8 +482,8 @@ public class TextElement extends Element
         String rotStrValue = rotation.xmlValue();
 
         Object[] args = {
-            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
-            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            " x=\"" + coordinate.x.getPrecise(6) + "\"", // 0
+            " y=\"" + coordinate.y.getPrecise(6) + "\"", // 1
             lockProperty.xmlValue(), // 2
             " size=\"" + sizeProperty.getPrecise(6) + "\"", // 3
             " layer=\"" + getLayerNum() + "\"", // 4
@@ -573,34 +497,5 @@ public class TextElement extends Element
         };
 
         return mf.format(args);
-
-//        StringBuilder sb = new StringBuilder("<text");
-//        sb.append(" x=\"").append(xProperty.getPrecise(6)).append("\"").
-//                append(" y=\"").append(yProperty.getPrecise(6)).append("\"");
-//        if (isLocked()) {
-//            sb.append(" locked=\"").append("yes").append("\"");
-//        }
-//        sb.append(" size=\"").append(sizeProperty.getPrecise(6)).
-//                append(" layer=\"").append(getLayerNum());
-//        if (getRatio() != 15) {
-//            sb.append(" ratio=\"").append(getRatio());
-//        }
-//        if (getDistance() != 50) {
-//            sb.append(" distance=\"").append(getDistance());
-//        }
-//
-//        if (!getAlign().equals(TextAlign.BOTTOM_LEFT)) {
-//            sb.append(" align=\"").append(getAlign().code()).append("\"");
-//        }
-//        if (!getFont().equals(TextFont.VECTOR)) {
-//            sb.append(" font=\"").append(getFont().code()).append("\"");
-//        }
-//        if (getRot() != 0.0) {
-//            sb.append(" rot=\"").append((int) getRot()).append("\"");
-//        }
-//        // TODO: GrouRefs
-//
-//        sb.append("/>");
-//        return sb.toString();
     }
 }

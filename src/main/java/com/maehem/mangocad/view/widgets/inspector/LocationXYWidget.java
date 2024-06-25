@@ -17,8 +17,9 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.RealValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.MissingResourceException;
@@ -43,12 +44,12 @@ public class LocationXYWidget extends InspectorWidget implements ElementValueLis
     private final TextField yField = new TextField();
 
     public LocationXYWidget(
-            RealValue xValue, RealValue yValue,
+            CoordinateValue coordinate,
             String msgKeyBase
     ) {
         super(msgKeyBase);
-        this.xValue = xValue;
-        this.yValue = yValue;
+        this.xValue = coordinate.x;
+        this.yValue = coordinate.y;
 
         Label xLabel = new Label("x:");
         xLabel.setId("location-xy-label");

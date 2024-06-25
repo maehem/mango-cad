@@ -16,7 +16,6 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 
 /**
@@ -25,29 +24,6 @@ import com.maehem.mangocad.model.element.ElementValueListener;
  */
 public class CoordinateValue extends ElementValue implements ElementValueListener {
 
-    public enum Field implements ElementField {
-        X("x", Double.class),
-        Y("y", Double.class);
-
-        private final String fName;
-        private final Class clazz;
-
-        private Field(String name, Class clazz) {
-            this.fName = name;
-            this.clazz = clazz;
-        }
-
-        @Override
-        public String fName() {
-            return fName;
-        }
-
-        @Override
-        public Class clazz() {
-            return clazz;
-        }
-    }
-
     public final RealValue x = new RealValue();
     public final RealValue y = new RealValue();
 
@@ -55,7 +31,6 @@ public class CoordinateValue extends ElementValue implements ElementValueListene
         x.addListener(this);
         y.addListener(this);
     }
-
 
     public double getX() {
         return x.get();
@@ -83,7 +58,7 @@ public class CoordinateValue extends ElementValue implements ElementValueListene
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        notifyValueChange();
+        notifyValueChange(newVal);
     }
 
 }

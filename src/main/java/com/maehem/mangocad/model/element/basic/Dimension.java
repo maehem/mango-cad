@@ -21,6 +21,7 @@ import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.GridUnit;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.IntValue;
@@ -104,12 +105,9 @@ public class Dimension extends Element implements
     }
 
     private int layer;
-    public final RealValue x1Property = new RealValue();
-    public final RealValue y1Property = new RealValue();
-    public final RealValue x2Property = new RealValue();
-    public final RealValue y2Property = new RealValue();
-    public final RealValue x3Property = new RealValue();
-    public final RealValue y3Property = new RealValue();
+    public final CoordinateValue coord1 = new CoordinateValue();
+    public final CoordinateValue coord2 = new CoordinateValue();
+    public final CoordinateValue coord3 = new CoordinateValue();
     public final LockValue lockProperty = new LockValue();
     private DimensionType dtype = DimensionType.PARALLEL;
     public final WidthValue widthProperty = new WidthValue(0.13);
@@ -131,12 +129,9 @@ public class Dimension extends Element implements
     @SuppressWarnings("LeakingThisInConstructor")
     public Dimension() {
 
-        x1Property.addListener(this);
-        y1Property.addListener(this);
-        x2Property.addListener(this);
-        y2Property.addListener(this);
-        x3Property.addListener(this);
-        y3Property.addListener(this);
+        coord1.addListener(this);
+        coord2.addListener(this);
+        coord3.addListener(this);
         lockProperty.addListener(this);
         widthProperty.addListener(this);
         extwidthProperty.addListener(this);
@@ -172,108 +167,108 @@ public class Dimension extends Element implements
      * @return the x1
      */
     public double getX1() {
-        return x1Property.get();
+        return coord1.x.get();
     }
 
     /**
-     * @param x1 the x1 to set
+     * @param val the x1 to set
      */
-    public void setX1(double x1) {
-        if (getX1() != x1) {
-            double oldVal = getX1();
-            x1Property.set(x1);
-            notifyListeners(Dimension.Field.X1, oldVal, getX1());
-        }
+    public void setX1(double val) {
+//        if (getX1() != x1) {
+//            double oldVal = getX1();
+        coord1.x.set(val);
+//            notifyListeners(Dimension.Field.X1, oldVal, getX1());
+//        }
     }
 
     /**
      * @return the y1
      */
     public double getY1() {
-        return y1Property.get();
+        return coord1.y.get();
     }
 
     /**
-     * @param y1 the y1 to set
+     * @param val the y1 to set
      */
-    public void setY1(double y1) {
-        if (getY1() != y1) {
-            double oldVal = getY1();
-            y1Property.set(y1);
-            notifyListeners(Dimension.Field.Y1, oldVal, getY1());
-        }
+    public void setY1(double val) {
+//        if (getY1() != y1) {
+//            double oldVal = getY1();
+        coord1.y.set(val);
+//            notifyListeners(Dimension.Field.Y1, oldVal, getY1());
+//        }
     }
 
     /**
      * @return the x2
      */
     public double getX2() {
-        return x2Property.get();
+        return coord2.x.get();
     }
 
     /**
-     * @param x2 the x2 to set
+     * @param val the x2 to set
      */
-    public void setX2(double x2) {
-        if (getX2() != x2) {
-            double oldVal = getX2();
-            x2Property.set(x2);
-            notifyListeners(Dimension.Field.X2, oldVal, getX2());
-        }
+    public void setX2(double val) {
+//        if (getX2() != x2) {
+//            double oldVal = getX2();
+        coord2.x.set(val);
+//            notifyListeners(Dimension.Field.X2, oldVal, getX2());
+//        }
     }
 
     /**
      * @return the y2
      */
     public double getY2() {
-        return y2Property.get();
+        return coord2.y.get();
     }
 
     /**
-     * @param y2 the y2 to set
+     * @param val the y2 to set
      */
-    public void setY2(double y2) {
-        if (getY2() != y2) {
-            double oldVal = getY2();
-            y2Property.set(y2);
-            notifyListeners(Dimension.Field.Y2, oldVal, getY2());
-        }
+    public void setY2(double val) {
+//        if (getY2() != y2) {
+//            double oldVal = getY2();
+        coord2.y.set(val);
+//            notifyListeners(Dimension.Field.Y2, oldVal, getY2());
+//        }
     }
 
     /**
      * @return the x3
      */
     public double getX3() {
-        return x3Property.get();
+        return coord3.x.get();
     }
 
     /**
-     * @param x3 the x3 to set
+     * @param val the x3 to set
      */
-    public void setX3(double x3) {
-        if (getX3() != x3) {
-            double oldVal = getX3();
-            x3Property.set(x3);
-            notifyListeners(Dimension.Field.X3, oldVal, getX3());
-        }
+    public void setX3(double val) {
+//        if (getX3() != x3) {
+//            double oldVal = getX3();
+        coord3.x.set(val);
+//            notifyListeners(Dimension.Field.X3, oldVal, getX3());
+//        }
     }
 
     /**
      * @return the y3
      */
     public double getY3() {
-        return y3Property.get();
+        return coord3.y.get();
     }
 
     /**
-     * @param y3 the y3 to set
+     * @param val the y3 to set
      */
-    public void setY3(double y3) {
-        if (getY3() != y3) {
-            double oldVal = getY3();
-            y3Property.set(y3);
-            notifyListeners(Dimension.Field.Y3, oldVal, getY3());
-        }
+    public void setY3(double val) {
+//        if (getY3() != y3) {
+//            double oldVal = getY3();
+        coord3.y.set(val);
+//            notifyListeners(Dimension.Field.Y3, oldVal, getY3());
+//        }
     }
 
     /**
@@ -448,18 +443,18 @@ public class Dimension extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(x1Property)) {
-            notifyListeners(Field.X1, x1Property.getOldValue(), x1Property.get());
-        } else if (newVal.equals(y1Property)) {
-            notifyListeners(Field.Y1, y1Property.getOldValue(), y1Property.get());
-        } else if (newVal.equals(x2Property)) {
-            notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
-        } else if (newVal.equals(y2Property)) {
-            notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
-        } else if (newVal.equals(x3Property)) {
-            notifyListeners(Field.X3, x3Property.getOldValue(), x3Property.get());
-        } else if (newVal.equals(y2Property)) {
-            notifyListeners(Field.Y3, y3Property.getOldValue(), y3Property.get());
+        if (newVal.equals(coord1.x)) {
+            notifyListeners(Field.X1, coord1.x.getOldValue(), coord1.x.get());
+        } else if (newVal.equals(coord1.y)) {
+            notifyListeners(Field.Y1, coord1.y.getOldValue(), coord1.y.get());
+        } else if (newVal.equals(coord2.x)) {
+            notifyListeners(Field.X2, coord2.x.getOldValue(), coord2.x.get());
+        } else if (newVal.equals(coord2.y)) {
+            notifyListeners(Field.Y2, coord2.y.getOldValue(), coord2.y.get());
+        } else if (newVal.equals(coord3.x)) {
+            notifyListeners(Field.X3, coord3.x.getOldValue(), coord3.x.get());
+        } else if (newVal.equals(coord3.y)) {
+            notifyListeners(Field.Y3, coord3.y.getOldValue(), coord3.y.get());
         } else if (newVal.equals(widthProperty)) {
             notifyListeners(WidthValue.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         } else if (newVal.equals(extwidthProperty)) {
@@ -493,12 +488,12 @@ public class Dimension extends Element implements
         MessageFormat mf = new MessageFormat("<dimension{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}/>");
 
         Object[] args = {
-            " x1=\"" + x1Property.getPrecise(6) + "\"", // 0
-            " y1=\"" + y1Property.getPrecise(6) + "\"", // 1
-            " x2=\"" + x2Property.getPrecise(6) + "\"", // 2
-            " y2=\"" + y2Property.getPrecise(6) + "\"", // 3
-            " x3=\"" + x3Property.getPrecise(6) + "\"", // 4
-            " y3=\"" + y3Property.getPrecise(6) + "\"", // 5
+            " x1=\"" + coord1.x.getPrecise(6) + "\"", // 0
+            " y1=\"" + coord1.y.getPrecise(6) + "\"", // 1
+            " x2=\"" + coord2.x.getPrecise(6) + "\"", // 2
+            " y2=\"" + coord2.y.getPrecise(6) + "\"", // 3
+            " x3=\"" + coord3.x.getPrecise(6) + "\"", // 4
+            " y3=\"" + coord3.y.getPrecise(6) + "\"", // 5
             lockProperty.xmlValue(), // 6
             " textsize=\"" + textsizeProperty.getPrecise(3) + "\"", // 7
             " layer=\"" + getLayerNum() + "\"", // 8

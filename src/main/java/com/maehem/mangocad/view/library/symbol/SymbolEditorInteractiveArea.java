@@ -173,7 +173,9 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         workArea.getTransforms().add(workScale);
 
         // Listen to changes in the Grid settings.
-        parentEditor.getDrawing().getGrid().addListener(this);
+        Platform.runLater(() -> {
+            parentEditor.getDrawing().getGrid().addListener(this);
+        });
 
         workArea.addEventFilter(ScrollEvent.ANY, (ScrollEvent event) -> {
             double scrollAmt = event.getDeltaY();
@@ -206,7 +208,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 //                abandonOperation();
 //                ke.consume();
 //            }
-            LOGGER.log(Level.SEVERE, "KeyPresed: " + ke.getCode());
+            LOGGER.log(Level.SEVERE, "KeyPresed: {0}", ke.getCode());
             if (ke.getCode().equals(KeyCode.COMMAND)) {
                 cmdKeyMode = true;
                 LOGGER.log(Level.SEVERE, "Command Key Pressed.");
@@ -266,7 +268,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     if (e instanceof SelectableProperty es) {
                         switch (es) {
                             case CircleElement circ -> {
-                                Element snapshot = es.getSnapshot();
+//                                Element snapshot = es.getSnapshot();
                                 if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
                                     // New circle, not yet placed. Adjust Radius
                                     double hypot = Math.hypot(moveDistSnappedX, moveDistSnappedY);
@@ -320,8 +322,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 Element snapshot = es.getSnapshot();
                                 if (snapshot instanceof LocationXYProperty snapXY) {
                                     //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
-                                    exy.setX(snapXY.getX() + moveDistSnappedX);
-                                    exy.setY(snapXY.getY() + moveDistSnappedY);
+                                    exy.getCoordinateProperty().setX(snapXY.getCoordinateProperty().getX() + moveDistSnappedX);
+                                    exy.getCoordinateProperty().setY(snapXY.getCoordinateProperty().getY() + moveDistSnappedY);
                                 }
                             }
                             case Wire exy -> {
@@ -571,8 +573,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.getSymbol().getElements().forEach((e) -> {
                     switch (e) {
                         case LocationXYProperty ee -> {
-                            if (Math.abs(me.getX() - ee.getX()) < PICK_SIZE
-                                    && Math.abs(-me.getY() - ee.getY()) < PICK_SIZE) {
+                            if (Math.abs(me.getX() - ee.getCoordinateProperty().getX()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - ee.getCoordinateProperty().getY()) < PICK_SIZE) {
                                 picks.add(e);
                             }
                         }
@@ -632,7 +634,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 });
                 LOGGER.log(Level.SEVERE, "Pick count: {0}", picks.size());
                 if (picks.isEmpty() && directPickedNode != null) {
-                    LOGGER.log(Level.SEVERE, "Process direct picked node: " + directPickedNode.getElement().getElementName());
+                    LOGGER.log(Level.SEVERE, "Process direct picked node: {0}", directPickedNode.getElement().getElementName());
                     if (cmdKeyMode) {
                         LOGGER.log(Level.SEVERE, "Command Key active.");
                         if (directPickedNode instanceof WireNode) {
@@ -1062,7 +1064,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     if (element instanceof SelectableProperty es) {
                         switch (es) {
                             case LocationXYProperty exy -> {
-                                if (isInsideSelection(exy.getX(), -exy.getY())) {
+                                if (isInsideSelection(exy.getCoordinateProperty().getX(), -exy.getCoordinateProperty().getY())) {
                                     selectedElements.add(element);
                                     es.setSelected(true);
                                     //LOGGER.log(Level.SEVERE, "ElementXY: {0},{1}", new Object[]{exy.getX(), exy.getY()});
@@ -1386,7 +1388,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 TextEditDialog editDialog = new TextEditDialog(text);
                 if (editDialog.getResult() == ButtonType.OK) {
                     //text.setValue(String.valueOf((int) (Math.random() * 10000)));
-                    LOGGER.log(Level.SEVERE, "    New Text: " + text.getValue());
+                    LOGGER.log(Level.SEVERE, "    New Text: {0}", text.getValue());
                     TextNode textNode = new TextNode(text, null,
                             parentEditor.getDrawing().getLayers(),
                             parentEditor.getDrawing().getPalette(),
@@ -1574,7 +1576,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        if (e instanceof Grid g) {
+        if (e instanceof Grid) {
             rebuildGrid();
         }
     }

@@ -531,7 +531,7 @@ public class TextNode extends ViewNode implements ElementListener {
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         LOGGER.log(Level.SEVERE,
                 "Text properties have changed! {0}: {1} => {2}",
-                new Object[]{field, oldVal.toString(), newVal.toString()});
+                new Object[]{field, oldVal == null ? "null" : oldVal.toString(), newVal == null ? "null" : newVal.toString()});
 
         switch (field) {
             case TextElement.Field.VALUE, TextElement.Field.DISTANCE -> {

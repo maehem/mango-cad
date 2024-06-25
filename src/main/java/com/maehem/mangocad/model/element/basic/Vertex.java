@@ -23,7 +23,6 @@ import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
-import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import java.text.MessageFormat;
 
@@ -37,8 +36,9 @@ public class Vertex extends Element implements
 
     public static final String ELEMENT_NAME = "vertex";
 
-    public final RealValue xProperty = new RealValue(0);
-    public final RealValue yProperty = new RealValue(0);
+    //public final RealValue xProperty = new RealValue(0);
+    //public final RealValue yProperty = new RealValue(0);
+    public final CoordinateValue coordinate = new CoordinateValue();
 
     public final CurveValue curveProperty = new CurveValue(0);
 
@@ -53,41 +53,37 @@ public class Vertex extends Element implements
     /**
      * @return the x
      */
-    @Override
     public double getX() {
-        return xProperty.get();
+        return coordinate.x.get();
     }
 
     /**
-     * @param x the x to set
+     * @param val the x to set
      */
-    @Override
-    public void setX(double x) {
-        if (xProperty.get() != x) {
-            double oldVal = xProperty.get();
-            xProperty.set(x);
-            notifyListeners(LocationXYProperty.Field.X, oldVal, xProperty.get());
-        }
+    public void setX(double val) {
+//        if (xProperty.get() != x) {
+//            double oldVal = xProperty.get();
+        coordinate.x.set(val);
+//            notifyListeners(LocationXYProperty.Field.X, oldVal, xProperty.get());
+//        }
     }
 
     /**
      * @return the y
      */
-    @Override
     public double getY() {
-        return yProperty.get();
+        return coordinate.y.get();
     }
 
     /**
      * @param y the y to set
      */
-    @Override
     public void setY(double y) {
-        if (yProperty.get() != y) {
-            double oldVal = yProperty.get();
-            yProperty.set(y);
-            notifyListeners(LocationXYProperty.Field.Y, oldVal, yProperty.get());
-        }
+//        if (yProperty.get() != y) {
+//            double oldVal = yProperty.get();
+        coordinate.y.set(y);
+//            notifyListeners(LocationXYProperty.Field.Y, oldVal, yProperty.get());
+//        }
     }
 
     /**
@@ -128,10 +124,10 @@ public class Vertex extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(xProperty)) {
-            notifyListeners(LocationXYProperty.Field.X, xProperty.getOldValue(), xProperty.get());
-        } else if (newVal.equals(yProperty)) {
-            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        if (newVal.equals(coordinate.x)) {
+            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
+        } else if (newVal.equals(coordinate.y)) {
+            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(curveProperty)) {
             notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         }
@@ -169,8 +165,8 @@ public class Vertex extends Element implements
         MessageFormat mf = new MessageFormat("<vertex{0}{1}{2}/>");
 
         Object[] args = {
-            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
-            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            " x=\"" + coordinate.x.getPrecise(6) + "\"", // 0
+            " y=\"" + coordinate.y.getPrecise(6) + "\"", // 1
             curveProperty.toXML() // 2
         };
 
@@ -179,7 +175,7 @@ public class Vertex extends Element implements
 
     @Override
     public CoordinateValue getCoordinateProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return coordinate;
     }
 
 }

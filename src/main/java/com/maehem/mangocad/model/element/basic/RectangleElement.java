@@ -18,12 +18,12 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
-import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -67,10 +67,13 @@ public class RectangleElement extends Element implements
     }
 
     private int layer;
-    public final RealValue x1Property = new RealValue(0);
-    public final RealValue y1Property = new RealValue(0);
-    public final RealValue x2Property = new RealValue(0);
-    public final RealValue y2Property = new RealValue(0);
+    public final CoordinateValue coord1 = new CoordinateValue();
+    public final CoordinateValue coord2 = new CoordinateValue();
+
+    //public final RealValue x1Property = new RealValue(0);
+    //public final RealValue y1Property = new RealValue(0);
+    //public final RealValue x2Property = new RealValue(0);
+    //public final RealValue y2Property = new RealValue(0);
     public final LockValue lockProperty = new LockValue();
     public final Rotation rotationProperty = new Rotation(Rotation.CONSTRAINED);
     private final ArrayList<String> grouprefs = new ArrayList<>();
@@ -84,10 +87,12 @@ public class RectangleElement extends Element implements
         rotationProperty.setAllowMirror(true);
         rotationProperty.setConstrained(true);
 
-        x1Property.addListener(this);
-        y1Property.addListener(this);
-        x2Property.addListener(this);
-        y2Property.addListener(this);
+        coord1.addListener(this);
+        coord2.addListener(this);
+        //x1Property.addListener(this);
+        //y1Property.addListener(this);
+        //x2Property.addListener(this);
+        //y2Property.addListener(this);
         rotationProperty.addListener(this);
         lockProperty.addListener(this);
     }
@@ -111,16 +116,16 @@ public class RectangleElement extends Element implements
      * @return the x1
      */
     public double getX1() {
-        return x1Property.get();
+        return coord1.x.get();
     }
 
     /**
-     * @param x1 the x1 to set
+     * @param val the x1 to set
      */
-    public void setX1(double x1) {
+    public void setX1(double val) {
 //        if (getX1() != x1) {
 //            double oldVal = getX1();
-        x1Property.set(x1);
+        coord1.x.set(val);
 //            notifyListeners(RectangleElement.Field.X1, oldVal, getX1());
 //        }
     }
@@ -129,16 +134,16 @@ public class RectangleElement extends Element implements
      * @return the y1
      */
     public double getY1() {
-        return y1Property.get();
+        return coord1.y.get();
     }
 
     /**
-     * @param y1 the y1 to set
+     * @param val the y1 to set
      */
-    public void setY1(double y1) {
+    public void setY1(double val) {
 //        if (getY1() != y1) {
 //            double oldVal = getY1();
-        y1Property.set(y1);
+        coord1.y.set(val);
 //            notifyListeners(RectangleElement.Field.Y1, oldVal, getY1());
 //        }
     }
@@ -147,16 +152,16 @@ public class RectangleElement extends Element implements
      * @return the x2
      */
     public double getX2() {
-        return x2Property.get();
+        return coord2.x.get();
     }
 
     /**
-     * @param x2 the x2 to set
+     * @param val the x2 to set
      */
-    public void setX2(double x2) {
+    public void setX2(double val) {
 //        if (getX2() != x2) {
 //            double oldVal = getX2();
-        x2Property.set(x2);
+        coord2.x.set(val);
 //            notifyListeners(RectangleElement.Field.X2, oldVal, getX2());
 //        }
     }
@@ -165,16 +170,16 @@ public class RectangleElement extends Element implements
      * @return the y2
      */
     public double getY2() {
-        return y2Property.get();
+        return coord2.y.get();
     }
 
     /**
-     * @param y2 the y2 to set
+     * @param val the y2 to set
      */
-    public void setY2(double y2) {
+    public void setY2(double val) {
 //        if (getY2() != y2) {
 //            double oldVal = getY2();
-            y2Property.set(y2);
+            coord2.y.set(val);
 //            notifyListeners(RectangleElement.Field.Y2, oldVal, getY2());
 //        }
     }
@@ -187,10 +192,10 @@ public class RectangleElement extends Element implements
     }
 
     public void setAllXY(double x1, double y1, double x2, double y2) {
-        x1Property.set(x1);
-        y1Property.set(y1);
-        x2Property.set(x2);
-        y2Property.set(y2);
+        coord1.x.set(x1);
+        coord1.y.set(y1);
+        coord2.x.set(x2);
+        coord2.y.set(y2);
 
         //notifyListeners(RectangleElement.Field.ALL_XY, null, null);
     }
@@ -288,11 +293,11 @@ public class RectangleElement extends Element implements
      * @param value the rotationProperty to set
      */
     public void setRot(double value) {
-        if (getRot() != value) {
-            double oldValue = getRot();
+//        if (getRot() != value) {
+//            double oldValue = getRot();
             this.rotationProperty.set(value);
             //notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
-        }
+//        }
     }
 
     @Override
@@ -415,14 +420,14 @@ public class RectangleElement extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(x1Property)) {
-            notifyListeners(Field.X1, x1Property.getOldValue(), x1Property.get());
-        } else if (newVal.equals(y1Property)) {
-            notifyListeners(Field.Y1, y1Property.getOldValue(), y1Property.get());
-        } else if (newVal.equals(x2Property)) {
-            notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
-        } else if (newVal.equals(y2Property)) {
-            notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
+        if (newVal.equals(coord1.x)) { // TODO Coordinate needs to pass the changed value.
+            notifyListeners(Field.X1, coord1.x.getOldValue(), coord1.x.get());
+        } else if (newVal.equals(coord1.y)) {
+            notifyListeners(Field.Y1, coord1.y.getOldValue(), coord1.y.get());
+        } else if (newVal.equals(coord2.x)) {
+            notifyListeners(Field.X2, coord2.x.getOldValue(), coord2.x.get());
+        } else if (newVal.equals(coord2.y)) {
+            notifyListeners(Field.Y2, coord2.y.getOldValue(), coord2.y.get());
         } else if (newVal.equals(rotationProperty)) {
             notifyListeners(Rotation.Field.VALUE, rotationProperty.getOldValue(), rotationProperty.get());
         } else if (newVal.equals(lockProperty)) {
@@ -441,10 +446,10 @@ public class RectangleElement extends Element implements
         String rotValue = rotationProperty.xmlValue();
 
         Object[] args = {
-            " x1=\"" + x1Property.getPrecise(6) + "\"", // 0
-            " y1=\"" + y1Property.getPrecise(6) + "\"", // 1
-            " x2=\"" + x2Property.getPrecise(6) + "\"", // 2
-            " y2=\"" + y2Property.getPrecise(6) + "\"", // 3
+            " x1=\"" + coord1.x.getPrecise(6) + "\"", // 0
+            " y1=\"" + coord1.y.getPrecise(6) + "\"", // 1
+            " x2=\"" + coord2.x.getPrecise(6) + "\"", // 2
+            " y2=\"" + coord2.y.getPrecise(6) + "\"", // 3
             lockProperty.xmlValue(), // 4
             " layer=\"" + getLayerNum() + "\"", // 5
             !rotValue.equals("R0") ? " rot=\"" + rotValue + "\"" : "" // 6

@@ -46,11 +46,6 @@ public class CircleElement extends Element implements
 
     public static final String ELEMENT_NAME = "circle";
 
-    @Override
-    public CoordinateValue getCoordinateProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     public enum Field implements ElementField {
         RADIUS("raduis", Double.class);
         //WIDTH("width", Double.class);
@@ -76,8 +71,9 @@ public class CircleElement extends Element implements
     }
 
     private int layer;
-    public final RealValue xProperty = new RealValue(0);
-    public final RealValue yProperty = new RealValue(0);
+    //public final RealValue xProperty = new RealValue(0);
+    //public final RealValue yProperty = new RealValue(0);
+    public final CoordinateValue coordinate = new CoordinateValue();
 
     public final LockValue lockProperty = new LockValue();
     public final RealValue radiusProperty = new RealValue(2.54, 0.0, Double.MAX_VALUE, 9);
@@ -90,8 +86,9 @@ public class CircleElement extends Element implements
 
     public CircleElement() {
 
-        xProperty.addListener(this);
-        yProperty.addListener(this);
+        //xProperty.addListener(this);
+        //yProperty.addListener(this);
+        coordinate.addListener(this);
         widthProperty.addListener(this);
         radiusProperty.addListener(this);
         lockProperty.addListener(this);
@@ -100,6 +97,11 @@ public class CircleElement extends Element implements
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        return coordinate;
     }
 
     @Override
@@ -151,41 +153,39 @@ public class CircleElement extends Element implements
     /**
      * @return the x
      */
-    @Override
     public double getX() {
-        return xProperty.get();
+        return coordinate.x.get();
     }
 
     /**
      * @param x the x to set
      */
-    @Override
+//    @Override
     public void setX(double x) {
-        if (getX() != x) {
-            double oldValue = getX();
-            xProperty.set(x);
-            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
-        }
+//        if (getX() != x) {
+//            double oldValue = getX();
+        coordinate.x.set(x);
+//            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
+//        }
     }
 
     /**
      * @return the y
      */
-    @Override
     public double getY() {
-        return yProperty.get();
+        return coordinate.y.get();
     }
 
     /**
      * @param y the y to set
      */
-    @Override
+//    @Override
     public void setY(double y) {
-        if (getY() != y) {
-            double oldValue = getY();
-            yProperty.set(y);
-            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
-        }
+//        if (getY() != y) {
+//            double oldValue = getY();
+        coordinate.y.set(y);
+//            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
+//        }
     }
 
     /**
@@ -263,10 +263,10 @@ public class CircleElement extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(xProperty)) {
-            notifyListeners(LocationXYProperty.Field.X, xProperty.getOldValue(), xProperty.get());
-        } else if (newVal.equals(yProperty)) {
-            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        if (newVal.equals(coordinate)) {
+            notifyListeners(LocationXYProperty.Field.UNKNOWN, null, null);
+//        } else if (newVal.equals(yProperty)) {
+//            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
         } else if (newVal.equals(radiusProperty)) {
             notifyListeners(Field.RADIUS, radiusProperty.getOldValue(), radiusProperty.get());
         } else if (newVal.equals(widthProperty)) {
@@ -291,8 +291,8 @@ public class CircleElement extends Element implements
         MessageFormat mf = new MessageFormat("<circle{0}{1}{2}{3}{4}{5}/>");
 
         Object[] args = {
-            " x=\"" + xProperty.getPrecise(6) + "\"", // 0
-            " y=\"" + yProperty.getPrecise(6) + "\"", // 1
+            " x=\"" + coordinate.x.getPrecise(6) + "\"", // 0
+            " y=\"" + coordinate.y.getPrecise(6) + "\"", // 1
             lockProperty.xmlValue(), // 2
             " radius=\"" + radiusProperty.getPrecise(9) + "\"", // 3
             " width=\"" + widthProperty.getPrecise(6) + "\"", // 4

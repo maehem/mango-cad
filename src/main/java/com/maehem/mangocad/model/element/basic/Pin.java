@@ -17,14 +17,15 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.LocationXYProperty;
-import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -51,7 +52,9 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class Pin extends Element implements LocationXYProperty, RotationProperty, SelectableProperty {
+public class Pin extends Element implements
+        LocationXYProperty, RotationProperty, SelectableProperty,
+        ElementValueListener {
 
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.
@@ -60,8 +63,9 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
     public final StringValue nameProperty = new StringValue("A");
-    public final RealValue xProperty = new RealValue(0);
-    public final RealValue yProperty = new RealValue(0);
+    //public final RealValue xProperty = new RealValue(0);
+    //public final RealValue yProperty = new RealValue(0);
+    public final CoordinateValue coordinate = new CoordinateValue();
     private boolean selected = false;
     private Pin snapshot2 = null;
 
@@ -77,11 +81,18 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
 
     public Pin() {
         rotation.setConstrained(true);
+
+        coordinate.addListener(this);
     }
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public CoordinateValue getCoordinateProperty() {
+        return coordinate;
     }
 
     @Override
@@ -110,41 +121,37 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
     /**
      * @return the x
      */
-    @Override
     public double getX() {
-        return xProperty.get();
+        return coordinate.x.get();
     }
 
     /**
-     * @param x the x to set
+     * @param val the x to set
      */
-    @Override
-    public void setX(double x) {
-        if (xProperty.get() != x) {
-            double oldX = xProperty.get();
-            xProperty.set(x);
-            notifyListeners(LocationXYProperty.Field.X, oldX, x);
-        }
+    public void setX(double val) {
+//        if (xProperty.get() != x) {
+//            double oldX = xProperty.get();
+        coordinate.x.set(val);
+//            notifyListeners(LocationXYProperty.Field.X, oldX, x);
+//        }
     }
 
     /**
      * @return the y
      */
-    @Override
     public double getY() {
-        return yProperty.get();
+        return coordinate.y.get();
     }
 
     /**
-     * @param y the y to set
+     * @param val the y to set
      */
-    @Override
-    public void setY(double y) {
-        if (yProperty.get() != y) {
-            double oldY = yProperty.get();
-            yProperty.set(y);
-            notifyListeners(LocationXYProperty.Field.Y, oldY, y);
-        }
+    public void setY(double val) {
+//        if (yProperty.get() != y) {
+//            double oldY = yProperty.get();
+        coordinate.y.set(val);
+//            notifyListeners(LocationXYProperty.Field.Y, oldY, y);
+//        }
     }
 
     /**
@@ -403,6 +410,15 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         }
     }
 
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(coordinate.x)) {
+            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), newVal);
+        } else if (newVal.equals(coordinate.y)) {
+            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), newVal);
+        }
+    }
+
     /**
      * <pre>
      * <pin name="B1" x="12.7" y="12.7" length="middle" rot="R180"/>
@@ -425,8 +441,8 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
 
         Object[] args = {
             nameProperty.get(), // 0
-            " x=\"" + xProperty.getPrecise(6) + "\"", // 1
-            " y=\"" + yProperty.getPrecise(6) + "\"", // 2
+            " x=\"" + coordinate.x.getPrecise(6) + "\"", // 1
+            " y=\"" + coordinate.y.getPrecise(6) + "\"", // 2
             !visible.equals(PinVisible.BOTH) ? " visible=\"" + visible.code() + "\"" : "", // 3
             !getLength().equals(PinLength.LONG) ? " length=\"" + length.code() + "\"" : "", // 4
             !getDirection().equals(PinDirection.IO) ? " direction=\"" + direction.code() + "\"" : "", // 5
@@ -438,8 +454,4 @@ public class Pin extends Element implements LocationXYProperty, RotationProperty
         return mf.format(args);
     }
 
-    @Override
-    public CoordinateValue getCoordinateProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

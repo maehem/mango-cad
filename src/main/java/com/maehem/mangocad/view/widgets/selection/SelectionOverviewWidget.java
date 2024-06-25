@@ -79,7 +79,7 @@ public class SelectionOverviewWidget extends HBox {
         if (item != null) {
             ImageView icon;
 
-            if (item instanceof Wire w) {
+            if (item instanceof Wire) {
                 icon = ViewUtils.createIcon(LINE_IMG, ICON_SIZE);
             } else if (item instanceof Dimension) {
                 icon = ViewUtils.createIcon(DIM_IMG, ICON_SIZE);
@@ -101,9 +101,9 @@ public class SelectionOverviewWidget extends HBox {
                     valueLabel.setText(value);
                 }
                 icon = ViewUtils.createIcon(TEXT_IMG, ICON_SIZE);
-            } else if (item instanceof RectangleElement r) {
+            } else if (item instanceof RectangleElement) {
                 icon = ViewUtils.createIcon(RECT_IMG, ICON_SIZE);
-            } else if (item instanceof CircleElement c) {
+            } else if (item instanceof CircleElement) {
                 icon = ViewUtils.createIcon(CIRC_IMG, ICON_SIZE);
             } else {
                 icon = new ImageView();
@@ -127,7 +127,7 @@ public class SelectionOverviewWidget extends HBox {
         }
     }
 
-    public void highlight(boolean highlight) {
+    public final void highlight(boolean highlight) {
         setId(highlight ? "selection-overview-widget-highlight" : "selection-overview-widget");
     }
 
@@ -185,40 +185,40 @@ public class SelectionOverviewWidget extends HBox {
             t.setText(null);
         } else if (item instanceof Pin p) {
             StringBuilder sb = new StringBuilder(" ####Pin").append(LF);
-                    sb.append("Name:  **").append(p.nameProperty.get()).append("** ")
+            sb.append("Name:  **").append(p.nameProperty.get()).append("** ")
                     .append(LF)
                     .append(LF)
                     .append("*x:* ")
-                    .append(p.xProperty.getPrecise(PRECISION))
+                    .append(p.coordinate.x.getPrecise(PRECISION))
                     .append("    *y:* ")
-                    .append(p.yProperty.getPrecise(PRECISION))
+                    .append(p.coordinate.y.getPrecise(PRECISION))
                     .append(LF)
-                            .append("*Rotation:* ").append(df.format(p.rotation.get()))
-                            .append(LF)
-                            .append("*Function:* ").append(p.getFunction().code()).append(LF)
-                            .append("*Direction:* ").append(p.getDirection().code()).append(LF)
-                            .append("*Visible:* ").append(p.getVisible().code()).append(LF)
-                            .append("*Length:* ").append(p.getLength().code()).append(LF)
-                            .append("*Swap Level:* ").append(String.valueOf(p.getSwapLevel())).append(LF)                            ;
+                    .append("*Rotation:* ").append(df.format(p.rotation.get()))
+                    .append(LF)
+                    .append("*Function:* ").append(p.getFunction().code()).append(LF)
+                    .append("*Direction:* ").append(p.getDirection().code()).append(LF)
+                    .append("*Visible:* ").append(p.getVisible().code()).append(LF)
+                    .append("*Length:* ").append(p.getLength().code()).append(LF)
+                    .append("*Swap Level:* ").append(String.valueOf(p.getSwapLevel())).append(LF);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
         } else if (item instanceof Dimension d) {
             StringBuilder sb = new StringBuilder(" ####Dimension").append(LF);
             sb.append(LF)
                     .append("*x1:* ")
-                    .append(d.x1Property.getPrecise(PRECISION))
+                    .append(d.coord1.x.getPrecise(PRECISION))
                     .append("    *y1:* ")
-                    .append(d.y1Property.getPrecise(PRECISION))
+                    .append(d.coord1.y.getPrecise(PRECISION))
                     .append(LF)
                     .append("*x2:* ")
-                    .append(d.x2Property.getPrecise(PRECISION))
+                    .append(d.coord2.x.getPrecise(PRECISION))
                     .append("    *y2:* ")
-                    .append(d.y2Property.getPrecise(PRECISION))
+                    .append(d.coord2.y.getPrecise(PRECISION))
                     .append(LF)
                     .append("*x3:* ")
-                    .append(d.x3Property.getPrecise(PRECISION))
+                    .append(d.coord3.x.getPrecise(PRECISION))
                     .append("    *y3:* ")
-                    .append(d.y3Property.getPrecise(PRECISION))
+                    .append(d.coord3.y.getPrecise(PRECISION))
                     .append(LF)
                     .append(LF)
                     .append("*Width:* ").append(d.widthProperty.getPrecise(PRECISION)).append(LF)
@@ -237,9 +237,9 @@ public class SelectionOverviewWidget extends HBox {
             sb.append(LF)
                     .append(LF)
                     .append("*x:* ")
-                    .append(c.xProperty.getPrecise(PRECISION))
+                    .append(c.coordinate.x.getPrecise(PRECISION))
                     .append("    *y:* ")
-                    .append(c.yProperty.getPrecise(PRECISION))
+                    .append(c.coordinate.y.getPrecise(PRECISION))
                     .append(LF)
                     .append("*Radius:* ").append(c.radiusProperty.getPrecise(PRECISION)).append(LF)
                     .append("*Width:* ").append(c.widthProperty.getPrecise(PRECISION)).append(LF);
@@ -250,17 +250,17 @@ public class SelectionOverviewWidget extends HBox {
             sb.append("* on layer *").append(er.getLayerNum()).append("*").append(LF);
             sb.append(LF)
                     .append("*x1:* ")
-                    .append(er.x1Property.getPrecise(PRECISION))
+                    .append(er.coord1.x.getPrecise(PRECISION))
                     .append("    *y1:* ")
-                    .append(er.y1Property.getPrecise(PRECISION))
+                    .append(er.coord1.y.getPrecise(PRECISION))
                     .append(LF)
                     .append("*x2:* ")
-                    .append(er.x2Property.getPrecise(PRECISION))
+                    .append(er.coord2.x.getPrecise(PRECISION))
                     .append("    *y2:* ")
-                    .append(er.y2Property.getPrecise(PRECISION))
+                    .append(er.coord2.y.getPrecise(PRECISION))
                     .append(LF)
                     .append(LF)
-                    .append("*Rotation:* ").append(df.format(er.getRot())).append(LF);
+                    .append("*Rotation:* ").append(df.format(er.rotationProperty.get())).append(LF);
             t.setGraphic(MarkdownUtils.markdownNode(0.75, sb.toString(), null));
             t.setText(null);
         } else if (item instanceof TextElement et) {
@@ -270,9 +270,9 @@ public class SelectionOverviewWidget extends HBox {
                     .append(LF)
                     .append(LF)
                     .append("*x:* ")
-                    .append(et.xProperty.getPrecise(PRECISION))
+                    .append(et.coordinate.x.getPrecise(PRECISION))
                     .append("    *y:* ")
-                    .append(et.yProperty.getPrecise(PRECISION))
+                    .append(et.coordinate.y.getPrecise(PRECISION))
                     .append(LF)
                     .append("*Rotation:* ").append(df.format(et.rotation.get())).append(LF)
                     .append("*Constrained:* ").append((et.rotation.isConstrained() ? "YES" : "NO")).append(LF)

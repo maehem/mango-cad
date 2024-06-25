@@ -22,6 +22,7 @@ import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
@@ -118,6 +119,8 @@ public class Wire extends Element implements
     public static final int DEFAULT_LAYER = 94; // Nets
 
     private int layer = DEFAULT_LAYER;
+    public final CoordinateValue coord1 = new CoordinateValue();
+    public final CoordinateValue coord2 = new CoordinateValue();
     public final RealValue x1Property = new RealValue(0);
     public final RealValue y1Property = new RealValue(0);
     public final RealValue x2Property = new RealValue(0);
@@ -151,6 +154,14 @@ public class Wire extends Element implements
     @Override
     public WidthValue getWidthProperty() {
         return widthProperty;
+    }
+
+    public CoordinateValue getCoordinate1() {
+        return coord1;
+    }
+
+    public CoordinateValue getCoordinate2() {
+        return coord2;
     }
 
     /**
@@ -442,14 +453,14 @@ public class Wire extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(x1Property)) {
-            notifyListeners(Field.X1, x1Property.getOldValue(), x1Property.get());
-        } else if (newVal.equals(y1Property)) {
-            notifyListeners(Field.Y1, y1Property.getOldValue(), y1Property.get());
-        } else if (newVal.equals(x2Property)) {
-            notifyListeners(Field.X2, x2Property.getOldValue(), x2Property.get());
-        } else if (newVal.equals(y2Property)) {
-            notifyListeners(Field.Y2, y2Property.getOldValue(), y2Property.get());
+        if (newVal.equals(coord1.x)) {
+            notifyListeners(Field.X1, coord1.x.getOldValue(), coord1.x.get());
+        } else if (newVal.equals(coord1.y)) {
+            notifyListeners(Field.Y1, coord1.y.getOldValue(), coord1.y.get());
+        } else if (newVal.equals(coord2.x)) {
+            notifyListeners(Field.X2, coord2.x.getOldValue(), coord2.x.get());
+        } else if (newVal.equals(coord2.y)) {
+            notifyListeners(Field.Y2, coord2.y.getOldValue(), coord2.y.get());
         } else if (newVal.equals(curveProperty)) {
             notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         } else if (newVal.equals(widthProperty)) {

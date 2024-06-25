@@ -36,8 +36,12 @@ public abstract class ElementValue {
     }
 
     protected void notifyValueChange() {
+        notifyValueChange(this);
+    }
+
+    protected void notifyValueChange(ElementValue subVal) {
         listeners.forEach((evl) -> {
-            evl.elementValueChanged(this);
+            evl.elementValueChanged(subVal);
         });
     }
 
