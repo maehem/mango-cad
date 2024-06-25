@@ -116,7 +116,7 @@ public class Dimension extends Element implements
     public final RealValue extoffsetProperty = new RealValue(0, 0.0, 200.0);
     public final RealValue textsizeProperty = new RealValue(2.54, 0.000003125, 200.0); // TODO. get from  a sample ElementText
     public final IntValue textratioProperty = new IntValue(8, 0, 31);
-    public final UnitValue unitProperty = new UnitValue(UnitValue.Unit.MM);
+    public final UnitValue unitValue = new UnitValue(UnitProperty.Unit.MM);
     public final IntValue precisionProperty = new IntValue(2, 0, 6);
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
@@ -138,7 +138,7 @@ public class Dimension extends Element implements
         extlengthProperty.addListener(this);
         extoffsetProperty.addListener(this);
         textratioProperty.addListener(this);
-        unitProperty.addListener(this);
+        unitValue.addListener(this);
         precisionProperty.addListener(this);
 
     }
@@ -154,8 +154,8 @@ public class Dimension extends Element implements
     }
 
     @Override
-    public UnitValue getUnitProperty() {
-        return unitProperty;
+    public UnitValue getUnitValue() {
+        return unitValue;
     }
 
     @Override
@@ -346,17 +346,17 @@ public class Dimension extends Element implements
     }
 
     /**
-     * @return the unitProperty
+     * @return the unitValue
      */
-    public UnitValue.Unit getUnit() {
-        return unitProperty.get();
+    public UnitProperty.Unit getUnit() {
+        return unitValue.get();
     }
 
     /**
-     * @param unit the unitProperty to set
+     * @param unit the unitValue to set
      */
-    public void setUnit(UnitValue.Unit unit) {
-        this.unitProperty.set(unit);
+    public void setUnit(UnitProperty.Unit unit) {
+        this.unitValue.set(unit);
     }
 
     /**
@@ -476,7 +476,7 @@ public class Dimension extends Element implements
             getExtwidth() != 0.0 ? " extwidth=\"" + extwidthProperty.getPrecise(6) + "\"" : "", // 10
             getExtlength() != 0.0 ? " extlength=\"" + extlengthProperty.getPrecise(6) + "\"" : "", // 11
             getExtoffset() != 0.0 ? " extoffset=\"" + extoffsetProperty.getPrecise(6) + "\"" : "", // 12
-            !getUnit().equals(UnitValue.Unit.MM) ? " unit=\"" + getUnit().code() + "\"" : "", // 13
+            !getUnit().equals(UnitProperty.Unit.MM) ? " unit=\"" + getUnit().code() + "\"" : "", // 13
             getPrecision() != 2 ? " precision=\"" + getPrecision() + "\"" : "", // 14
             isVisible() ? " visible=\"yes\"" : "" // 15
         };

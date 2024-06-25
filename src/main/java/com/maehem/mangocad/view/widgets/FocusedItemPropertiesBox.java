@@ -25,10 +25,11 @@ import com.maehem.mangocad.model.element.basic.RectangleElement;
 import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.property.UnitValue;
+import com.maehem.mangocad.model.element.property.UnitProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import com.maehem.mangocad.view.ElementSelectionListener;
+import com.maehem.mangocad.view.widgets.inspector.CoordinateWidget;
 import com.maehem.mangocad.view.widgets.inspector.CurveValueWidget;
 import com.maehem.mangocad.view.widgets.inspector.DimensionTypeToggleWidget;
 import com.maehem.mangocad.view.widgets.inspector.GridUnitListWidget;
@@ -36,7 +37,6 @@ import com.maehem.mangocad.view.widgets.inspector.InspectorWidget;
 import com.maehem.mangocad.view.widgets.inspector.IntegerListWidget;
 import com.maehem.mangocad.view.widgets.inspector.LineStyleWidget;
 import com.maehem.mangocad.view.widgets.inspector.LineWidthWidget;
-import com.maehem.mangocad.view.widgets.inspector.CoordinateWidget;
 import com.maehem.mangocad.view.widgets.inspector.MirrorToggleWidget;
 import com.maehem.mangocad.view.widgets.inspector.PinDirectionWidget;
 import com.maehem.mangocad.view.widgets.inspector.PinFuncToggleWidget;
@@ -150,7 +150,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         "TEXT_RATIO", "%",
                         TextElement.RATIO_DEFAULT_OPTIONS);
                 GridUnitListWidget unitWidget = new GridUnitListWidget(
-                        d.unitProperty, "UNIT", UnitValue.Unit.MM);
+                        d.unitValue, "UNIT", UnitProperty.Field.VALUE);
                 IntegerListWidget precisionWidget = new IntegerListWidget(
                         d.precisionProperty, Dimension.Field.PRECISION,
                         "DIM_PRECISION", null,

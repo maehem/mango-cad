@@ -20,6 +20,7 @@ import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.property.ElementValue;
+import com.maehem.mangocad.model.element.property.UnitProperty;
 import com.maehem.mangocad.model.element.property.UnitValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.MissingResourceException;
@@ -36,25 +37,25 @@ import javafx.scene.control.Tooltip;
  */
 public class GridUnitListWidget extends InspectorWidget implements ElementValueListener {
 
-    private final ObservableList<UnitValue.Unit> options
+    private final ObservableList<UnitProperty.Unit> options
             = FXCollections.observableArrayList(
-                    UnitValue.Unit.values()
+                    UnitProperty.Unit.values()
             );
 
-    private final ComboBox<UnitValue.Unit> comboBox = new ComboBox<>(options);
+    private final ComboBox<UnitProperty.Unit> comboBox = new ComboBox<>(options);
     private final UnitValue unit;
     private final ElementField field;
 
     public GridUnitListWidget(UnitValue e, String msgKeyBase, ElementField f) {
         super(msgKeyBase);
 
-        if (e instanceof UnitValue w) {
-            this.unit = w;
+//        if (e instanceof UnitProperty w) {
+        this.unit = e;
             this.unit.addListener(this); // platform.runLater()???
-        } else {
-            this.unit = null;
-            LOGGER.log(Level.SEVERE, "GridUnitListWidget: element is not of type GridUnit!");
-        }
+//        }// else {
+//            this.unit = null;
+//            LOGGER.log(Level.SEVERE, "GridUnitListWidget: element is not of type Unit!");
+//        }
         this.field = f;
 
         Tooltip tt = new Tooltip();
@@ -81,8 +82,8 @@ public class GridUnitListWidget extends InspectorWidget implements ElementValueL
         });
     }
 
-    private void updateComboState(UnitValue.Unit unitToSet) {
-        for (UnitValue.Unit unitOption : options) {
+    private void updateComboState(UnitProperty.Unit unitToSet) {
+        for (UnitProperty.Unit unitOption : options) {
             if (unitOption.equals(unitToSet)) {
                 comboBox.getSelectionModel().select(unitOption);
                 break;
