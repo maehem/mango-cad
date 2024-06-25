@@ -36,7 +36,7 @@ import com.maehem.mangocad.view.widgets.inspector.InspectorWidget;
 import com.maehem.mangocad.view.widgets.inspector.IntegerListWidget;
 import com.maehem.mangocad.view.widgets.inspector.LineStyleWidget;
 import com.maehem.mangocad.view.widgets.inspector.LineWidthWidget;
-import com.maehem.mangocad.view.widgets.inspector.LocationXYWidget;
+import com.maehem.mangocad.view.widgets.inspector.CoordinateWidget;
 import com.maehem.mangocad.view.widgets.inspector.MirrorToggleWidget;
 import com.maehem.mangocad.view.widgets.inspector.PinDirectionWidget;
 import com.maehem.mangocad.view.widgets.inspector.PinFuncToggleWidget;
@@ -108,7 +108,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
             case Pin p -> {
                 // XY location
                 StringValueWidget nw = new StringValueWidget(p.nameProperty, "PIN_NAME");
-                LocationXYWidget lxy = new LocationXYWidget(p.coordinate, "PIN_LOCATION");
+                CoordinateWidget lxy = new CoordinateWidget(p.coordinate, "PIN_LOCATION");
                 PinRotationToggleWidget prw = new PinRotationToggleWidget(p);
                 PinDirectionWidget pdw = new PinDirectionWidget(p);
                 PinSwapLevelWidget psw = new PinSwapLevelWidget(p);
@@ -119,8 +119,8 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 getChildren().addAll(nw, lxy, prw, pdw, psw, plw, pfw, pvw);
             }
             case Wire w -> {
-                LocationXYWidget lxy1 = new LocationXYWidget(w.coord1, "LINE_LOCATION_1");
-                LocationXYWidget lxy2 = new LocationXYWidget(w.coord2, "LINE_LOCATION_2");
+                CoordinateWidget lxy1 = new CoordinateWidget(w.coord1, "LINE_LOCATION_1");
+                CoordinateWidget lxy2 = new CoordinateWidget(w.coord2, "LINE_LOCATION_2");
                 LineWidthWidget lwW = new LineWidthWidget(w, w.widthProperty);
                 LineStyleWidget lsW = new LineStyleWidget(w);
                 // Cap
@@ -131,7 +131,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
             }
             case TextElement t -> {
                 StringValueWidget valw = new StringValueWidget(t.valueProperty, "TEXT_VALUE");
-                LocationXYWidget lxy = new LocationXYWidget(t.coordinate, "TEXT_LOCATION");
+                CoordinateWidget lxy = new CoordinateWidget(t.coordinate, "TEXT_LOCATION");
                 RotationWidget rW = new RotationWidget(t, "ROTATION");
                 MirrorToggleWidget mW = new MirrorToggleWidget(t, "MIRROR");
                 TextSizeWidget tsW = new TextSizeWidget(t, "TEXT_SIZE"); // Upgrade to EditableDoubleListWidget
@@ -192,8 +192,8 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 );
             }
             case RectangleElement er -> {
-                LocationXYWidget lxy1 = new LocationXYWidget(er.coord1, "LINE_LOCATION_1");
-                LocationXYWidget lxy2 = new LocationXYWidget(er.coord2, "LINE_LOCATION_2");
+                CoordinateWidget lxy1 = new CoordinateWidget(er.coord1, "LINE_LOCATION_1");
+                CoordinateWidget lxy2 = new CoordinateWidget(er.coord2, "LINE_LOCATION_2");
                 RotationWidget rotW = new RotationWidget(er, "ROTATION");
 
                 ElementValueListener evl = (newVal) -> {
@@ -210,7 +210,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 );
             }
             case CircleElement ec -> {
-                LocationXYWidget lxy = new LocationXYWidget(ec.coordinate, "LOCATION");
+                CoordinateWidget lxy = new CoordinateWidget(ec.coordinate, "LOCATION");
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
                         ec.widthProperty, WidthProperty.Field.WIDTH,
                         "CIRCLE_WIDTH", null, ToolModeWidget.EDITABLE,

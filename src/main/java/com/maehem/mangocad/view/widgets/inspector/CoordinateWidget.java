@@ -35,7 +35,7 @@ import javafx.scene.layout.Pane;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LocationXYWidget extends InspectorWidget implements ElementValueListener {
+public class CoordinateWidget extends InspectorWidget implements ElementValueListener {
 
     private final RealValue xValue;
     private final RealValue yValue;
@@ -43,7 +43,7 @@ public class LocationXYWidget extends InspectorWidget implements ElementValueLis
     private final TextField xField = new TextField();
     private final TextField yField = new TextField();
 
-    public LocationXYWidget(
+    public CoordinateWidget(
             CoordinateValue coordinate,
             String msgKeyBase
     ) {
