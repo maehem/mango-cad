@@ -17,46 +17,17 @@
 package com.maehem.mangocad.model.element.property;
 
 /**
- * <pre>
- * Rotation -- rotation of an object; allowed range: [MSR]0..359.9
+ * Rotation -- rotation of an element; allowed range: [MSR]0..359.9
  *
  * May have 90 degree constraint.
  *
- * Autodesk packed 'mirror' and 'spin' in here without updating the XML spec.
- *
- * </pre>
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public class Rotation extends RealValue {
 
-    public enum Field {
-        SPIN("spin", Boolean.class),
-        CONSTRAINED("constrained", Boolean.class),
-        ALLOW_SPIN("allowSpin", Boolean.class),
-        MIRROR("mirror", Boolean.class),
-        ALLOW_MIRROR("allowMirror", Boolean.class),
-        VALUE("value", String.class);
-
-        private final String fName;
-        private final Class clazz;
-
-        private Field(String name, Class clazz) {
-            this.fName = name;
-            this.clazz = clazz;
-        }
-
-        public String fName() {
-            return fName;
-        }
-
-        public Class clazz() {
-            return clazz;
-        }
-    }
-
     private static final double MIN = 0.0;
-    private static final double MAX = 360.0;
+    private static final double MAX = 359.9;
 
     public static final boolean MIRROR_NOT_ALLOWED = false;
     public static final boolean MIRROR_ALLOWED = true;
@@ -76,7 +47,7 @@ public class Rotation extends RealValue {
     private boolean allowSpin = !SPIN_ALLOWED;
     private boolean allowMirror = MIRROR_ALLOWED;
 
-    private int prec = 1;
+    private final int PREC = 1;
 
     public Rotation() {
         super(0.0, MIN, MAX);
@@ -91,21 +62,17 @@ public class Rotation extends RealValue {
      * @return the value
      */
     public void setValue(String strValue) {
-        if (strValue.startsWith("MR")) {
-            // Mirror
+        if (strValue.startsWith("MR")) { // Mirror
             setMirror(true);
             set(Double.parseDouble(strValue.substring(2)));
-        } else if (strValue.startsWith("SR")) {
-            // Spin
+        } else if (strValue.startsWith("SR")) { // Spin
             setSpin(true);
             set(Double.parseDouble(strValue.substring(2)));
-        } else if (strValue.startsWith("SMR")) {
-            // Spin
+        } else if (strValue.startsWith("SMR")) { // Spin and Mirror
             setSpin(true);
             setMirror(true);
             set(Double.parseDouble(strValue.substring(3)));
-        } else {
-            // Normal
+        } else { // Normal  ex.  R123
             set(Double.parseDouble(strValue.substring(1)));
         }
     }
@@ -236,10 +203,10 @@ public class Rotation extends RealValue {
 
     @Override
     public String toString() {
-        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + getPrecise(prec);
+        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + getPrecise(PREC);
     }
 
     public String xmlValue() {
-        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + getPrecise(prec);
+        return (isSpin() ? "S" : "") + (isMirror() ? "M" : "") + "R" + getPrecise(PREC);
     }
 }

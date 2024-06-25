@@ -99,8 +99,8 @@ public class RotationWidget extends InspectorWidget {
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
         if ( //!field.equals(ElementText.Field.ROTATION) &&
-                !field.equals(Rotation.Field.VALUE)
-                && !field.equals(Rotation.Field.MIRROR)) {
+                !field.equals(RotationProperty.Field.VALUE)
+                && !field.equals(RotationProperty.Field.MIRROR)) {
             //LOGGER.log(Level.SEVERE, "The Rotation Field is not an expected type: " + field.name());
             return;
         }

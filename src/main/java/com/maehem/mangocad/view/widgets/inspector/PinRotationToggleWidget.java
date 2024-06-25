@@ -18,7 +18,7 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.property.Rotation;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
 import java.util.logging.Level;
@@ -120,7 +120,7 @@ public class PinRotationToggleWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(Rotation.Field.VALUE)) {
+        if (!field.equals(RotationProperty.Field.VALUE)) {
             return;
         }
         if (newVal == null) {

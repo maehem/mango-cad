@@ -399,9 +399,9 @@ public class RectangleElement extends Element implements
         } else if (newVal.equals(coord2.y)) {
             notifyListeners(Field.Y2, coord2.y.getOldValue(), coord2.y.get());
         } else if (newVal.equals(rotationProperty)) {
-            notifyListeners(Rotation.Field.VALUE, rotationProperty.getOldValue(), rotationProperty.get());
+            notifyListeners(RotationProperty.Field.VALUE, rotationProperty.getOldValue(), rotationProperty.get());
         } else if (newVal.equals(lockProperty)) {
-            notifyListeners(LockValue.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
+            notifyListeners(LockProperty.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
         }
     }
 

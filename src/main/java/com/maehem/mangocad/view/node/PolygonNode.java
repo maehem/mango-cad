@@ -25,7 +25,7 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.Rotation;
+import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ColorUtils;
@@ -245,7 +245,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
 //                }
 //            }
 //        }
-        if (field instanceof Rotation.Field) {
+        if (field instanceof RotationProperty.Field) {
             rebuildPath();
         }
         if (field instanceof SelectableProperty.Field) {

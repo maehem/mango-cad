@@ -111,7 +111,7 @@ public class MirrorToggleWidget extends InspectorWidget {
         // Qualify what we can mirror.
         // TODO: support rotate for groups of things and higher level things
         // like devices and footprints.
-        if (!field.equals(Rotation.Field.MIRROR)) {
+        if (!field.equals(RotationProperty.Field.MIRROR)) {
             //LOGGER.log(Level.SEVERE, "The Rotation/Mirror Field is not an expected type: " + field.toString() + field.name());
             return;
         }

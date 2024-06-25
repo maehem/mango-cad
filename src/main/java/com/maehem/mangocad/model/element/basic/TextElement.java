@@ -262,7 +262,7 @@ public class TextElement extends Element
     public void setRotation(Rotation r) {
         //Rotation oldValue = this.getRotation();
         Rotation.copyValues(r, rotation);
-        notifyListeners(Rotation.Field.VALUE, null, rotation);
+        notifyListeners(RotationProperty.Field.VALUE, null, rotation);
     }
 
     /**
@@ -438,7 +438,7 @@ public class TextElement extends Element
         } else if (newVal.equals(sizeProperty)) {
             notifyListeners(Field.SIZE, sizeProperty.getOldValue(), sizeProperty.get());
         } else if (newVal.equals(rotation)) {
-            notifyListeners(Rotation.Field.VALUE, rotation.getOldValue(), rotation.get());
+            notifyListeners(RotationProperty.Field.VALUE, rotation.getOldValue(), rotation.get());
         }
 
     }

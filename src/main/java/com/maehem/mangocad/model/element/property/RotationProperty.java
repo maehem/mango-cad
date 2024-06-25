@@ -16,11 +16,40 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.element.ElementField;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public interface RotationProperty {
+
+    public enum Field implements ElementField {
+        SPIN("spin", Boolean.class),
+        CONSTRAINED("constrained", Boolean.class),
+        ALLOW_SPIN("allowSpin", Boolean.class),
+        MIRROR("mirror", Boolean.class),
+        ALLOW_MIRROR("allowMirror", Boolean.class),
+        VALUE("value", String.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        @Override
+        public String fName() {
+            return fName;
+        }
+
+        @Override
+        public Class clazz() {
+            return clazz;
+        }
+    }
 
     public Rotation getRotationProperty();
 

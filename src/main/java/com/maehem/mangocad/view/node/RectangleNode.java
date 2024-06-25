@@ -122,7 +122,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
             default -> {
             }
         }
-        if (field instanceof Rotation.Field) {
+        if (field instanceof RotationProperty.Field) {
             updatePoints();
         }
     }
