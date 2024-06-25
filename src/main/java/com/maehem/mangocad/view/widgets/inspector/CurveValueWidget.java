@@ -17,9 +17,10 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.utils.Dialogs;
 import java.text.MessageFormat;
@@ -86,7 +87,7 @@ public class CurveValueWidget extends InspectorWidget implements ElementValueLis
     private void doRangeErrorDialog(Object item) {
         String errorHeader = MSG.getString("LINE_CURVE_VALUE_ERROR_HEADER");
         String errorMsg = MessageFormat.format(MSG.getString("LINE_CURVE_VALUE_ERROR_RANGE"),
-                CurveValue.Field.VALUE.fName(), item,
+                CurveProperty.Field.VALUE.fName(), item,
                 value.getMin(), value.getMax());
         Dialogs.errorDialog(errorHeader, errorMsg).show();
     }

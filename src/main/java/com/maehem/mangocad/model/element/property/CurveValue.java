@@ -30,27 +30,6 @@ public class CurveValue extends RealValue {
         super(value, MIN, MAX);
     }
 
-    public enum Field {
-        VALUE("value", Double.class);
-
-        private final String fName;
-        private final Class clazz;
-
-        private Field(String name, Class clazz) {
-            this.fName = name;
-            this.clazz = clazz;
-        }
-
-        public String fName() {
-            return fName;
-        }
-
-        public Class clazz() {
-            return clazz;
-        }
-
-    }
-
     public String toXML() {
         return get() != 0.0 ? " curve=\"" + getPrecise(1) + "\"" : "";
     }

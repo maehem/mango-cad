@@ -16,11 +16,36 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.element.ElementField;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public interface CurveProperty { // TODO: rename to UnitProperty
+
+    public enum Field implements ElementField {
+        VALUE("value", Double.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        @Override
+        public String fName() {
+            return fName;
+        }
+
+        @Override
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
 
     public CurveValue getCurveProperty();
 

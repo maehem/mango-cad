@@ -82,7 +82,7 @@ public class Vertex extends Element implements
         if (curveProperty.get() != curve) {
             double oldVal = curveProperty.get();
             curveProperty.set(curve);
-            notifyListeners(CurveValue.Field.VALUE, oldVal, curveProperty.get());
+            notifyListeners(CurveProperty.Field.VALUE, oldVal, curveProperty.get());
         }
     }
 
@@ -118,7 +118,7 @@ public class Vertex extends Element implements
         } else if (newVal.equals(coordinate.y)) {
             notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(curveProperty)) {
-            notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
+            notifyListeners(CurveProperty.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         }
     }
 
