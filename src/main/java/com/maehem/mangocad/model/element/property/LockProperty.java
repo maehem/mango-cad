@@ -22,6 +22,27 @@ package com.maehem.mangocad.model.element.property;
  */
 public interface LockProperty {
 
+    public enum Field {
+        LOCKED("locked", Boolean.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        public String fName() {
+            return fName;
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
+
     public LockValue getLockProperty();
 
 }

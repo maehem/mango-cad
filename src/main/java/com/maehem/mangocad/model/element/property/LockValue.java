@@ -25,27 +25,6 @@ public class LockValue extends ElementValue {
     private boolean value = false;
     private boolean oldValue = false;
 
-    public enum Field {
-        LOCKED("locked", Boolean.class);
-
-        private final String fName;
-        private final Class clazz;
-
-        private Field(String name, Class clazz) {
-            this.fName = name;
-            this.clazz = clazz;
-        }
-
-        public String fName() {
-            return fName;
-        }
-
-        public Class clazz() {
-            return clazz;
-        }
-
-    }
-
     public boolean isLocked() {
         return value;
     }
