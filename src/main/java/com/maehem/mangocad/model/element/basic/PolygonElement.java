@@ -147,7 +147,7 @@ public class PolygonElement extends Element implements
 //        if (this.width != width) {
 //            double oldVal = this.width;
             widthProperty.set(width);
-//            notifyListeners(WidthValue.Field.WIDTH, oldVal, this.width);
+//            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
 //        }
     }
 

@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.WidthValue;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import java.util.logging.Level;
@@ -113,7 +113,7 @@ public class CircleNode extends ViewNode implements ElementListener {
             case CircleElement.Field.RADIUS -> {
                 updateRadius();
             }
-            case WidthValue.Field.WIDTH -> {
+            case WidthProperty.Field.WIDTH -> {
                 updateWidth();
             }
             default -> {

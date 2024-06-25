@@ -23,11 +23,11 @@ import com.maehem.mangocad.model.element.basic.PolygonElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
-import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.CoordinateProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
-import com.maehem.mangocad.model.element.property.WidthValue;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import static com.maehem.mangocad.view.library.LibraryElementNode.distance;
@@ -206,7 +206,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
                 new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
 
         switch (field) {
-            case WidthValue.Field.WIDTH -> {
+            case WidthProperty.Field.WIDTH -> {
                 updateWidth();
             }
             case LayerNumberProperty.Field.LAYER -> {
@@ -229,7 +229,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
         }
 //        if (field instanceof PolygonElementField erf) {
 //            switch (erf) {
-//                case WidthValue.Field.WIDTH -> {
+//                case WidthProperty.Field.WIDTH -> {
 //                    updateWidth();
 //                }
 //                case PolygonElement.Field.LAYER -> {

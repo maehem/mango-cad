@@ -26,6 +26,7 @@ import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.UnitValue;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import com.maehem.mangocad.view.ElementSelectionListener;
 import com.maehem.mangocad.view.widgets.inspector.CurveValueWidget;
@@ -156,28 +157,28 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                         Dimension.PRECISION_OPTIONS);
                 // Show
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
-                        d.widthProperty, WidthValue.Field.WIDTH,
+                        d.widthProperty, WidthProperty.Field.WIDTH,
                         "LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
                         WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext. Width (with auto)
                 RealValueListWidget2 extWidthWidget = new RealValueListWidget2(
-                        d.extwidthProperty, WidthValue.Field.WIDTH,
+                        d.extwidthProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_WIDTH", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 1.0,
                         WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Length (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extLengthWidget = new RealValueListWidget2(
-                        d.extlengthProperty, WidthValue.Field.WIDTH,
+                        d.extlengthProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_LENGTH", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 10.0,
                         WidthValue.WIDTH_DEFAULT_OPTIONS
                 );
                 // Ext Offset (with auto)  Auto = 10x widthProperty
                 RealValueListWidget2 extOffsetWidget = new RealValueListWidget2(
-                        d.extoffsetProperty, WidthValue.Field.WIDTH,
+                        d.extoffsetProperty, WidthProperty.Field.WIDTH,
                         "DIM_EXT_LINE_OFFSET", null, ToolModeWidget.EDITABLE,
                         d.widthProperty, 10.0,
                         WidthValue.WIDTH_DEFAULT_OPTIONS
@@ -211,7 +212,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
             case CircleElement ec -> {
                 LocationXYWidget lxy = new LocationXYWidget(ec.coordinate, "LOCATION");
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
-                        ec.widthProperty, WidthValue.Field.WIDTH,
+                        ec.widthProperty, WidthProperty.Field.WIDTH,
                         "CIRCLE_WIDTH", null, ToolModeWidget.EDITABLE,
                         null, 1.0,
                         WidthValue.WIDTH_DEFAULT_OPTIONS

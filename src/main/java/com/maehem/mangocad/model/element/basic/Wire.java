@@ -460,7 +460,7 @@ public class Wire extends Element implements
         } else if (newVal.equals(curveProperty)) {
             notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         } else if (newVal.equals(widthProperty)) {
-            notifyListeners(WidthValue.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         }
     }
 

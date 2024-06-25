@@ -430,7 +430,7 @@ public class Dimension extends Element implements
         } else if (newVal.equals(coord3.y)) {
             notifyListeners(Field.Y3, coord3.y.getOldValue(), coord3.y.get());
         } else if (newVal.equals(widthProperty)) {
-            notifyListeners(WidthValue.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
+            notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         } else if (newVal.equals(extwidthProperty)) {
             notifyListeners(Field.EXTWIDTH, extwidthProperty.getOldValue(), extwidthProperty.get());
         } else if (newVal.equals(extlengthProperty)) {

@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.misc.WireWidthDefaults;
+import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
@@ -110,7 +111,7 @@ public class LineWidthWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(WidthValue.Field.WIDTH)) {
+        if (!field.equals(WidthProperty.Field.WIDTH)) {
             return;
         }
         if (newVal == null) {
