@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import java.text.MessageFormat;
 
@@ -31,7 +31,7 @@ import java.text.MessageFormat;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Vertex extends Element implements
-        LocationXYProperty, SelectableProperty, CurveProperty,
+        CoordinateProperty, SelectableProperty, CurveProperty,
         ElementValueListener {
 
     public static final String ELEMENT_NAME = "vertex";
@@ -114,9 +114,9 @@ public class Vertex extends Element implements
     @Override
     public void elementValueChanged(ElementValue newVal) {
         if (newVal.equals(coordinate.x)) {
-            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
+            notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
         } else if (newVal.equals(coordinate.y)) {
-            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
+            notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(curveProperty)) {
             notifyListeners(CurveValue.Field.VALUE, curveProperty.getOldValue(), curveProperty.get());
         }

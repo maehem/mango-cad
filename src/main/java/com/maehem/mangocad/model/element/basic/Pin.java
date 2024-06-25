@@ -25,7 +25,7 @@ import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -53,7 +53,7 @@ import java.util.List;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class Pin extends Element implements
-        LocationXYProperty, RotationProperty, SelectableProperty,
+        CoordinateProperty, RotationProperty, SelectableProperty,
         ElementValueListener {
 
     public static final String ELEMENT_NAME = "pin";
@@ -326,9 +326,9 @@ public class Pin extends Element implements
     @Override
     public void elementValueChanged(ElementValue newVal) {
         if (newVal.equals(coordinate.x)) {
-            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), newVal);
+            notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), newVal);
         } else if (newVal.equals(coordinate.y)) {
-            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), newVal);
+            notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), newVal);
         }
     }
 

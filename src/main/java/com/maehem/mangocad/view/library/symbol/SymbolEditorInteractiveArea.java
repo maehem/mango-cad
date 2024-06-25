@@ -31,7 +31,7 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.EditorTool;
@@ -313,10 +313,10 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not PolygonElement: " + snapshot.getElementName());
                                 }
                             }
-                            case LocationXYProperty exy -> {
+                            case CoordinateProperty exy -> {
                                 //LOGGER.log(Level.SEVERE, "Move elementXY.");
                                 Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof LocationXYProperty snapXY) {
+                                if (snapshot instanceof CoordinateProperty snapXY) {
                                     //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
                                     exy.getCoordinateProperty().setX(snapXY.getCoordinateProperty().getX() + moveDistSnappedX);
                                     exy.getCoordinateProperty().setY(snapXY.getCoordinateProperty().getY() + moveDistSnappedY);
@@ -568,7 +568,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 ArrayList<Element> picks = new ArrayList<>();
                 parentEditor.getSymbol().getElements().forEach((e) -> {
                     switch (e) {
-                        case LocationXYProperty ee -> {
+                        case CoordinateProperty ee -> {
                             if (Math.abs(me.getX() - ee.getCoordinateProperty().getX()) < PICK_SIZE
                                     && Math.abs(-me.getY() - ee.getCoordinateProperty().getY()) < PICK_SIZE) {
                                 picks.add(e);
@@ -1059,7 +1059,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 parentEditor.getSymbol().getElements().forEach((element) -> {
                     if (element instanceof SelectableProperty es) {
                         switch (es) {
-                            case LocationXYProperty exy -> {
+                            case CoordinateProperty exy -> {
                                 if (isInsideSelection(exy.getCoordinateProperty().getX(), -exy.getCoordinateProperty().getY())) {
                                     selectedElements.add(element);
                                     es.setSelected(true);

@@ -23,7 +23,7 @@ import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.Pin;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
 import com.maehem.mangocad.view.node.PinNode;
@@ -230,11 +230,11 @@ public class PinTester extends Application implements ElementListener, PickListe
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         switch (field) {
-            case LocationXYProperty.Field.Y -> {
+            case CoordinateProperty.Field.Y -> {
                 hLine.setStartY(-pinElement.getY());
                 hLine.setEndY(-pinElement.getY());
             }
-            case LocationXYProperty.Field.X -> {
+            case CoordinateProperty.Field.X -> {
                 vLine.setStartX(pinElement.getX());
                 vLine.setEndX(pinElement.getX());
             }

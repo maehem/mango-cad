@@ -22,7 +22,7 @@ import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
 import com.maehem.mangocad.view.ColorUtils;
@@ -104,7 +104,7 @@ public class CircleNode extends ViewNode implements ElementListener {
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (field) {
-            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
+            case CoordinateProperty.Field.X, CoordinateProperty.Field.Y -> {
                 updateLocation();
             }
             case SelectableProperty.Field.SELECTED -> {

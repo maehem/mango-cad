@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import static com.maehem.mangocad.model.element.enums.TextAlign.*;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.ColorUtils;
@@ -541,7 +541,7 @@ public class TextNode extends ViewNode implements ElementListener {
             case LayerNumberProperty.Field.LAYER -> {
                 updateLayer();
             }
-            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
+            case CoordinateProperty.Field.X, CoordinateProperty.Field.Y -> {
                 updateLocation();
             }
             case SelectableProperty.Field.SELECTED -> {

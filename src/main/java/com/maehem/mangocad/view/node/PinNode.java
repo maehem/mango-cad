@@ -23,7 +23,7 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import static com.maehem.mangocad.model.element.enums.PinVisible.*;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.PickListener;
@@ -460,7 +460,7 @@ public class PinNode extends ViewNode implements ElementListener {
 //                new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (field) {
-            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
+            case CoordinateProperty.Field.X, CoordinateProperty.Field.Y -> {
                 updatePosition();
             }
             case SelectableProperty.Field.SELECTED -> {

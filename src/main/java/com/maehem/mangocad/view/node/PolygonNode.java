@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
@@ -220,7 +220,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
                     rebuildPath();
                 }
             }
-            case LocationXYProperty.Field.X, LocationXYProperty.Field.Y -> {
+            case CoordinateProperty.Field.X, CoordinateProperty.Field.Y -> {
                 LOGGER.log(Level.SEVERE, "    Vertex field has changed. f: {0}", field.name());
                 updateVerticesXY();
             }

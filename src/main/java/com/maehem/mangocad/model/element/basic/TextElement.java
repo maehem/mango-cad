@@ -26,7 +26,7 @@ import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.Rotation;
@@ -62,7 +62,7 @@ import javafx.collections.ObservableList;
  */
 public class TextElement extends Element
         implements
-        LayerNumberProperty, LocationXYProperty, RotationProperty,
+        LayerNumberProperty, CoordinateProperty, RotationProperty,
         SelectableProperty, GrouprefsProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
@@ -432,9 +432,9 @@ public class TextElement extends Element
     @Override
     public void elementValueChanged(ElementValue newVal) {
         if (newVal.equals(coordinate.x)) {
-            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
+            notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
         } else if (newVal.equals(coordinate.y)) {
-            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
+            notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(sizeProperty)) {
             notifyListeners(Field.SIZE, sizeProperty.getOldValue(), sizeProperty.get());
         } else if (newVal.equals(rotation)) {

@@ -23,7 +23,7 @@ import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
@@ -40,7 +40,7 @@ import java.util.logging.Level;
  * @author Mark J Koch ( @maehem on GitHub)
  */
 public class CircleElement extends Element implements
-        LayerNumberProperty, LocationXYProperty, SelectableProperty,
+        LayerNumberProperty, CoordinateProperty, SelectableProperty,
         WidthProperty, LockProperty, GrouprefsProperty,
         ElementValueListener {
 
@@ -248,9 +248,9 @@ public class CircleElement extends Element implements
     @Override
     public void elementValueChanged(ElementValue newVal) {
         if (newVal.equals(coordinate.x)) {
-            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
+            notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
         } else if (newVal.equals(coordinate.y)) {
-            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
+            notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(radiusProperty)) {
             notifyListeners(Field.RADIUS, radiusProperty.getOldValue(), radiusProperty.get());
         } else if (newVal.equals(widthProperty)) {

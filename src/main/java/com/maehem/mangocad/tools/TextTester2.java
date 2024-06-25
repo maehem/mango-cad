@@ -24,7 +24,7 @@ import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.misc.LayerElement;
-import com.maehem.mangocad.model.element.property.LocationXYProperty;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
@@ -228,11 +228,11 @@ public class TextTester2 extends Application implements ElementListener, PickLis
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         switch (field) {
-            case LocationXYProperty.Field.Y -> {
+            case CoordinateProperty.Field.Y -> {
                 hLine.setStartY(-et.getY());
                 hLine.setEndY(-et.getY());
             }
-            case LocationXYProperty.Field.X -> {
+            case CoordinateProperty.Field.X -> {
                 vLine.setStartX(et.getX());
                 vLine.setEndX(et.getX());
             }
