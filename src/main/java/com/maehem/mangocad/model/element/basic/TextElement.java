@@ -176,11 +176,7 @@ public class TextElement extends Element
      * @param val the x to set
      */
     public void setX(double val) {
-//        if (getX() != x) {
-//            double oldValue = getX();
         coordinate.x.set(val);
-//            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
-//        }
     }
 
     /**
@@ -194,11 +190,7 @@ public class TextElement extends Element
      * @param val the y to set
      */
     public void setY(double val) {
-//        if (getY() != y) {
-//            double oldValue = getY();
         coordinate.y.set(val);
-//            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
-//        }
     }
 
     /**
@@ -273,20 +265,6 @@ public class TextElement extends Element
         notifyListeners(Rotation.Field.VALUE, null, rotation);
     }
 
-//    @Override
-//    public double getRot() {
-//        return rotation.get();
-//    }
-//
-//    @Override
-//    public void setRot(double rot) {
-//        if (getRot() != rot) {
-//            double oldValue = this.getRot();
-//            rotation.set(rot);
-//            notifyListeners(Rotation.Field.VALUE, oldValue, this.getRot());
-//        }
-//    }
-//
     /**
      * @return the align
      */

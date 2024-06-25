@@ -157,10 +157,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
         shadow.setVisible(false);
 
-        //scaleText.setLayoutX(10);
-        //scaleText.setLayoutY(10);
-        //scaleText.setScaleX(0.5);
-        //scaleText.setScaleY(0.5);
         selectionRectangle.setFill(null);
         selectionRectangle.setStroke(selectionRectangleColor);
         selectionRectangle.setStrokeType(StrokeType.CENTERED);

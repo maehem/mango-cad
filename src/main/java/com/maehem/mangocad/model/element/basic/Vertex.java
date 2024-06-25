@@ -36,10 +36,7 @@ public class Vertex extends Element implements
 
     public static final String ELEMENT_NAME = "vertex";
 
-    //public final RealValue xProperty = new RealValue(0);
-    //public final RealValue yProperty = new RealValue(0);
     public final CoordinateValue coordinate = new CoordinateValue();
-
     public final CurveValue curveProperty = new CurveValue(0);
 
     private boolean selected = false;
@@ -61,11 +58,7 @@ public class Vertex extends Element implements
      * @param val the x to set
      */
     public void setX(double val) {
-//        if (xProperty.get() != x) {
-//            double oldVal = xProperty.get();
         coordinate.x.set(val);
-//            notifyListeners(LocationXYProperty.Field.X, oldVal, xProperty.get());
-//        }
     }
 
     /**
@@ -79,11 +72,7 @@ public class Vertex extends Element implements
      * @param y the y to set
      */
     public void setY(double y) {
-//        if (yProperty.get() != y) {
-//            double oldVal = yProperty.get();
         coordinate.y.set(y);
-//            notifyListeners(LocationXYProperty.Field.Y, oldVal, yProperty.get());
-//        }
     }
 
     /**

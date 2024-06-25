@@ -506,8 +506,6 @@ public class TextNode extends ViewNode implements ElementListener {
             }
             parentMirrorTranslate.setX(trFact * textWidth);
             parentMirrorTranslate.setY(0);
-            //Translate tr = new Translate(trFact * tt.getBoundsInLocal().getWidth(), 0);
-            //tt.getTransforms().add(tr);
         }
     }
 
@@ -549,11 +547,6 @@ public class TextNode extends ViewNode implements ElementListener {
             case SelectableProperty.Field.SELECTED -> {
                 updateLayer();
             }
-//            case Rotation.Field.VALUE -> {
-//                updateLocation();
-//                updateAlignRotation();
-//                updateSpin();
-//            }
             case TextElement.Field.ALIGN -> {
                 updateAlignRotation();
             }

@@ -25,7 +25,6 @@ import com.maehem.mangocad.model.element.ElementField;
 public interface LocationXYProperty {
 
     public enum Field implements ElementField {
-        UNKNOWN("unkown", Double.class),
         X("x", Double.class),
         Y("y", Double.class);
 
@@ -50,13 +49,5 @@ public interface LocationXYProperty {
     }
 
     public CoordinateValue getCoordinateProperty();
-
-//    public double getX();
-//
-//    public double getY();
-//
-//    public void setX(double x);
-//
-//    public void setY(double y);
 
 }

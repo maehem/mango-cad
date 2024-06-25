@@ -47,7 +47,6 @@ public class RectangleElement extends Element implements
         X1("x1", Double.class), Y1("y1", Double.class),
         X2("x2", Double.class), Y2("y2", Double.class),
         ALL_XY("allXY", null);
-        //SELECTED("selected", Boolean.class);
 
         private final String fName;
         private final Class clazz;
@@ -69,11 +68,6 @@ public class RectangleElement extends Element implements
     private int layer;
     public final CoordinateValue coord1 = new CoordinateValue();
     public final CoordinateValue coord2 = new CoordinateValue();
-
-    //public final RealValue x1Property = new RealValue(0);
-    //public final RealValue y1Property = new RealValue(0);
-    //public final RealValue x2Property = new RealValue(0);
-    //public final RealValue y2Property = new RealValue(0);
     public final LockValue lockProperty = new LockValue();
     public final Rotation rotationProperty = new Rotation(Rotation.CONSTRAINED);
     private final ArrayList<String> grouprefs = new ArrayList<>();
@@ -89,10 +83,6 @@ public class RectangleElement extends Element implements
 
         coord1.addListener(this);
         coord2.addListener(this);
-        //x1Property.addListener(this);
-        //y1Property.addListener(this);
-        //x2Property.addListener(this);
-        //y2Property.addListener(this);
         rotationProperty.addListener(this);
         lockProperty.addListener(this);
     }
@@ -123,11 +113,7 @@ public class RectangleElement extends Element implements
      * @param val the x1 to set
      */
     public void setX1(double val) {
-//        if (getX1() != x1) {
-//            double oldVal = getX1();
         coord1.x.set(val);
-//            notifyListeners(RectangleElement.Field.X1, oldVal, getX1());
-//        }
     }
 
     /**
@@ -141,11 +127,7 @@ public class RectangleElement extends Element implements
      * @param val the y1 to set
      */
     public void setY1(double val) {
-//        if (getY1() != y1) {
-//            double oldVal = getY1();
         coord1.y.set(val);
-//            notifyListeners(RectangleElement.Field.Y1, oldVal, getY1());
-//        }
     }
 
     /**
@@ -159,11 +141,7 @@ public class RectangleElement extends Element implements
      * @param val the x2 to set
      */
     public void setX2(double val) {
-//        if (getX2() != x2) {
-//            double oldVal = getX2();
         coord2.x.set(val);
-//            notifyListeners(RectangleElement.Field.X2, oldVal, getX2());
-//        }
     }
 
     /**
@@ -177,11 +155,7 @@ public class RectangleElement extends Element implements
      * @param val the y2 to set
      */
     public void setY2(double val) {
-//        if (getY2() != y2) {
-//            double oldVal = getY2();
-            coord2.y.set(val);
-//            notifyListeners(RectangleElement.Field.Y2, oldVal, getY2());
-//        }
+        coord2.y.set(val);
     }
 
     /**
@@ -196,8 +170,6 @@ public class RectangleElement extends Element implements
         coord1.y.set(y1);
         coord2.x.set(x2);
         coord2.y.set(y2);
-
-        //notifyListeners(RectangleElement.Field.ALL_XY, null, null);
     }
 
     /**
@@ -295,8 +267,8 @@ public class RectangleElement extends Element implements
     public void setRot(double value) {
 //        if (getRot() != value) {
 //            double oldValue = getRot();
-            this.rotationProperty.set(value);
-            //notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
+        this.rotationProperty.set(value);
+        //notifyListeners(RotationProperty.Field.VALUE, oldValue, getRot());
 //        }
     }
 
@@ -398,7 +370,6 @@ public class RectangleElement extends Element implements
 //    public boolean isMirrored() {
 //        return rotationProperty.isMirror();
 //    }
-
 //    @Override
 //    public boolean isMirrorAllowed() {
 //        return rotationProperty.isMirrorAllowed();
@@ -417,7 +388,6 @@ public class RectangleElement extends Element implements
 //    public void setConstrained(boolean value) { // Not changable
 //
 //    }
-
     @Override
     public void elementValueChanged(ElementValue newVal) {
         if (newVal.equals(coord1.x)) { // TODO Coordinate needs to pass the changed value.

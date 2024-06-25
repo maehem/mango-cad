@@ -64,8 +64,6 @@ public class Hole extends Element implements LocationXYProperty, GrouprefsProper
     }
 
     public final CoordinateValue coordinate = new CoordinateValue();
-    //private double x;
-    //private double y;
     private double drill;
     private final ArrayList<String> groupRefs = new ArrayList<>();
 

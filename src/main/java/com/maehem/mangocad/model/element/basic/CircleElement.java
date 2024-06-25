@@ -86,8 +86,6 @@ public class CircleElement extends Element implements
 
     public CircleElement() {
 
-        //xProperty.addListener(this);
-        //yProperty.addListener(this);
         coordinate.addListener(this);
         widthProperty.addListener(this);
         radiusProperty.addListener(this);
@@ -143,11 +141,7 @@ public class CircleElement extends Element implements
      * @param width the width to set
      */
     public void setWidth(double width) {
-//        if (getWidth() != width) {
-//            double oldValue = getWidth();
         widthProperty.set(width);
-//            notifyListeners(ElementCircle.Field.WIDTH, oldValue, getWidth());
-//        }
     }
 
     /**
@@ -160,13 +154,8 @@ public class CircleElement extends Element implements
     /**
      * @param x the x to set
      */
-//    @Override
     public void setX(double x) {
-//        if (getX() != x) {
-//            double oldValue = getX();
         coordinate.x.set(x);
-//            notifyListeners(LocationXYProperty.Field.X, oldValue, getX());
-//        }
     }
 
     /**
@@ -179,13 +168,8 @@ public class CircleElement extends Element implements
     /**
      * @param y the y to set
      */
-//    @Override
     public void setY(double y) {
-//        if (getY() != y) {
-//            double oldValue = getY();
         coordinate.y.set(y);
-//            notifyListeners(LocationXYProperty.Field.Y, oldValue, getY());
-//        }
     }
 
     /**
@@ -263,10 +247,10 @@ public class CircleElement extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(coordinate)) {
-            notifyListeners(LocationXYProperty.Field.UNKNOWN, null, null);
-//        } else if (newVal.equals(yProperty)) {
-//            notifyListeners(LocationXYProperty.Field.Y, yProperty.getOldValue(), yProperty.get());
+        if (newVal.equals(coordinate.x)) {
+            notifyListeners(LocationXYProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
+        } else if (newVal.equals(coordinate.y)) {
+            notifyListeners(LocationXYProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());
         } else if (newVal.equals(radiusProperty)) {
             notifyListeners(Field.RADIUS, radiusProperty.getOldValue(), radiusProperty.get());
         } else if (newVal.equals(widthProperty)) {

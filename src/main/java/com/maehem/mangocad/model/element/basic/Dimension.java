@@ -174,11 +174,7 @@ public class Dimension extends Element implements
      * @param val the x1 to set
      */
     public void setX1(double val) {
-//        if (getX1() != x1) {
-//            double oldVal = getX1();
         coord1.x.set(val);
-//            notifyListeners(Dimension.Field.X1, oldVal, getX1());
-//        }
     }
 
     /**
@@ -192,11 +188,7 @@ public class Dimension extends Element implements
      * @param val the y1 to set
      */
     public void setY1(double val) {
-//        if (getY1() != y1) {
-//            double oldVal = getY1();
         coord1.y.set(val);
-//            notifyListeners(Dimension.Field.Y1, oldVal, getY1());
-//        }
     }
 
     /**
@@ -210,11 +202,7 @@ public class Dimension extends Element implements
      * @param val the x2 to set
      */
     public void setX2(double val) {
-//        if (getX2() != x2) {
-//            double oldVal = getX2();
         coord2.x.set(val);
-//            notifyListeners(Dimension.Field.X2, oldVal, getX2());
-//        }
     }
 
     /**
@@ -228,11 +216,7 @@ public class Dimension extends Element implements
      * @param val the y2 to set
      */
     public void setY2(double val) {
-//        if (getY2() != y2) {
-//            double oldVal = getY2();
         coord2.y.set(val);
-//            notifyListeners(Dimension.Field.Y2, oldVal, getY2());
-//        }
     }
 
     /**
@@ -246,11 +230,7 @@ public class Dimension extends Element implements
      * @param val the x3 to set
      */
     public void setX3(double val) {
-//        if (getX3() != x3) {
-//            double oldVal = getX3();
         coord3.x.set(val);
-//            notifyListeners(Dimension.Field.X3, oldVal, getX3());
-//        }
     }
 
     /**
@@ -264,11 +244,7 @@ public class Dimension extends Element implements
      * @param val the y3 to set
      */
     public void setY3(double val) {
-//        if (getY3() != y3) {
-//            double oldVal = getY3();
         coord3.y.set(val);
-//            notifyListeners(Dimension.Field.Y3, oldVal, getY3());
-//        }
     }
 
     /**
@@ -288,7 +264,6 @@ public class Dimension extends Element implements
     /**
      * @return the widthProperty
      */
-//    @Override
     public double getWidth() {
         return widthProperty.get();
     }
@@ -296,7 +271,6 @@ public class Dimension extends Element implements
     /**
      * @param width the widthProperty to set
      */
-//    @Override
     public void setWidth(double width) {
         this.widthProperty.set(width);
     }

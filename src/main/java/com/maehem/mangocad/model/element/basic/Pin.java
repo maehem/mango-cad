@@ -63,8 +63,6 @@ public class Pin extends Element implements
     public static final List<String> BASIC_ROTATIONS = Arrays.asList("R0", "R90", "R180", "R270"); // TODO: Make a fixed-ROT enum
 
     public final StringValue nameProperty = new StringValue("A");
-    //public final RealValue xProperty = new RealValue(0);
-    //public final RealValue yProperty = new RealValue(0);
     public final CoordinateValue coordinate = new CoordinateValue();
     private boolean selected = false;
     private Pin snapshot2 = null;
@@ -129,11 +127,7 @@ public class Pin extends Element implements
      * @param val the x to set
      */
     public void setX(double val) {
-//        if (xProperty.get() != x) {
-//            double oldX = xProperty.get();
         coordinate.x.set(val);
-//            notifyListeners(LocationXYProperty.Field.X, oldX, x);
-//        }
     }
 
     /**
@@ -147,11 +141,7 @@ public class Pin extends Element implements
      * @param val the y to set
      */
     public void setY(double val) {
-//        if (yProperty.get() != y) {
-//            double oldY = yProperty.get();
         coordinate.y.set(val);
-//            notifyListeners(LocationXYProperty.Field.Y, oldY, y);
-//        }
     }
 
     /**
@@ -264,83 +254,6 @@ public class Pin extends Element implements
             notifyListeners(PinField.SWAPLEVEL, oldVal, this.swapLevel);
         }
     }
-
-//    /**
-//     * @return the rotation
-//     */
-//    @Override
-//    public double getRot() {
-//        return rotation.get();
-//    }
-//
-//    /**
-//     * @param val the rotation to set
-//     */
-//    @Override
-//    public void setRot(double val) {
-//        if (this.rotation.get() != val) {
-//            double oldVal = this.getRot();
-//            this.rotation.set(val);
-//            notifyListeners(Rotation.Field.VALUE, oldVal, this.rotation.get());
-//        }
-//    }
-
-//    @Override
-//    public boolean isSpun() {
-//        return false;
-//    }
-//
-//    @Override
-//    public void setSpin(boolean value) {
-//        // Not applicable
-//    }
-//
-//    @Override
-//    public boolean isSpin() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isSpinAllowed() {
-//        return false;
-//    }
-//
-//    @Override
-//    public void setAllowSpin(boolean value) {
-//        // Not applicable.
-//    }
-//
-//    @Override
-//    public void setMirror(boolean value) {
-//        if (value) {
-//            setRot(getRot() + 180);
-//        }
-//    }
-//
-//    @Override
-//    public boolean isMirrored() {
-//        return getRot() == 180 || getRot() == 270;
-//    }
-//
-//    @Override
-//    public boolean isMirrorAllowed() {
-//        return false;
-//    }
-//
-//    @Override
-//    public void setAllowMirror(boolean value) {
-//        // Not applicable.
-//    }
-//
-//    @Override
-//    public boolean isConstrained() {
-//        return true;
-//    }
-//
-//    @Override
-//    public void setConstrained(boolean value) {
-//        // Only true allowed.
-//    }
 
     @Override
     public void createSnapshot() {

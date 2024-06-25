@@ -264,11 +264,7 @@ public class Wire extends Element implements
      */
     //@Override
     public void setWidth(double width) {
-//        if (getWidth() != width) {
-//            double oldVal = getWidth();
-            widthProperty.set(width);
-//            notifyListeners(WidthValue.Field.WIDTH, oldVal, getWidth());
-//        }
+        widthProperty.set(width);
     }
 
     /**

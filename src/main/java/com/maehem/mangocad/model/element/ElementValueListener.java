@@ -24,6 +24,5 @@ import com.maehem.mangocad.model.element.property.ElementValue;
  */
 public interface ElementValueListener {
 
-    // if newVal is null then parent val is thing that changed.
     public void elementValueChanged(ElementValue newVal);
 }
