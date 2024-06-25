@@ -19,10 +19,11 @@ package com.maehem.mangocad.model.element.property;
 import com.maehem.mangocad.model.element.ElementField;
 
 /**
+ * Represents a X/Y location.
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface LocationXYProperty {
+public interface CoordinateProperty {
 
     public enum Field implements ElementField {
         X("x", Double.class),
