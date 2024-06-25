@@ -256,7 +256,7 @@ public class CircleElement extends Element implements
         } else if (newVal.equals(widthProperty)) {
             notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         } else if (newVal.equals(lockProperty)) {
-            notifyListeners(LockValue.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
+            notifyListeners(LockProperty.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
         }
     }
 
