@@ -23,6 +23,7 @@ import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
+import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
@@ -70,7 +71,8 @@ public class CircleElement extends Element implements
 
     }
 
-    private int layer;
+    //private int layer;
+    private final IntValue layerValue = new IntValue(0);
     //public final RealValue xProperty = new RealValue(0);
     //public final RealValue yProperty = new RealValue(0);
     public final CoordinateValue coordinate = new CoordinateValue();
@@ -86,6 +88,7 @@ public class CircleElement extends Element implements
 
     public CircleElement() {
 
+        layerValue.addListener(this);
         coordinate.addListener(this);
         widthProperty.addListener(this);
         radiusProperty.addListener(this);
@@ -110,6 +113,10 @@ public class CircleElement extends Element implements
     @Override
     public LockValue getLockProperty() {
         return lockProperty;
+    }
+
+    public IntValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     /**
@@ -233,16 +240,17 @@ public class CircleElement extends Element implements
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
     @Override
@@ -257,6 +265,8 @@ public class CircleElement extends Element implements
             notifyListeners(WidthProperty.Field.WIDTH, widthProperty.getOldValue(), widthProperty.get());
         } else if (newVal.equals(lockProperty)) {
             notifyListeners(LockProperty.Field.LOCKED, lockProperty.getOldValue(), lockProperty.isLocked());
+        } else if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
         }
     }
 
