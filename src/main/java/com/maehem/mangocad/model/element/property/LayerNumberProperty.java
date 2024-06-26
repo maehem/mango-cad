@@ -16,13 +16,15 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import com.maehem.mangocad.model.element.ElementField;
+
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
 public interface LayerNumberProperty {
 
-    public enum Field {
+    public enum Field implements ElementField {
         LAYER("layer", Integer.class);
 
         private final String fName;
@@ -33,10 +35,12 @@ public interface LayerNumberProperty {
             this.clazz = clazz;
         }
 
+        @Override
         public String fName() {
             return fName;
         }
 
+        @Override
         public Class clazz() {
             return clazz;
         }
