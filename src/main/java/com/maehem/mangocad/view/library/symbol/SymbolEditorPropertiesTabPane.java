@@ -29,8 +29,8 @@ public class SymbolEditorPropertiesTabPane extends TabPane {
     private final SymbolEditorInspectorTab propertiesTab;
     //private final SymbolEditorSelectionTab selectionTab;
 
-    public SymbolEditorPropertiesTabPane() {
-        propertiesTab = new SymbolEditorInspectorTab();
+    public SymbolEditorPropertiesTabPane(LibrarySymbolSubEditor parent) {
+        propertiesTab = new SymbolEditorInspectorTab(parent.getDrawing());
         propertiesTab.setClosable(false);
 
 //        selectionTab = new SymbolEditorSelectionTab(null);
