@@ -96,7 +96,7 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
     private final HBox bottomArea = new HBox();
     private final Symbol symbol;
     private final SymbolEditorInteractiveArea symbolEditorInteractiveArea;
-    private final SymbolEditorPropertiesTabPane propertiesTabPane = new SymbolEditorPropertiesTabPane();
+    private final SymbolEditorPropertiesTabPane propertiesTabPane = new SymbolEditorPropertiesTabPane(this);
 
     public LibrarySymbolSubEditor(LibraryEditor parent, Symbol symbol) {
         super(parent);

@@ -16,12 +16,12 @@
  */
 package com.maehem.mangocad.view.board;
 
-import com.maehem.mangocad.view.library.symbol.SymbolEditorPropertiesTabPane;
 import java.io.File;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -46,7 +46,7 @@ public class BoardEditor extends BorderPane {
         // left: tool bar
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new BoardEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new BoardEditorInteractiveArea(), new Pane());
         workArea.setDividerPosition(0, 0.8);
         setCenter(workArea);
 
