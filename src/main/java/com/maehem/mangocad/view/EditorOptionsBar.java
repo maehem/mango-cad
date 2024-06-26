@@ -20,8 +20,8 @@ import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.library.MouseMovementListener;
 import com.maehem.mangocad.view.widgets.GridMouseWidget;
-import com.maehem.mangocad.view.widgets.LayerChooser;
 import com.maehem.mangocad.view.widgets.ToolModeWidgetBox;
+import com.maehem.mangocad.view.widgets.toolbar.LayerChooserWidget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -69,7 +69,7 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
                     getItems().add(b);
                 }
                 case LAYER_CHOOSER -> {
-                    LayerChooser layerChooser = new LayerChooser(drawing.getPalette(), drawing.getLayers()); // Does nothing for this editor.
+                    LayerChooserWidget layerChooser = new LayerChooserWidget(drawing.getLayers()); // Does nothing for this editor.
                     getItems().add(layerChooser);
 
                     layerChooser.getChooser().setOnAction((event) -> {
