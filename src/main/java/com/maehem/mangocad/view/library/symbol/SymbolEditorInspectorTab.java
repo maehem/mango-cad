@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.view.widgets.FocusedItemPropertiesBox;
 import com.maehem.mangocad.view.widgets.SelectedItemsOverviewBox;
 import java.util.List;
@@ -33,24 +34,26 @@ public class SymbolEditorInspectorTab extends Tab { // TODO: Move to view pkg.
 
     //private Element element;
     private final VBox propertyNodes = new VBox();
-    private final FocusedItemPropertiesBox focusedItemBox = new FocusedItemPropertiesBox();
-    private final SelectedItemsOverviewBox selectedItemsBox = new SelectedItemsOverviewBox(focusedItemBox);
+    private final FocusedItemPropertiesBox focusedItemBox;
+    private final SelectedItemsOverviewBox selectedItemsBox;
     private final TitledPane focusedPane;
     private final TitledPane selectionPane;
     //private final Accordion accordion;
 
-    public SymbolEditorInspectorTab() {
+    public SymbolEditorInspectorTab(Drawing drawing) {
         super("Inspector");
         this.setContent(propertyNodes);
 
+        focusedItemBox = new FocusedItemPropertiesBox(drawing);
+        focusedPane = new TitledPane("Properties", focusedItemBox);
+
+        selectedItemsBox = new SelectedItemsOverviewBox(focusedItemBox);
         ScrollPane selectedScrollPane = new ScrollPane(selectedItemsBox);
         selectedScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         selectedScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        focusedPane = new TitledPane("Properties", focusedItemBox);
         selectionPane = new TitledPane("Selected Items", selectedScrollPane);
 
-        //accordion = new Accordion(focusedPane, selectionPane);
         focusedPane.animatedProperty().set(false);
         selectionPane.animatedProperty().set(false);
 
