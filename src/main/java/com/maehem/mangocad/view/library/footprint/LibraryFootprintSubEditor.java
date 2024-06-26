@@ -22,7 +22,6 @@ import com.maehem.mangocad.view.EditorTool;
 import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
-import com.maehem.mangocad.view.library.symbol.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.event.Event;
@@ -30,6 +29,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 /**
@@ -98,7 +98,7 @@ public class LibraryFootprintSubEditor extends LibrarySubEditor {
         leftToolBar = new EditorToolbar(tools, this);
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new FootprintEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new FootprintEditorInteractiveArea(), new Pane());
         workArea.setDividerPosition(0, 0.8);
         // center: work area
         setCenter(workArea);
