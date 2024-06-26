@@ -21,9 +21,12 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.PolygonPour;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -63,7 +66,7 @@ import java.util.logging.Logger;
 public class PolygonElement extends Element implements
         LayerNumberProperty, ElementListener, SelectableProperty,
         WidthProperty, LockProperty,
-        GrouprefsProperty {
+        GrouprefsProperty, ElementValueListener {
 
     public static final Logger LOGGER = Logger.getLogger("com.maehem.mangocad");
     public static final String ELEMENT_NAME = "polygon";
@@ -98,7 +101,8 @@ public class PolygonElement extends Element implements
 
     }
 
-    private int layer;
+    //private int layer;
+    public final LayerNumberValue layerValue = new LayerNumberValue(98);
 
     public final LockValue lockProperty = new LockValue();
     public final WidthValue widthProperty = new WidthValue();
@@ -116,9 +120,19 @@ public class PolygonElement extends Element implements
     private PolygonElement snapshot = null;
     private boolean selected = false;
 
+    public PolygonElement() {
+
+        layerValue.addListener(this);
+    }
+
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     @Override
@@ -443,21 +457,30 @@ public class PolygonElement extends Element implements
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
     @Override
     public ArrayList<String> getGrouprefs() {
         return grouprefs;
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
+        }
+
     }
 
     /**

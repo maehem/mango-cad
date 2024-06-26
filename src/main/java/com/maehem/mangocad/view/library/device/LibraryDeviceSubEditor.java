@@ -104,7 +104,7 @@ public class LibraryDeviceSubEditor extends LibrarySubEditor {
         //this.parent = parent;
 
         // top:  option toolbar row
-        topToolBar = new EditorOptionsBar(parentEditor.getLibrary().getParentDrawing(), options, this);
+        topToolBar = new EditorOptionsBar(parentEditor.getLibrary().getParentDrawing(), null, options, this);
         setTop(topToolBar);
         //topArea.getChildren().add(topToolBar);
 

@@ -17,8 +17,11 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +29,7 @@ import java.util.List;
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */
-public class FrameElement extends Element implements LayerNumberProperty, GrouprefsProperty {
+public class FrameElement extends Element implements LayerNumberProperty, GrouprefsProperty, ElementValueListener {
     public static final String ELEMENT_NAME = "frame";
 
     //     frame ( no elements )
@@ -43,7 +46,8 @@ public class FrameElement extends Element implements LayerNumberProperty, Groupr
     //          border-bottom %Bool;        "yes"
     //          grouprefs     IDREFS         #IMPLIED
     //
-    private int layer;
+    //private int layer;
+    public final LayerNumberValue layerValue = new LayerNumberValue(97);
     private double x1;
     private double y1;
     private double x2;
@@ -56,10 +60,19 @@ public class FrameElement extends Element implements LayerNumberProperty, Groupr
     private boolean borderBottom = true;
     private final ArrayList<String> groupRefs = new ArrayList<>();
 
+    public FrameElement() {
+
+        layerValue.addListener(this);
+    }
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     /**
@@ -208,20 +221,28 @@ public class FrameElement extends Element implements LayerNumberProperty, Groupr
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
     @Override
     public ArrayList<String> getGrouprefs() {
         return groupRefs;
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
+        }
     }
 }

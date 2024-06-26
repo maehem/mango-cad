@@ -21,25 +21,39 @@ import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.Rotation;
 import java.util.ArrayList;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub)
+ * <pre>
+ * [[attribute]]
+ *      name %String; #REQUIRED
+ *      value %String; #IMPLIED
+ *      x %Coord;  #IMPLIED
+ *      y %Coord; #IMPLIED
+ *      size %Dimension; #IMPLIED
+ *      layer %Layer; #IMPLIED
+ *      font %TextFont; #IMPLIED
+ *      ratio %Int; #IMPLIED
+ *      rot %Rotation; "R0"
+ *      display %AttributeDisplay; "value"
+ *      constant %Bool; "no"
+ *      align %Align; "bottom-left"
+ *      grouprefs IDREFS #IMPLIED >
  *
- * [[attribute]] name %String; #REQUIRED value %String; #IMPLIED x %Coord;
- * #IMPLIED y %Coord; #IMPLIED size %Dimension; #IMPLIED layer %Layer; #IMPLIED
- * font %TextFont; #IMPLIED ratio %Int; #IMPLIED rot %Rotation; "R0" display
- * %AttributeDisplay; "value" constant %Bool; "no" align %Align; "bottom-left"
- * grouprefs IDREFS #IMPLIED > <!-- display: Only in <element> or <instance>
- * context --> <!-- constant:Only in <device> context -->
+ *      <!-- display: Only in <element> or <instance> context -->
+ *      <!-- constant:Only in <device> context -->
+ * </pre>
  */
 public class Attribute extends Element implements LayerNumberProperty, GrouprefsProperty {
 
     public static final String ELEMENT_NAME = "attribute";
 
-    private int layer;
+    //private int layer;
+    public final LayerNumberValue layerNumber = new LayerNumberValue(97);
     private String name;
     private double x;
     private double y;
@@ -57,6 +71,7 @@ public class Attribute extends Element implements LayerNumberProperty, Grouprefs
 
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
+    // TODO: Needs Listener setup
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
@@ -245,16 +260,22 @@ public class Attribute extends Element implements LayerNumberProperty, Grouprefs
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerNumber.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerNumber.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

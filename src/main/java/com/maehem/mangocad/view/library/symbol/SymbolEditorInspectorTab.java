@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.library.symbol;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import com.maehem.mangocad.view.widgets.FocusedItemPropertiesBox;
 import com.maehem.mangocad.view.widgets.SelectedItemsOverviewBox;
@@ -40,11 +41,11 @@ public class SymbolEditorInspectorTab extends Tab { // TODO: Move to view pkg.
     private final TitledPane selectionPane;
     //private final Accordion accordion;
 
-    public SymbolEditorInspectorTab(Drawing drawing) {
+    public SymbolEditorInspectorTab(Drawing drawing, LibraryElement libraryElement) {
         super("Inspector");
         this.setContent(propertyNodes);
 
-        focusedItemBox = new FocusedItemPropertiesBox(drawing);
+        focusedItemBox = new FocusedItemPropertiesBox(drawing, libraryElement);
         focusedPane = new TitledPane("Properties", focusedItemBox);
 
         selectedItemsBox = new SelectedItemsOverviewBox(focusedItemBox);

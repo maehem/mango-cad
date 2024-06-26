@@ -154,4 +154,9 @@ public class Footprint extends LibraryElement { // class name "Package" is reser
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    @Override
+    public boolean isLayerAllowed(int layerNumber) {
+        return layerNumber < 90 && layerNumber >= 100;
+    }
+
 }

@@ -26,6 +26,7 @@ import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
@@ -104,7 +105,7 @@ public class Dimension extends Element implements
 
     }
 
-    private int layer;
+    public final LayerNumberValue layerValue = new LayerNumberValue(97);
     public final CoordinateValue coord1 = new CoordinateValue();
     public final CoordinateValue coord2 = new CoordinateValue();
     public final CoordinateValue coord3 = new CoordinateValue();
@@ -129,6 +130,7 @@ public class Dimension extends Element implements
     @SuppressWarnings("LeakingThisInConstructor")
     public Dimension() {
 
+        layerValue.addListener(this);
         coord1.addListener(this);
         coord2.addListener(this);
         coord3.addListener(this);
@@ -146,6 +148,11 @@ public class Dimension extends Element implements
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     @Override
@@ -403,21 +410,24 @@ public class Dimension extends Element implements
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(coord1.x)) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
+        } else if (newVal.equals(coord1.x)) {
             notifyListeners(Field.X1, coord1.x.getOldValue(), coord1.x.get());
         } else if (newVal.equals(coord1.y)) {
             notifyListeners(Field.Y1, coord1.y.getOldValue(), coord1.y.get());

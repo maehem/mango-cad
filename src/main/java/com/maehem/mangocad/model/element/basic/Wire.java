@@ -28,6 +28,7 @@ import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
@@ -118,7 +119,8 @@ public class Wire extends Element implements
     public static final String ELEMENT_NAME = "wire";
     public static final int DEFAULT_LAYER = 94; // Nets
 
-    private int layer = DEFAULT_LAYER;
+    //private int layer = DEFAULT_LAYER;
+    public final LayerNumberValue layerValue = new LayerNumberValue(DEFAULT_LAYER);
     public final CoordinateValue coord1 = new CoordinateValue();
     public final CoordinateValue coord2 = new CoordinateValue();
     public final RealValue x1Property = new RealValue(0);
@@ -138,6 +140,7 @@ public class Wire extends Element implements
     @SuppressWarnings("LeakingThisInConstructor")
     public Wire() {
 
+        layerValue.addListener(this);
         x1Property.addListener(this);
         y1Property.addListener(this);
         x2Property.addListener(this);
@@ -149,6 +152,11 @@ public class Wire extends Element implements
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     @Override
@@ -435,21 +443,24 @@ public class Wire extends Element implements
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(coord1.x)) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
+        } else if (newVal.equals(coord1.x)) {
             notifyListeners(Field.X1, coord1.x.getOldValue(), coord1.x.get());
         } else if (newVal.equals(coord1.y)) {
             notifyListeners(Field.Y1, coord1.y.getOldValue(), coord1.y.get());

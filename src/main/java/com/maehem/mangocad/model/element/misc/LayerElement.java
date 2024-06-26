@@ -38,6 +38,8 @@ public class LayerElement implements VisibleProperty {
     private boolean allowDelete = true;
     public final Layers parent;
 
+    private boolean editorVisible = true;
+
     public LayerElement(Layers parent) {
         this.parent = parent;
     }
@@ -111,6 +113,26 @@ public class LayerElement implements VisibleProperty {
      */
     @Override
     public final void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    /**
+     * Used to tell editor if item should appear in comboBox menu. Not written
+     * to file. Determined at run time based on editor: Symbol, Schematic,
+     * Footprint, Board.
+     *
+     * @return the visible
+     */
+    public final boolean isEditorVisible() {
+        return visible;
+    }
+
+    /**
+     * Used to tell editor if item should appear in comboBox menu.
+     *
+     * @param visible the visible to set
+     */
+    public final void setEditorVisible(boolean visible) {
         this.visible = visible;
     }
 

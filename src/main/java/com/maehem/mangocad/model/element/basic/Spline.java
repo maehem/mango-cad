@@ -17,14 +17,17 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import java.util.ArrayList;
 
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class Spline extends Element implements LayerNumberProperty {
+public class Spline extends Element implements LayerNumberProperty, ElementValueListener {
 
     public static final String ELEMENT_NAME = "spline";
 
@@ -39,12 +42,23 @@ public class Spline extends Element implements LayerNumberProperty {
     //     layer           %Int%       IMPLIED    (new to 9.7)
     //     locked          %Bool%      IMPLIED    (new to 9.7)
     private double width;
-    private int layer;
+    public final LayerNumberValue layerValue = new LayerNumberValue(1);
+    //private int layer;
     private boolean locked = false;
+
+    public Spline() {
+
+        layerValue.addListener(this);
+    }
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     /**
@@ -84,15 +98,24 @@ public class Spline extends Element implements LayerNumberProperty {
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
+    }
+
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
         }
+
     }
 }

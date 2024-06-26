@@ -17,30 +17,29 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.TextFont;
 import com.maehem.mangocad.model.element.enums.WireStyle;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import java.util.ArrayList;
 
 /**
- * schematic_group
-          name              ID             #REQUIRED
-          selectable        %Bool;         #IMPLIED
-          width             %Dimension;    #IMPLIED
-          titleSize         %Dimension;    #IMPLIED
-          titleFont         %TextFont;     #IMPLIED
-          style             %WireStyle;    #IMPLIED
-          showAnnotations   %Bool;         #IMPLIED
-          layer             %Layer;        #IMPLIED
-          grouprefs         IDREFS         #IMPLIED
+ * schematic_group name ID #REQUIRED selectable %Bool; #IMPLIED width
+ * %Dimension; #IMPLIED titleSize %Dimension; #IMPLIED titleFont %TextFont;
+ * #IMPLIED style %WireStyle; #IMPLIED showAnnotations %Bool; #IMPLIED layer
+ * %Layer; #IMPLIED grouprefs IDREFS #IMPLIED
  *
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class SchematicGroup extends Element implements LayerNumberProperty {
+public class SchematicGroup extends Element implements LayerNumberProperty, ElementValueListener {
+
     public static final String ELEMENT_NAME = "schematic_group";
 
-    private int layer;
+    //private int layer;
+    public final LayerNumberValue layerValue = new LayerNumberValue(1);
     private String name;
     private boolean selectable;
     private double width;
@@ -50,10 +49,19 @@ public class SchematicGroup extends Element implements LayerNumberProperty {
     private boolean showAnnotations;
     private ArrayList<String> grouprefs = new ArrayList<>();
 
+    public SchematicGroup() {
+
+        layerValue.addListener(this);
+    }
 
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     /**
@@ -154,20 +162,20 @@ public class SchematicGroup extends Element implements LayerNumberProperty {
         this.showAnnotations = showAnnotations;
     }
 
-    /**
-     * @return the layer
-     */
-    public int getLayer() {
-        return layer;
-    }
-
-    /**
-     * @param layer the layer to set
-     */
-    public void setLayer(int layer) {
-        this.layer = layer;
-    }
-
+//    /**
+//     * @return the layer
+//     */
+//    public int getLayer() {
+//        return layer;
+//    }
+//
+//    /**
+//     * @param layer the layer to set
+//     */
+//    public void setLayer(int layer) {
+//        this.layer = layer;
+//    }
+//
     /**
      * @return the grouprefs
      */
@@ -184,16 +192,23 @@ public class SchematicGroup extends Element implements LayerNumberProperty {
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
+    @Override
+    public void elementValueChanged(ElementValue newVal) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
+        }
+    }
 }

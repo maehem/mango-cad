@@ -148,5 +148,7 @@ public abstract class LibraryElement {
         this.descriptions = descriptions;
     }
 
+    public abstract boolean isLayerAllowed(int layerNumber);
+
     public abstract String toXML();
 }

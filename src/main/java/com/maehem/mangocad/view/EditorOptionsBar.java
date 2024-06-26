@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view;
 
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Drawing;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.library.MouseMovementListener;
@@ -51,7 +52,7 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
     private final GridMouseWidget gridMouseWidget = new GridMouseWidget();
     //ContextMessageWidget editMessage = new ContextMessageWidget("Foo", null);
 
-    public EditorOptionsBar(Drawing drawing, List<EditorOption> options, EditorOptionsBarListener listener) {
+    public EditorOptionsBar(Drawing drawing, LibraryElement libraryElement, List<EditorOption> options, EditorOptionsBarListener listener) {
         this.options = options;
         listeners.add(listener);
 
@@ -69,7 +70,7 @@ public class EditorOptionsBar extends ToolBar implements EditorToolbarListener {
                     getItems().add(b);
                 }
                 case LAYER_CHOOSER -> {
-                    LayerChooserWidget layerChooser = new LayerChooserWidget(drawing.getLayers()); // Does nothing for this editor.
+                    LayerChooserWidget layerChooser = new LayerChooserWidget(drawing.getLayers(), libraryElement); // Does nothing for this editor.
                     getItems().add(layerChooser);
 
                     layerChooser.getChooser().setOnAction((event) -> {

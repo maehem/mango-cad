@@ -106,4 +106,9 @@ public class Symbol extends LibraryElement {
         return mf.format(args);
     }
 
+    @Override
+    public boolean isLayerAllowed(int layerNumber) {
+        return layerNumber >= 90;
+    }
+
 }

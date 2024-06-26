@@ -21,12 +21,13 @@ import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.enums.TextFont;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
 import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
-import com.maehem.mangocad.model.element.property.CoordinateProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
 import com.maehem.mangocad.model.element.property.Rotation;
@@ -121,7 +122,8 @@ public class TextElement extends Element
                     30, 31
             );
 
-    private int layer;
+    //private int layer;
+    public final LayerNumberValue layerValue = new LayerNumberValue(1);
     //public final RealValue xProperty = new RealValue(0);
     //public final RealValue yProperty = new RealValue(0);
     public final CoordinateValue coordinate = new CoordinateValue();
@@ -145,6 +147,7 @@ public class TextElement extends Element
         rotation.setAllowMirror(true);
         rotation.setAllowSpin(true);
 
+        layerValue.addListener(this);
         coordinate.addListener(this);
         rotation.addListener(this);
         sizeProperty.addListener(this);
@@ -153,6 +156,11 @@ public class TextElement extends Element
     @Override
     public String getElementName() {
         return ELEMENT_NAME;
+    }
+
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
+        return layerValue;
     }
 
     @Override
@@ -417,21 +425,24 @@ public class TextElement extends Element
 
     @Override
     public int getLayerNum() {
-        return layer;
+        return layerValue.get();
     }
 
     @Override
     public void setLayerNum(int layer) {
-        if (this.layer != layer) {
-            int oldVal = this.layer;
-            this.layer = layer;
-            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-        }
+        layerValue.set(layer);
+//        if (this.layer != layer) {
+//            int oldVal = this.layer;
+//            this.layer = layer;
+//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
+//        }
     }
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(coordinate.x)) {
+        if (newVal.equals(layerValue)) {
+            notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());
+        } else if (newVal.equals(coordinate.x)) {
             notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), coordinate.x.get());
         } else if (newVal.equals(coordinate.y)) {
             notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), coordinate.y.get());

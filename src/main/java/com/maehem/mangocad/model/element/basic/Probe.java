@@ -49,6 +49,7 @@ public class Probe extends TextElement {
 
     public Probe() {
         setSize(10.0);
+        setLayerNum(89);
     }
 
 

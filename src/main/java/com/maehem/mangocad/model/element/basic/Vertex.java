@@ -18,15 +18,23 @@ package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.CurveValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import java.text.MessageFormat;
 
 /**
+ * <code>
+ * ELEMENT vertex (no sub-elements)
+ *      x             %Coord;        #REQUIRED
+ *      y             %Coord;        #REQUIRED
+ *      curve         %WireCurve;    "0"
+ *
+ *      curve: The curvature from this vertex to the next one
+ * </code>
  *
  * @author Mark J Koch ( @maehem on GitHub)
  */

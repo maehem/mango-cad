@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.view.widgets.toolbar;
 
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.widgets.LayerChooser;
@@ -39,9 +40,9 @@ public class LayerChooserWidget extends HBox {
 
     private final LayerChooser chooser;
 
-    public LayerChooserWidget(Layers layers) {
+    public LayerChooserWidget(Layers layers, LibraryElement libraryElement) {
 
-        chooser = new LayerChooser(layers);
+        chooser = new LayerChooser(layers, libraryElement);
         //chooser.getItems().addAll(layers.getElements());
         //chooser.setButtonCell(new ColorRectCell(palette));
         //chooser.setCellFactory((ListView<LayerElement> list) -> new ColorRectCell(palette));

@@ -16,46 +16,17 @@
  */
 package com.maehem.mangocad.model.element.property;
 
-import com.maehem.mangocad.model.element.ElementField;
-
 /**
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public interface LayerNumberProperty {
+public class LayerNumberValue extends IntValue {
 
-    public enum Field implements ElementField {
-        LAYER("layer", Integer.class);
+    private static final int MIN = 0;
+    private static final int MAX = 255;
 
-        private final String fName;
-        private final Class clazz;
-
-        private Field(String name, Class clazz) {
-            this.fName = name;
-            this.clazz = clazz;
-        }
-
-        @Override
-        public String fName() {
-            return fName;
-        }
-
-        @Override
-        public Class clazz() {
-            return clazz;
-        }
+    public LayerNumberValue(int value) {
+        super(value, MIN, MAX);
     }
-
-    public LayerNumberValue getLayerNumberProperty();
-
-    /**
-     * @return the layer
-     */
-    public int getLayerNum();
-
-    /**
-     * @param layer the layer to set
-     */
-    public void setLayerNum(int layer);
 
 }

@@ -52,6 +52,11 @@ public class Package3d extends LibraryElement {
     }
 
     @Override
+    public boolean isLayerAllowed(int layerNumber) {
+        return true;
+    }
+
+    @Override
     public String toXML() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }

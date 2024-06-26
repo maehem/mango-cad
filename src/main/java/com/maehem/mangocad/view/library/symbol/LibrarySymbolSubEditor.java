@@ -96,14 +96,15 @@ public class LibrarySymbolSubEditor extends LibrarySubEditor {
     private final HBox bottomArea = new HBox();
     private final Symbol symbol;
     private final SymbolEditorInteractiveArea symbolEditorInteractiveArea;
-    private final SymbolEditorPropertiesTabPane propertiesTabPane = new SymbolEditorPropertiesTabPane(this);
+    private final SymbolEditorPropertiesTabPane propertiesTabPane;
 
     public LibrarySymbolSubEditor(LibraryEditor parent, Symbol symbol) {
         super(parent);
         this.symbol = symbol;
 
+        propertiesTabPane = new SymbolEditorPropertiesTabPane(this);
         // top:  option toolbar row
-        optionsToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
+        optionsToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), symbol, options, this);
         // TODO: i18n bundle
         optionsToolbar.setMessage("Editing Symbol:   " + symbol.getName());
 

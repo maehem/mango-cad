@@ -23,8 +23,8 @@ import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.GrouprefsProperty;
-import com.maehem.mangocad.model.element.property.IntValue;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
@@ -72,7 +72,7 @@ public class CircleElement extends Element implements
     }
 
     //private int layer;
-    private final IntValue layerValue = new IntValue(0);
+    private final LayerNumberValue layerValue = new LayerNumberValue(0);
     //public final RealValue xProperty = new RealValue(0);
     //public final RealValue yProperty = new RealValue(0);
     public final CoordinateValue coordinate = new CoordinateValue();
@@ -115,7 +115,8 @@ public class CircleElement extends Element implements
         return lockProperty;
     }
 
-    public IntValue getLayerNumberProperty() {
+    @Override
+    public LayerNumberValue getLayerNumberProperty() {
         return layerValue;
     }
 
@@ -246,11 +247,6 @@ public class CircleElement extends Element implements
     @Override
     public void setLayerNum(int layer) {
         layerValue.set(layer);
-//        if (this.layer != layer) {
-//            int oldVal = this.layer;
-//            this.layer = layer;
-//            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
-//        }
     }
 
     @Override

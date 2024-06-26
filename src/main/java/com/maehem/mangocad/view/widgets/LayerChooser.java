@@ -17,6 +17,7 @@
 package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.ColorPalette;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
@@ -41,9 +42,14 @@ public class LayerChooser extends ComboBox<LayerElement> {
 
     //private final ComboBox<LayerElement> chooser = new ComboBox<>();
 
-    public LayerChooser(Layers layers) {
-        super(layers.getElements());
+    public LayerChooser(Layers layers, LibraryElement libraryElement) {
+        super();
 
+        layers.getElements().forEach((le) -> {
+            if (libraryElement.isLayerAllowed(le.getNumber())) {
+                getItems().add(le);
+            }
+        });
         //getItems().addAll(layers.getElements());
         setButtonCell(new ColorRectCell(layers.getPalette()));
         setCellFactory((ListView<LayerElement> list) -> new ColorRectCell(layers.getPalette()));

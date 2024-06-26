@@ -18,6 +18,7 @@ package com.maehem.mangocad.view.widgets;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.basic.CircleElement;
 import com.maehem.mangocad.model.element.basic.Dimension;
 import com.maehem.mangocad.model.element.basic.Pin;
@@ -72,10 +73,12 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
 
     private final Map<ElementValue, ElementValueListener> evListenerMap = new HashMap<>();
     private final Drawing drawing;
+    private final LibraryElement libraryElement;
 
     // TODO: arraylist that tracks elementValue and elementValueListener pairs.
-    public FocusedItemPropertiesBox(Drawing drawing) {
+    public FocusedItemPropertiesBox(Drawing drawing, LibraryElement libraryElement) {
         this.drawing = drawing;
+        this.libraryElement = libraryElement;
         updateContent(null);
     }
 
@@ -109,6 +112,12 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
     }
 
     private void generatePropertyNodes(Element element) {
+        if (element instanceof LayerNumberProperty le) {
+            LayerSelectorWidget layerSelectWidget = new LayerSelectorWidget(
+                    drawing.getLayers(), libraryElement, le.getLayerNumberProperty(),
+                    LayerNumberProperty.Field.LAYER, "LAYER");
+            getChildren().add(layerSelectWidget);
+        }
         switch (element) {
             case Pin p -> {
                 // XY location
@@ -215,9 +224,6 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 );
             }
             case CircleElement ec -> {
-                LayerSelectorWidget layerSelectWidget = new LayerSelectorWidget(
-                        drawing.getLayers(), ec.getLayerNumberProperty(),
-                        LayerNumberProperty.Field.LAYER, "LAYER");
                 CoordinateWidget lxy = new CoordinateWidget(ec.coordinate, "LOCATION");
                 RealValueListWidget2 lineWidthWidget = new RealValueListWidget2(
                         ec.widthProperty, WidthProperty.Field.WIDTH,
@@ -233,7 +239,7 @@ public class FocusedItemPropertiesBox extends VBox implements ElementSelectionLi
                 );
 
                 getChildren().addAll(
-                        layerSelectWidget, lxy, lineWidthWidget, radiusWidget
+                        lxy, lineWidthWidget, radiusWidget
                 );
             }
             default -> {

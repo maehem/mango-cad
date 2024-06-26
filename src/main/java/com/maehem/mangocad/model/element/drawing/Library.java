@@ -16,8 +16,8 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
-import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.enums.DesignType;
 import com.maehem.mangocad.model.element.highlevel.DeviceSet;
 import com.maehem.mangocad.model.element.highlevel.Footprint;

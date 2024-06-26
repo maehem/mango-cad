@@ -91,7 +91,7 @@ public class LibraryFootprintSubEditor extends LibrarySubEditor {
         //this.parent = parent;
 
         // top:  two tool bar rows
-        topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), options, this);
+        topToolbar = new EditorOptionsBar(parent.getLibrary().getParentDrawing(), null, options, this);
         setTop(topToolbar);
 
         // left: tool bar

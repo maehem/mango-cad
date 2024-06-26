@@ -19,6 +19,7 @@ package com.maehem.mangocad.view.widgets.inspector;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.ElementValue;
@@ -43,14 +44,14 @@ public class LayerSelectorWidget extends InspectorWidget implements ElementValue
     //private final ElementField field;
     private final Layers layers;
 
-    public LayerSelectorWidget(Layers layers, IntValue value, ElementField f,
+    public LayerSelectorWidget(Layers layers, LibraryElement libraryElement, IntValue value, ElementField f,
             String msgKeyBase) {
         super(msgKeyBase);
         this.layers = layers;
         this.layerNumber = value;
         //this.field = f;
         //this.options = options;
-        comboBox = new LayerChooser(layers);
+        comboBox = new LayerChooser(layers, libraryElement);
 
         updateComboState(layerNumber.get());
         //this.allowEdit = allowEdit;
