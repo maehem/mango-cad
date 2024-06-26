@@ -20,12 +20,9 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -36,31 +33,28 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Mark J Koch ( @maehem on GitHub )
  */
-public class LayerChooser extends HBox {
+public class LayerChooser extends ComboBox<LayerElement> {
 
     private static final String CELL_CSS_ID = "layer-chooser-button";
 
-    private final Label label = new Label("Layers: ");
+    //private final Label label = new Label("Layers: ");
 
-    private final ComboBox<LayerElement> chooser = new ComboBox<>();
+    //private final ComboBox<LayerElement> chooser = new ComboBox<>();
 
-    public LayerChooser(ColorPalette palette, Layers layers) {
+    public LayerChooser(Layers layers) {
+        super(layers.getElements());
 
-        chooser.getItems().addAll(layers.getElements());
-        chooser.setButtonCell(new ColorRectCell(palette));
-        chooser.setCellFactory((ListView<LayerElement> list) -> new ColorRectCell(palette));
-        chooser.getSelectionModel().select(0);
-        chooser.setPrefWidth(140); // TODO move to CSS?
-        chooser.setPrefHeight(20);
+        //getItems().addAll(layers.getElements());
+        setButtonCell(new ColorRectCell(layers.getPalette()));
+        setCellFactory((ListView<LayerElement> list) -> new ColorRectCell(layers.getPalette()));
+        getSelectionModel().select(0);
+        setPrefWidth(140); // TODO move to CSS?
+        setPrefHeight(20);
 
-        getChildren().addAll(label, chooser);
+        //getChildren().addAll(label, chooser);
 
-        setSpacing(4);
-        setAlignment(Pos.CENTER);
-    }
-
-    public ComboBox<LayerElement> getChooser() {
-        return chooser;
+        //setSpacing(4);
+        //setAlignment(Pos.CENTER);
     }
 
     private static class ColorRectCell extends ListCell<LayerElement> {
