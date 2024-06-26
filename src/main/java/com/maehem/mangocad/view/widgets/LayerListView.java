@@ -20,9 +20,9 @@ import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.view.ColorUtils;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.FillStyle;
 import com.maehem.mangocad.view.ViewUtils;
-import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.settings.LayerPropertiesDialog;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -69,7 +69,7 @@ public class LayerListView extends TreeTableView<LayerElement> {
     public LayerListView(ColorPalette palette, Layers layers) {
         initColumns(palette);
 
-        TreeItem<LayerElement> root = new TreeItem<>(new LayerElement());
+        TreeItem<LayerElement> root = new TreeItem<>(new LayerElement(layers));
 
         // for each layer generate item
         for (LayerElement le : layers.getElements()) {

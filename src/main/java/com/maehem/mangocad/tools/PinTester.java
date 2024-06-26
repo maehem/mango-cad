@@ -65,7 +65,7 @@ public class PinTester extends Application implements ElementListener, PickListe
     private final PinPropertiesList propertiesList = new PinPropertiesList(this, pinElement);
 
     private final ColorPalette palette = new ColorPalette(ColorPalette.Style.DARK);
-    private final Layers layers = new Layers();
+    private final Layers layers = new Layers(palette);
 
     //private final String textValue = "HridH\nXXXXX\nHHHHH";
     private final String pinName = "PIN";
@@ -133,7 +133,7 @@ public class PinTester extends Application implements ElementListener, PickListe
 
         pinElement.addListener(this);
 
-        LayerElement layer = new LayerElement();
+        LayerElement layer = new LayerElement(layers);
         layer.setNumber(96);
         layer.setName("tNames");
         layer.setColorIndex(5);

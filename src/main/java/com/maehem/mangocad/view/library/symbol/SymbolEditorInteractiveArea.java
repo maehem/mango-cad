@@ -878,7 +878,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         //LOGGER.log(Level.SEVERE, "New Wire");
         WireNode wireNode = new WireNode(wire,
                 parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette(),
+                parentEditor.getDrawing().getLayers().getPalette(),
                 this);
         wireNode.addTo(workArea);
         ephemeralNode = wireNode;
@@ -932,7 +932,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         //LOGGER.log(Level.SEVERE, "New Wire");
         CircleNode circleNode = new CircleNode(circle,
                 parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette(),
+                parentEditor.getDrawing().getLayers().getPalette(),
                 this);
         circleNode.addTo(workArea);
         ephemeralNode = circleNode;
@@ -951,7 +951,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         //LOGGER.log(Level.SEVERE, "New Wire");
         RectangleNode rectNode = new RectangleNode(rect,
                 parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette(),
+                parentEditor.getDrawing().getLayers().getPalette(),
                 this);
         rectNode.addTo(workArea);
         ephemeralNode = rectNode;
@@ -971,7 +971,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
         }
         PolygonNode node = new PolygonNode(poly,
                 parentEditor.getDrawing().getLayers(),
-                parentEditor.getDrawing().getPalette(),
+                parentEditor.getDrawing().getLayers().getPalette(),
                 this);
         node.addTo(workArea);
         ephemeralNode = node;
@@ -1199,7 +1199,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 case Wire w -> {
                     WireNode wireNode = new WireNode(w,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             this);
                     nodes.add(wireNode);
                     wireNode.addTo(workArea);
@@ -1207,7 +1207,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 case TextElement t -> {
                     TextNode textNode = new TextNode(t, null,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             null, true,
                             this);
                     nodes.add(textNode);
@@ -1216,7 +1216,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 case CircleElement c -> {
                     CircleNode circleNode = new CircleNode(c,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             this
                     );
                     nodes.add(circleNode);
@@ -1225,7 +1225,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 case RectangleElement c -> {
                     RectangleNode rectNode = new RectangleNode(c,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             this
                     );
                     nodes.add(rectNode);
@@ -1234,7 +1234,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 case PolygonElement p -> {
                     PolygonNode polyNode = new PolygonNode(p,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             this);
                     nodes.add(polyNode);
                     polyNode.addTo(workArea);
@@ -1242,7 +1242,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 case Dimension d -> {
                     DimensionNode dimNode = new DimensionNode(d,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             this
                     );
                     nodes.add(dimNode);
@@ -1387,7 +1387,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     LOGGER.log(Level.SEVERE, "    New Text: {0}", text.getValue());
                     TextNode textNode = new TextNode(text, null,
                             parentEditor.getDrawing().getLayers(),
-                            parentEditor.getDrawing().getPalette(),
+                            parentEditor.getDrawing().getLayers().getPalette(),
                             null, true, this);
                     textNode.addTo(workArea);
                     ephemeralNode = textNode;

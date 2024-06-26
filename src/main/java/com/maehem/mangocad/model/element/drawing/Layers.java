@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.model.element.drawing;
 
+import com.maehem.mangocad.model.ColorPalette;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
@@ -28,6 +29,12 @@ import javafx.collections.ObservableList;
 public class Layers {
 
     private final ObservableList<LayerElement> elements = FXCollections.observableList(new ArrayList<>());
+
+    private ColorPalette palette;
+
+    public Layers(ColorPalette palette) {
+        this.palette = palette;
+    }
 
     /**
      * @return the elements
@@ -45,5 +52,14 @@ public class Layers {
 
         return null;
     }
+
+    public ColorPalette getPalette() {
+        return palette;
+    }
+
+    public void setPalette(ColorPalette palette) {
+        this.palette = palette;
+    }
+
 
 }

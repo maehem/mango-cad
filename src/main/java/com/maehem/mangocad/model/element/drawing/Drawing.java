@@ -44,7 +44,7 @@ public class Drawing extends Element {
     //private final LayerElement layers[] = new LayerElement[256];
 
     //private final ObservableList<LayerElement> layers2 = FXCollections.observableArrayList(new ArrayList<LayerElement>(256));
-    private final Layers layerz = new Layers();
+    private final Layers layerz = new Layers(colorPalette);
 
     // Non-savable and ephemeral things
     // DRAWING_NAME,  SHEET (x of xx), LAST_DATE_TIME
@@ -62,9 +62,9 @@ public class Drawing extends Element {
         return ELEMENT_NAME;
     }
 
-    public ColorPalette getPalette() {
-        return colorPalette;
-    }
+//    public ColorPalette getPalette() {
+//        return colorPalette;
+//    }
 
     public Grid getGrid() {
         return grid;

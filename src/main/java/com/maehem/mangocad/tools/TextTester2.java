@@ -62,7 +62,7 @@ public class TextTester2 extends Application implements ElementListener, PickLis
     private final TextPropertiesList2 propertiesList = new TextPropertiesList2(this, et);
 
     private final ColorPalette palette = new ColorPalette(ColorPalette.Style.DARK);
-    private final Layers layers = new Layers();
+    private final Layers layers = new Layers(palette);
 
     //private final String textValue = "HridH\nXXXXX\nHHHHH";
     private final String textValue = ">NAME";
@@ -137,7 +137,7 @@ public class TextTester2 extends Application implements ElementListener, PickLis
 
         et.addListener(this);
 
-        LayerElement layer = new LayerElement();
+        LayerElement layer = new LayerElement(layers);
         layer.setNumber(96);
         layer.setName("tNames");
         layer.setColorIndex(5);

@@ -117,7 +117,7 @@ public class DetailNodes {
         //LayerElement[] layers = lib.getParentDrawing().getLayers();
         Layers layers = lib.getParentDrawing().getLayers();
 
-        ColorPalette palette = lib.getParentDrawing().getPalette();
+        ColorPalette palette = lib.getParentDrawing().getLayers().getPalette();
 
         Node g = LibraryElementNode.createSymbolNode(null, symbol, null, null, null, layers, palette);
 
@@ -154,7 +154,7 @@ public class DetailNodes {
     public static Node deviceGatePreview(Gate gate, Library lib) {
         //LayerElement[] layers = lib.getParentDrawing().getLayers();
         Layers layers2 = lib.getParentDrawing().getLayers();
-        ColorPalette palette = lib.getParentDrawing().getPalette();
+        ColorPalette palette = lib.getParentDrawing().getLayers().getPalette();
 
         Group g = new Group();
         //StackPane pane = new StackPane(g);
@@ -216,7 +216,7 @@ public class DetailNodes {
     public static Group footprintPreview(Footprint footprint, Library lib, boolean showGauge) {
         //LayerElement[] layers = lib.getParentDrawing().getLayers();
         Layers layers = lib.getParentDrawing().getLayers();
-        ColorPalette palette = lib.getParentDrawing().getPalette();
+        ColorPalette palette = lib.getParentDrawing().getLayers().getPalette();
 
         //Group g = new Group();
         Node g = LibraryElementNode.createPackageNode(footprint, layers, palette);

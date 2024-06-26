@@ -142,7 +142,7 @@ public class SchematicFileItem extends ControlPanelListItem {
 
                 // TODO:  Make this a Drawing static util.
                 // Save the current display palette and put it back after print.
-                ColorPalette palette = sch.getParentDrawing().getPalette();
+                ColorPalette palette = sch.getParentDrawing().getLayers().getPalette();
                 ColorPalette.Style origStyle = palette.getStyle();
                 palette.setStyle(ColorPalette.Style.PRINT_COLOR);
 

@@ -1980,7 +1980,7 @@ public class EagleCADIngest {
 
     static void ingestEagleLayer(Layers layers, Node node) throws EagleCADLibraryFileException {
 
-        LayerElement layer = new LayerElement();
+        LayerElement layer = new LayerElement(layers);
 
         // layer
         //  number        %Layer;        #REQUIRED

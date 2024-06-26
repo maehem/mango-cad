@@ -115,7 +115,7 @@ public class BoardPreview extends Group {
     private void populateNodeAsDesign() {
         //LayerElement[] layers = board.getParentDrawing().getLayers();
         Layers layers = board.getParentDrawing().getLayers();
-        ColorPalette palette = board.getParentDrawing().getPalette();
+        ColorPalette palette = board.getParentDrawing().getLayers().getPalette();
         ObservableList<Node> chld = getChildren();
 
         for (Element element : board.getPlain()) {
@@ -174,7 +174,7 @@ public class BoardPreview extends Group {
                 Footprint pkg = libSearch.get().getPackage(element.getFootprint());
                 Node pkgPreview = LibraryElementNode.createPackageNode(
                         pkg, board.getParentDrawing().getLayers(),
-                        board.getParentDrawing().getPalette()
+                        board.getParentDrawing().getLayers().getPalette()
                 );
                 pkgPreview.setLayoutX(element.getX());
                 pkgPreview.setLayoutY(-element.getY());

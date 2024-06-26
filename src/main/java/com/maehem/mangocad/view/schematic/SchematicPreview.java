@@ -70,7 +70,7 @@ public class SchematicPreview extends Group {
     private void populateNode(Schematic schem, int index) {
         //LayerElement[] layers = schem.getParentDrawing().getLayers();
         Layers layers = schem.getParentDrawing().getLayers();
-        ColorPalette palette = schem.getParentDrawing().getPalette();
+        ColorPalette palette = schem.getParentDrawing().getLayers().getPalette();
         //LOGGER.log(Level.SEVERE, "Populate Page: " + (index+1));
         Sheet sheet = schem.getSheets().get(index);
         Map<String, String> vars = new HashMap();
