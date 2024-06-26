@@ -24,7 +24,6 @@ import com.maehem.mangocad.view.EditorToolbar;
 import com.maehem.mangocad.view.ViewUtils;
 import com.maehem.mangocad.view.library.LibraryEditor;
 import com.maehem.mangocad.view.library.LibrarySubEditor;
-import com.maehem.mangocad.view.library.symbol.SymbolEditorPropertiesTabPane;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -35,6 +34,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 /**
@@ -112,7 +112,7 @@ public class LibraryDeviceSubEditor extends LibrarySubEditor {
         leftToolBar = new EditorToolbar(tools, this);
         setLeft(leftToolBar);
 
-        SplitPane workArea = new SplitPane(new DeviceEditorInteractiveArea(), new SymbolEditorPropertiesTabPane());
+        SplitPane workArea = new SplitPane(new DeviceEditorInteractiveArea(), new Pane());
         workArea.setDividerPosition(0, 0.8);
         // center: work area
         setCenter(workArea);
