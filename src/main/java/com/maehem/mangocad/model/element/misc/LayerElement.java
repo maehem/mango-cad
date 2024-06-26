@@ -16,6 +16,7 @@
  */
 package com.maehem.mangocad.model.element.misc;
 
+import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
 
 /**
@@ -35,8 +36,10 @@ public class LayerElement implements VisibleProperty {
     private boolean visible = true;
     private boolean active = true;
     private boolean allowDelete = true;
+    public final Layers parent;
 
-    public LayerElement() {
+    public LayerElement(Layers parent) {
+        this.parent = parent;
     }
 
     /**
