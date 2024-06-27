@@ -248,7 +248,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 //LOGGER.log(Level.SEVERE, "Work Area: mXY: {0},{1}", new Object[]{me.getX(), me.getY()});
                 //LOGGER.log(Level.SEVERE, "Moving the things around.");
                 // TODO: Is 'option' key held down? then use altGrid.
-                double snap = parentEditor.getDrawing().getGrid().getSizeMM();
+//                double snap = parentEditor.getDrawing().getGrid().getSizeMM();
 
 //                double xxx = (int) (me.getX() / snap) * snap; // Snap to grid
 //                double yyy = (int) (me.getY() / snap) * snap; // Snap to grid
@@ -413,119 +413,126 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     switch (me.getButton()) {
                         case PRIMARY -> {
                             if (ephemeralNode != null) {
-                                if (toolMode.equals(EditorTool.PIN)) {
-                                    // New node. Add to symbol.
-                                    Symbol symbol = parentEditor.getSymbol();
-                                    symbol.getElements().add(ephemeralNode.getElement());
-                                    nodes.add(ephemeralNode);
-                                    lastElementAdded = ephemeralNode.getElement();
-                                    LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
-                                    ephemeralNode = null;
-                                    LOGGER.log(Level.SEVERE, "Clear movingElements. 1");
-                                    movingElements.clear(); // End move of node.
-                                    // Initiate another placemet of this node type.
-                                    setEditorTool(toolMode); // Trigger another pin placement.
-                                } else if (toolMode.equals(EditorTool.LINE)) {
-                                    if (ephemeralNode instanceof WireNode wn) {
-                                        Wire wire = (Wire) wn.getElement();
-                                        wire.setSelectedEnd(WireEnd.NONE);
-                                        Symbol symbol = parentEditor.getSymbol();
+                                Symbol symbol = parentEditor.getSymbol();
+                                switch (toolMode) {
+                                    case PIN:
+                                        // New node. Add to symbol.
                                         symbol.getElements().add(ephemeralNode.getElement());
                                         nodes.add(ephemeralNode);
                                         lastElementAdded = ephemeralNode.getElement();
-                                        LOGGER.log(Level.SEVERE, "Remember ephemeral element as lastAdded.");
                                         LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
                                         ephemeralNode = null;
-                                        LOGGER.log(Level.SEVERE, "Clear movingElements. 3");
+                                        LOGGER.log(Level.SEVERE, "Clear movingElements. 1");
                                         movingElements.clear(); // End move of node.
-                                        // Initiate new line.
-                                        initiateNewLineSegment(me, wire.getX2(), -wire.getY2());
-                                        LOGGER.log(Level.SEVERE, "Set tool mode element.");
-                                        toolMode.setToolElement(wire); ////   Looks wrong?  ???????
-                                        setEditorTool(toolMode); // Refreshes with lastElementAdded values.
-                                    }
-                                } else if (toolMode.equals(EditorTool.TEXT)) {
-                                    if (ephemeralNode instanceof TextNode tn) {
-                                        TextElement text = (TextElement) tn.getElement();
-                                        Symbol symbol = parentEditor.getSymbol();
-                                        symbol.getElements().add(text);
-                                        nodes.add(ephemeralNode);
-                                        lastElementAdded = text;
-                                        ephemeralNode = null;
-                                        LOGGER.log(Level.SEVERE, "Clear movingElements. 78230");
-                                        movingElements.clear();
-                                        //text = initiateNewText();  // Initiate new text.
-                                        setEditorTool(toolMode); // Reset widget.
-                                    }
-                                } else if (toolMode.equals(EditorTool.CIRCLE)) { // Finish sizing a new circle.
-                                    if (ephemeralNode instanceof CircleNode cn) {
-                                        CircleElement circ = (CircleElement) cn.getElement();
-                                        Symbol symbol = parentEditor.getSymbol();
-                                        symbol.getElements().add(circ);
-                                        nodes.add(ephemeralNode);
-                                        lastElementAdded = circ;
-                                        ephemeralNode = null;
-                                        movingElements.clear();
-                                        setEditorTool(toolMode);
-                                    }
-                                } else if (toolMode.equals(EditorTool.RECTANGLE)) { // Finish sizing a new Rectangle
-                                    if (ephemeralNode instanceof RectangleNode wn) {
-                                        RectangleElement rect = (RectangleElement) wn.getElement();
-                                        Symbol symbol = parentEditor.getSymbol();
-                                        symbol.getElements().add(rect);
-                                        nodes.add(ephemeralNode);
-                                        lastElementAdded = rect;
-                                        LOGGER.log(Level.SEVERE, "Remember ephemeral rectangle as lastAdded.");
-                                        LOGGER.log(Level.SEVERE, "Placed new {0}.", rect.getElementName());
-                                        ephemeralNode = null;
-                                        movingElements.clear(); // End move of node.
-                                        setEditorTool(toolMode); // Refreshes with lastElementAdded values.
-                                    }
-                                } else if (toolMode.equals(EditorTool.POLYGON)) { // Finish adding vertices to new Polygon
-                                    if (ephemeralNode instanceof PolygonNode wn) {
-                                        PolygonElement poly = (PolygonElement) wn.getElement();
-                                        List<Vertex> verts = poly.getVertices();
-                                        Vertex last = verts.getLast();
-                                        if (verts.size() > 3) {
-                                            Vertex first = verts.getFirst();
+                                        // Initiate another placemet of this node type.
+                                        setEditorTool(toolMode); // Trigger another pin placement.
+                                        break;
+                                    case LINE:
+                                        if (ephemeralNode instanceof WireNode wn) {
+                                            Wire wire = (Wire) wn.getElement();
+                                            wire.setSelectedEnd(WireEnd.NONE);
+                                            //Symbol symbol = parentEditor.getSymbol();
+                                            symbol.getElements().add(ephemeralNode.getElement());
+                                            nodes.add(ephemeralNode);
+                                            lastElementAdded = ephemeralNode.getElement();
+                                            LOGGER.log(Level.SEVERE, "Remember ephemeral element as lastAdded.");
+                                            LOGGER.log(Level.SEVERE, "Placed new {0}.", ephemeralNode.getElement().getElementName());
+                                            ephemeralNode = null;
+                                            LOGGER.log(Level.SEVERE, "Clear movingElements. 3");
+                                            movingElements.clear(); // End move of node.
+                                            // Initiate new line.
+                                            initiateNewLineSegment(me, wire.getX2(), -wire.getY2());
+                                            LOGGER.log(Level.SEVERE, "Set tool mode element.");
+                                            toolMode.setToolElement(wire); ////   Looks wrong?  ???????
+                                            setEditorTool(toolMode); // Refreshes with lastElementAdded values.
+                                        }   break;
+                                    case TEXT:
+                                        if (ephemeralNode instanceof TextNode tn) {
+                                            TextElement text = (TextElement) tn.getElement();
+                                            //Symbol symbol = parentEditor.getSymbol();
+                                            symbol.getElements().add(text);
+                                            nodes.add(ephemeralNode);
+                                            lastElementAdded = text;
+                                            ephemeralNode = null;
+                                            LOGGER.log(Level.SEVERE, "Clear movingElements. 78230");
+                                            movingElements.clear();
+                                            //text = initiateNewText();  // Initiate new text.
+                                            setEditorTool(toolMode); // Reset widget.
+                                        }   break;
+                                    case CIRCLE:
+                                        // Finish sizing a new circle.
+                                        if (ephemeralNode instanceof CircleNode cn) {
+                                            CircleElement circ = (CircleElement) cn.getElement();
+                                            //Symbol symbol = parentEditor.getSymbol();
+                                            symbol.getElements().add(circ);
+                                            nodes.add(ephemeralNode);
+                                            lastElementAdded = circ;
+                                            ephemeralNode = null;
+                                            movingElements.clear();
+                                            setEditorTool(toolMode);
+                                        }   break;
+                                    case RECTANGLE:
+                                        // Finish sizing a new Rectangle
+                                        if (ephemeralNode instanceof RectangleNode wn) {
+                                            RectangleElement rect = (RectangleElement) wn.getElement();
+                                            //Symbol symbol = parentEditor.getSymbol();
+                                            symbol.getElements().add(rect);
+                                            nodes.add(ephemeralNode);
+                                            lastElementAdded = rect;
+                                            LOGGER.log(Level.SEVERE, "Remember ephemeral rectangle as lastAdded.");
+                                            LOGGER.log(Level.SEVERE, "Placed new {0}.", rect.getElementName());
+                                            ephemeralNode = null;
+                                            movingElements.clear(); // End move of node.
+                                            setEditorTool(toolMode); // Refreshes with lastElementAdded values.
+                                        }   break;
+                                    case POLYGON:
+                                        // Finish adding vertices to new Polygon
+                                        if (ephemeralNode instanceof PolygonNode wn) {
+                                            PolygonElement poly = (PolygonElement) wn.getElement();
+                                            List<Vertex> verts = poly.getVertices();
+                                            Vertex last = verts.getLast();
+                                            if (verts.size() > 3) {
+                                                Vertex first = verts.getFirst();
 
-                                            // check if x,y is same as first()
-                                            if (first.getX() == last.getX() && first.getY() == last.getY()) {
-                                                // Closure!
-                                                LOGGER.log(Level.SEVERE, "Polygon CLOSE detected.");
-                                                verts.remove(last);
-                                                // Nail it down
-                                                Symbol symbol = parentEditor.getSymbol();
-                                                symbol.getElements().add(poly);
-                                                nodes.add(wn);
-                                                wn.setClosePath(true); // Close it up.
-                                                //wn.rebuildPath();
-                                                PolygonElement lastPolygon = new PolygonElement();
-                                                lastPolygon.setWidth(poly.getWidth());
-                                                lastElementAdded = lastPolygon;
-                                                ephemeralNode = null;
-                                                movingElements.clear();
-                                                setEditorTool(toolMode);
+                                                // check if x,y is same as first()
+                                                if (first.getX() == last.getX() && first.getY() == last.getY()) {
+                                                    // Closure!
+                                                    LOGGER.log(Level.SEVERE, "Polygon CLOSE detected.");
+                                                    verts.remove(last);
+                                                    // Nail it down
+                                                    //Symbol symbol = parentEditor.getSymbol();
+                                                    symbol.getElements().add(poly);
+                                                    nodes.add(wn);
+                                                    wn.setClosePath(true); // Close it up.
+                                                    //wn.rebuildPath();
+                                                    PolygonElement lastPolygon = new PolygonElement();
+                                                    lastPolygon.setWidth(poly.getWidth());
+                                                    lastElementAdded = lastPolygon;
+                                                    ephemeralNode = null;
+                                                    movingElements.clear();
+                                                    setEditorTool(toolMode);
+                                                } else {
+                                                    LOGGER.log(Level.SEVERE, "Mouse clicked: polygon add vert.");
+                                                    // Add a new Vertex
+                                                    Vertex newVert = new Vertex();
+                                                    newVert.setX(last.getX());
+                                                    newVert.setY(last.getY());
+                                                    // TODO Curve?
+                                                    poly.addVertex(newVert);
+                                                    setEditorTool(toolMode);
+                                                }
                                             } else {
                                                 LOGGER.log(Level.SEVERE, "Mouse clicked: polygon add vert.");
                                                 // Add a new Vertex
                                                 Vertex newVert = new Vertex();
                                                 newVert.setX(last.getX());
                                                 newVert.setY(last.getY());
-                                                // TODO Curve?
                                                 poly.addVertex(newVert);
                                                 setEditorTool(toolMode);
                                             }
-                                        } else {
-                                            LOGGER.log(Level.SEVERE, "Mouse clicked: polygon add vert.");
-                                            // Add a new Vertex
-                                            Vertex newVert = new Vertex();
-                                            newVert.setX(last.getX());
-                                            newVert.setY(last.getY());
-                                            poly.addVertex(newVert);
-                                            setEditorTool(toolMode);
-                                        }
-                                    }
+                                        }   break;
+                                    default:
+                                        break;
                                 }
                             } else {
                                 LOGGER.log(Level.SEVERE, "Clear movingElements. 2");
@@ -622,6 +629,23 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
                             if (ep.hasSelections()) {
                                 picks.addAll(Arrays.asList(ep.getSelectedVertices()));
+                            } else {
+                                LOGGER.log(Level.SEVERE, "No polygon elements selected.");
+                            }
+                        }
+                        case Dimension dim -> {
+                            if (Math.abs(me.getX() - dim.getX1()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - dim.getY1()) < PICK_SIZE) {
+                                picks.add(e);
+                                dim.setSelected(true);
+                            } else if (Math.abs(me.getX() - dim.getX2()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - dim.getY2()) < PICK_SIZE) {
+                                picks.add(e);
+                                dim.setSelected(true);
+                            } else if (Math.abs(me.getX() - dim.getX3()) < PICK_SIZE
+                                    && Math.abs(-me.getY() - dim.getY3()) < PICK_SIZE) {
+                                picks.add(e);
+                                dim.setSelected(true);
                             }
                         }
                         default -> {
