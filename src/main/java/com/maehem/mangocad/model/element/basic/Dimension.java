@@ -30,13 +30,16 @@ import com.maehem.mangocad.model.element.property.LayerNumberValue;
 import com.maehem.mangocad.model.element.property.LockProperty;
 import com.maehem.mangocad.model.element.property.LockValue;
 import com.maehem.mangocad.model.element.property.RealValue;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.UnitProperty;
 import com.maehem.mangocad.model.element.property.UnitValue;
 import com.maehem.mangocad.model.element.property.VisibleProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.model.element.property.WidthValue;
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -46,7 +49,7 @@ import javafx.collections.ObservableList;
  */
 public class Dimension extends Element implements
         LayerNumberProperty, GrouprefsProperty, VisibleProperty,
-        WidthProperty, UnitProperty, LockProperty,
+        WidthProperty, UnitProperty, LockProperty, SelectableProperty,
         ElementValueListener {
 
     public static final String ELEMENT_NAME = "dimension";
@@ -121,6 +124,9 @@ public class Dimension extends Element implements
     public final IntValue precisionProperty = new IntValue(2, 0, 6);
     private boolean visible = false;
     private final ArrayList<String> grouprefs = new ArrayList<>();
+
+    private Dimension snapshot = null;
+    private boolean selected = false;
 
     public static final ObservableList<Integer> PRECISION_OPTIONS
             = FXCollections.observableArrayList(
@@ -421,6 +427,81 @@ public class Dimension extends Element implements
 //            this.layer = layer;
 //            notifyListeners(LayerNumberProperty.Field.LAYER, oldVal, this.layer);
 //        }
+    }
+
+    @Override
+    public void createSnapshot() {
+        snapshot = copy();
+    }
+
+    @Override
+    public void restoreSnapshot() {
+        if (snapshot != null) {
+            setLayerNum(snapshot.getLayerNum());
+            setDtype(snapshot.getDtype());
+            setX1(snapshot.getX1());
+            setY1(snapshot.getY1());
+            setX2(snapshot.getX2());
+            setY2(snapshot.getY2());
+            setX3(snapshot.getX3());
+            setY3(snapshot.getY3());
+            setWidth(snapshot.widthProperty.get());
+            setExtwidth(snapshot.getExtlength());
+            setExtlength(snapshot.getExtlength());
+            setExtoffset(snapshot.getExtoffset());
+            setPrecision(snapshot.getPrecision());
+            setTextratio(snapshot.getTextratio());
+            setTextsize(snapshot.getTextsize());
+            setUnit(snapshot.getUnit());
+            setVisible(snapshot.isVisible());
+
+            snapshot = null;
+        } else {
+            LOGGER.log(Level.SEVERE, "Dimension: Tried to restore a NULL snapshot!");
+        }
+    }
+
+    public Dimension copy() {
+        Dimension copy = new Dimension();
+
+        copy.setLayerNum(getLayerNum());
+        copy.setDtype(getDtype());
+        copy.setX1(getX1());
+        copy.setY1(getY1());
+        copy.setX2(getX2());
+        copy.setY2(getY2());
+        copy.setX3(getX3());
+        copy.setY3(getY3());
+        copy.setWidth(getWidth());
+        copy.setExtwidth(getExtwidth());
+        copy.setExtlength(getExtlength());
+        copy.setExtoffset(getExtoffset());
+        copy.setPrecision(getPrecision());
+        copy.setTextratio(getTextratio());
+        copy.setTextsize(getTextsize());
+        copy.setUnit(getUnit());
+        copy.setVisible(isVisible());
+
+        return copy;
+    }
+
+    @Override
+    public Dimension getSnapshot() {
+        return snapshot;
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        if (this.selected != selected) {
+            boolean oldValue = this.selected;
+            this.selected = selected;
+            notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
+        }
     }
 
     @Override
