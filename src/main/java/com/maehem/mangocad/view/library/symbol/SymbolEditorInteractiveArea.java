@@ -445,7 +445,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                             LOGGER.log(Level.SEVERE, "Set tool mode element.");
                                             toolMode.setToolElement(wire); ////   Looks wrong?  ???????
                                             setEditorTool(toolMode); // Refreshes with lastElementAdded values.
-                                        }   break;
+                                        }
+                                        break;
                                     case TEXT:
                                         if (ephemeralNode instanceof TextNode tn) {
                                             TextElement text = (TextElement) tn.getElement();
@@ -458,7 +459,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                             movingElements.clear();
                                             //text = initiateNewText();  // Initiate new text.
                                             setEditorTool(toolMode); // Reset widget.
-                                        }   break;
+                                        }
+                                        break;
                                     case CIRCLE:
                                         // Finish sizing a new circle.
                                         if (ephemeralNode instanceof CircleNode cn) {
@@ -470,7 +472,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                             ephemeralNode = null;
                                             movingElements.clear();
                                             setEditorTool(toolMode);
-                                        }   break;
+                                        }
+                                        break;
                                     case RECTANGLE:
                                         // Finish sizing a new Rectangle
                                         if (ephemeralNode instanceof RectangleNode wn) {
@@ -484,7 +487,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                             ephemeralNode = null;
                                             movingElements.clear(); // End move of node.
                                             setEditorTool(toolMode); // Refreshes with lastElementAdded values.
-                                        }   break;
+                                        }
+                                        break;
                                     case POLYGON:
                                         // Finish adding vertices to new Polygon
                                         if (ephemeralNode instanceof PolygonNode wn) {
@@ -530,7 +534,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                                 poly.addVertex(newVert);
                                                 setEditorTool(toolMode);
                                             }
-                                        }   break;
+                                        }
+                                        break;
                                     default:
                                         break;
                                 }
@@ -1127,6 +1132,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                     LOGGER.log(Level.SEVERE, "Rectangle selection true.");
                                 } else {
                                     es.setSelected(false);
+                                }
+                            }
+                            case Dimension dim -> {
+                                if (isInsideSelection(dim.getX1(), -dim.getY1())
+                                        || isInsideSelection(dim.getX2(), -dim.getY2())
+                                        || isInsideSelection(dim.getX3(), -dim.getY3())) {
+                                    dim.setSelected(true);
+                                    selectedElements.add(dim);
                                 }
                             }
                             default -> {
