@@ -254,6 +254,29 @@ public class CircleElement extends Element implements
         }
     }
 
+    /**
+     * Could be a move or a ephemeral radius adjust
+     *
+     * @param xDist X distance to apply adjustment
+     * @param yDist Y distance to apply adjustment
+     * @param ephemeral false, adjust position. true, adjust radius.
+     */
+    @Override
+    public void modify(double xDist, double yDist, boolean ephemeral) {
+        Element snapshot = getSnapshot();
+        if (ephemeral) {
+            // New circle, not yet placed. Adjust Radius
+            double hypot = Math.hypot(xDist, yDist);
+            setRadius(hypot);
+        } else {
+            if (snapshot instanceof CircleElement snapCirc) {
+                // User moving circle at center X,Y
+                setX(snapCirc.getX() + xDist);
+                setY(snapCirc.getY() + yDist);
+            }
+        }
+    }
+
     @Override
     public int getLayerNum() {
         return layerValue.get();

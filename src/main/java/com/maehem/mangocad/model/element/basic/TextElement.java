@@ -439,6 +439,17 @@ public class TextElement extends Element
     }
 
     @Override
+    public void modify(double xDist, double yDist, boolean ephemeral) {
+        //LOGGER.log(Level.SEVERE, "Move elementXY.");
+        //Element snapshot = es.getSnapshot();
+        if (getSnapshot() instanceof CoordinateProperty snapXY) {
+            //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
+            getCoordinateProperty().setX(snapXY.getCoordinateProperty().getX() + xDist);
+            getCoordinateProperty().setY(snapXY.getCoordinateProperty().getY() + yDist);
+        }
+    }
+
+    @Override
     public int getLayerNum() {
         return layerValue.get();
     }

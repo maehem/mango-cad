@@ -261,116 +261,119 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                 double moveDistSnappedX = getSnappedLocation(me.getX(), movingMouseStartX);
                 double moveDistSnappedY = -getSnappedLocation(me.getY(), movingMouseStartY);
 
-                int i = 1;
+                //int i = 1;
                 for (Element e : movingElements) {
-                    LOGGER.log(Level.SEVERE, "Moving element: {0} : {1}", new Object[]{i, e.toString()});
-                    i++;
+                    //LOGGER.log(Level.SEVERE, "Moving element: {0} : {1}", new Object[]{i, e.toString()});
+                    //i++;
                     if (e instanceof SelectableProperty es) {
-                        switch (es) {
-                            case CircleElement circ -> {
+                        es.modify(moveDistSnappedX, moveDistSnappedY, ephemeralNode != null);
+//                        switch (es) {
+//                            case CircleElement circ -> {
+////                                Element snapshot = es.getSnapshot();
+////                                if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
+////                                    // New circle, not yet placed. Adjust Radius
+////                                    double hypot = Math.hypot(moveDistSnappedX, moveDistSnappedY);
+////                                    circ.setRadius(hypot);
+////                                } else {
+////                                    if (snapshot instanceof CircleElement snapCirc) {
+////                                        // User moving circle at center X,Y
+////                                        // TODO needs snapshot?
+////                                        circ.setX(snapCirc.getX() + moveDistSnappedX);
+////                                        circ.setY(snapCirc.getY() + moveDistSnappedY);
+////                                    }
+////                                }
+//                            }
+//                            case RectangleElement rect -> {
+////                                Element snapshot = es.getSnapshot();
+////                                if (snapshot instanceof RectangleElement snapRect) {
+////                                    if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
+////                                        // New rect, not yet placed. Adjust Width and height.
+////                                        rect.setX2(rect.getX1() + moveDistSnappedX);
+////                                        rect.setY2(rect.getY1() + moveDistSnappedY);
+////                                    } else {
+////                                        // User moving circle at center X,Y
+////                                        rect.setAllXY(
+////                                                snapRect.getX1() + moveDistSnappedX,
+////                                                snapRect.getY1() + moveDistSnappedY,
+////                                                snapRect.getX2() + moveDistSnappedX,
+////                                                snapRect.getY2() + moveDistSnappedY
+////                                        );
+////                                    }
+////                                }
+//                            }
+//                            case PolygonElement poly -> {
+////                                Element snapshot = es.getSnapshot();
+////                                if (snapshot instanceof PolygonElement snapPoly) {
+////                                    if (ephemeralNode != null) {
+////                                        // Poly with new Vertex
+////                                        Vertex v0 = poly.getVertices().getFirst();
+////                                        Vertex vMoving = poly.getVertices().getLast();
+////                                        vMoving.setX(v0.getX() + moveDistSnappedX);
+////                                        vMoving.setY(v0.getY() + moveDistSnappedY);
+////                                        LOGGER.log(Level.SEVERE, "Moving Poly Vertex: {0},{1}   obj:{2}", new Object[]{vMoving.getX(), vMoving.getY(), vMoving.hashCode()});
+////                                    } else {
+////                                        Vertex[] selectedVertices = poly.getSelectedVertices();
+////                                        // Move selected vertices together.
+////                                        LOGGER.log(Level.SEVERE, "Polygon: Move selected vertices. Not implemented yet!");
+////                                    }
+////                                } else {
+////                                    LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not PolygonElement: " + snapshot.getElementName());
+////                                }
+//                            }
+//                            case CoordinateProperty exy -> {
+//                                //LOGGER.log(Level.SEVERE, "Move elementXY.");
 //                                Element snapshot = es.getSnapshot();
-                                if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
-                                    // New circle, not yet placed. Adjust Radius
-                                    double hypot = Math.hypot(moveDistSnappedX, moveDistSnappedY);
-                                    circ.setRadius(hypot);
-                                } else {
-                                    // User moving circle at center X,Y
-                                    // TODO needs snapshot?
-                                    circ.setX(circ.getX() + moveDistSnappedX);
-                                    circ.setY(circ.getY() + moveDistSnappedY);
-                                }
-                            }
-                            case RectangleElement rect -> {
-                                Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof RectangleElement snapRect) {
-                                    if (ephemeralNode != null) { // Could be a move or a radius adjust(new circles)
-                                        // New rect, not yet placed. Adjust Width and height.
-                                        rect.setX2(rect.getX1() + moveDistSnappedX);
-                                        rect.setY2(rect.getY1() + moveDistSnappedY);
-                                    } else {
-                                        // User moving circle at center X,Y
-                                        rect.setAllXY(
-                                                snapRect.getX1() + moveDistSnappedX,
-                                                snapRect.getY1() + moveDistSnappedY,
-                                                snapRect.getX2() + moveDistSnappedX,
-                                                snapRect.getY2() + moveDistSnappedY
-                                        );
-                                    }
-                                }
-                            }
-                            case PolygonElement poly -> {
-                                Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof PolygonElement snapPoly) {
-                                    if (ephemeralNode != null) {
-                                        // Poly with new Vertex
-                                        Vertex v0 = poly.getVertices().getFirst();
-                                        Vertex vMoving = poly.getVertices().getLast();
-                                        vMoving.setX(v0.getX() + moveDistSnappedX);
-                                        vMoving.setY(v0.getY() + moveDistSnappedY);
-                                        LOGGER.log(Level.SEVERE, "Moving Poly Vertex: {0},{1}   obj:{2}", new Object[]{vMoving.getX(), vMoving.getY(), vMoving.hashCode()});
-                                    } else {
-                                        Vertex[] selectedVertices = poly.getSelectedVertices();
-                                        // Move selected vertices together.
-                                        LOGGER.log(Level.SEVERE, "Polygon: Move selected vertices. Not implemented yet!");
-                                    }
-                                } else {
-                                    LOGGER.log(Level.SEVERE, "Mouse moved: Snapshot is not PolygonElement: " + snapshot.getElementName());
-                                }
-                            }
-                            case CoordinateProperty exy -> {
-                                //LOGGER.log(Level.SEVERE, "Move elementXY.");
-                                Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof CoordinateProperty snapXY) {
-                                    //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
-                                    exy.getCoordinateProperty().setX(snapXY.getCoordinateProperty().getX() + moveDistSnappedX);
-                                    exy.getCoordinateProperty().setY(snapXY.getCoordinateProperty().getY() + moveDistSnappedY);
-                                }
-                            }
-                            case Wire exy -> {
-                                Element snapshot = es.getSnapshot();
-                                if (snapshot instanceof Wire snapXY) {
-                                    switch (exy.getPickedEnd()) {
-                                        case WireEnd.ONE -> {
-                                            exy.setX1(snapXY.getX1() + moveDistSnappedX);
-                                            exy.setY1(snapXY.getY1() + moveDistSnappedY);
-                                        }
-                                        case WireEnd.TWO -> {
-                                            exy.setX2(snapXY.getX2() + moveDistSnappedX);
-                                            exy.setY2(snapXY.getY2() + moveDistSnappedY);
-                                        }
-                                        case WireEnd.NONE -> {
-                                            double mX = moveDistSnappedX;
-                                            double mY = moveDistSnappedY;
-                                            double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
-                                            double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
-                                            double c = snapXY.getLength();
-
-                                            LOGGER.log(Level.SEVERE,
-                                                    "    m:{0},{1}     a={2}   b={3}  c={4}",
-                                                    new Object[]{mX, mY, a, b, c}
-                                            );
-                                            double lawCosCurve = Math.toDegrees(Math.acos(
-                                                    (a * a + b * b - c * c) / (2 * a * b)
-                                            )) % 180.0;
-                                            double curve = 360.0 - 2.0 * lawCosCurve;
-                                            double div = 360.0 / snapXY.getLength();
-                                            double curve2 = mY * div;
-                                            double curve3 = mX * div;
-                                            double curve4 = Math.hypot(curve2, curve3);
-                                            if (curve > -340 && curve < 340) {
-                                                LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve: {1}", new Object[]{div, -curve});
-                                                exy.setCurve(-curve);
-                                            }
-                                        }
-                                        default -> {
-                                        }
-                                    }
-                                }
-                            }
-                            default -> {
-                                // Non-movable thing.
-                            }
-                        }
+//                                if (snapshot instanceof CoordinateProperty snapXY) {
+//                                    //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
+//                                    exy.getCoordinateProperty().setX(snapXY.getCoordinateProperty().getX() + moveDistSnappedX);
+//                                    exy.getCoordinateProperty().setY(snapXY.getCoordinateProperty().getY() + moveDistSnappedY);
+//                                }
+//                            }
+//                            case Wire exy -> {
+////                                Element snapshot = es.getSnapshot();
+////                                if (snapshot instanceof Wire snapXY) {
+////                                    switch (exy.getPickedEnd()) {
+////                                        case WireEnd.ONE -> {
+////                                            exy.setX1(snapXY.getX1() + moveDistSnappedX);
+////                                            exy.setY1(snapXY.getY1() + moveDistSnappedY);
+////                                        }
+////                                        case WireEnd.TWO -> {
+////                                            exy.setX2(snapXY.getX2() + moveDistSnappedX);
+////                                            exy.setY2(snapXY.getY2() + moveDistSnappedY);
+////                                        }
+////                                        case WireEnd.NONE -> {
+////                                            double mX = moveDistSnappedX;
+////                                            double mY = moveDistSnappedY;
+////                                            double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
+////                                            double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
+////                                            double c = snapXY.getLength();
+////
+////                                            LOGGER.log(Level.SEVERE,
+////                                                    "    m:{0},{1}     a={2}   b={3}  c={4}",
+////                                                    new Object[]{mX, mY, a, b, c}
+////                                            );
+////                                            double lawCosCurve = Math.toDegrees(Math.acos(
+////                                                    (a * a + b * b - c * c) / (2 * a * b)
+////                                            )) % 180.0;
+////                                            double curve = 360.0 - 2.0 * lawCosCurve;
+////                                            double div = 360.0 / snapXY.getLength();
+////                                            double curve2 = mY * div;
+////                                            double curve3 = mX * div;
+////                                            double curve4 = Math.hypot(curve2, curve3);
+////                                            if (curve > -340 && curve < 340) {
+////                                                LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve: {1}", new Object[]{div, -curve});
+////                                                exy.setCurve(-curve);
+////                                            }
+////                                        }
+////                                        default -> {
+////                                        }
+////                                    }
+////                                }
+//                            }
+//                            default -> {
+//                                es.modify(moveDistSnappedX, moveDistSnappedY, ephemeralNode != null);
+//                            }
+//                        }
                     }
                 }
             }

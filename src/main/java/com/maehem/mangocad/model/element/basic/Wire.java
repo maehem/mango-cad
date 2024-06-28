@@ -435,13 +435,13 @@ public class Wire extends Element implements
     @Override
     public void setPicked(boolean picked) {
         //if (!this.pickedEnd.equals(WireEnd.BOTH)) {
-            boolean oldValue = isPicked();
-            this.pickedEnd = picked ? WireEnd.BOTH : WireEnd.NONE;
-            notifyListeners(SelectableProperty.Field.PICKED, oldValue, isPicked());
+        boolean oldValue = isPicked();
+        this.pickedEnd = picked ? WireEnd.BOTH : WireEnd.NONE;
+        notifyListeners(SelectableProperty.Field.PICKED, oldValue, isPicked());
         //}
     }
 
-    public void setPickedEnd( WireEnd pickedEnd ) {
+    public void setPickedEnd(WireEnd pickedEnd) {
         if (!this.pickedEnd.equals(pickedEnd)) {
             boolean oldValue = isPicked();
             this.pickedEnd = pickedEnd;
@@ -451,6 +451,48 @@ public class Wire extends Element implements
 
     public WireEnd getPickedEnd() {
         return pickedEnd;
+    }
+
+    @Override
+    public void modify(double xDist, double yDist, boolean ephemeral) {
+        if (getSnapshot() instanceof Wire snapXY) {
+            switch (getPickedEnd()) {
+                case WireEnd.ONE -> {
+                    setX1(snapXY.getX1() + xDist);
+                    setY1(snapXY.getY1() + yDist);
+                }
+                case WireEnd.TWO -> {
+                    setX2(snapXY.getX2() + xDist);
+                    setY2(snapXY.getY2() + yDist);
+                }
+                case WireEnd.NONE -> {
+                    double mX = xDist;
+                    double mY = yDist;
+                    double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
+                    double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
+                    double c = snapXY.getLength();
+
+                    LOGGER.log(Level.SEVERE,
+                            "    m:{0},{1}     a={2}   b={3}  c={4}",
+                            new Object[]{mX, mY, a, b, c}
+                    );
+                    double lawCosCurve = Math.toDegrees(Math.acos(
+                            (a * a + b * b - c * c) / (2 * a * b)
+                    )) % 180.0;
+                    double curve = 360.0 - 2.0 * lawCosCurve;
+                    double div = 360.0 / snapXY.getLength();
+                    double curve2 = mY * div;
+                    double curve3 = mX * div;
+                    double curve4 = Math.hypot(curve2, curve3);
+                    if (curve > -340 && curve < 340) {
+                        LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve: {1}", new Object[]{div, -curve});
+                        setCurve(-curve);
+                    }
+                }
+                default -> {
+                }
+            }
+        }
     }
 
     public Wire copy() {

@@ -520,6 +520,11 @@ public class Dimension extends Element implements
     }
 
     @Override
+    public void modify(double xDist, double yDist, boolean ephemeral) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
     public void elementValueChanged(ElementValue newVal) {
         if (newVal.equals(layerValue)) {
             notifyListeners(LayerNumberProperty.Field.LAYER, layerValue.getOldValue(), layerValue.get());

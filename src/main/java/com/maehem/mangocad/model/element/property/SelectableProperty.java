@@ -59,4 +59,6 @@ public interface SelectableProperty {
     public boolean isPicked();
 
     public void setPicked(boolean picked);
+
+    public void modify(double xDist, double yDist, boolean ephemeral);
 }

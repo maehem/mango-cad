@@ -413,6 +413,25 @@ public class PolygonElement extends Element implements
         notifyListeners(SelectableProperty.Field.PICKED, oldValue, this.picked);
     }
 
+    @Override
+    public void modify(double xDist, double yDist, boolean ephemeral) {
+        if (getSnapshot() instanceof PolygonElement snapPoly) {
+            if (ephemeral) {
+                // Poly with new Vertex
+                Vertex v0 = getVertices().getFirst();
+                Vertex vMoving = getVertices().getLast();
+                vMoving.setX(v0.getX() + xDist);
+                vMoving.setY(v0.getY() + yDist);
+                LOGGER.log(Level.SEVERE, "Moving Poly Vertex: {0},{1}   obj:{2}", new Object[]{vMoving.getX(), vMoving.getY(), vMoving.hashCode()});
+            } else {
+                Vertex[] selectedVertices = getSelectedVertices();
+                // Move selected vertices together.
+                LOGGER.log(Level.SEVERE, "Polygon: Move selected vertices. Not implemented yet!");
+            }
+        } else {
+            LOGGER.log(Level.SEVERE, "Polygon Modify: Snapshot is not PolygonElement: " + snapshot.getElementName());
+        }
+    }
 
     /**
      * Return a list of vertices that are selected. * given X/Y.

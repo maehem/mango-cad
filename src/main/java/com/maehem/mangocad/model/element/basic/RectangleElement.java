@@ -328,6 +328,24 @@ public class RectangleElement extends Element implements
         }
     }
 
+    @Override
+    public void modify(double xDist, double yDist, boolean ephemeral) {
+        if (getSnapshot() instanceof RectangleElement snapRect) {
+            if (ephemeral) { // Could be a move or a radius adjust(new circles)
+                // New rect, not yet placed. Adjust Width and height.
+                setX2(getX1() + xDist);
+                setY2(getY1() + yDist);
+            } else { // User moving circle at center X,Y
+                setAllXY(
+                        snapRect.getX1() + xDist,
+                        snapRect.getY1() + yDist,
+                        snapRect.getX2() + xDist,
+                        snapRect.getY2() + yDist
+                );
+            }
+        }
+    }
+
     public RectangleElement copy() {
         RectangleElement rectCopy = new RectangleElement();
 
