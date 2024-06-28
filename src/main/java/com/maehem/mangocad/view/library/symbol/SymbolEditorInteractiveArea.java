@@ -297,7 +297,11 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
     private void initMouseClicked() {
         workArea.setOnMouseClicked((me) -> {
             LOGGER.log(Level.SEVERE, "Mouse Click: " + me.getButton().name());
+            if (me.getClickCount() == 2) {
+                LOGGER.log(Level.SEVERE, "Double-clicked.");
+            }
             if (!movingElements.isEmpty()) {
+                LOGGER.log(Level.SEVERE, "Moving elements.");
                 if (null != me.getButton()) {
                     switch (me.getButton()) {
                         case PRIMARY -> {
@@ -316,10 +320,11 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                         LOGGER.log(Level.SEVERE, "Clear movingElements. 1");
                                         movingElements.clear(); // End move of node.
 
-                                        if (ephemeralNode instanceof WireNode wn) { // Line
-                                            Wire wire = (Wire) element;
-                                            wire.setSelectedEnd(WireEnd.NONE);
+                                        if (me.getClickCount() == 1 && element instanceof Wire wire) { // Line
+                                            LOGGER.log(Level.SEVERE, "Create next Line Segment.");
+                                            wire.setPickedEnd(WireEnd.NONE);
                                             initiateNewLineSegment(me, wire.getX2(), -wire.getY2());
+                                            toolMode.setToolElement(wire); ////   Looks wrong?  ???????
                                         }
 
                                         setEditorTool(toolMode); // Trigger another pin placement.
@@ -823,13 +828,15 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             wire.setWidth(lastWire.getWidth());
             wire.setCurve(lastWire.curveProperty.get());
             wire.setStyle(lastWire.getStyle());
-            LOGGER.log(Level.SEVERE, "I see a last added element.");
+            LOGGER.log(Level.SEVERE, "I see a last added wire segment.");
+        } else {
+            LOGGER.log(Level.SEVERE, "No last added element.");
         }
         wire.setX1(x);
         wire.setY1(-y);
         wire.setX2(x);
         wire.setY2(-y);
-        wire.setSelectedEnd(TWO);
+        wire.setPickedEnd(TWO);
         wire.createSnapshot();
         //LOGGER.log(Level.SEVERE, "New Wire");
         WireNode wireNode = new WireNode(wire,
@@ -868,6 +875,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     //LOGGER.log(Level.SEVERE, "    New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
                     Rotation rotProp = pickRot.getRotationProperty();
                     Rotation refProp = tmpRot.getRotationProperty();
+                    // The toolbar widgets are additive to current value.
                     rotProp.set(pickRot.getRotationProperty().get() + refProp.get());
                     switch ( rotProp.getMirrorStyle() ) {
                         case FLIP -> {
