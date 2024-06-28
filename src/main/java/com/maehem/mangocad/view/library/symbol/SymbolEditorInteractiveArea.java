@@ -32,6 +32,7 @@ import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
 import com.maehem.mangocad.model.element.property.CoordinateProperty;
+import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.EditorTool;
@@ -247,7 +248,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
             }
             // Move any selected node.
             if (!movingElements.isEmpty()) {
-                LOGGER.log(Level.SEVERE, "Moving {0} elements.", movingElements.size());
+                //LOGGER.log(Level.SEVERE, "Moving {0} elements.", movingElements.size());
                 double moveDistSnappedX = getSnappedLocation(me.getX(), movingMouseStartX);
                 double moveDistSnappedY = -getSnappedLocation(me.getY(), movingMouseStartY);
 
@@ -691,8 +692,8 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                             initiateWireElementCurve(me, wire);
                                         }
                                     } else {
+                                        LOGGER.log(Level.SEVERE, "initiate move: " + picks.getFirst().getElementName());
                                         initiateElementMove(picks, me.getX(), me.getY());
-                                        LOGGER.log(Level.SEVERE, "Moving a thing: " + picks.getFirst().getElementName());
                                     }
                                 } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
                                     // If more than one pick,
@@ -859,13 +860,25 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
             if (lastElementAdded != null && lastElementAdded instanceof RotationProperty tmpRot) {
                 //LOGGER.log(Level.SEVERE, "I see a last added element.");
-                //LOGGER.log(Level.SEVERE, "    lastElement: r:{0}  mir:{1}", new Object[]{tmpRot.getRot(), tmpRot.isMirrored() ? "Y" : "N"});
+                //LOGGER.log(Level.SEVERE, "    lastElement: r:{0}  mir:{1}",
+                //        new Object[]{tmpRot.getRotationProperty().get(), tmpRot.getRotationProperty().isMirror() ? "Y" : "N"});
                 if (pick instanceof RotationProperty pickRot) {
                     //LOGGER.log(Level.SEVERE, "    It's a RotationProperty.");
                     //LOGGER.log(Level.SEVERE, "    pickRot: r:{0}  mir:{1}", new Object[]{pickRot.getRot(), pickRot.isMirrored() ? "Y" : "N"});
                     //LOGGER.log(Level.SEVERE, "    New Rot: {0} +  tmpRot: {1} = {2}", new Object[]{pickRot.getRot(), tmpRot.getRot(), (pickRot.getRot() + tmpRot.getRot())});
-                    pickRot.getRotationProperty().set(pickRot.getRotationProperty().get() + tmpRot.getRotationProperty().get());
-                    pickRot.getRotationProperty().setMirror(tmpRot.getRotationProperty().isMirror());
+                    Rotation rotProp = pickRot.getRotationProperty();
+                    Rotation refProp = tmpRot.getRotationProperty();
+                    rotProp.set(pickRot.getRotationProperty().get() + refProp.get());
+                    switch ( rotProp.getMirrorStyle() ) {
+                        case FLIP -> {
+                            rotProp.setMirror(refProp.isMirror());
+                        }
+                        case ROTATE -> {
+                            if (refProp.isMirror()) {
+                                rotProp.set(rotProp.get() + 180.0);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -979,13 +992,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
 
     private void initiateElementMirror(Element pick, Element copyRotFrom) {
         if (pick instanceof RotationProperty rotE) {
-            if (copyRotFrom instanceof RotationProperty er) {
-                if (rotE.getRotationProperty().isMirrorAllowed()) {
-                    rotE.getRotationProperty().setMirror(er.getRotationProperty().isMirror());
-                } else {
-                    double angle = er.getRotationProperty().isMirror() ? 180.0 : 0.0;
-                    rotE.getRotationProperty().set(rotE.getRotationProperty().get() + angle);
-                }
+            if (copyRotFrom instanceof RotationProperty referenceRot) {
+                rotE.getRotationProperty().setMirror(referenceRot.getRotationProperty().isMirror());
+//                if (rotE.getRotationProperty().isMirrorAllowed()) {
+//                    rotE.getRotationProperty().setMirror(referenceRot.getRotationProperty().isMirror());
+//                } else {
+//                    double angle = referenceRot.getRotationProperty().isMirror() ? 180.0 : 0.0;
+//                    rotE.getRotationProperty().set(rotE.getRotationProperty().get() + angle);
+//                }
             } else {
                 LOGGER.log(Level.SEVERE, "Tried to copy mir value from a non-rotational element!");
             }

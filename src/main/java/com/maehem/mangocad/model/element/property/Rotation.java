@@ -16,6 +16,9 @@
  */
 package com.maehem.mangocad.model.element.property;
 
+import static com.maehem.mangocad.view.ControlPanel.LOGGER;
+import java.util.logging.Level;
+
 /**
  * Rotation -- rotation of an element; allowed range: [MSR]0..359.9
  *
@@ -28,6 +31,10 @@ public class Rotation extends RealValue {
 
     private static final double MIN = 0.0;
     private static final double MAX = 359.9;
+
+    public enum MirrorStyle {
+        NONE, FLIP, ROTATE
+    }
 
     public static final boolean MIRROR_NOT_ALLOWED = false;
     public static final boolean MIRROR_ALLOWED = true;
@@ -45,7 +52,9 @@ public class Rotation extends RealValue {
     private boolean mirror = false;
 
     private boolean allowSpin = !SPIN_ALLOWED;
-    private boolean allowMirror = MIRROR_ALLOWED;
+    //private boolean allowMirror = MIRROR_ALLOWED;
+    private MirrorStyle mirrorStyle = MirrorStyle.ROTATE;
+
 
     private final int PREC = 1;
 
@@ -59,7 +68,8 @@ public class Rotation extends RealValue {
     }
 
     /**
-     * @return the value
+     *
+     * @param strValue
      */
     public void setValue(String strValue) {
         if (strValue.startsWith("MR")) { // Mirror
@@ -150,12 +160,26 @@ public class Rotation extends RealValue {
      * @param mirror the mirror to set
      */
     public void setMirror(boolean mirror) {
-        if (isMirrorAllowed() && isMirror() != mirror) {
-            this.mirror = mirror;
-            notifyValueChange();
-        } else {
-            this.mirror = false; // Ensure the rule.
+        switch (getMirrorStyle()) {
+            case FLIP -> {
+                this.mirror = mirror;
+                notifyValueChange();
+            }
+            case ROTATE -> {
+                this.mirror = false;
+                this.set(get() + 180.0); // set() calls notifyValueChanged().
+            }
+            case NONE -> {
+                LOGGER.log(Level.SEVERE, "Rotation: Attempt to setMirror() on element that does not allow it!");
+            }
         }
+
+//        if (isMirrorAllowed() && isMirror() != mirror) {
+//            this.mirror = mirror;
+//            notifyValueChange();
+//        } else {
+//            this.mirror = false; // Ensure the rule.
+//        }
     }
 
     /**
@@ -176,24 +200,31 @@ public class Rotation extends RealValue {
         return !isSpin() && (get() > 90.0 && get() <= 270.0);
     }
 
-    /**
-     * @return the allowMirror
-     */
-    public boolean isMirrorAllowed() {
-        return allowMirror;
+//    /**
+//     * @return the allowMirror
+//     */
+//    public boolean isMirrorAllowed() {
+//        return allowMirror;
+//    }
+    public MirrorStyle getMirrorStyle() {
+        return mirrorStyle;
     }
 
-    /**
-     * @param allowMirror the allowMirror to set
-     */
-    public void setAllowMirror(boolean allowMirror) {
-        this.allowMirror = allowMirror;
+//    /**
+//     * @param allowMirror the allowMirror to set
+//     */
+//    public void setAllowMirror(boolean allowMirror) {
+//        this.allowMirror = allowMirror;
+//    }
+    public void setMirrorStyle(MirrorStyle mirStyle) {
+        this.mirrorStyle = mirStyle;
     }
 
     static public Rotation copyValues(Rotation old, Rotation copy) {
         copy.set(old.get());
         copy.setMirror(old.isMirror());
-        copy.setAllowMirror(old.isMirrorAllowed());
+        //copy.setAllowMirror(old.isMirrorAllowed());
+        copy.setMirrorStyle(old.getMirrorStyle());
         copy.setSpin(old.isSpin());
         copy.setAllowSpin(old.isSpinAllowed());
         copy.setConstrained(old.isConstrained());

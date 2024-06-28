@@ -82,7 +82,8 @@ public class RectangleElement extends Element implements
     public RectangleElement() {
         layerValue.addListener(this);
         rotationProperty.setAllowSpin(false);
-        rotationProperty.setAllowMirror(true);
+        //rotationProperty.setAllowMirror(true);
+        rotationProperty.setMirrorStyle(Rotation.MirrorStyle.FLIP);
         rotationProperty.setConstrained(true);
 
         coord1.addListener(this);

@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.CoordinateProperty;
+import com.maehem.mangocad.model.element.property.Rotation;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.PickListener;
 import com.maehem.mangocad.view.controlpanel.tab.PreviewContent;
@@ -130,7 +131,8 @@ public class TextTester2 extends Application implements ElementListener, PickLis
         et.setLayerNum(96);
         et.setAlign(TextAlign.TOP_LEFT);
         et.setDistance(50);
-        et.rotation.setAllowMirror(true);
+        //et.rotation.setAllowMirror(true);
+        et.rotation.setMirrorStyle(Rotation.MirrorStyle.FLIP);
         et.rotation.setAllowSpin(true);
         et.rotation.setMirror(false);
         et.rotation.setSpin(false);

@@ -82,6 +82,7 @@ public class Pin extends Element implements
         rotation.setConstrained(true);
 
         coordinate.addListener(this);
+        rotation.addListener(this);
     }
 
     @Override
@@ -267,7 +268,8 @@ public class Pin extends Element implements
             Rotation snapRotation = snapshot2.rotation;
             setX(snapshot2.getX());
             setY(snapshot2.getY());
-            rotation.setAllowMirror(snapRotation.isMirrorAllowed());
+            //rotation.setAllowMirror(snapRotation.isMirrorAllowed());
+            rotation.setMirrorStyle(snapRotation.getMirrorStyle());
             rotation.setConstrained(snapRotation.isConstrained());
             setDirection(snapshot2.getDirection());
             setFunction(snapshot2.getFunction());
@@ -298,7 +300,8 @@ public class Pin extends Element implements
         Pin copyPin = new Pin();
         copyPin.setX(getX());
         copyPin.setY(getY());
-        copyPin.rotation.setAllowMirror(rotation.isMirrorAllowed());
+        //copyPin.rotation.setAllowMirror(rotation.isMirrorAllowed());
+        copyPin.rotation.setMirrorStyle(rotation.getMirrorStyle());
         copyPin.rotation.setConstrained(rotation.isConstrained());
         copyPin.setDirection(getDirection());
         copyPin.setFunction(getFunction());
@@ -351,6 +354,8 @@ public class Pin extends Element implements
             notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), newVal);
         } else if (newVal.equals(coordinate.y)) {
             notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), newVal);
+        } else if (newVal.equals(rotation)) {
+            notifyListeners(RotationProperty.Field.ALL, rotation, rotation);
         }
     }
 

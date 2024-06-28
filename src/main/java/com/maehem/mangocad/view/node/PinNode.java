@@ -488,7 +488,7 @@ public class PinNode extends ViewNode implements ElementListener {
                 updatePadPin();
                 updateColors();
             }
-            case RotationProperty.Field.VALUE -> {
+            case RotationProperty.Field.ALL -> {
                 LOGGER.log(Level.SEVERE,
                         "Pin properties have changed! {0}: {1} => {2}",
                         new Object[]{field, oldVal.toString(), newVal.toString()});

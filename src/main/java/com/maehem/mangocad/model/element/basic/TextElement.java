@@ -145,7 +145,8 @@ public class TextElement extends Element
 
     @SuppressWarnings("LeakingThisInConstructor")
     public TextElement() {
-        rotation.setAllowMirror(true);
+        //rotation.setAllowMirror(true);
+        rotation.setMirrorStyle(Rotation.MirrorStyle.FLIP);
         rotation.setAllowSpin(true);
 
         layerValue.addListener(this);
@@ -358,7 +359,8 @@ public class TextElement extends Element
             setX(snapshot.getX());
             setY(snapshot.getY());
             setAlign(snapshot.getAlign());
-            rotation.setAllowMirror(snapshot.rotation.isMirrorAllowed());
+            //rotation.setAllowMirror(snapshot.rotation.isMirrorAllowed());
+            rotation.setMirrorStyle(snapshot.rotation.getMirrorStyle());
             rotation.setAllowSpin(snapshot.rotation.isSpinAllowed());
             rotation.setConstrained(snapshot.rotation.isConstrained());
             setDistance(snapshot.getDistance());
@@ -388,7 +390,8 @@ public class TextElement extends Element
         copy.setX(getX());
         copy.setY(getY());
         copy.setAlign(align);
-        copy.rotation.setAllowMirror(rotation.isMirrorAllowed());
+        //copy.rotation.setAllowMirror(rotation.isMirrorAllowed());
+        copy.rotation.setMirrorStyle(rotation.getMirrorStyle());
         copy.rotation.setAllowSpin(rotation.isSpinAllowed());
         copy.rotation.setConstrained(rotation.isConstrained());
         copy.setDistance(distance);

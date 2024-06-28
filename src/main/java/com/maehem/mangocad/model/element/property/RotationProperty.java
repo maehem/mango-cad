@@ -30,7 +30,8 @@ public interface RotationProperty {
         ALLOW_SPIN("allowSpin", Boolean.class),
         MIRROR("mirror", Boolean.class),
         ALLOW_MIRROR("allowMirror", Boolean.class),
-        VALUE("value", String.class);
+        VALUE("value", String.class),
+        ALL("all", Rotation.class);
 
         private final String fName;
         private final Class clazz;
