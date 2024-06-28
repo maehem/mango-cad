@@ -101,9 +101,14 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
     private void updateLayer() {
         LayerElement layer = layers.get(rectangle.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
+        if (rectangle.isPicked()) {
+            c = c.brighter().saturate();
+        } else if (rectangle.isSelected()) {
+            c = c.darker();
+        }
 
-        rectangleShape.setFill(rectangle.isSelected() ? c.brighter().brighter() : c);
-        rectShape.setFill(rectangle.isSelected() ? c.brighter().brighter() : c);
+        rectangleShape.setFill(c);
+        rectShape.setFill(c);
     }
 
     @Override
@@ -116,7 +121,7 @@ public class RectangleNode extends ViewNode implements RotationProperty, Element
             case RectangleElement.Field.X1, RectangleElement.Field.Y1, RectangleElement.Field.X2, RectangleElement.Field.Y2, RectangleElement.Field.ALL_XY -> {
                 updatePoints();
             }
-            case SelectableProperty.Field.SELECTED -> {
+            case SelectableProperty.Field.SELECTED, SelectableProperty.Field.PICKED -> {
                 updateLayer();
             }
             default -> {

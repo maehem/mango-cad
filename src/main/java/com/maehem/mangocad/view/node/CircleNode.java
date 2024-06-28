@@ -89,12 +89,16 @@ public class CircleNode extends ViewNode implements ElementListener {
     private void updateLayer() {
         LayerElement layer = layers.get(circle.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
-
-        circleShape.setStroke(circle.isSelected() ? c.brighter().brighter() : c);
+        if (circle.isPicked()) {
+            c = c.brighter().saturate();
+        } else if (circle.isSelected()) {
+            c = c.darker();
+        }
+        circleShape.setStroke(c);
         if ( circle.getWidth() > 0.0 ) {
             circleShape.setFill(Color.TRANSPARENT);
         } else {
-            circleShape.setFill(circle.isSelected() ? c.brighter().brighter() : c);
+            circleShape.setFill(c);
         }
     }
 
@@ -108,7 +112,7 @@ public class CircleNode extends ViewNode implements ElementListener {
             case CoordinateProperty.Field.X, CoordinateProperty.Field.Y -> {
                 updateLocation();
             }
-            case SelectableProperty.Field.SELECTED, LayerNumberProperty.Field.LAYER -> {
+            case SelectableProperty.Field.SELECTED, SelectableProperty.Field.PICKED, LayerNumberProperty.Field.LAYER -> {
                 updateLayer();
             }
             case CircleElement.Field.RADIUS -> {

@@ -130,6 +130,7 @@ public class TextElement extends Element
     public final LockValue lockProperty = new LockValue();
     public final RealValue sizeProperty = new RealValue(1.778, 0.000001, 100000); // 0.7 inch
     private boolean selected = false;
+    private boolean picked = false;
     private TextElement snapshot = null;
 
     private TextFont font = TextFont.PROPORTIONAL;
@@ -420,6 +421,20 @@ public class TextElement extends Element
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public boolean isPicked() {
+        return picked;
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        if (this.picked != picked) {
+            boolean oldValue = this.picked;
+            this.picked = picked;
+            notifyListeners(SelectableProperty.Field.PICKED, oldValue, this.picked);
         }
     }
 

@@ -127,6 +127,7 @@ public class Dimension extends Element implements
 
     private Dimension snapshot = null;
     private boolean selected = false;
+    private boolean picked = false;
 
     public static final ObservableList<Integer> PRECISION_OPTIONS
             = FXCollections.observableArrayList(
@@ -501,6 +502,20 @@ public class Dimension extends Element implements
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public boolean isPicked() {
+        return picked;
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        if (this.picked != picked) {
+            boolean oldValue = this.picked;
+            this.picked = picked;
+            notifyListeners(SelectableProperty.Field.PICKED, oldValue, this.picked);
         }
     }
 

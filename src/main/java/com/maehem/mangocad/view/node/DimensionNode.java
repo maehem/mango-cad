@@ -25,17 +25,21 @@ import com.maehem.mangocad.model.element.drawing.Layers;
 import com.maehem.mangocad.model.element.enums.DimensionType;
 import com.maehem.mangocad.model.element.enums.TextAlign;
 import com.maehem.mangocad.model.element.misc.LayerElement;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
 import static com.maehem.mangocad.view.node.ViewNode.LOGGER;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -78,6 +82,8 @@ public class DimensionNode extends ViewNode implements ElementListener {
     private final TextNode textNode;
     private final TextElement et = new TextElement();
 
+    private final ArrayList<Shape> pickShapes = new ArrayList<>();
+
     public DimensionNode(Dimension d, Layers layers, ColorPalette palette, PickListener pickListener) {
         super(d, pickListener);
 
@@ -108,6 +114,25 @@ public class DimensionNode extends ViewNode implements ElementListener {
         //textNode.setAscend(0.625);  // 3x width?
 
         generateShapes();
+
+        // TODO: Alternate pick shapes for lines.
+        pickShapes.add(extLine1);
+        pickShapes.add(extLine2);
+        pickShapes.add(dimLine);
+        pickShapes.add(dimArrow1);
+        pickShapes.add(dimArrow2);
+        pickShapes.add(displayValue);
+        pickShapes.add(textNode.getTextShape());
+
+        pickShapes.forEach((shape) -> {
+            shape.addEventFilter(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+                LOGGER.log(Level.SEVERE, "Dimension shape picked:{0}", shape);
+                PickListener listener = getPickListener();
+                if (listener != null) {
+                    getPickListener().nodePicked(this, me);
+                }
+            });
+        });
 
         Platform.runLater(() -> {
             this.dimension.addListener(this);
@@ -602,6 +627,12 @@ public class DimensionNode extends ViewNode implements ElementListener {
     private void updateLayer() {
         LayerElement layer = layers.get(dimension.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
+        if (dimension.isPicked()) {
+            c = c.brighter().saturate();
+        } else if (dimension.isSelected()) {
+            c = c.darker();
+        }
+
         extLine1.setStroke(c);
         extLine2.setStroke(c);
         dimLine.setStroke(c);
@@ -623,11 +654,14 @@ public class DimensionNode extends ViewNode implements ElementListener {
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         //Wire.Field f = (Wire.Field) field;
 
-        LOGGER.log(Level.FINE,
-                "Wire properties have changed! {0}: {1} => {2}",
+        LOGGER.log(Level.SEVERE,
+                "Dimension properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
         switch (field) {
+            case SelectableProperty.Field.SELECTED, SelectableProperty.Field.PICKED -> {
+                updateLayer();
+            }
 //            case Wire.Field.X1, Wire.Field.Y1, Wire.Field.X2, Wire.Field.Y2 -> {
 //                updateLine();
 //            }

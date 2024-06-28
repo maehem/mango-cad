@@ -91,7 +91,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
         });
     }
 
-    public void rebuildPath() {
+    public final void rebuildPath() {
         LOGGER.log(Level.SEVERE, "Rebuild path.");
         path.getElements().clear();
 
@@ -165,8 +165,13 @@ public class PolygonNode extends ViewNode implements ElementListener {
     private void updateLayer() {
         LayerElement layer = layers.get(polygonElement.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
-
-        path.setStroke(polygonElement.isSelected() || polygonElement.hasSelections() ? c.brighter().brighter() : c);
+        if (polygonElement.isPicked()) {
+            c = c.brighter().saturate();
+        } else if (polygonElement.isSelected() || polygonElement.hasSelections()) {
+            c = c.darker();
+        }
+        //path.setStroke(polygonElement.isSelected() || polygonElement.hasSelections() ? c.brighter().brighter() : c);
+        path.setStroke(c);
         if (closePath) {
             path.setFill(c);
         } else {
@@ -201,7 +206,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
-        LOGGER.log(Level.SEVERE,
+        LOGGER.log(Level.FINE,
                 "Polygon properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal != null ? oldVal.toString() : "null", newVal != null ? newVal.toString() : "null"});
 
@@ -209,7 +214,7 @@ public class PolygonNode extends ViewNode implements ElementListener {
             case WidthProperty.Field.WIDTH -> {
                 updateWidth();
             }
-            case LayerNumberProperty.Field.LAYER -> {
+            case LayerNumberProperty.Field.LAYER, SelectableProperty.Field.SELECTED, SelectableProperty.Field.PICKED -> {
                 updateLayer();
             }
             case PolygonElement.Field.VERTEX -> {
@@ -248,9 +253,9 @@ public class PolygonNode extends ViewNode implements ElementListener {
         if (field instanceof RotationProperty.Field) {
             rebuildPath();
         }
-        if (field instanceof SelectableProperty.Field) {
-            updateLayer();
-        }
+//        if (field instanceof SelectableProperty.Field) {
+//            updateLayer();
+//        }
 //        if (field instanceof VertexField vf) {
 //            LOGGER.log(Level.SEVERE, "    Vertex field has changed. f: {0}", vf.name());
 //            updateVerticesXY();

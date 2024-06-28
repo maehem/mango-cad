@@ -25,7 +25,8 @@ import com.maehem.mangocad.model.element.Element;
 public interface SelectableProperty {
 
     public enum Field {
-        SELECTED("selected", Boolean.class);
+        SELECTED("selected", Boolean.class),
+        PICKED("picked", Boolean.class);
 
         private final String fName;
         private final Class clazz;
@@ -54,4 +55,8 @@ public interface SelectableProperty {
     public boolean isSelected();
 
     public void setSelected(boolean selected);
+
+    public boolean isPicked();
+
+    public void setPicked(boolean picked);
 }

@@ -25,6 +25,7 @@ import com.maehem.mangocad.model.element.enums.WireEnd;
 import com.maehem.mangocad.model.element.misc.LayerElement;
 import com.maehem.mangocad.model.element.property.CurveProperty;
 import com.maehem.mangocad.model.element.property.LayerNumberProperty;
+import com.maehem.mangocad.model.element.property.SelectableProperty;
 import com.maehem.mangocad.model.element.property.WidthProperty;
 import com.maehem.mangocad.view.ColorUtils;
 import com.maehem.mangocad.view.PickListener;
@@ -192,8 +193,14 @@ public class WireNode extends ViewNode implements ElementListener {
     private void updateLayer() {
         LayerElement layer = layers.get(wire.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
+        if (wire.isPicked()) {
+            c = c.brighter().saturate();
+        } else if (wire.isSelected()) {
+            c = c.darker();
+        }
         // Get new Color based on layer.
-        wireCurve.setStroke(wire.getSelectedEnd() != WireEnd.NONE ? c.brighter().brighter() : c);
+        //wireCurve.setStroke(wire.getSelectedEnd() != WireEnd.NONE ? c.brighter().brighter() : c);
+        wireCurve.setStroke(c);
     }
 
     private void updateStyle() {
@@ -209,7 +216,7 @@ public class WireNode extends ViewNode implements ElementListener {
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         //Wire.Field f = (Wire.Field) field;
 
-        LOGGER.log(Level.FINER,
+        LOGGER.log(Level.SEVERE,
                 "WireNode:  Wire properties have changed! {0}: {1} => {2}",
                 new Object[]{field, oldVal.toString(), newVal.toString()});
 
@@ -226,7 +233,7 @@ public class WireNode extends ViewNode implements ElementListener {
             case CurveProperty.Field.VALUE -> {
                 updateCurve();
             }
-            case LayerNumberProperty.Field.LAYER -> {
+            case LayerNumberProperty.Field.LAYER, SelectableProperty.Field.PICKED -> {
                 updateLayer();
             }
             case Wire.Field.STYLE -> {

@@ -128,6 +128,7 @@ public class Wire extends Element implements
     public final RealValue x2Property = new RealValue(0);
     public final RealValue y2Property = new RealValue(0);
     private WireEnd selectedEnd = WireEnd.NONE;
+    private WireEnd pickedEnd = WireEnd.NONE;
     public final WidthValue widthProperty = new WidthValue(0.254);
     public final CurveValue curveProperty = new CurveValue(0.0);
     private String extent = "";  // TODO: Store as 'extent' object.
@@ -367,11 +368,11 @@ public class Wire extends Element implements
 
     @Override
     public String toString() {
-        MessageFormat mf = new MessageFormat("wire: {0},{1} to {2},{3}  avg:{4},{5} layer:{6}");
+        MessageFormat mf = new MessageFormat("wire: {0},{1} to {2},{3}  avg:{4},{5} layer:{6} picked:{7}");
         Object[] o = new Object[]{
             getX1(), getY1(), getX2(), getY2(),
             getAverageX(), getAverageY(),
-            getLayerNum()};
+            getLayerNum(), getPickedEnd().code()};
         return mf.format(o);
     }
 
@@ -424,6 +425,32 @@ public class Wire extends Element implements
     @Override
     public void setSelected(boolean selected) {
         LOGGER.log(Level.SEVERE, "Wire.setSelected() mis-used.  Use setSelectedEnd() instead!");
+    }
+
+    @Override
+    public boolean isPicked() {
+        return !pickedEnd.equals(WireEnd.NONE);
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        //if (!this.pickedEnd.equals(WireEnd.BOTH)) {
+            boolean oldValue = isPicked();
+            this.pickedEnd = picked ? WireEnd.BOTH : WireEnd.NONE;
+            notifyListeners(SelectableProperty.Field.PICKED, oldValue, isPicked());
+        //}
+    }
+
+    public void setPickedEnd( WireEnd pickedEnd ) {
+        if (!this.pickedEnd.equals(pickedEnd)) {
+            boolean oldValue = isPicked();
+            this.pickedEnd = pickedEnd;
+            notifyListeners(SelectableProperty.Field.PICKED, oldValue, isPicked());
+        }
+    }
+
+    public WireEnd getPickedEnd() {
+        return pickedEnd;
     }
 
     public Wire copy() {

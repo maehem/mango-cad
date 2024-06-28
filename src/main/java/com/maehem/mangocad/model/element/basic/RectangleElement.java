@@ -75,6 +75,7 @@ public class RectangleElement extends Element implements
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     private boolean selected = false;
+    private boolean picked = false;
     private int selectedCorner = 0;
     private RectangleElement snapshot = null;
 
@@ -310,6 +311,20 @@ public class RectangleElement extends Element implements
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public boolean isPicked() {
+        return picked;
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        if (this.picked != picked) {
+            boolean oldValue = this.picked;
+            this.picked = picked;
+            notifyListeners(SelectableProperty.Field.PICKED, oldValue, this.picked);
         }
     }
 

@@ -48,6 +48,7 @@ public class Vertex extends Element implements
     public final CurveValue curveProperty = new CurveValue(0);
 
     private boolean selected = false;
+    private boolean picked = false;
     private Vertex snapshot = null;
 
     @Override
@@ -116,6 +117,20 @@ public class Vertex extends Element implements
             boolean oldValue = this.selected;
             this.selected = selected;
             notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
+        }
+    }
+
+    @Override
+    public boolean isPicked() {
+        return picked;
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        if (this.picked != picked) {
+            boolean oldValue = this.picked;
+            this.picked = picked;
+            notifyListeners(SelectableProperty.Field.PICKED, oldValue, this.picked);
         }
     }
 

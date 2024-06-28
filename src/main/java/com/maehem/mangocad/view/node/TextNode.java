@@ -38,6 +38,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
@@ -173,6 +174,10 @@ public class TextNode extends ViewNode implements ElementListener {
         return text.getText();
     }
 
+    public Shape getTextShape() {
+        return text;
+    }
+
     private double getTextWidth() {
         // JavaFX getBoundsInLocal().getWidth() for text always
         // reports +0.99 more than actual width, so we subtract it.
@@ -248,9 +253,14 @@ public class TextNode extends ViewNode implements ElementListener {
     private void updateLayer() {
         LayerElement layer = layers.get(textElement.getLayerNum());
         Color c = ColorUtils.getColor(palette.getHex(layer.getColorIndex()));
+        if (textElement.isPicked()) {
+            c = c.brighter().saturate();
+        } else if (textElement.isSelected()) {
+            c = c.darker();
+        }
         // Get new Color based on layer.
-        text.setStroke(textElement.isSelected() ? c.brighter().brighter() : c);
-        text.setFill(textElement.isSelected() ? c.brighter().brighter() : c);
+        text.setStroke(c);
+        text.setFill(c);
     }
 
     private void updateFont() {
@@ -545,7 +555,7 @@ public class TextNode extends ViewNode implements ElementListener {
             case CoordinateProperty.Field.X, CoordinateProperty.Field.Y -> {
                 updateLocation();
             }
-            case SelectableProperty.Field.SELECTED -> {
+            case SelectableProperty.Field.SELECTED, SelectableProperty.Field.PICKED -> {
                 updateLayer();
             }
             case TextElement.Field.ALIGN -> {

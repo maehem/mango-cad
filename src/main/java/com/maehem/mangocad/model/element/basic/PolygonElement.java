@@ -113,12 +113,13 @@ public class PolygonElement extends Element implements
     private boolean orphans = false;
     private boolean thermals = true;
     private int rank = 1;
-    private final List<Vertex> vertices = new ArrayList<>();
+    public final List<Vertex> vertices = new ArrayList<>();
     private final ArrayList<String> grouprefs = new ArrayList<>();
 
     // Ephemaral data
     private PolygonElement snapshot = null;
     private boolean selected = false;
+    private boolean picked = false;
 
     public PolygonElement() {
 
@@ -160,7 +161,7 @@ public class PolygonElement extends Element implements
     public void setWidth(double width) {
 //        if (this.width != width) {
 //            double oldVal = this.width;
-            widthProperty.set(width);
+        widthProperty.set(width);
 //            notifyListeners(WidthProperty.Field.WIDTH, oldVal, this.width);
 //        }
     }
@@ -373,6 +374,45 @@ public class PolygonElement extends Element implements
 
         return false;
     }
+
+    public int pickVerticesIn(double x, double y, double range) {
+        int vCount = 0;
+        for (Vertex v : vertices) {
+            if ((Math.abs(x - v.getX()) < range && Math.abs(y - v.getY()) < range)) {
+                v.setPicked(true);
+                vCount++;
+            } else {
+                v.setPicked(false);
+            }
+        }
+        return vCount;
+    }
+
+    public boolean hasPicks() {
+        for (Vertex v : vertices) {
+            if (v.isPicked()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isPicked() {
+        return picked;
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        boolean oldValue = this.picked;
+        this.picked = picked;
+        vertices.forEach((v) -> {
+            v.setPicked(picked);
+        });
+        notifyListeners(SelectableProperty.Field.PICKED, oldValue, this.picked);
+    }
+
 
     /**
      * Return a list of vertices that are selected. * given X/Y.

@@ -23,9 +23,9 @@ import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
+import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.ElementValue;
-import com.maehem.mangocad.model.element.property.CoordinateProperty;
 import com.maehem.mangocad.model.element.property.Rotation;
 import com.maehem.mangocad.model.element.property.RotationProperty;
 import com.maehem.mangocad.model.element.property.SelectableProperty;
@@ -65,6 +65,7 @@ public class Pin extends Element implements
     public final StringValue nameProperty = new StringValue("A");
     public final CoordinateValue coordinate = new CoordinateValue();
     private boolean selected = false;
+    private boolean picked = false;
     private Pin snapshot2 = null;
 
     private PinVisible visible = PinVisible.BOTH;
@@ -321,6 +322,16 @@ public class Pin extends Element implements
             this.selected = selected;
             notifyListeners(SelectableProperty.Field.SELECTED, oldValue, this.selected);
         }
+    }
+
+    @Override
+    public boolean isPicked() {
+        return picked;
+    }
+
+    @Override
+    public void setPicked(boolean picked) {
+        this.picked = picked;
     }
 
     @Override
