@@ -485,21 +485,21 @@ public class Wire extends Element implements
 
                     //double curve = 360.0 - 2.0 * lawCosCurve;
                     double div = 360.0 / snapXY.getLength();
-                    double curve2 = mY * div;
-                    double curve3 = mX * div;
+                    double curveX = mY * div;
+                    double curveY = mX * div;
                     //double curve4 = Math.hypot(curve2, curve3);
                     //LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve2: {1}   curve: {2}", new Object[]{div, curve2, curve3});
                     //if (curve4 > -340 && curve4 < 340) {
 //                    LOGGER.log(Level.SEVERE, "Curve2: div: {0}, c2: {1},  c3:{2}  hyp: {3}",
 //                            new Object[]{div, curve2, curve3, curve4}
 //                    );
-                    if (Math.abs(curve2) <= Math.abs(curve3)) {
-                        if (curve3 > -340 && curve3 < 340) {
-                            setCurve(-curve3);
+                    if (Math.abs(curveX) <= Math.abs(curveY)) {
+                        if (curveY > -340 && curveY < 340) {
+                            setCurve(-curveY);
                         }
                     } else {
-                        if (curve2 > -340 && curve2 < 340) {
-                            setCurve(-curve2);
+                        if (curveX > -340 && curveX < 340) {
+                            setCurve(-curveX);
                         }
                     }
                     //}
