@@ -17,8 +17,8 @@
 package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
-import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.ElementValueListener;
+import com.maehem.mangocad.model.element.property.ElementValue;
 import com.maehem.mangocad.model.element.property.StringValue;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.MissingResourceException;
@@ -62,14 +62,15 @@ public class StringValueWidget extends InspectorWidget implements ElementValueLi
 
         getChildren().addAll(textField);
 
-        Platform.runLater(() -> {
-            value.addListener(this);
-        });
-
         textField.setOnAction((t) -> {
             LOGGER.log(Level.SEVERE, "Textfield action.");
             value.set(textField.getText());
         });
+
+        Platform.runLater(() -> {
+            value.addListener(this);
+        });
+
     }
 
 //    private void doRangeErrorDialog(Object item, double multiplier) {
@@ -87,6 +88,7 @@ public class StringValueWidget extends InspectorWidget implements ElementValueLi
 
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
+        LOGGER.log(Level.SEVERE, "Element changed: " + e.toString());
 //        switch (field) {
 //            case ElementText.Field.SIZE, Dimension.Field.TEXTSIZE -> {
 //                if (newVal != null) {
@@ -104,6 +106,7 @@ public class StringValueWidget extends InspectorWidget implements ElementValueLi
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
+        LOGGER.log(Level.SEVERE, "ElementValue changed: " + newVal.toString());
         if (newVal.equals(value)) {
             //updateComboState(yValue.get());
         }
