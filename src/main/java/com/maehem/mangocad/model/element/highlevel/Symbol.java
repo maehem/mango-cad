@@ -19,10 +19,12 @@ package com.maehem.mangocad.model.element.highlevel;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.LibraryElement;
 import com.maehem.mangocad.model.element.basic.Pin;
+import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.PinDirection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <code>
@@ -72,6 +74,17 @@ public class Symbol extends LibraryElement {
         }
 
         return null;
+    }
+
+    public List<Wire> getWireList() {
+        return elements.stream()
+                .filter(Wire.class::isInstance)
+                .map(Wire.class::cast)
+                //.filter(sic -> sic.getStartTime() != sic.getEndTime())
+                .collect(Collectors.toList());
+
+//        elements.stream().filter((el) -> (el instanceof Wire w))
+//        return elements.stream().filter((el) -> (el instanceof Wire w)).toList();
     }
 
     public int getLayerNum() {
