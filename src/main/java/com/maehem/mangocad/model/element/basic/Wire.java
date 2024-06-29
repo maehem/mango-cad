@@ -466,30 +466,50 @@ public class Wire extends Element implements
                     setY2(snapXY.getY2() + yDist);
                 }
                 case WireEnd.NONE -> {
-                    double mX = xDist;
+                    double mX = xDist; // Where the user clicked?
                     double mY = yDist;
-                    double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
-                    double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
-                    double c = snapXY.getLength();
+                    //double a = Math.hypot(snapXY.getX1() - mX, snapXY.getY1() - mY);
+                    //double b = Math.hypot(snapXY.getX2() - mX, snapXY.getY2() - mY);
+                    //double c = snapXY.getLength();
 
-                    LOGGER.log(Level.SEVERE,
-                            "    m:{0},{1}     a={2}   b={3}  c={4}",
-                            new Object[]{mX, mY, a, b, c}
-                    );
-                    double lawCosCurve = Math.toDegrees(Math.acos(
-                            (a * a + b * b - c * c) / (2 * a * b)
-                    )) % 180.0;
-                    double curve = 360.0 - 2.0 * lawCosCurve;
+//                    LOGGER.log(Level.SEVERE,
+//                            "    m:{0},{1}     a={2}   b={3}  c={4}",
+//                            new Object[]{mX, mY, a, b, c}
+//                    );
+//                    double lawCosCurve = Math.toDegrees(Math.acos(
+//                            (a * a + b * b - c * c) / (2 * a * b)
+//                    ));
+                    //LOGGER.log(Level.SEVERE, "LawCos  Raw: " + lawCosCurve);
+//                    lawCosCurve %= 180.0;
+//                    LOGGER.log(Level.SEVERE, "LawCos %180: " + lawCosCurve);
+
+                    //double curve = 360.0 - 2.0 * lawCosCurve;
                     double div = 360.0 / snapXY.getLength();
                     double curve2 = mY * div;
                     double curve3 = mX * div;
-                    double curve4 = Math.hypot(curve2, curve3);
-                    if (curve > -340 && curve < 340) {
-                        LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve: {1}", new Object[]{div, -curve});
-                        setCurve(-curve);
+                    //double curve4 = Math.hypot(curve2, curve3);
+                    //LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve2: {1}   curve: {2}", new Object[]{div, curve2, curve3});
+                    //if (curve4 > -340 && curve4 < 340) {
+//                    LOGGER.log(Level.SEVERE, "Curve2: div: {0}, c2: {1},  c3:{2}  hyp: {3}",
+//                            new Object[]{div, curve2, curve3, curve4}
+//                    );
+                    if (Math.abs(curve2) <= Math.abs(curve3)) {
+                        if (curve3 > -340 && curve3 < 340) {
+                            setCurve(-curve3);
+                        }
+                    } else {
+                        if (curve2 > -340 && curve2 < 340) {
+                            setCurve(-curve2);
+                        }
                     }
+                    //}
+//                    if (curve > -340 && curve < 340) {
+//                        LOGGER.log(Level.SEVERE, "Curve: div: {0}, curve: {1}", new Object[]{div, -curve});
+//                        setCurve(-curve);
+//                    }
                 }
                 default -> {
+                    LOGGER.log(Level.SEVERE, "Move Wire End BOTH.");
                 }
             }
         }
