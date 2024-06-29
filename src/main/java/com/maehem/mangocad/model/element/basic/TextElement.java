@@ -153,6 +153,7 @@ public class TextElement extends Element
         coordinate.addListener(this);
         rotation.addListener(this);
         sizeProperty.addListener(this);
+        valueProperty.addListener(this);
     }
 
     @Override
@@ -315,11 +316,11 @@ public class TextElement extends Element
      * @param value the value to set
      */
     public void setValue(String value) {
-        if (!getValue().equals(value)) {
-            String oldValue = getValue();
-            valueProperty.set(value);
-            notifyListeners(TextElement.Field.VALUE, oldValue, getValue());
-        }
+//        if (!getValue().equals(value)) {
+//            String oldValue = getValue();
+        valueProperty.set(value);
+//            notifyListeners(TextElement.Field.VALUE, oldValue, getValue());
+//        }
     }
 
     /**
@@ -479,6 +480,8 @@ public class TextElement extends Element
             notifyListeners(Field.SIZE, sizeProperty.getOldValue(), sizeProperty.get());
         } else if (newVal.equals(rotation)) {
             notifyListeners(RotationProperty.Field.VALUE, rotation.getOldValue(), rotation.get());
+        } else if (newVal.equals(valueProperty)) {
+            notifyListeners(Field.VALUE, valueProperty.getOldValue(), valueProperty.get());
         }
 
     }
