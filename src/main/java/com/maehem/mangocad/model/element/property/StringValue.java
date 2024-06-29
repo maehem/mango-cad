@@ -40,9 +40,13 @@ public class StringValue extends ElementValue {
     public void set(String value) {
         oldValue = this.value;
         this.value = value;
-        if (oldValue != this.value) {
+        if (!oldValue.equals(value)) {
             notifyValueChange();
         }
+    }
+
+    public String getOldValue() {
+        return oldValue;
     }
 
 }
