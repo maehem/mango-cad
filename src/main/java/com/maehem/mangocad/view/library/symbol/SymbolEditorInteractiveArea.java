@@ -27,7 +27,6 @@ import com.maehem.mangocad.model.element.basic.TextElement;
 import com.maehem.mangocad.model.element.basic.Vertex;
 import com.maehem.mangocad.model.element.basic.Wire;
 import com.maehem.mangocad.model.element.enums.WireEnd;
-import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
 import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.highlevel.Symbol;
 import com.maehem.mangocad.model.element.misc.Grid;
@@ -484,8 +483,6 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     }
                 });
 
-                //LOGGER.log(Level.SEVERE, "Editor Work Area Clicked: {0}", me.getButton().name());
-                //ArrayList<Element> picks = new ArrayList<>();
                 parentEditor.getSymbol().getElements().forEach((e) -> {
                     switch (e) {
                         case CoordinateProperty ee -> {
@@ -497,13 +494,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                             }
                         }
                         case Wire wire -> {
-                            if (Math.abs(me.getX() - wire.getX1()) < PICK_SIZE
-                                    && Math.abs(-me.getY() - wire.getY1()) < PICK_SIZE) {
-                                wire.setPickedEnd(ONE);
-                            } else if (Math.abs(me.getX() - wire.getX2()) < PICK_SIZE
-                                    && Math.abs(-me.getY() - wire.getY2()) < PICK_SIZE) {
-                                wire.setPickedEnd(TWO);
-                            }
+                            WireEnd pickedEnd = wire.pick(me, PICK_SIZE);
                         }
                         case RectangleElement er -> {
                             double[] p = er.getPoints();
@@ -576,34 +567,30 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                         if (element instanceof SelectableProperty se) {
                             se.setPicked(true);
                             picks.add(element);
+                            // if any directPicks are wires,
+                            if (element instanceof Wire wire) {
+                                // find other wires that share  X/Y points.
+                                // Pick those points and add to picks.
+                                parentEditor.getSymbol().getWireList().forEach((otherWire) -> {
+                                    if (!otherWire.equals(wire)) {
+                                        WireEnd endMatch = wire.endMatch(WireEnd.ONE, otherWire);
+                                        if (!endMatch.equals(WireEnd.NONE)) {
+                                            otherWire.setPickedEnd(endMatch);
+                                            picks.add(otherWire);
+                                        }
+                                        endMatch = wire.endMatch(WireEnd.TWO, otherWire);
+                                        if (!endMatch.equals(WireEnd.NONE)) {
+                                            otherWire.setPickedEnd(endMatch);
+                                            picks.add(otherWire);
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
                 });
                 LOGGER.log(Level.SEVERE, "Pick count: {0}", new Object[]{picks.size()});
 
-//                if (picks2.size() == 1) {
-//                    if (cmdKeyMode) {
-//                        LOGGER.log(Level.SEVERE, "Command Key active.");
-//                        Element el = picks2.getFirst();
-//                        if (el instanceof Wire wire) {
-//                            LOGGER.log(Level.SEVERE, "  ===> Wire Node with command key.");
-//                            if (toolMode.equals(EditorTool.MOVE)) {
-//                                LOGGER.log(Level.SEVERE, "    ==> Mode is MOVE");
-//                                movingElements.add(wire);
-//                                wire.setSelectedEnd(WireEnd.NONE);
-//                                wire.setPicked(true);
-//                                movingMouseStartX = me.getX();
-//                                movingMouseStartY = me.getY();
-//                                if (wire instanceof SelectableProperty es) {
-//                                    es.createSnapshot();
-//                                }
-//                                LOGGER.log(Level.SEVERE, "    ======> Command-Click Wire Node. Move to affect curve.");
-//                            }
-//                        }
-//                    } else {
-//                        LOGGER.log(Level.SEVERE, "Nothing to do.");
-//                    }
-//                } else {
                 switch (me.getButton()) {
                     case PRIMARY -> { // Move or choose what to move.
                         contextMenu.hide();
@@ -690,14 +677,14 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                                 // If one pick, pick it.
                                 if (picks.size() == 1) {  // TODO: movingNodes.isEmpty() not needed.
                                     LOGGER.log(Level.SEVERE, "    ==> Mode is MOVE");
+                                    Element el = picks.getFirst();
                                     if (cmdKeyMode) {
                                         LOGGER.log(Level.SEVERE, "Command Key active.");
-                                        Element el = picks.getFirst();
                                         if (el instanceof Wire wire) {
                                             initiateWireElementCurve(me, wire);
                                         }
                                     } else {
-                                        LOGGER.log(Level.SEVERE, "initiate move: " + picks.getFirst().getElementName());
+                                        LOGGER.log(Level.FINER, "initiate move: " + picks.getFirst().getElementName());
                                         initiateElementMove(picks, me.getX(), me.getY());
                                     }
                                 } else if (isOnlyWires(picks)) { // Wires converge and nothing else there.
@@ -877,7 +864,7 @@ public class SymbolEditorInteractiveArea extends ScrollPane implements PickListe
                     Rotation refProp = tmpRot.getRotationProperty();
                     // The toolbar widgets are additive to current value.
                     rotProp.set(pickRot.getRotationProperty().get() + refProp.get());
-                    switch ( rotProp.getMirrorStyle() ) {
+                    switch (rotProp.getMirrorStyle()) {
                         case FLIP -> {
                             rotProp.setMirror(refProp.isMirror());
                         }
