@@ -216,30 +216,47 @@ public class WireNode extends ViewNode implements ElementListener {
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         //Wire.Field f = (Wire.Field) field;
 
-        LOGGER.log(Level.SEVERE,
-                "WireNode:  Wire properties have changed! {0}: {1} => {2}",
-                new Object[]{field, oldVal.toString(), newVal.toString()});
-
         switch (field) {
             case Wire.Field.X1, Wire.Field.Y1, Wire.Field.X2, Wire.Field.Y2 -> {
+                LOGGER.log(Level.FINER,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateLine();
             }
             case Wire.Field.END -> {
+                LOGGER.log(Level.SEVERE,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateLayer();
             }
             case Wire.Field.CAP -> {
+                LOGGER.log(Level.SEVERE,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateCap();
             }
             case CurveProperty.Field.VALUE -> {
+                LOGGER.log(Level.SEVERE,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateCurve();
             }
             case LayerNumberProperty.Field.LAYER, SelectableProperty.Field.PICKED -> {
+                LOGGER.log(Level.SEVERE,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateLayer();
             }
             case Wire.Field.STYLE -> {
+                LOGGER.log(Level.SEVERE,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateStyle();
             }
             case WidthProperty.Field.WIDTH -> {
+                LOGGER.log(Level.SEVERE,
+                        "Wire properties have changed! {0}: {1} => {2}",
+                        new Object[]{field, oldVal.toString(), newVal.toString()});
                 updateWidth();
             }
             default -> {
