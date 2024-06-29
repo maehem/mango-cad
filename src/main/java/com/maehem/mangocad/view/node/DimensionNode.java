@@ -102,7 +102,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
         displayValue.getTransforms().add(dimLineRotate);
 
         et.setAlign(TextAlign.BOTTOM_CENTER);
-        et.setValue("???");
+        et.valueProperty.set("???");
         et.setSize(dimension.getTextsize());
         et.setRatio(dimension.getTextratio());
         et.setLayerNum(dimension.getLayerNum());
@@ -280,7 +280,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 }
                 BigDecimal bd = BigDecimal.valueOf(hyp12);
                 bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                et.setValue(bd.toString() + unitLabel);
+                et.valueProperty.set(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
@@ -349,7 +349,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 }
                 BigDecimal bd = BigDecimal.valueOf(Math.abs(x1 - x2));
                 bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                et.setValue(bd.toString() + unitLabel);
+                et.valueProperty.set(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
@@ -425,7 +425,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 }
                 BigDecimal bd = BigDecimal.valueOf(Math.abs(y1 - y2));
                 bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                et.setValue(bd.toString() + unitLabel);
+                et.valueProperty.set(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
@@ -538,7 +538,7 @@ public class DimensionNode extends ViewNode implements ElementListener {
                 }
                 BigDecimal bd = BigDecimal.valueOf(Math.abs(hyp12));
                 bd = bd.setScale(dimension.getPrecision(), RoundingMode.HALF_UP);
-                et.setValue(bd.toString() + unitLabel);
+                et.valueProperty.set(bd.toString() + unitLabel);
 
                 updateWidths();
                 updateLayer();
