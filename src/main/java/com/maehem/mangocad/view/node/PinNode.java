@@ -19,7 +19,6 @@ package com.maehem.mangocad.view.node;
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.ElementListener;
 import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import static com.maehem.mangocad.model.element.enums.PinVisible.*;
@@ -467,21 +466,21 @@ public class PinNode extends ViewNode implements ElementListener {
             case SelectableProperty.Field.SELECTED -> {
                 updateColors();
             }
-            case PinField.NAME, PinField.PAD_VALUE -> {
+            case Pin.Field.NAME, Pin.Field.PAD_VALUE -> {
                 updatePadPin();
             }
-            case PinField.DIRECTION, PinField.SWAPLEVEL -> {
+            case Pin.Field.DIRECTION, Pin.Field.SWAPLEVEL -> {
                 updatePinData();
             }
-            case PinField.VISIBLE -> {
+            case Pin.Field.VISIBLE -> {
                 updateColors();
             }
-            case PinField.FUNCTION -> {
+            case Pin.Field.FUNCTION -> {
                 updateClockLines();
                 updateLine();
                 updateColors();
             }
-            case PinField.LENGTH -> {
+            case Pin.Field.LENGTH -> {
                 updateRotation();
                 updateLine();
                 updateClockLines();

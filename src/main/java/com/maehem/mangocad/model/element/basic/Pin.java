@@ -17,9 +17,9 @@
 package com.maehem.mangocad.model.element.basic;
 
 import com.maehem.mangocad.model.element.Element;
+import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.PinDirection;
-import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinFunction;
 import com.maehem.mangocad.model.element.enums.PinLength;
 import com.maehem.mangocad.model.element.enums.PinVisible;
@@ -56,6 +56,35 @@ public class Pin extends Element implements
         CoordinateProperty, RotationProperty, SelectableProperty,
         ElementValueListener {
 
+    public enum Field implements ElementField {
+        NAME("name", String.class),
+        VISIBLE("visible", PinVisible.class),
+        LENGTH("length", PinLength.class),
+        DIRECTION("direction", PinDirection.class),
+        FUNCTION("function", PinFunction.class),
+        SWAPLEVEL("swapLevel", Integer.class),
+        PAD_VALUE("padValue", String.class);
+
+        private final String fName;
+        private final Class clazz;
+
+        private Field(String name, Class clazz) {
+            this.fName = name;
+            this.clazz = clazz;
+        }
+
+        @Override
+        public String fName() {
+            return fName;
+        }
+
+        @Override
+        public Class clazz() {
+            return clazz;
+        }
+
+    }
+
     public static final String ELEMENT_NAME = "pin";
     // 'layer' is not used.
 
@@ -64,6 +93,8 @@ public class Pin extends Element implements
 
     public final StringValue nameProperty = new StringValue("A");
     public final CoordinateValue coordinate = new CoordinateValue();
+    public final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
+
     private boolean selected = false;
     private boolean picked = false;
     private Pin snapshot2 = null;
@@ -73,14 +104,14 @@ public class Pin extends Element implements
     private PinDirection direction = PinDirection.IO;
     private PinFunction function = PinFunction.NONE;
     private int swapLevel = 0;
-    public final Rotation rotation = new Rotation(Rotation.CONSTRAINED);
 
     // Lookup
     private String padValue = null;
 
     public Pin() {
-        rotation.setConstrained(true);
+        //rotation.setConstrained(true);
 
+        nameProperty.addListener(this);
         coordinate.addListener(this);
         rotation.addListener(this);
     }
@@ -111,11 +142,11 @@ public class Pin extends Element implements
      * @param name the name to set
      */
     public void setName(String name) {
-        if (this.nameProperty.get() == null || !this.nameProperty.get().equals(name)) {
-            String oldName = this.nameProperty.get();
-            this.nameProperty.set(name);
-            notifyListeners(PinField.NAME, oldName, name);
-        }
+//        if (this.nameProperty.get() == null || !this.nameProperty.get().equals(name)) {
+//            String oldName = this.nameProperty.get();
+        this.nameProperty.set(name);
+//            notifyListeners(PinField.NAME, oldName, name);
+//        }
     }
 
     /**
@@ -160,7 +191,7 @@ public class Pin extends Element implements
         if (value == null || (this.padValue != null && !this.padValue.equals(value))) {
             String oldVal = this.padValue;
             this.padValue = value;
-            notifyListeners(PinField.PAD_VALUE, oldVal, padValue);
+            notifyListeners(Field.PAD_VALUE, oldVal, padValue);
         }
     }
 
@@ -181,7 +212,7 @@ public class Pin extends Element implements
         if (this.visible != visible) {
             PinVisible oldVisible = this.visible;
             this.visible = visible;
-            notifyListeners(PinField.VISIBLE, oldVisible, this.visible);
+            notifyListeners(Field.VISIBLE, oldVisible, this.visible);
         }
     }
 
@@ -199,7 +230,7 @@ public class Pin extends Element implements
         if (this.length != length) {
             PinLength oldVal = this.length;
             this.length = length;
-            notifyListeners(PinField.LENGTH, oldVal, this.length);
+            notifyListeners(Field.LENGTH, oldVal, this.length);
         }
     }
 
@@ -217,7 +248,7 @@ public class Pin extends Element implements
         if (this.direction != direction) {
             PinDirection oldVal = this.direction;
             this.direction = direction;
-            notifyListeners(PinField.DIRECTION, oldVal, this.direction);
+            notifyListeners(Field.DIRECTION, oldVal, this.direction);
         }
     }
 
@@ -235,7 +266,7 @@ public class Pin extends Element implements
         if (this.function != function) {
             PinFunction oldVal = this.function;
             this.function = function;
-            notifyListeners(PinField.FUNCTION, oldVal, this.function);
+            notifyListeners(Field.FUNCTION, oldVal, this.function);
         }
     }
 
@@ -253,7 +284,7 @@ public class Pin extends Element implements
         if (this.swapLevel != swapLevel) {
             int oldVal = this.swapLevel;
             this.swapLevel = swapLevel;
-            notifyListeners(PinField.SWAPLEVEL, oldVal, this.swapLevel);
+            notifyListeners(Field.SWAPLEVEL, oldVal, this.swapLevel);
         }
     }
 
@@ -340,7 +371,6 @@ public class Pin extends Element implements
     @Override
     public void modify(double xDist, double yDist, boolean ephemeral) {
         //LOGGER.log(Level.SEVERE, "Move elementXY.");
-        //Element snapshot = es.getSnapshot();
         if (getSnapshot() instanceof CoordinateProperty snapXY) {
             //LOGGER.log(Level.SEVERE, "    Move relative to snapXY.");
             getCoordinateProperty().setX(snapXY.getCoordinateProperty().getX() + xDist);
@@ -350,7 +380,9 @@ public class Pin extends Element implements
 
     @Override
     public void elementValueChanged(ElementValue newVal) {
-        if (newVal.equals(coordinate.x)) {
+        if (newVal.equals(nameProperty)) {
+            notifyListeners(Field.NAME, nameProperty.getOldValue(), nameProperty.get());
+        } else if (newVal.equals(coordinate.x)) {
             notifyListeners(CoordinateProperty.Field.X, coordinate.x.getOldValue(), newVal);
         } else if (newVal.equals(coordinate.y)) {
             notifyListeners(CoordinateProperty.Field.Y, coordinate.y.getOldValue(), newVal);

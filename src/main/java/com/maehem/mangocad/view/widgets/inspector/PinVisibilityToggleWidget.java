@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.enums.PinField;
 import com.maehem.mangocad.model.element.enums.PinVisible;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import com.maehem.mangocad.view.ViewUtils;
@@ -122,7 +121,7 @@ public class PinVisibilityToggleWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(PinField.VISIBLE)) {
+        if (!field.equals(Pin.Field.VISIBLE)) {
             return;
         }
         if (newVal == null) {

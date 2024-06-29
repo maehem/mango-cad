@@ -18,7 +18,6 @@ package com.maehem.mangocad.view.widgets.inspector;
 
 import com.maehem.mangocad.model.element.Element;
 import com.maehem.mangocad.model.element.basic.Pin;
-import com.maehem.mangocad.model.element.enums.PinField;
 import static com.maehem.mangocad.view.ControlPanel.LOGGER;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -73,7 +72,7 @@ public class PinSwapLevelWidget extends InspectorWidget {
     @Override
     public void elementChanged(Element e, Enum field, Object oldVal, Object newVal) {
         // Update widgets.
-        if (!field.equals(PinField.SWAPLEVEL)) {
+        if (!field.equals(Pin.Field.SWAPLEVEL)) {
             return;
         }
         if (newVal == null) {
