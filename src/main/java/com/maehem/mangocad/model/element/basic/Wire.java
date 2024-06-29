@@ -21,6 +21,8 @@ import com.maehem.mangocad.model.element.ElementField;
 import com.maehem.mangocad.model.element.ElementValueListener;
 import com.maehem.mangocad.model.element.enums.WireCap;
 import com.maehem.mangocad.model.element.enums.WireEnd;
+import static com.maehem.mangocad.model.element.enums.WireEnd.ONE;
+import static com.maehem.mangocad.model.element.enums.WireEnd.TWO;
 import com.maehem.mangocad.model.element.enums.WireStyle;
 import com.maehem.mangocad.model.element.property.CoordinateValue;
 import com.maehem.mangocad.model.element.property.CurveProperty;
@@ -37,6 +39,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.input.MouseEvent;
 
 /**
  * <pre>
@@ -366,16 +369,6 @@ public class Wire extends Element implements
         return grouprefs;
     }
 
-    @Override
-    public String toString() {
-        MessageFormat mf = new MessageFormat("wire: {0},{1} to {2},{3}  avg:{4},{5} layer:{6} picked:{7}");
-        Object[] o = new Object[]{
-            getX1(), getY1(), getX2(), getY2(),
-            getAverageX(), getAverageY(),
-            getLayerNum(), getPickedEnd().code()};
-        return mf.format(o);
-    }
-
     public void setSelectedEnd(WireEnd end) {
         if (!getSelectedEnd().equals(end)) {
             WireEnd oldVal = this.getSelectedEnd();
@@ -386,6 +379,35 @@ public class Wire extends Element implements
 
     public WireEnd getSelectedEnd() {
         return selectedEnd;
+    }
+
+    /**
+     * Check if otherWire has an end that matches the target end for this Wire.
+     *
+     * @param thisWireEnd end of this wire to check.
+     * @param otherWire the other wire.
+     * @return ONE or TWO for otherWire if there is a match. NONE if no match.
+     * Never returns BOTH.
+     */
+    public WireEnd endMatch(WireEnd thisWireEnd, Wire otherWire) {
+        switch (thisWireEnd) {
+            case ONE -> {
+                if (getX1() == otherWire.getX1() && getY1() == otherWire.getY1()) {
+                    return ONE;
+                } else if (getX1() == otherWire.getX2() && getY1() == otherWire.getY2()) {
+                    return TWO;
+                }
+            }
+            case TWO -> {
+                if (getX2() == otherWire.getX1() && getY2() == otherWire.getY1()) {
+                    return ONE;
+                } else if (getX2() == otherWire.getX2() && getY2() == otherWire.getY2()) {
+                    return TWO;
+                }
+            }
+        }
+
+        return WireEnd.NONE;
     }
 
     @Override
@@ -423,7 +445,8 @@ public class Wire extends Element implements
     }
 
     @Override
-    public void setSelected(boolean selected) {
+    public void setSelected(boolean selected
+    ) {
         LOGGER.log(Level.SEVERE, "Wire.setSelected() mis-used.  Use setSelectedEnd() instead!");
     }
 
@@ -433,7 +456,8 @@ public class Wire extends Element implements
     }
 
     @Override
-    public void setPicked(boolean picked) {
+    public void setPicked(boolean picked
+    ) {
         //if (!this.pickedEnd.equals(WireEnd.BOTH)) {
         boolean oldValue = isPicked();
         this.pickedEnd = picked ? WireEnd.BOTH : WireEnd.NONE;
@@ -451,6 +475,20 @@ public class Wire extends Element implements
 
     public WireEnd getPickedEnd() {
         return pickedEnd;
+    }
+
+    public WireEnd pick(MouseEvent me, double pickSize) {
+        if (Math.abs(me.getX() - getX1()) < pickSize
+                && Math.abs(-me.getY() - getY1()) < pickSize) {
+            setPickedEnd(ONE);
+        } else if (Math.abs(me.getX() - getX2()) < pickSize
+                && Math.abs(-me.getY() - getY2()) < pickSize) {
+            setPickedEnd(TWO);
+        }
+        // BOTH is handled by direct shape pick because wire might
+        // be curved.
+
+        return getPickedEnd();
     }
 
     @Override
@@ -482,7 +520,6 @@ public class Wire extends Element implements
                     //LOGGER.log(Level.SEVERE, "LawCos  Raw: " + lawCosCurve);
 //                    lawCosCurve %= 180.0;
 //                    LOGGER.log(Level.SEVERE, "LawCos %180: " + lawCosCurve);
-
                     //double curve = 360.0 - 2.0 * lawCosCurve;
                     double div = 360.0 / snapXY.getLength();
                     double curveX = mY * div;
@@ -510,6 +547,10 @@ public class Wire extends Element implements
                 }
                 default -> {
                     LOGGER.log(Level.SEVERE, "Move Wire End BOTH.");
+                    setX1(snapXY.getX1() + xDist);
+                    setY1(snapXY.getY1() + yDist);
+                    setX2(snapXY.getX2() + xDist);
+                    setY2(snapXY.getY2() + yDist);
                 }
             }
         }
@@ -588,6 +629,16 @@ public class Wire extends Element implements
         };
 
         return mf.format(args);
+    }
+
+    @Override
+    public String toString() {
+        MessageFormat mf = new MessageFormat("wire: {0},{1} to {2},{3}  avg:{4},{5} layer:{6} picked:{7}");
+        Object[] o = new Object[]{
+            getX1(), getY1(), getX2(), getY2(),
+            getAverageX(), getAverageY(),
+            getLayerNum(), getPickedEnd().code()};
+        return mf.format(o);
     }
 
 }
