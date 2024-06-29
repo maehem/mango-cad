@@ -198,7 +198,7 @@ public class TextNode extends ViewNode implements ElementListener {
     }
 
     private void updateValue() {
-        String textString = altText != null ? altText : textElement.getValue();
+        String textString = altText != null ? altText : textElement.valueProperty.get();
 
         // Replace exclamation with bar over text.
         if (textString != null && textString.startsWith("!")) {
@@ -596,7 +596,7 @@ public class TextNode extends ViewNode implements ElementListener {
 
     @Override
     public String toString() {
-        return "TextNode: " + textElement.getValue();
+        return "TextNode: " + textElement.valueProperty.get();
     }
 
 }
